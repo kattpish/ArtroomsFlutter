@@ -128,7 +128,8 @@ class MyApp extends StatelessWidget {
                   ],
                 ),
               ),
-              Padding(
+              Container(
+                alignment: Alignment.center,
                 padding: const EdgeInsets.only(bottom: 20.0),
                 child: TextButton(
                   onPressed: () {},
