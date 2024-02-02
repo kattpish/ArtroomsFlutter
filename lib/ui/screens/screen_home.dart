@@ -91,7 +91,7 @@ class _ScreenHomeState extends State<ScreenHome> with SingleTickerProviderStateM
           controller: _tabController,
           labelColor: Colors.black,
           unselectedLabelColor: Colors.grey,
-          indicatorColor: Colors.deepPurple,
+          indicatorColor: const Color(0xFF6A79FF),
           indicatorWeight: 3.0,
           tabs: const [
             Tab(text: '아이디'),
