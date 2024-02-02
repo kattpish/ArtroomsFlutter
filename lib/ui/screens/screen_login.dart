@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
 
+class MyScreenLogin extends StatelessWidget {
 
-class MyApp extends StatelessWidget {
-
-  const MyApp({super.key});
+  const MyScreenLogin({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      title: 'Login',
       home: Scaffold(
         backgroundColor: const Color(0xFF6A79FF),
         body: SafeArea(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
+              const Spacer(flex: 2),
               Expanded(
                 flex: 2,
                 child: Column(
@@ -36,103 +37,104 @@ class MyApp extends StatelessWidget {
                   ],
                 ),
               ),
-              Expanded(
-                flex: 3,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.0),
-                      child: TextField(
-                        style: const TextStyle(
-                            color: Colors.white
-                        ),
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Colors.white.withAlpha(100),
-                          hintText: '이메일',
-                          hintStyle: const TextStyle(color: Colors.white),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30.0),
-                            borderSide: BorderSide.none,
-                          ),
+              const SizedBox(height: 20),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.0),
+                    child: TextField(
+                      style: const TextStyle(color: Colors.white),
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: const Color(0xFF7F94FE).withAlpha(255),
+                        hintText: '이메일',
+                        hintStyle: const TextStyle(color: Colors.white),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30.0),
+                          borderSide: BorderSide.none,
                         ),
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.0),
-                      child: TextField(
-                        obscureText: true,
-                        style: const TextStyle(
-                            color: Colors.white
-                        ),
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Colors.white.withAlpha(100),
-                          hintText: '비밀번호',
-                          hintStyle: const TextStyle(color: Colors.white),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30.0),
-                            borderSide: BorderSide.none,
-                          ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.0),
+                    child: TextField(
+                      obscureText: true,
+                      style: const TextStyle(color: Colors.white),
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: const Color(0xFF7F94FE).withAlpha(255),
+                        hintText: '비밀번호',
+                        hintStyle: const TextStyle(color: Colors.white),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30.0),
+                          borderSide: BorderSide.none,
                         ),
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.0),
-                      child: ElevatedButton(
-                        onPressed: () {},
-                        style: ElevatedButton.styleFrom(
-                          minimumSize: const Size(double.infinity, 48),
-                          foregroundColor: const Color(0xFF6A79FF), backgroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 16.0),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30.0),
-                          ),
-                        ),
-                        child: const Text(
-                          '로그인',
-                          style: TextStyle(
-                            fontSize: 18,
-                          ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.0),
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: const Size(double.infinity, 48),
+                        foregroundColor: const Color(0xFF6A79FF),
+                        backgroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 16.0),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30.0),
                         ),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 16.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          TextButton(
-                            onPressed: () {},
-                            child: const Text(
-                              '아이디 찾기',
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
-                          Container(
-                            width: 1,
-                            height: 20,
-                            color: Colors.white70,
-                          ),
-                          TextButton(
-                            onPressed: () {},
-                            child: const Text(
-                              '비밀번호 찾기',
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
-                        ],
+                      child: const Text(
+                        '로그인',
+                        style: TextStyle(
+                          fontSize: 18,
+                        ),
                       ),
+                      onPressed: () {
+
+                      },
                     ),
-                  ],
-                ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        TextButton(
+                          child: const Text(
+                            '아이디 찾기',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          onPressed: () {
+
+                          },
+                        ),
+                        Container(
+                          width: 1,
+                          height: 20,
+                          color: Colors.white70,
+                        ),
+                        TextButton(
+                          child: const Text(
+                            '비밀번호 찾기',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          onPressed: () {
+
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
+              const Spacer(flex: 1),
               Container(
                 alignment: Alignment.center,
                 padding: const EdgeInsets.only(bottom: 20.0),
                 child: TextButton(
-                  onPressed: () {},
                   style: TextButton.styleFrom(foregroundColor: Colors.white70),
                   child: const Row(
                     mainAxisSize: MainAxisSize.min,
@@ -148,8 +150,12 @@ class MyApp extends StatelessWidget {
                       ),
                     ],
                   ),
+                  onPressed: () {
+                    // Sign up logic here
+                  },
                 ),
               ),
+              const Spacer(flex: 1),
             ],
           ),
         ),
