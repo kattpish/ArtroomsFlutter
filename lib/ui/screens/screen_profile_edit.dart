@@ -42,7 +42,9 @@ class _MyScreenProfileEditState extends State<MyScreenProfileEdit> {
         ),
         title: const Text(
           '프로필 수정',
-          style: TextStyle(color: Colors.black),
+          style: TextStyle(
+              color: Colors.black
+          ),
         ),
         backgroundColor: Colors.white,
         elevation: 0,
