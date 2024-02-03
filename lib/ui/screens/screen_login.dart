@@ -1,5 +1,7 @@
+import 'package:artrooms/ui/screens/screen_home.dart';
 import 'package:flutter/material.dart';
 
+import '../../utils/utils.dart';
 import '../theme/theme_colors.dart';
 
 
@@ -37,12 +39,13 @@ class _MyScreeLoginState extends State<MyScreenLogin> {
                       'assets/images/icons/logo.png',
                       height: 60,
                     ),
+                    const SizedBox(height: 10),
                     const Text(
                       '아트플룻 도넛',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 20,
+                        fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -102,9 +105,15 @@ class _MyScreeLoginState extends State<MyScreenLogin> {
                         '로그인',
                         style: TextStyle(
                           fontSize: 18,
+                          fontWeight: FontWeight.w600
                         ),
                       ),
                       onPressed: () {
+
+                        Navigator.of(context).pop();
+                        Navigator.push(context, MaterialPageRoute(builder: (context) {
+                          return const MyScreenHome();
+                        }));
 
                       },
                     ),
@@ -125,8 +134,9 @@ class _MyScreeLoginState extends State<MyScreenLogin> {
                         ),
                         Container(
                           width: 1,
-                          height: 20,
-                          color: Colors.white70,
+                          height: 18,
+                          color: Colors.white,
+                          margin: const EdgeInsets.symmetric(horizontal: 8.0),
                         ),
                         TextButton(
                           child: const Text(
@@ -163,7 +173,7 @@ class _MyScreeLoginState extends State<MyScreenLogin> {
                     ],
                   ),
                   onPressed: () {
-                    // Sign up logic here
+                    launchInBrowser(Uri(scheme: 'https', host: 'artrooms.app', path: 'signup'));
                   },
                 ),
               ),

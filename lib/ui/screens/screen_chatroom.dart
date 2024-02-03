@@ -93,7 +93,10 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
         ),
         title: Text(
           widget.chat.name,
-          style: const TextStyle(color: Colors.black),
+          style: const TextStyle(
+              color: colorMainGrey900,
+              fontWeight: FontWeight.w600
+          ),
         ),
         centerTitle: true,
         elevation: 1,

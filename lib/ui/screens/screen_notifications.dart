@@ -36,7 +36,8 @@ class _MyScreenNotificationsState extends State<MyScreenNotifications> {
           title: const Text(
             '알림 및 소리',
             style: TextStyle(
-                color: Colors.black
+                color: colorMainGrey900,
+                fontWeight: FontWeight.w600
             ),
           ),
           elevation: 1,

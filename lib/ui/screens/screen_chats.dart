@@ -1,5 +1,6 @@
 import 'package:artrooms/modules/module_chats.dart';
 import 'package:artrooms/ui/screens/screen_chatroom.dart';
+import 'package:artrooms/ui/screens/screen_notifications_sounds.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
@@ -9,18 +10,18 @@ import '../theme/theme_colors.dart';
 import '../widgets/widget_loader.dart';
 
 
-class MyChatsScreen extends StatefulWidget {
+class MyScreenChats extends StatefulWidget {
 
-  const MyChatsScreen({super.key});
+  const MyScreenChats({super.key});
 
   @override
   State<StatefulWidget> createState() {
-    return _MyChatsScreenState();
+    return _MyScreenChatsState();
   }
 
 }
 
-class _MyChatsScreenState extends State<MyChatsScreen> {
+class _MyScreenChatsState extends State<MyScreenChats> {
 
   bool isLoading = true;
   bool isSearching = false;
@@ -31,12 +32,8 @@ class _MyChatsScreenState extends State<MyChatsScreen> {
   void initState() {
     super.initState();
 
-    Future.delayed(const Duration(seconds: 1), () {
-      setState(() {
-        isLoading = false;
-        chats.addAll(loadChats());
-      });
-    });
+    refreshChats();
+
   }
 
   @override
@@ -53,7 +50,10 @@ class _MyChatsScreenState extends State<MyChatsScreen> {
         appBar: AppBar(
           title: const Text(
             '채팅',
-            style: TextStyle(color: Colors.black),
+            style: TextStyle(
+                color: colorMainGrey900,
+                fontWeight: FontWeight.w600
+            ),
           ),
           backgroundColor: Colors.white,
           elevation: 0,
@@ -72,7 +72,9 @@ class _MyChatsScreenState extends State<MyChatsScreen> {
             ),
           ],
         ),
-        body: isLoading ? const MyLoader() : Column(
+        body: isLoading
+            ? const MyLoader()
+            : Column(
           children: [
             Visibility(
               visible: isSearching || chats.isNotEmpty || searchController.text.isNotEmpty,
@@ -107,7 +109,7 @@ class _MyChatsScreenState extends State<MyChatsScreen> {
               ),
             ),
             Expanded(
-              child: (chats.isNotEmpty && !isSearching)
+              child: (chats.isNotEmpty || isSearching)
                   ? ListView.builder(
                 itemCount: chats.length,
                 itemBuilder: (context, index) {
@@ -151,7 +153,20 @@ class _MyChatsScreenState extends State<MyChatsScreen> {
       child: ListTile(
         leading: CircleAvatar(
           radius: 30,
-          backgroundImage: NetworkImage(chats[index].profilePictureUrl),
+          backgroundColor: Colors.transparent,
+          child: FadeInImage.assetNetwork(
+            placeholder: 'assets/images/profile/placeholder.png',
+            image: chats[index].profilePictureUrl,
+            fit: BoxFit.cover,
+            fadeInDuration: const Duration(milliseconds: 200),
+            fadeOutDuration: const Duration(milliseconds: 200),
+            imageErrorBuilder: (context, error, stackTrace) {
+              return Image.asset(
+                'assets/images/profile/placeholder.png',
+                fit: BoxFit.cover,
+              );
+            },
+          ),
         ),
         title: Text(chats[index].name),
         subtitle: Text(chats[index].lastMessage),
@@ -164,17 +179,20 @@ class _MyChatsScreenState extends State<MyChatsScreen> {
               overflow: TextOverflow.ellipsis,
               style: const TextStyle(color: Colors.grey, fontSize: 12),
             ),
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: const BoxDecoration(
-                color: colorPrimaryPurple,
-                shape: BoxShape.circle,
-              ),
-              child: Text(
-                chats[index].unreadMessages.toString(),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(color: Colors.white),
+            Visibility(
+              visible: chats[index].unreadMessages > 0,
+              child: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: const BoxDecoration(
+                  color: colorPrimaryPurple,
+                  shape: BoxShape.circle,
+                ),
+                child: Text(
+                  chats[index].unreadMessages.toString(),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(color: Colors.white),
+                ),
               ),
             ),
           ],
@@ -258,9 +276,9 @@ class _MyChatsScreenState extends State<MyChatsScreen> {
                         Navigator.of(context).pop();
                       },
                     ),
-                  )
-                  ,
+                  ),
                 ),
+                const SizedBox(height: 20),
                 const Text(
                   '채팅방 나가기',
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
@@ -271,7 +289,7 @@ class _MyChatsScreenState extends State<MyChatsScreen> {
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 16),
                 ),
-                const SizedBox(height: 40),
+                const SizedBox(height: 50),
                 ElevatedButton(
                   onPressed: () {
 
@@ -300,16 +318,35 @@ class _MyChatsScreenState extends State<MyChatsScreen> {
     );
   }
 
-
   void _onSelectMenuItem(String value) {
     switch (value) {
       case 'Refresh':
-
+        refreshChats();
         break;
       case 'Settings':
 
+        Navigator.push(context, MaterialPageRoute(builder: (context) {
+          return const MyScreenNotificationsSounds();
+        }));
+
         break;
     }
+  }
+
+  void refreshChats() {
+
+    setState(() {
+      isLoading = true;
+      chats.clear();
+    });
+
+    Future.delayed(const Duration(seconds: 1), () {
+      setState(() {
+        isLoading = false;
+        chats.addAll(loadChats());
+      });
+    });
+
   }
 
   void searchChats(String query) {

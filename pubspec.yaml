@@ -1,6 +1,6 @@
 name: artrooms
 description: Artrooms Flutter App.
-version: 1.0.0+1
+version: 1.0.0
 
 environment:
   sdk: '>=3.0.2 <4.0.0'
@@ -11,6 +11,7 @@ dependencies:
 
   cupertino_icons: ^1.0.2
   flutter_slidable: ^3.0.1
+  url_launcher: ^6.1.14
 
 dev_dependencies:
   flutter_test:

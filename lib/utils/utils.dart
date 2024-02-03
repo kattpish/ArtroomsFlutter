@@ -1,4 +1,6 @@
 
+import 'package:url_launcher/url_launcher.dart';
+
 String formatChatDateString(String dateString) {
 
   final DateTime date = DateTime.parse(dateString);
@@ -18,4 +20,13 @@ String formatChatDateString(String dateString) {
     return "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
   }
 
+}
+
+Future<void> launchInBrowser(Uri url) async {
+  if (!await launchUrl(
+    url,
+    mode: LaunchMode.externalApplication,
+  )) {
+    throw Exception('Could not launch $url');
+  }
 }

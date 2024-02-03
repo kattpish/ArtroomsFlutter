@@ -26,7 +26,8 @@ class _MyScreenProfileState extends State<MyScreenProfile> {
         title: const Text(
           '설정',
           style: TextStyle(
-              color: Colors.black
+              color: colorMainGrey900,
+              fontWeight: FontWeight.w600
           ),
         ),
         actions: [
