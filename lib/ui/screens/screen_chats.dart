@@ -3,31 +3,34 @@ import 'package:artrooms/ui/screens/screen_chatroom.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
-import '../../beans/chat.dart';
-import '../../utils/MyUtils.dart';
+import '../../beans/bean_chat.dart';
+import '../../utils/utils.dart';
 import '../theme/theme_colors.dart';
 import '../widgets/widget_loader.dart';
 
 
-class MyChatListScreen extends StatefulWidget {
+class MyChatsScreen extends StatefulWidget {
 
-  const MyChatListScreen({super.key});
+  const MyChatsScreen({super.key});
 
   @override
-  _MyChatListScreenState createState() => _MyChatListScreenState();
+  State<StatefulWidget> createState() {
+    return _MyChatsScreenState();
+  }
 
 }
 
-class _MyChatListScreenState extends State<MyChatListScreen> {
+class _MyChatsScreenState extends State<MyChatsScreen> {
 
   bool isLoading = true;
   bool isSearching = false;
-  final List<Chat> chats = [];
+  final List<MyChat> chats = [];
   TextEditingController searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
+
     Future.delayed(const Duration(seconds: 1), () {
       setState(() {
         isLoading = false;
@@ -78,9 +81,10 @@ class _MyChatListScreenState extends State<MyChatListScreen> {
                 child: TextField(
                   controller: searchController,
                   decoration: InputDecoration(
-                    hintText: 'Search',
+                    hintText: '',
                     suffixIcon: !isSearching ? Icon(
                         Icons.search,
+                        size: 30,
                         color: searchController.text.isNotEmpty ? colorPrimaryPurple : Colors.grey
                     ) : Container(
                       width: 20,
@@ -178,7 +182,7 @@ class _MyChatListScreenState extends State<MyChatListScreen> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => ChatDetailScreen(chat: chats[index]),
+              builder: (context) => MyScreenChatroom(chat: chats[index]),
             ),
           );
         },
@@ -319,7 +323,7 @@ class _MyChatListScreenState extends State<MyChatListScreen> {
     });
 
     Future.delayed(const Duration(seconds: 1), () {
-      List<Chat> filtered = filterChats(query);
+      List<MyChat> filtered = filterChats(query);
 
       setState(() {
         chats.clear();

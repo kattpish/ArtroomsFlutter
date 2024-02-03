@@ -1,12 +1,18 @@
-class Chat {
+
+import 'bean_message.dart';
+
+
+class MyChat {
+
   final String id;
   final String name;
   final String lastMessage;
   final int unreadMessages;
   final String profilePictureUrl;
   final String date;
+  List<MyMessage> messages = [];
 
-  Chat({
+  MyChat({
     required this.id,
     required this.name,
     required this.lastMessage,
@@ -14,4 +20,5 @@ class Chat {
     required this.profilePictureUrl,
     required this.date,
   });
+
 }

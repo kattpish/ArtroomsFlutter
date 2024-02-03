@@ -2,28 +2,19 @@ import 'package:flutter/material.dart';
 
 import '../theme/theme_colors.dart';
 
-class MyScreenHome extends StatelessWidget {
+
+class MyScreenHome extends StatefulWidget {
 
   const MyScreenHome({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      title: 'Home',
-      home: ScreenHome(),
-    );
+  State<StatefulWidget> createState() {
+    return _MyScreenHomeState();
   }
+
 }
 
-class ScreenHome extends StatefulWidget {
-
-  const ScreenHome({Key? key}) : super(key: key);
-
-  @override
-  _ScreenHomeState createState() => _ScreenHomeState();
-}
-
-class _ScreenHomeState extends State<ScreenHome> with SingleTickerProviderStateMixin {
+class _MyScreenHomeState extends State<MyScreenHome> with SingleTickerProviderStateMixin {
 
   late TabController _tabController;
   final TextEditingController _idController = TextEditingController();
@@ -75,58 +66,63 @@ class _ScreenHomeState extends State<ScreenHome> with SingleTickerProviderStateM
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.grey),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        title: const Text(
-          '아이디 · 비밀번호 찾기',
-          style: TextStyle(color: Colors.black),
-        ),
-        centerTitle: true,
-        elevation: 2,
+    return MaterialApp(
+      title: 'Home',
+      home: Scaffold(
         backgroundColor: Colors.white,
-        bottom: TabBar(
+        appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios, color: colorMainGrey250),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+          title: const Text(
+            '아이디 · 비밀번호 찾기',
+            style: TextStyle(
+                color: Colors.black
+            ),
+          ),
+          centerTitle: true,
+          elevation: 2,
+          backgroundColor: Colors.white,
+          bottom: TabBar(
+            controller: _tabController,
+            labelColor: Colors.black,
+            unselectedLabelColor: Colors.grey,
+            indicatorColor: colorPrimaryPurple,
+            indicatorWeight: 3.0,
+            tabs: const [
+              Tab(text: '아이디'),
+              Tab(text: '비밀번호'),
+            ],
+          ),
+        ),
+        body: TabBarView(
           controller: _tabController,
-          labelColor: Colors.black,
-          unselectedLabelColor: Colors.grey,
-          indicatorColor: colorPrimaryPurple,
-          indicatorWeight: 3.0,
-          tabs: const [
-            Tab(text: '아이디'),
-            Tab(text: '비밀번호'),
+          children: [
+            _buildIdTab(),
+            _buildPasswordTab(),
           ],
         ),
-      ),
-      body: TabBarView(
-        controller: _tabController,
-        children: [
-          _buildIdTab(),
-          _buildPasswordTab(),
-        ],
-      ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 40.0),
-        child: ElevatedButton(
-          onPressed: _submit,
-          style: ElevatedButton.styleFrom(
-            foregroundColor: Colors.white,
-            backgroundColor: _isButtonDisabled ? colorPrimaryPurple.withAlpha(100) : colorPrimaryPurple,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(30.0),
+        bottomNavigationBar: Padding(
+          padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 40.0),
+          child: ElevatedButton(
+            onPressed: _submit,
+            style: ElevatedButton.styleFrom(
+              foregroundColor: Colors.white,
+              backgroundColor: _isButtonDisabled ? colorPrimaryPurple.withAlpha(100) : colorPrimaryPurple,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30.0),
+              ),
+              padding: const EdgeInsets.symmetric(vertical: 20.0),
+              elevation: 0,
+              textStyle: const TextStyle(fontSize: 18),
+              fixedSize: const Size.fromHeight(60),
             ),
-            padding: const EdgeInsets.symmetric(vertical: 20.0),
-            elevation: 0,
-            textStyle: const TextStyle(fontSize: 18),
-            fixedSize: const Size.fromHeight(60),
+            child: const Text('인증메일 전송', style: TextStyle(color: Colors.white)),
           ),
-          child: const Text('인증메일 전송', style: TextStyle(color: Colors.white)),
         ),
-      ),
 
+      ),
     );
   }
 

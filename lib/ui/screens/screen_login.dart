@@ -2,9 +2,19 @@ import 'package:flutter/material.dart';
 
 import '../theme/theme_colors.dart';
 
-class MyScreenLogin extends StatelessWidget {
+
+class MyScreenLogin extends StatefulWidget {
 
   const MyScreenLogin({super.key});
+
+  @override
+  State<StatefulWidget> createState() {
+    return _MyScreeLoginState();
+  }
+
+}
+
+class _MyScreeLoginState extends State<MyScreenLogin> {
 
   @override
   Widget build(BuildContext context) {
