@@ -107,7 +107,8 @@ class _MyChatsScreenState extends State<MyChatsScreen> {
               ),
             ),
             Expanded(
-              child: (chats.isNotEmpty && !isSearching) ? ListView.builder(
+              child: (chats.isNotEmpty && !isSearching)
+                  ? ListView.builder(
                 itemCount: chats.length,
                 itemBuilder: (context, index) {
                   return Container(
@@ -179,12 +180,9 @@ class _MyChatsScreenState extends State<MyChatsScreen> {
           ],
         ),
         onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => MyScreenChatroom(chat: chats[index]),
-            ),
-          );
+          Navigator.push(context, MaterialPageRoute(builder: (context) {
+            return MyScreenChatroom(chat: chats[index]);
+          }));
         },
       ),
     );
@@ -214,7 +212,7 @@ class _MyChatsScreenState extends State<MyChatsScreen> {
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 16.0,
-              color: Colors.grey,
+              color: colorMainGrey700,
             ),
           ),
         ],
@@ -290,7 +288,7 @@ class _MyChatsScreenState extends State<MyChatsScreen> {
                     '확인',
                     style: TextStyle(
                         fontSize: 18,
-                      color: Colors.white
+                        color: Colors.white
                     ),
                   ),
                 ),

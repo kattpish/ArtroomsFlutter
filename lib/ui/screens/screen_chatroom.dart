@@ -4,6 +4,7 @@ import '../../beans/bean_chat.dart';
 import '../../beans/bean_message.dart';
 import '../theme/theme_colors.dart';
 
+
 class MyScreenChatroom extends StatefulWidget {
 
   final MyChat chat;
@@ -111,15 +112,18 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
           Expanded(
             child: _isLoading
                 ? const MyLoader()
-                : ListView.builder(
-              controller: _scrollController,
-              itemCount: messages.length,
-              itemBuilder: (context, index) {
-                final message = messages[index];
-                return message.senderId == 'my_id'
-                    ? _buildMyMessageBubble(message)
-                    : _buildOtherMessageBubble(message);
-              },
+                : Container(
+              child: messages.isNotEmpty ? ListView.builder(
+                controller: _scrollController,
+                itemCount: messages.length,
+                itemBuilder: (context, index) {
+                  final message = messages[index];
+                  return message.senderId == 'my_id'
+                      ? _buildMyMessageBubble(message)
+                      : _buildOtherMessageBubble(message);
+                },
+              )
+                  : buildNoChats(context),
             ),
           ),
           _buildMessageInput(),
@@ -262,6 +266,30 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
                 ),
               ),
             ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget buildNoChats(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Image.asset(
+            'assets/images/icons/chat_gray.png',
+            width: 80.0,
+            height: 80.0,
+          ),
+          const SizedBox(height: 10),
+          const Text(
+            '대화내용이 없어요',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 16.0,
+              color: colorMainGrey700,
+            ),
           ),
         ],
       ),
