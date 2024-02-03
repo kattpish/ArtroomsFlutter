@@ -1,16 +1,22 @@
 
 class MyMessage {
 
-  String senderId;
+  int senderId;
   String senderName;
+  String profilePictureUrl = "";
   String content;
   String timestamp;
+  String attachment = "";
+  List<String> imageAttachments = ["", "", "", "", "", "", "", "",];
+  bool isMe;
 
   MyMessage({
     required this.senderId,
     required this.senderName,
     required this.content,
     required this.timestamp,
+    this.attachment = "",
+    required this.isMe,
   });
 
 }

@@ -7,6 +7,8 @@ const colorPrimaryPurple400 = Color(0xFF6A79FF);
 
 const colorMainGrey900 = Color(0xFF202020);
 const colorMainGrey700 = Color(0xFF565656);
+const colorMainGrey500 = Color(0xFF7D7D7D);
+const colorMainGrey400 = Color(0xFF989898);
 const colorMainGrey300 = Color(0xFFC6C6C6);
 const colorMainGrey250 = Color(0xFFD8D8D8);
 const colorMainGrey200 = Color(0xFFE8E8E8);

@@ -34,15 +34,14 @@ class _MyScreenChatsState extends State<MyScreenChats> {
 
     refreshChats();
 
-  }
-
-  @override
-  Widget build(BuildContext context) {
-
     searchController.addListener(() {
       searchChats(searchController.text);
     });
 
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Chats',
       home: Scaffold(
@@ -149,39 +148,58 @@ class _MyScreenChatsState extends State<MyScreenChats> {
           ),
         ],
       ),
-
       child: ListTile(
         leading: CircleAvatar(
           radius: 30,
           backgroundColor: Colors.transparent,
           child: FadeInImage.assetNetwork(
-            placeholder: 'assets/images/profile/placeholder.png',
+            placeholder: 'assets/images/profile/profile_${(index % 2) + 1}.png',
             image: chats[index].profilePictureUrl,
             fit: BoxFit.cover,
             fadeInDuration: const Duration(milliseconds: 200),
             fadeOutDuration: const Duration(milliseconds: 200),
             imageErrorBuilder: (context, error, stackTrace) {
               return Image.asset(
-                'assets/images/profile/placeholder.png',
+                'assets/images/profile/profile_${(index % 2) + 1}.png',
                 fit: BoxFit.cover,
               );
             },
           ),
         ),
-        title: Text(chats[index].name),
-        subtitle: Text(chats[index].lastMessage),
+        title: Text(
+          chats[index].name,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: const TextStyle(
+            fontSize: 16,
+              fontWeight: FontWeight.w600
+          ),
+        ),
+        subtitle: Text(
+          chats[index].lastMessage,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+          style: const TextStyle(
+              fontSize: 14,
+          ),
+        ),
         trailing: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
               formatChatDateString(chats[index].date),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(color: Colors.grey, fontSize: 12),
+              style: const TextStyle(
+                  color: Colors.grey,
+                  fontSize: 12
+              ),
             ),
             Visibility(
               visible: chats[index].unreadMessages > 0,
               child: Container(
+                margin: const EdgeInsets.only(right: 4),
                 padding: const EdgeInsets.all(8),
                 decoration: const BoxDecoration(
                   color: colorPrimaryPurple,
@@ -324,11 +342,9 @@ class _MyScreenChatsState extends State<MyScreenChats> {
         refreshChats();
         break;
       case 'Settings':
-
         Navigator.push(context, MaterialPageRoute(builder: (context) {
           return const MyScreenNotificationsSounds();
         }));
-
         break;
     }
   }
