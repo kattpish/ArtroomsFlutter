@@ -1,115 +1,48 @@
+import 'package:artrooms/modules/module_chats.dart';
 import 'package:artrooms/ui/screens/screen_chatroom.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
 import '../../beans/chat.dart';
 import '../../utils/MyUtils.dart';
+import '../theme/theme_colors.dart';
+import '../widgets/widget_loader.dart';
 
-class MyChatListScreen extends StatelessWidget {
 
-  MyChatListScreen({super.key});
+class MyChatListScreen extends StatefulWidget {
 
-  final List<Chat> chats = [
-    Chat(
-      id: '1',
-      name: '아티스트 A',
-      lastMessage: '안녕하세요! 오늘 프로젝트 어땠나요?',
-      unreadMessages: 3,
-      profilePictureUrl: 'https://via.placeholder.com/150',
-      date: "2024-02-02 23:46",
-    ),
-    Chat(
-      id: '2',
-      name: '아티스트 B',
-      lastMessage: '내일 미팅 준비 다 되셨나요?',
-      unreadMessages: 1,
-      profilePictureUrl: 'https://via.placeholder.com/150',
-      date: "2024-02-01 23:46",
-    ),
-    Chat(
-      id: '3',
-      name: '아티스트 C',
-      lastMessage: '프로젝트 마감일 확인 부탁드립니다.',
-      unreadMessages: 5,
-      profilePictureUrl: 'https://via.placeholder.com/150',
-      date: "2024-01-16",
-    ),
-    Chat(
-      id: '4',
-      name: '아티스트 A',
-      lastMessage: '안녕하세요! 오늘 프로젝트 어땠나요?',
-      unreadMessages: 3,
-      profilePictureUrl: 'https://via.placeholder.com/150',
-      date: "2023-07-16",
-    ),
-    Chat(
-      id: '5',
-      name: '아티스트 B',
-      lastMessage: '내일 미팅 준비 다 되셨나요?',
-      unreadMessages: 1,
-      profilePictureUrl: 'https://via.placeholder.com/150',
-      date: "2023-07-16",
-    ),
-    Chat(
-      id: '6',
-      name: '아티스트 C',
-      lastMessage: '프로젝트 마감일 확인 부탁드립니다.',
-      unreadMessages: 5,
-      profilePictureUrl: 'https://via.placeholder.com/150',
-      date: "2023-07-16",
-    ),
-    Chat(
-      id: '7',
-      name: '아티스트 A',
-      lastMessage: '안녕하세요! 오늘 프로젝트 어땠나요?',
-      unreadMessages: 3,
-      profilePictureUrl: 'https://via.placeholder.com/150',
-      date: "2023-07-16",
-    ),
-    Chat(
-      id: '8',
-      name: '아티스트 B',
-      lastMessage: '내일 미팅 준비 다 되셨나요?',
-      unreadMessages: 1,
-      profilePictureUrl: 'https://via.placeholder.com/150',
-      date: "2023-07-16",
-    ),
-    Chat(
-      id: '9',
-      name: '아티스트 C',
-      lastMessage: '프로젝트 마감일 확인 부탁드립니다.',
-      unreadMessages: 5,
-      profilePictureUrl: 'https://via.placeholder.com/150',
-      date: "2023-07-16",
-    ),
-    Chat(
-      id: '10',
-      name: '아티스트 A',
-      lastMessage: '안녕하세요! 오늘 프로젝트 어땠나요?',
-      unreadMessages: 3,
-      profilePictureUrl: 'https://via.placeholder.com/150',
-      date: "2023-07-16",
-    ),
-    Chat(
-      id: '11',
-      name: '아티스트 B',
-      lastMessage: '내일 미팅 준비 다 되셨나요?',
-      unreadMessages: 1,
-      profilePictureUrl: 'https://via.placeholder.com/150',
-      date: "2023-07-16",
-    ),
-    Chat(
-      id: '12',
-      name: '아티스트 C',
-      lastMessage: '프로젝트 마감일 확인 부탁드립니다.',
-      unreadMessages: 5,
-      profilePictureUrl: 'https://via.placeholder.com/150',
-      date: "2023-07-16",
-    ),
-  ];
+  const MyChatListScreen({super.key});
+
+  @override
+  _MyChatListScreenState createState() => _MyChatListScreenState();
+
+}
+
+class _MyChatListScreenState extends State<MyChatListScreen> {
+
+  bool isLoading = true;
+  bool isSearching = false;
+  final List<Chat> chats = [];
+  TextEditingController searchController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(const Duration(seconds: 1), () {
+      setState(() {
+        isLoading = false;
+        chats.addAll(loadChats());
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+
+    searchController.addListener(() {
+      searchChats(searchController.text);
+    });
+
     return MaterialApp(
       title: 'Chats',
       home: Scaffold(
@@ -136,26 +69,41 @@ class MyChatListScreen extends StatelessWidget {
             ),
           ],
         ),
-        body: Column(
+        body: isLoading ? const MyLoader() : Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextField(
-                decoration: InputDecoration(
-                  hintText: '',
-                  suffixIcon: const Icon(Icons.search),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30),
-                    borderSide: BorderSide.none,
+            Visibility(
+              visible: isSearching || chats.isNotEmpty || searchController.text.isNotEmpty,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextField(
+                  controller: searchController,
+                  decoration: InputDecoration(
+                    hintText: 'Search',
+                    suffixIcon: !isSearching ? Icon(
+                        Icons.search,
+                        color: searchController.text.isNotEmpty ? colorPrimaryPurple : Colors.grey
+                    ) : Container(
+                      width: 20,
+                      height: 20,
+                      padding: const EdgeInsets.all(15.0),
+                      child: const CircularProgressIndicator(
+                        color: colorPrimaryPurple,
+                        strokeWidth: 2,
+                      ),
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30),
+                      borderSide: BorderSide.none,
+                    ),
+                    filled: true,
+                    fillColor: Colors.grey[200],
                   ),
-                  filled: true,
-                  fillColor: Colors.grey[200],
+                  onChanged: (value) {},
                 ),
               ),
             ),
             Expanded(
-              child: chats.isNotEmpty
-                  ? ListView.builder(
+              child: (chats.isNotEmpty && !isSearching) ? ListView.builder(
                 itemCount: chats.length,
                 itemBuilder: (context, index) {
                   return Container(
@@ -164,9 +112,7 @@ class MyChatListScreen extends StatelessWidget {
                   );
                 },
               )
-                  : const Center(
-                child: Text('No chats found'),
-              ),
+                  : buildNoChats(context),
             ),
           ],
         ),
@@ -178,28 +124,28 @@ class MyChatListScreen extends StatelessWidget {
     return Slidable(
       key: const ValueKey(0),
       endActionPane: ActionPane(
-        motion: ScrollMotion(),
+        motion: const ScrollMotion(),
         children: [
           SlidableAction(
-            flex: 2,
-            onPressed: doNothing,
-            backgroundColor: Colors.grey,
+            flex: 1,
+            onPressed: _onClickOption1,
+            backgroundColor: colorMainGrey300,
             foregroundColor: Colors.white,
-            icon: Icons.archive,
-            label: '',
+            icon: Icons.notifications,
           ),
           SlidableAction(
-            onPressed: doNothing,
-            backgroundColor: Color(0xFF6A79FF),
+            flex: 1,
+            onPressed: _onClickOption2,
+            backgroundColor: colorPrimaryPurple,
             foregroundColor: Colors.white,
-            icon: Icons.save,
-            label: '',
+            icon: Icons.send_to_mobile,
           ),
         ],
       ),
 
-      child:  ListTile(
+      child: ListTile(
         leading: CircleAvatar(
+          radius: 30,
           backgroundImage: NetworkImage(chats[index].profilePictureUrl),
         ),
         title: Text(chats[index].name),
@@ -209,16 +155,20 @@ class MyChatListScreen extends StatelessWidget {
           children: [
             Text(
               formatChatDateString(chats[index].date),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: const TextStyle(color: Colors.grey, fontSize: 12),
             ),
             Container(
               padding: const EdgeInsets.all(8),
               decoration: const BoxDecoration(
-                color: Color(0xFF6A79FF),
+                color: colorPrimaryPurple,
                 shape: BoxShape.circle,
               ),
               child: Text(
                 chats[index].unreadMessages.toString(),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
                 style: const TextStyle(color: Colors.white),
               ),
             ),
@@ -236,17 +186,149 @@ class MyChatListScreen extends StatelessWidget {
     );
   }
 
-  void doNothing(BuildContext context) {}
+  Widget buildNoChats(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Image.asset(
+            'assets/images/icons/chat_blue.png',
+            width: 80.0,
+            height: 80.0,
+          ),
+          const SizedBox(height: 20),
+          const Text(
+            '채팅방이 없어요',
+            style: TextStyle(
+              fontSize: 24.0,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 10),
+          const Text(
+            '아트룸즈 홈페이지에서 상담신청을 하시거나\n라이브 클래스가 개설되면 채팅방이 개설됩니다',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 16.0,
+              color: Colors.grey,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _onClickOption1(BuildContext context) {
+
+  }
+
+  void _onClickOption2(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.0),
+          ),
+          child: Container(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Align(
+                  alignment: Alignment.topRight,
+                  child: Container(
+                    width: 30,
+                    height: 30,
+                    decoration: const BoxDecoration(
+                      color: colorMainGrey200,
+                      shape: BoxShape.circle,
+                    ),
+                    child: IconButton(
+                      icon: const Icon(
+                        Icons.close,
+                        size: 16,
+                        color: Colors.white,
+                      ),
+                      padding: const EdgeInsets.all(4),
+                      constraints: const BoxConstraints(),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  )
+                  ,
+                ),
+                const Text(
+                  '채팅방 나가기',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 15),
+                const Text(
+                  '대화 내용이 모두 삭제됩니다.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 16),
+                ),
+                const SizedBox(height: 40),
+                ElevatedButton(
+                  onPressed: () {
+
+                  },
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: colorPrimaryPurple,
+                    backgroundColor: colorPrimaryPurple,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                    minimumSize: const Size(double.infinity, 50), // Button size
+                  ),
+                  child: const Text(
+                    '확인',
+                    style: TextStyle(
+                        fontSize: 18,
+                      color: Colors.white
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
 
   void _onSelectMenuItem(String value) {
     switch (value) {
       case 'Refresh':
-      // TODO: Implement refresh action
+
         break;
       case 'Settings':
-      // TODO: Implement settings action
+
         break;
     }
+  }
+
+  void searchChats(String query) {
+
+    setState(() {
+      if(query.isNotEmpty) {
+        isSearching = true;
+      }
+    });
+
+    Future.delayed(const Duration(seconds: 1), () {
+      List<Chat> filtered = filterChats(query);
+
+      setState(() {
+        chats.clear();
+        chats.addAll(filtered);
+        isSearching = false;
+        isLoading = false;
+      });
+    });
+
   }
 
 }

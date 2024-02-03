@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../theme/theme_colors.dart';
+
 class MyScreenLogin extends StatelessWidget {
 
   const MyScreenLogin({super.key});
@@ -9,7 +11,7 @@ class MyScreenLogin extends StatelessWidget {
     return MaterialApp(
       title: 'Login',
       home: Scaffold(
-        backgroundColor: const Color(0xFF6A79FF),
+        backgroundColor: colorPrimaryPurple,
         body: SafeArea(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -79,7 +81,7 @@ class MyScreenLogin extends StatelessWidget {
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         minimumSize: const Size(double.infinity, 48),
-                        foregroundColor: const Color(0xFF6A79FF),
+                        foregroundColor: colorPrimaryPurple,
                         backgroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(vertical: 16.0),
                         shape: RoundedRectangleBorder(

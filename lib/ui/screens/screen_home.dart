@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../theme/theme_colors.dart';
+
 class MyScreenHome extends StatelessWidget {
 
   const MyScreenHome({Key? key}) : super(key: key);
@@ -91,7 +93,7 @@ class _ScreenHomeState extends State<ScreenHome> with SingleTickerProviderStateM
           controller: _tabController,
           labelColor: Colors.black,
           unselectedLabelColor: Colors.grey,
-          indicatorColor: const Color(0xFF6A79FF),
+          indicatorColor: colorPrimaryPurple,
           indicatorWeight: 3.0,
           tabs: const [
             Tab(text: '아이디'),
@@ -112,7 +114,7 @@ class _ScreenHomeState extends State<ScreenHome> with SingleTickerProviderStateM
           onPressed: _submit,
           style: ElevatedButton.styleFrom(
             foregroundColor: Colors.white,
-            backgroundColor: _isButtonDisabled ? const Color(0xFF6A79FF).withAlpha(100) : const Color(0xFF6A79FF),
+            backgroundColor: _isButtonDisabled ? colorPrimaryPurple.withAlpha(100) : colorPrimaryPurple,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(30.0),
             ),
