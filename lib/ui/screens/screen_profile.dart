@@ -30,6 +30,7 @@ class _MyScreenProfileState extends State<MyScreenProfile> {
               fontWeight: FontWeight.w600
           ),
         ),
+        leadingWidth: 0,
         actions: [
           Container(
             width: 30,

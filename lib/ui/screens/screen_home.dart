@@ -7,7 +7,9 @@ import '../theme/theme_colors.dart';
 
 class MyScreenHome extends StatefulWidget {
 
-  const MyScreenHome({Key? key}) : super(key: key);
+  final int tab;
+
+  const MyScreenHome({super.key, required this.tab});
 
   @override
   State<StatefulWidget> createState() {
@@ -32,29 +34,8 @@ class _MyScreenHomeState extends State<MyScreenHome> with SingleTickerProviderSt
     _idController.addListener(_checkIfButtonShouldBeEnabled);
     _passwordController.addListener(_checkIfButtonShouldBeEnabled);
     _emailController.addListener(_checkIfButtonShouldBeEnabled);
-  }
 
-  void _handleTabSelection() {
-    if (_tabController.indexIsChanging) {
-      _checkIfButtonShouldBeEnabled();
-    }
-  }
-
-  void _checkIfButtonShouldBeEnabled() {
-    if(_tabController.index == 0) {
-      if (_idController.text.isNotEmpty || _passwordController.text.isNotEmpty) {
-        setState(() => _isButtonDisabled = false);
-      } else {
-        setState(() => _isButtonDisabled = true);
-      }
-
-    }else {
-      if (_emailController.text.isNotEmpty) {
-        setState(() => _isButtonDisabled = false);
-      } else {
-        setState(() => _isButtonDisabled = true);
-      }
-    }
+    _tabController.index = widget.tab;
   }
 
   @override
@@ -225,6 +206,29 @@ class _MyScreenHomeState extends State<MyScreenHome> with SingleTickerProviderSt
         ],
       ),
     );
+  }
+
+  void _handleTabSelection() {
+    if (_tabController.indexIsChanging) {
+      _checkIfButtonShouldBeEnabled();
+    }
+  }
+
+  void _checkIfButtonShouldBeEnabled() {
+    if(_tabController.index == 0) {
+      if (_idController.text.isNotEmpty || _passwordController.text.isNotEmpty) {
+        setState(() => _isButtonDisabled = false);
+      } else {
+        setState(() => _isButtonDisabled = true);
+      }
+
+    }else {
+      if (_emailController.text.isNotEmpty) {
+        setState(() => _isButtonDisabled = false);
+      } else {
+        setState(() => _isButtonDisabled = true);
+      }
+    }
   }
 
   void _submit() {

@@ -1,6 +1,7 @@
 import 'package:artrooms/modules/module_chats.dart';
 import 'package:artrooms/ui/screens/screen_chatroom.dart';
 import 'package:artrooms/ui/screens/screen_notifications_sounds.dart';
+import 'package:artrooms/ui/screens/screen_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
@@ -58,9 +59,9 @@ class _MyScreenChatsState extends State<MyScreenChats> {
           elevation: 0,
           actions: [
             PopupMenuButton<String>(
-              onSelected: _onSelectMenuItem,
               itemBuilder: (BuildContext context) {
-                return {'Refresh', 'Settings'}.map((String choice) {
+                return {'설정', '알림 및 소리'}
+                    .map((String choice) {
                   return PopupMenuItem<String>(
                     value: choice,
                     child: Text(choice),
@@ -68,6 +69,20 @@ class _MyScreenChatsState extends State<MyScreenChats> {
                 }).toList();
               },
               icon: const Icon(Icons.more_vert, color: Colors.grey),
+              onSelected: (value) {
+                switch (value) {
+                  case '설정':
+                    Navigator.push(context, MaterialPageRoute(builder: (context) {
+                      return const MyScreenProfile();
+                    }));
+                    break;
+                  case '알림 및 소리':
+                    Navigator.push(context, MaterialPageRoute(builder: (context) {
+                      return const MyScreenNotificationsSounds();
+                    }));
+                    break;
+                }
+              },
             ),
           ],
         ),
@@ -335,19 +350,6 @@ class _MyScreenChatsState extends State<MyScreenChats> {
         );
       },
     );
-  }
-
-  void _onSelectMenuItem(String value) {
-    switch (value) {
-      case 'Refresh':
-        refreshChats();
-        break;
-      case 'Settings':
-        Navigator.push(context, MaterialPageRoute(builder: (context) {
-          return const MyScreenNotificationsSounds();
-        }));
-        break;
-    }
   }
 
   void refreshChats() {

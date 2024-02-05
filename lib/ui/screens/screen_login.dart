@@ -1,3 +1,4 @@
+import 'package:artrooms/ui/screens/screen_chats.dart';
 import 'package:artrooms/ui/screens/screen_home.dart';
 import 'package:flutter/material.dart';
 
@@ -109,12 +110,10 @@ class _MyScreeLoginState extends State<MyScreenLogin> {
                         ),
                       ),
                       onPressed: () {
-
                         Navigator.of(context).pop();
                         Navigator.push(context, MaterialPageRoute(builder: (context) {
-                          return const MyScreenHome();
+                          return const MyScreenChats();
                         }));
-
                       },
                     ),
                   ),
@@ -129,7 +128,9 @@ class _MyScreeLoginState extends State<MyScreenLogin> {
                             style: TextStyle(color: Colors.white),
                           ),
                           onPressed: () {
-
+                            Navigator.push(context, MaterialPageRoute(builder: (context) {
+                              return const MyScreenHome(tab: 0);
+                            }));
                           },
                         ),
                         Container(
@@ -144,7 +145,9 @@ class _MyScreeLoginState extends State<MyScreenLogin> {
                             style: TextStyle(color: Colors.white),
                           ),
                           onPressed: () {
-
+                            Navigator.push(context, MaterialPageRoute(builder: (context) {
+                              return const MyScreenHome(tab: 1);
+                            }));
                           },
                         ),
                       ],
