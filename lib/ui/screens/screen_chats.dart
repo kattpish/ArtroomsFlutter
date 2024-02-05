@@ -83,14 +83,15 @@ class _MyScreenChatsState extends State<MyScreenChats> {
                   controller: searchController,
                   decoration: InputDecoration(
                     hintText: '',
-                    suffixIcon: !isSearching ? Icon(
+                    suffixIcon: !isSearching
+                        ? Icon(
                         Icons.search,
                         size: 30,
                         color: searchController.text.isNotEmpty ? colorPrimaryPurple : Colors.grey
                     ) : Container(
                       width: 20,
                       height: 20,
-                      padding: const EdgeInsets.all(15.0),
+                      padding: const EdgeInsets.all(15),
                       child: const CircularProgressIndicator(
                         color: colorPrimaryPurple,
                         strokeWidth: 2,
@@ -132,19 +133,19 @@ class _MyScreenChatsState extends State<MyScreenChats> {
       endActionPane: ActionPane(
         motion: const ScrollMotion(),
         children: [
-          SlidableAction(
+          CustomSlidableAction(
             flex: 1,
             onPressed: _onClickOption1,
             backgroundColor: colorMainGrey300,
             foregroundColor: Colors.white,
-            icon: Icons.notifications,
+            child: Image.asset('assets/images/icons/icon_bell.png', width: 24, height: 24),
           ),
-          SlidableAction(
+          CustomSlidableAction(
             flex: 1,
             onPressed: _onClickOption2,
             backgroundColor: colorPrimaryPurple,
             foregroundColor: Colors.white,
-            icon: Icons.send_to_mobile,
+            child: Image.asset('assets/images/icons/icon_send.png', width: 24, height: 24),
           ),
         ],
       ),
@@ -310,7 +311,7 @@ class _MyScreenChatsState extends State<MyScreenChats> {
                 const SizedBox(height: 50),
                 ElevatedButton(
                   onPressed: () {
-
+                    Navigator.of(context).pop();
                   },
                   style: ElevatedButton.styleFrom(
                     foregroundColor: colorPrimaryPurple,
@@ -318,7 +319,7 @@ class _MyScreenChatsState extends State<MyScreenChats> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30.0),
                     ),
-                    minimumSize: const Size(double.infinity, 50), // Button size
+                    minimumSize: const Size(double.infinity, 50),
                   ),
                   child: const Text(
                     '확인',

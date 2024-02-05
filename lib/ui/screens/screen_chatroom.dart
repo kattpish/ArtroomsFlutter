@@ -51,11 +51,24 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
         elevation: 1,
         backgroundColor: Colors.white,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.archive_outlined, color: Colors.grey),
-            onPressed: () {
+          Container(
+            width: 80,
+            height: 80,
+            decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+            ),
+            child: InkWell(
+              child: Container(
+                  padding: const EdgeInsets.all(16.0),
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                  ),
+                  child: Image.asset('assets/images/icons/icon_archive.png', width: 24, height: 24)
+              ),
+              onTap: () {
 
-            },
+              },
+            ),
           ),
         ],
       ),
@@ -274,7 +287,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
   }
 
   Widget _buildAttachment(String attachment) {
-    if (attachment.isNotEmpty) {
+    if (false && attachment.isNotEmpty) {
       return Container(
         margin: const EdgeInsets.symmetric(vertical: 8),
         padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 22),
@@ -282,37 +295,37 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
           borderRadius: BorderRadius.circular(22),
           border: Border.all(color: const Color(0xFFE3E3E3), width: 1.0,),
         ),
-      child: const Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'artrooms_img_file_33.psd',
-            style: TextStyle(
-              fontSize: 18,
-              color: colorMainGrey700,
-              fontWeight: FontWeight.w500
+        child: const Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'artrooms_img_file_33.psd',
+              style: TextStyle(
+                  fontSize: 18,
+                  color: colorMainGrey700,
+                  fontWeight: FontWeight.w500
+              ),
             ),
-          ),
-          SizedBox(height: 20),
-          Text(
-            '70.20MB / 2022.08.16 만료',
-            style: TextStyle(
-              fontSize: 16,
-              color: colorMainGrey400,
-              fontWeight: FontWeight.w400
+            SizedBox(height: 20),
+            Text(
+              '70.20MB / 2022.08.16 만료',
+              style: TextStyle(
+                  fontSize: 16,
+                  color: colorMainGrey400,
+                  fontWeight: FontWeight.w400
+              ),
             ),
-          ),
-          SizedBox(height: 20),
-          Text(
-            '저장',
-            style: TextStyle(
-              fontSize: 16,
-              color: colorMainGrey500,
-              fontWeight: FontWeight.w400
+            SizedBox(height: 20),
+            Text(
+              '저장',
+              style: TextStyle(
+                  fontSize: 16,
+                  color: colorMainGrey500,
+                  fontWeight: FontWeight.w400
+              ),
             ),
-          ),
-        ],
-      ),
+          ],
+        ),
       );
     }else {
       return const SizedBox.shrink();
@@ -320,19 +333,20 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
   }
 
   Widget _buildImageAttachments(List<String> imageAttachments) {
-    return Container(
-      height: 100,
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: imageAttachments.length,
-        itemBuilder: (context, index) {
-          return Padding(
-            padding: const EdgeInsets.only(right: 4.0),
-            child: FadeInImage.assetNetwork(
+    if (false && imageAttachments.isNotEmpty) {
+      return Container(
+        height: 100,
+        margin: const EdgeInsets.symmetric(vertical: 8),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          itemCount: imageAttachments.length,
+          itemBuilder: (context, index) {
+            return Padding(
+              padding: const EdgeInsets.only(right: 4.0),
+              child: FadeInImage.assetNetwork(
                 placeholder: 'assets/images/chats/placeholder_photo.png',
                 image: imageAttachments[index],
                 fit: BoxFit.cover,
@@ -345,10 +359,13 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
                   );
                 },
               ),
-          );
-        },
-      ),
-    );
+            );
+          },
+        ),
+      );
+    }else {
+      return const SizedBox.shrink();
+    }
   }
 
 
