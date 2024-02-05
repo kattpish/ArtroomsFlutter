@@ -326,6 +326,9 @@ class _MyScreenChatsState extends State<MyScreenChats> {
                 const SizedBox(height: 50),
                 ElevatedButton(
                   onPressed: () {
+                    setState(() {
+                      chats.removeAt(0);
+                    });
                     Navigator.of(context).pop();
                   },
                   style: ElevatedButton.styleFrom(
