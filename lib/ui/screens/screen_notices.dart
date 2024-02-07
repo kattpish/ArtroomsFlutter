@@ -20,19 +20,20 @@ class Notification {
   final String date;
   final String title;
   final String body;
-  IconData icon;
+  bool isVisible;
 
-  Notification(this.date, this.title, this.body, {this.icon =Icons.star});
+  Notification(this.date, this.title, this.body, {this.isVisible = true});
+
 }
 class _MyScreenNoticesState extends State<MyScreenNotices> {
   final List<Notification> notifications = [
-    Notification("2024.5.12", "프로젝트 공지", "다음주는 쉽니다!",icon:Icons.star ),
-    Notification("2024.5.5", "", "미팅이 오전으로 변경되었습니다.", icon: Icons.star )
-    // ... Add more notifications
+    Notification("2024.5.12", "프로젝트 공지", "다음주는 쉽니다!", isVisible: true ),
+    Notification("2024.5.5", "", "미팅이 오전으로 변경되었습니다.",  isVisible: false )
   ];
 
+
+
   void _viewDetails(BuildContext context, Notification notification) {
-    // Navigate to the details screen or show a dialog
     showDialog(
       context: context,
       builder: (context) {
@@ -64,6 +65,8 @@ class _MyScreenNoticesState extends State<MyScreenNotices> {
             margin: EdgeInsets.all(8.0),
             elevation: 0,
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children:  [
                 Row(
                   children: [
@@ -73,8 +76,10 @@ class _MyScreenNoticesState extends State<MyScreenNotices> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                   Icon(notification.icon as IconData?, color: Colors.blue),
-                    const SizedBox(width: 8.0),
+                    Visibility(
+                      visible: notification.isVisible,
+                      child: Icon(Icons.star),
+                    ),
                     Text(
                       notification.title,
                       style: TextStyle(
