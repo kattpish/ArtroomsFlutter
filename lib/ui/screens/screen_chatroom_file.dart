@@ -17,9 +17,9 @@ class MyScreenChatroomFile extends StatefulWidget {
 
 class _MyScreenChatroomFileState extends State<MyScreenChatroomFile> {
 
-  bool _isButtonDisabled = true;
+  bool _isButtonFileDisabled = true;
 
-  List<FileItem> files = [
+  List<FileItem> filesMedia = [
     FileItem(name: 'artrooms_img_file_final_1', date: '2022.08.16 만료'),
     FileItem(name: 'artrooms_img_file_final_2', date: '2022.08.16 만료'),
     FileItem(name: 'artrooms_img_file_final_1', date: '2022.08.16 만료'),
@@ -65,9 +65,9 @@ class _MyScreenChatroomFileState extends State<MyScreenChatroomFile> {
             mainAxisSpacing: 8,
             childAspectRatio: 1,
           ),
-          itemCount: files.length,
+          itemCount: filesMedia.length,
           itemBuilder: (context, index) {
-            var file = files[index];
+            var file = filesMedia[index];
             return Card(
               elevation: 0,
               color: Colors.white,
@@ -75,7 +75,7 @@ class _MyScreenChatroomFileState extends State<MyScreenChatroomFile> {
                 onTap: () {
                   setState(() {
                     file.isSelected = !file.isSelected;
-                    _checkIfButtonShouldBeEnabled();
+                    _checkIfFileButtonShouldBeEnabled();
                   });
                 },
                 child: Container(
@@ -155,12 +155,12 @@ class _MyScreenChatroomFileState extends State<MyScreenChatroomFile> {
         bottomNavigationBar: Container(
           margin: const EdgeInsets.only(left: 16.0, right: 16.0, top: 16, bottom: 42),
           padding: const EdgeInsets.all(4.0),
-          decoration: BoxDecoration(color: _isButtonDisabled ? colorPrimaryBlue400.withAlpha(100) : colorPrimaryBlue,
+          decoration: BoxDecoration(color: _isButtonFileDisabled ? colorPrimaryBlue400.withAlpha(100) : colorPrimaryBlue,
             borderRadius: BorderRadius.circular(20),
           ),
           child: TextButton(
             onPressed: () {
-              select();
+              selectFiles();
             },
             child:const Text(
                 '저장',
@@ -175,26 +175,26 @@ class _MyScreenChatroomFileState extends State<MyScreenChatroomFile> {
     );
   }
 
-  void _checkIfButtonShouldBeEnabled() {
+  void _checkIfFileButtonShouldBeEnabled() {
 
     int n = 0;
-    for(FileItem fileItem in files) {
+    for(FileItem fileItem in filesMedia) {
       if(fileItem.isSelected) {
         n++;
       }
     }
 
     if (n > 0) {
-      setState(() => _isButtonDisabled = false);
+      setState(() => _isButtonFileDisabled = false);
     } else {
-      setState(() => _isButtonDisabled = true);
+      setState(() => _isButtonFileDisabled = true);
     }
 
   }
 
-  void select() {
+  void selectFiles() {
 
-    if(!_isButtonDisabled) {
+    if(!_isButtonFileDisabled) {
       Navigator.pop(context);
     }
 

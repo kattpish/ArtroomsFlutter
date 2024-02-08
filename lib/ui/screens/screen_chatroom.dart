@@ -1,10 +1,13 @@
 import 'package:artrooms/ui/screens/screen_chatroom_drawer.dart';
+import 'package:artrooms/ui/screens/screen_chatroom_photo.dart';
 import 'package:artrooms/ui/widgets/widget_loader.dart';
 import 'package:flutter/material.dart';
 import '../../beans/bean_chat.dart';
+import '../../beans/bean_file.dart';
 import '../../beans/bean_message.dart';
 import '../../modules/module_messages.dart';
 import '../theme/theme_colors.dart';
+import '../widgets/widget_media.dart';
 
 
 class MyScreenChatroom extends StatefulWidget {
@@ -25,6 +28,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
   bool _isLoading = true;
   bool _isButtonDisabled = true;
   bool _showAttachment = false;
+  bool _showAttachment1 = false;
   final List<MyMessage> messages = [];
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _messageController = TextEditingController();
@@ -38,156 +42,109 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.grey),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        title: Text(
-          widget.chat.name,
-          style: const TextStyle(
-              color: colorMainGrey900,
-              fontWeight: FontWeight.w600
-          ),
-        ),
-        centerTitle: true,
-        elevation: 0.5,
-        backgroundColor: Colors.white,
-        actions: [
-          Container(
-            width: 80,
-            height: 80,
-            decoration: const BoxDecoration(
-              shape: BoxShape.circle,
-            ),
-            child: InkWell(
-              child: Container(
-                  padding: const EdgeInsets.all(16.0),
+    return WillPopScope(
+      onWillPop: () async {
+        if(_showAttachment) {
+          setState(() {
+            _showAttachment = false;
+          });
+          return false;
+        }else if(_showAttachment1) {
+          setState(() {
+            _showAttachment1 = false;
+          });
+          return false;
+        }
+        return true;
+      },
+      child: Stack(
+        children: [
+          Scaffold(
+            appBar: AppBar(
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back_ios, color: Colors.grey),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              title: Text(
+                widget.chat.name,
+                style: const TextStyle(
+                    color: colorMainGrey900,
+                    fontWeight: FontWeight.w600
+                ),
+              ),
+              centerTitle: true,
+              elevation: 0.5,
+              backgroundColor: Colors.white,
+              actions: [
+                Container(
+                  width: 80,
+                  height: 80,
                   decoration: const BoxDecoration(
                     shape: BoxShape.circle,
                   ),
-                  child: Image.asset('assets/images/icons/icon_archive.png', width: 24, height: 24)
-              ),
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return const MyScreenChatroomDrawer();
-                }));
-              },
-            ),
-          ),
-        ],
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: _isLoading
-                ? const MyLoader()
-                : Container(
-              child: messages.isNotEmpty ? ListView.builder(
-                controller: _scrollController,
-                itemCount: messages.length,
-                itemBuilder: (context, index) {
-                  final message = messages[index];
-                  return message.isMe
-                      ? _buildMyMessageBubble(message)
-                      : _buildOtherMessageBubble(message);
-                },
-              )
-                  : buildNoChats(context),
-            ),
-          ),
-          _buildMessageInput(),
-          const SizedBox(height: 25),
-          Visibility(
-            visible: _showAttachment,
-              child: SizedBox(
-                height: 300,
-                child: Column(
-                  children: [
-                    Center(
-                      child: Container(
-                        width: 70,
-                        height: 8,
+                  child: InkWell(
+                    child: Container(
+                        padding: const EdgeInsets.all(16.0),
                         decoration: const BoxDecoration(
-                          color: colorMainGrey250,
-                          borderRadius: BorderRadius.all(Radius.circular(24)),
+                          shape: BoxShape.circle,
                         ),
-
-                      ),
+                        child: Image.asset('assets/images/icons/icon_archive.png', width: 24, height: 24)
                     ),
-                    const SizedBox(height: 12,),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Container(
-                            width: double.infinity,
-                            margin: const EdgeInsets.only(left: 16.0, right: 4.0, top: 2, bottom: 2),
-                            padding: const EdgeInsets.all(4.0),
-                            decoration: BoxDecoration(color: colorPrimaryPurple,
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                            child: TextButton(
-                              onPressed: () {
-
-                              },
-                              child: const Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.camera_alt,
-                                    color: Colors.white,
-                                  ),
-                                  SizedBox(width: 6),
-                                  Text(
-                                      '카메라',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 20,
-                                      )
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: Container(
-                            width: double.infinity,
-                            margin: const EdgeInsets.only(left: 4.0, right: 16.0, top: 2, bottom: 2),
-                            padding: const EdgeInsets.all(4.0),
-                            decoration: BoxDecoration(color: colorPrimaryBlue,
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                            child: TextButton(
-                              onPressed: () {
-
-                              },
-                              child: const Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.folder,
-                                    color: Colors.white,
-                                  ),
-                                  SizedBox(width: 6),
-                                  Text(
-                                      '파일',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 20,
-                                      )
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    )
-                  ],
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) {
+                        return const MyScreenChatroomDrawer();
+                      }));
+                    },
+                  ),
                 ),
-              ))
+              ],
+            ),
+            body: Column(
+              children: [
+                Expanded(
+                  child: _isLoading
+                      ? const MyLoader()
+                      : Container(
+                    child: messages.isNotEmpty ? ListView.builder(
+                      controller: _scrollController,
+                      itemCount: messages.length,
+                      itemBuilder: (context, index) {
+                        final message = messages[index];
+                        return message.isMe
+                            ? _buildMyMessageBubble(message)
+                            : _buildOtherMessageBubble(message);
+                      },
+                    )
+                        : buildNoChats(context),
+                  ),
+                ),
+                _buildMessageInput(),
+                const SizedBox(height: 25),
+                Visibility(
+                    visible: _showAttachment,
+                    child: SizedBox(
+                        height: 320,
+                        child: _attachmentPicker(context, this)
+                    ),
+                ),
+              ],
+            ),
+          ),
+          Visibility(
+            visible: _showAttachment1,
+            child: Scaffold(
+              backgroundColor: Colors.black.withOpacity(0.4),
+              body: Container(
+                  height: double.infinity,
+                  margin: const EdgeInsets.only(top: 80),
+                  padding: const EdgeInsets.only(top: 16),
+                  color: Colors.white,
+                  child: _attachmentPicker(context, this)
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -503,6 +460,334 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
   }
 
 
+  int type = 1;
+  int _selected = 0;
+  bool _selectMode = false;
+  bool _isButtonFileDisabled = true;
+  List<FileItem> files = [
+    FileItem(name: '', path: 'assets/images/photos/photo_1.png'),
+    FileItem(name: '', path: 'assets/images/photos/photo_2.png'),
+    FileItem(name: '', path: 'assets/images/photos/photo_3.png'),
+    FileItem(name: '', path: 'assets/images/photos/photo_4.png'),
+  ];
+
+  List<FileItem> filesMedia = [
+    FileItem(name: 'artrooms_img_file_final_1', date: '2022.08.16 만료'),
+    FileItem(name: 'artrooms_img_file_final_2', date: '2022.08.16 만료'),
+    FileItem(name: 'artrooms_img_file_final_1', date: '2022.08.16 만료'),
+    FileItem(name: 'artrooms_img_file_final_2', date: '2022.08.16 만료'),
+    FileItem(name: 'artrooms_img_file_final_1', date: '2022.08.16 만료'),
+    FileItem(name: 'artrooms_img_file_final_2', date: '2022.08.16 만료'),
+    FileItem(name: 'artrooms_img_file_final_1', date: '2022.08.16 만료'),
+    FileItem(name: 'artrooms_img_file_final_2', date: '2022.08.16 만료'),
+    FileItem(name: 'artrooms_img_file_final_1', date: '2022.08.16 만료'),
+    FileItem(name: 'artrooms_img_file_final_2', date: '2022.08.16 만료'),
+    FileItem(name: 'artrooms_img_file_final_1', date: '2022.08.16 만료'),
+    FileItem(name: 'artrooms_img_file_final_2', date: '2022.08.16 만료'),
+  ];
+
+  Widget _attachmentPicker(BuildContext context, State<StatefulWidget> state) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: Column(
+        children: [
+          Center(
+            child: InkWell(
+              onTap: () {
+                if(_showAttachment) {
+                  state.setState(() {
+                    _showAttachment = false;
+                    _showAttachment1 = true;
+                  });
+                  // showPicker(context, state);
+                }else {
+                  setState(() {
+                    _showAttachment1 = false;
+                  });
+                  // Navigator.of(context).pop();
+                }
+              },
+              child: Container(
+                width: 70,
+                height: 8,
+                padding: const EdgeInsets.all(4.0),
+                decoration: const BoxDecoration(
+                  color: colorMainGrey250,
+                  borderRadius: BorderRadius.all(Radius.circular(24)),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 12,),
+          Row(
+            children: [
+              Expanded(
+                child: Container(
+                  width: double.infinity,
+                  margin: const EdgeInsets.only(left: 10.0, right: 4.0, top: 2, bottom: 2),
+                  padding: const EdgeInsets.all(4.0),
+                  decoration: BoxDecoration(color: colorPrimaryPurple,
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  child: TextButton(
+                    onPressed: () {
+                      state.setState(() {
+                        type = 1;
+                      });
+                    },
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.camera_alt,
+                          color: Colors.white,
+                        ),
+                        SizedBox(width: 6),
+                        Text(
+                            '카메라',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                            )
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Container(
+                  width: double.infinity,
+                  margin: const EdgeInsets.only(left: 4.0, right: 10.0, top: 2, bottom: 2),
+                  padding: const EdgeInsets.all(4.0),
+                  decoration: BoxDecoration(color: colorPrimaryBlue,
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  child: TextButton(
+                    onPressed: () {
+                      state.setState(() {
+                        type = 2;
+                      });
+                    },
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.folder,
+                          color: Colors.white,
+                        ),
+                        SizedBox(width: 6),
+                        Text(
+                            '파일',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                            )
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8,),
+          Visibility(
+            visible: type == 1,
+            child: Expanded(
+              child: GridView.builder(
+                padding: const EdgeInsets.only(bottom: 32),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  crossAxisSpacing: 8,
+                  mainAxisSpacing: 8,
+                  childAspectRatio: 1,
+                ),
+                itemCount: files.length,
+                itemBuilder: (context, index) {
+                  var file = files[index];
+                  return Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    child: InkWell(
+                      onTap: () {
+                        viewPhoto(context, file);
+                      },
+                      onLongPress: () {
+                        state.setState(() {
+                          file.isSelected = !file.isSelected;
+                        });
+                        _checkIfPhotoShouldBeEnabled();
+                      },
+                      child: Stack(
+                        children: [
+                          Image.asset(
+                            file.path,
+                            width: double.infinity,
+                            height: double.infinity,
+                            fit: BoxFit.cover,
+                          ),
+                          Positioned(
+                            top: 3,
+                            right: 4,
+                            child: Visibility(
+                              visible: _selectMode,
+                              child: InkWell(
+                                onTap: () {
+                                  state.setState(() {
+                                    file.isSelected = !file.isSelected;
+                                    _checkIfPhotoShouldBeEnabled();
+                                  });
+                                },
+                                child: Container(
+                                  width: 26,
+                                  height: 26,
+                                  decoration: BoxDecoration(
+                                    color: file.isSelected ? colorPrimaryBlue : colorMainGrey200.withAlpha(150),
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                      color: file.isSelected ? colorPrimaryBlue : const Color(0xFFE3E3E3),
+                                      width: 1,
+                                    ),
+                                  ),
+                                  child: file.isSelected
+                                      ? const Icon(Icons.check, size: 16, color: Colors.white)
+                                      : Container(),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+          Visibility(
+            visible: type == 2,
+              child: Expanded(
+                child: GridView.builder(
+                  padding: const EdgeInsets.only(left: 8, top: 8, right: 8, bottom: 32),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 8,
+                    mainAxisSpacing: 8,
+                    childAspectRatio: 1,
+                  ),
+                  itemCount: filesMedia.length,
+                  itemBuilder: (context, index) {
+                    var file = filesMedia[index];
+                    return Card(
+                      elevation: 0,
+                      color: Colors.white,
+                      child: InkWell(
+                        onTap: () {
+                          setState(() {
+                            file.isSelected = !file.isSelected;
+                            _checkIfFileButtonShouldBeEnabled();
+                          });
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(16.0),
+                            border: Border.all(color: colorMainGrey200, width: 1.0,),
+                          ),
+                          child: Stack(
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const SizedBox(height: 24),
+                                  Image.asset(
+                                    file.isSelected ? 'assets/images/icons/icon_file_selected.png' : 'assets/images/icons/icon_file.png',
+                                    width: 30,
+                                    height: 30,
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          file.name,
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            color: colorMainGrey700,
+                                            fontWeight: FontWeight.w400,
+                                          ),
+                                          maxLines: 2,
+                                        ),
+                                        const SizedBox(height: 8),
+                                        Text(
+                                          file.date,
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            color: Color(0xFF8F8F8F),
+                                            fontWeight: FontWeight.w300,
+                                          ),
+                                          maxLines: 1,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Positioned(
+                                top: 3,
+                                right: 2,
+                                child: Container(
+                                  width: 26,
+                                  height: 26,
+                                  decoration: BoxDecoration(
+                                    color: file.isSelected ? colorPrimaryBlue : Colors.transparent,
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                      color: file.isSelected ? colorPrimaryBlue : const Color(0xFFE3E3E3),
+                                      width: 1,
+                                    ),
+                                  ),
+                                  child: file.isSelected
+                                      ? const Icon(Icons.check, size: 16, color: Colors.white)
+                                      : Container(),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+          ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void showPicker(BuildContext context, State<StatefulWidget> state) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Scaffold(
+            backgroundColor: Colors.black.withOpacity(0.40),
+            body: Container(
+              padding: const EdgeInsets.only(top: 8),
+              color: Colors.white,
+              child: _attachmentPicker(context, state),
+            ),
+          );
+        }
+    );
+  }
+
   void _loadMessages() {
 
     messages.clear();
@@ -569,6 +854,89 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeOut,
     );
+  }
+
+  void _checkIfPhotoShouldBeEnabled() {
+
+    _selected = 0;
+    for(FileItem fileItem in files) {
+      if(fileItem.isSelected) {
+        setState(() {
+          _selected++;
+        });
+      }
+    }
+
+    if (_selected > 0) {
+      setState(() {
+        _selectMode = true;
+        _isButtonDisabled = false;
+      });
+    } else {
+      setState(() {
+        _isButtonDisabled = true;
+      });
+    }
+
+  }
+
+  void _deselectAll(isClose) {
+
+    setState(() {
+      _selected = 0;
+    });
+
+    for(FileItem fileItem in files) {
+      setState(() {
+        fileItem.isSelected = false;
+      });
+    }
+
+    if(isClose) {
+      setState(() {
+        _selectMode = false;
+      });
+
+      _checkIfPhotoShouldBeEnabled();
+    }
+
+  }
+
+  void select() {
+
+    if(!_isButtonDisabled) {
+      Navigator.pop(context);
+    }
+
+  }
+
+  void _checkIfFileButtonShouldBeEnabled() {
+
+    int n = 0;
+    for(FileItem fileItem in files) {
+      if(fileItem.isSelected) {
+        n++;
+      }
+    }
+
+    if (n > 0) {
+      setState(() {
+        _isButtonFileDisabled = false;
+      });
+    } else {
+      setState(() {
+        _isButtonFileDisabled = true;
+      });
+    }
+
+  }
+
+  void selectFiles() {
+
+    if(!_isButtonFileDisabled) {
+      Navigator.pop(context);
+    }
+
   }
 
 }

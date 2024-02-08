@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../beans/bean_file.dart';
 import '../theme/theme_colors.dart';
+import '../widgets/widget_media.dart';
 
 
 class MyScreenChatroomPhoto extends StatefulWidget {
@@ -21,11 +22,28 @@ class _MyScreenChatroomPhotoState extends State<MyScreenChatroomPhoto> {
   bool _selectMode = false;
   bool _isButtonDisabled = true;
 
-  List<FileItem> files = [
+  List<FileItem> filesPhotos = [
     FileItem(name: '', path: 'assets/images/photos/photo_1.png'),
     FileItem(name: '', path: 'assets/images/photos/photo_2.png'),
     FileItem(name: '', path: 'assets/images/photos/photo_3.png'),
     FileItem(name: '', path: 'assets/images/photos/photo_4.png'),
+  ];
+
+  bool _isButtonFileDisabled = true;
+
+  List<FileItem> files = [
+    FileItem(name: 'artrooms_img_file_final_1', date: '2022.08.16 만료'),
+    FileItem(name: 'artrooms_img_file_final_2', date: '2022.08.16 만료'),
+    FileItem(name: 'artrooms_img_file_final_1', date: '2022.08.16 만료'),
+    FileItem(name: 'artrooms_img_file_final_2', date: '2022.08.16 만료'),
+    FileItem(name: 'artrooms_img_file_final_1', date: '2022.08.16 만료'),
+    FileItem(name: 'artrooms_img_file_final_2', date: '2022.08.16 만료'),
+    FileItem(name: 'artrooms_img_file_final_1', date: '2022.08.16 만료'),
+    FileItem(name: 'artrooms_img_file_final_2', date: '2022.08.16 만료'),
+    FileItem(name: 'artrooms_img_file_final_1', date: '2022.08.16 만료'),
+    FileItem(name: 'artrooms_img_file_final_2', date: '2022.08.16 만료'),
+    FileItem(name: 'artrooms_img_file_final_1', date: '2022.08.16 만료'),
+    FileItem(name: 'artrooms_img_file_final_2', date: '2022.08.16 만료'),
   ];
 
   @override
@@ -63,7 +81,7 @@ class _MyScreenChatroomPhotoState extends State<MyScreenChatroomPhoto> {
                   child: Center(
                     child: InkWell(
                       onTap: () {
-                        _deselectAll(true);
+                        _deselectAllPhotos(true);
                       },
                       child: Container(
                         padding: const EdgeInsets.all(8.0),
@@ -91,7 +109,7 @@ class _MyScreenChatroomPhotoState extends State<MyScreenChatroomPhoto> {
                 child: Center(
                   child: InkWell(
                     onTap: () {
-                      _deselectAll(false);
+                      _deselectAllPhotos(false);
                     },
                     child: Container(
                       padding: const EdgeInsets.all(8.0),
@@ -120,20 +138,20 @@ class _MyScreenChatroomPhotoState extends State<MyScreenChatroomPhoto> {
             mainAxisSpacing: 0,
             childAspectRatio: 1,
           ),
-          itemCount: files.length,
+          itemCount: filesPhotos.length,
           itemBuilder: (context, index) {
-            var file = files[index];
+            var file = filesPhotos[index];
             return Container(
               color: Colors.white,
               child: InkWell(
                 onTap: () {
-                  _viewPhoto(context, file);
+                  viewPhoto(context, file);
                 },
                 onLongPress: () {
                   setState(() {
                     file.isSelected = !file.isSelected;
                   });
-                  _checkIfButtonShouldBeEnabled();
+                  _checkIfPhotoShouldBeEnabled();
                 },
                 child: Stack(
                   children: [
@@ -152,7 +170,7 @@ class _MyScreenChatroomPhotoState extends State<MyScreenChatroomPhoto> {
                           onTap: () {
                             setState(() {
                               file.isSelected = !file.isSelected;
-                              _checkIfButtonShouldBeEnabled();
+                              _checkIfPhotoShouldBeEnabled();
                             });
                           },
                           child: Container(
@@ -187,7 +205,7 @@ class _MyScreenChatroomPhotoState extends State<MyScreenChatroomPhoto> {
           ),
           child: TextButton(
             onPressed: () {
-              select();
+              selectPhotos();
             },
             child:const Text(
                 '저장',
@@ -202,87 +220,11 @@ class _MyScreenChatroomPhotoState extends State<MyScreenChatroomPhoto> {
     );
   }
 
-  void _viewPhoto(BuildContext context, FileItem file) {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return Scaffold(
-            backgroundColor: Colors.black.withOpacity(0.40),
-            body: Container(
-              color: Colors.black.withOpacity(0.5),
-              child: Column(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Container(
-                          width: 30,
-                          height: 30,
-                          decoration: const BoxDecoration(
-                            color: colorMainGrey200,
-                            shape: BoxShape.circle,
-                          ),
-                          child: IconButton(
-                            icon: const Icon(
-                              Icons.close,
-                              size: 22,
-                              color: Colors.black,
-                            ),
-                            padding: const EdgeInsets.all(4),
-                            constraints: const BoxConstraints(),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  Expanded(
-                    child: Image.asset(
-                      file.path,
-                      width: double.infinity,
-                      height: double.infinity,
-                      fit: BoxFit.none,
-                    ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
-                    child: Row(
-                      children: [
-                        SizedBox(
-                          width: 40,
-                          height: 40,
-                          child: IconButton(
-                            icon: const Icon(
-                              Icons.file_download_outlined,
-                              size: 32,
-                              color: colorMainGrey300,
-                            ),
-                            padding: const EdgeInsets.all(4),
-                            constraints: const BoxConstraints(),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
-        }
-    );
-  }
 
-  void _checkIfButtonShouldBeEnabled() {
+  void _checkIfPhotoShouldBeEnabled() {
 
     _selected = 0;
-    for(FileItem fileItem in files) {
+    for(FileItem fileItem in filesPhotos) {
       if(fileItem.isSelected) {
         setState(() {
           _selected++;
@@ -303,13 +245,13 @@ class _MyScreenChatroomPhotoState extends State<MyScreenChatroomPhoto> {
 
   }
 
-  void _deselectAll(isClose) {
+  void _deselectAllPhotos(isClose) {
 
     setState(() {
       _selected = 0;
     });
 
-    for(FileItem fileItem in files) {
+    for(FileItem fileItem in filesPhotos) {
       setState(() {
         fileItem.isSelected = false;
       });
@@ -320,12 +262,12 @@ class _MyScreenChatroomPhotoState extends State<MyScreenChatroomPhoto> {
         _selectMode = false;
       });
 
-      _checkIfButtonShouldBeEnabled();
+      _checkIfPhotoShouldBeEnabled();
     }
 
   }
 
-  void select() {
+  void selectPhotos() {
 
     if(!_isButtonDisabled) {
       Navigator.pop(context);
