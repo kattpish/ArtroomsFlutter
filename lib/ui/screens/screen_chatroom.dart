@@ -492,7 +492,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
       child: Column(
         children: [
           Center(
-            child: InkWell(
+            child: GestureDetector(
               onTap: () {
                 if(_showAttachment) {
                   state.setState(() {
@@ -507,13 +507,30 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
                   // Navigator.of(context).pop();
                 }
               },
+              onVerticalDragUpdate: (details) {
+                if (details.delta.dy < 0) {
+                  setState(() {
+                    _showAttachment = false;
+                    _showAttachment1 = true;
+                  });
+                }
+                if (details.delta.dy > 0) {
+                  setState(() {
+                    _showAttachment = false;
+                    _showAttachment1 = false;
+                  });
+                }
+              },
               child: Container(
-                width: 70,
-                height: 8,
+                height: 16,
                 padding: const EdgeInsets.all(4.0),
-                decoration: const BoxDecoration(
-                  color: colorMainGrey250,
-                  borderRadius: BorderRadius.all(Radius.circular(24)),
+                child: Container(
+                  width: 70,
+                  height: 8,
+                  decoration: const BoxDecoration(
+                    color: colorMainGrey250,
+                    borderRadius: BorderRadius.all(Radius.circular(24)),
+                  ),
                 ),
               ),
             ),

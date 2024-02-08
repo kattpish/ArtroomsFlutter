@@ -56,7 +56,7 @@ class _MyScreeLoginState extends State<MyScreenLogin> {
                   ],
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 40),
               Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
@@ -181,7 +181,7 @@ class _MyScreeLoginState extends State<MyScreenLogin> {
                     ],
                   ),
                   onPressed: () {
-                    launchInBrowser(Uri(scheme: 'https', host: 'artrooms.app', path: 'signup'));
+                    launchInBrowser(Uri(scheme: 'https', host: 'artrooms.com', path: ''));
                   },
                 ),
               ),
