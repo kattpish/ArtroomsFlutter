@@ -67,7 +67,7 @@ class _MyScreenNotificationsSoundsState extends State<MyScreenNotificationsSound
                 trailing: const Text(
                   '아룸 (기본)',
                   style: TextStyle(
-                    color: colorPrimaryPurple400,
+                    color: colorPrimaryBlue400,
                     fontSize: 14,
                   ),
                 ),
@@ -82,7 +82,7 @@ class _MyScreenNotificationsSoundsState extends State<MyScreenNotificationsSound
   Widget _buildTrailingWidget(bool isEnabled, int index) {
     return Switch(
       value: isEnabled,
-      activeColor: colorPrimaryPurple,
+      activeColor: colorPrimaryBlue,
       onChanged: (value) {
         _toggleNotification(index, value);
       },

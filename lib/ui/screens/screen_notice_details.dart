@@ -63,7 +63,7 @@ class _MyScreenNoticeDetailsState extends State<MyScreenNoticeDetails> {
                         widget.notice.date,
                         style: const TextStyle(
                           fontSize: 18,
-                          color: colorPrimaryPurple,
+                          color: colorPrimaryBlue,
                           fontWeight: FontWeight.w400,
                         ),
                       ),
@@ -73,7 +73,7 @@ class _MyScreenNoticeDetailsState extends State<MyScreenNoticeDetails> {
                             padding: const EdgeInsets.all(2.0),
                             margin: const EdgeInsets.all(6.0),
                             decoration: const BoxDecoration(
-                              color: colorPrimaryPurple,
+                              color: colorPrimaryBlue,
                               shape:  BoxShape.circle,
                             ),
                             child:const Icon(Icons.star, size:10, color: Colors.white,),)

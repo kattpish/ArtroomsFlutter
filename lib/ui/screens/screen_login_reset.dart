@@ -74,7 +74,7 @@ class _MyScreenLoginResetState extends State<MyScreenLoginReset> with SingleTick
             controller: _tabController,
             labelColor: Colors.black,
             unselectedLabelColor: Colors.grey,
-            indicatorColor: colorPrimaryPurple,
+            indicatorColor: colorPrimaryBlue,
             indicatorWeight: 2.0,
             tabs: const [
               Tab(
@@ -99,7 +99,7 @@ class _MyScreenLoginResetState extends State<MyScreenLoginReset> with SingleTick
             onPressed: _submit,
             style: ElevatedButton.styleFrom(
               foregroundColor: Colors.white,
-              backgroundColor: _isButtonDisabled ? colorPrimaryPurple.withAlpha(100) : colorPrimaryPurple,
+              backgroundColor: _isButtonDisabled ? colorPrimaryBlue.withAlpha(100) : colorPrimaryBlue,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(30.0),
               ),
@@ -219,16 +219,24 @@ class _MyScreenLoginResetState extends State<MyScreenLoginReset> with SingleTick
   void _checkIfButtonShouldBeEnabled() {
     if(_tabController.index == 0) {
       if (_idController.text.isNotEmpty || _passwordController.text.isNotEmpty) {
-        setState(() => _isButtonDisabled = false);
+        setState(() {
+          _isButtonDisabled = false;
+        });
       } else {
-        setState(() => _isButtonDisabled = true);
+        setState(() {
+          _isButtonDisabled = true;
+        });
       }
 
     }else {
       if (_emailController.text.isNotEmpty) {
-        setState(() => _isButtonDisabled = false);
+        setState(() {
+          _isButtonDisabled = false;
+        });
       } else {
-        setState(() => _isButtonDisabled = true);
+        setState(() {
+          _isButtonDisabled = true;
+        });
       }
     }
   }

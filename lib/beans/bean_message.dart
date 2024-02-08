@@ -7,7 +7,7 @@ class MyMessage {
   String content;
   String timestamp;
   String attachment = "";
-  List<String> imageAttachments = ["", "", "", "", "", "", "", "",];
+  List<String> imageAttachments = [];
   bool isMe;
 
   MyMessage({
@@ -16,6 +16,7 @@ class MyMessage {
     required this.content,
     required this.timestamp,
     this.attachment = "",
+    this.imageAttachments = const [],
     required this.isMe,
   });
 

@@ -23,6 +23,8 @@ class MyScreenChatroom extends StatefulWidget {
 class _MyScreenChatroomState extends State<MyScreenChatroom> {
 
   bool _isLoading = true;
+  bool _isButtonDisabled = true;
+  bool _showAttachment = false;
   final List<MyMessage> messages = [];
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _messageController = TextEditingController();
@@ -30,6 +32,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
   @override
   void initState() {
     super.initState();
+    _messageController.addListener(_checkIfButtonShouldBeEnabled);
     _loadMessages();
   }
 
@@ -56,7 +59,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
             width: 80,
             height: 80,
             decoration: const BoxDecoration(
-                shape: BoxShape.circle,
+              shape: BoxShape.circle,
             ),
             child: InkWell(
               child: Container(
@@ -95,7 +98,96 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
             ),
           ),
           _buildMessageInput(),
-          const SizedBox(height: 30),
+          const SizedBox(height: 25),
+          Visibility(
+            visible: _showAttachment,
+              child: SizedBox(
+                height: 300,
+                child: Column(
+                  children: [
+                    Center(
+                      child: Container(
+                        width: 70,
+                        height: 8,
+                        decoration: const BoxDecoration(
+                          color: colorMainGrey250,
+                          borderRadius: BorderRadius.all(Radius.circular(24)),
+                        ),
+
+                      ),
+                    ),
+                    const SizedBox(height: 12,),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Container(
+                            width: double.infinity,
+                            margin: const EdgeInsets.only(left: 16.0, right: 4.0, top: 2, bottom: 2),
+                            padding: const EdgeInsets.all(4.0),
+                            decoration: BoxDecoration(color: colorPrimaryPurple,
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            child: TextButton(
+                              onPressed: () {
+
+                              },
+                              child: const Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.camera_alt,
+                                    color: Colors.white,
+                                  ),
+                                  SizedBox(width: 6),
+                                  Text(
+                                      '카메라',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 20,
+                                      )
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Container(
+                            width: double.infinity,
+                            margin: const EdgeInsets.only(left: 4.0, right: 16.0, top: 2, bottom: 2),
+                            padding: const EdgeInsets.all(4.0),
+                            decoration: BoxDecoration(color: colorPrimaryBlue,
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            child: TextButton(
+                              onPressed: () {
+
+                              },
+                              child: const Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.folder,
+                                    color: Colors.white,
+                                  ),
+                                  SizedBox(width: 6),
+                                  Text(
+                                      '파일',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 20,
+                                      )
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ))
         ],
       ),
     );
@@ -106,13 +198,26 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
       padding: const EdgeInsets.all(8.0),
       child: Row(
         children: [
-          const CircleAvatar(
-            backgroundColor: Colors.transparent,
-            child: Icon(Icons.add, color: colorMainGrey250),
+          Container(
+            padding: const EdgeInsets.all(0.0),
+            child: InkWell(
+              onTap: () {
+                setState(() {
+                  _showAttachment = !_showAttachment;
+                });
+              },
+              child: const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Icon(
+                    Icons.add,
+                    color: colorMainGrey250
+                ),
+              ),
+            ),
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: 0),
           Expanded(
-            child: TextField(
+            child: TextFormField(
               controller: _messageController,
               decoration: InputDecoration(
                 hintText: '',
@@ -123,14 +228,24 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
                 filled: true,
                 fillColor: const Color(0xFFF3F3F3),
               ),
+              minLines: 1,
+              maxLines: 4,
             ),
           ),
-          const SizedBox(width: 8),
-          GestureDetector(
-            onTap: _sendMessage,
-            child: const CircleAvatar(
-              backgroundColor: Colors.transparent,
-              child: Icon(Icons.send, color: colorMainGrey250),
+          const SizedBox(width: 0),
+          Container(
+            padding: const EdgeInsets.all(0.0),
+            child: InkWell(
+              onTap: () {
+                _sendMessage();
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Icon(
+                  Icons.send,
+                  color: _isButtonDisabled ? colorMainGrey250 : colorPrimaryBlue,
+                ),
+              ),
             ),
           )
         ],
@@ -158,7 +273,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
               Container(
                 padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
                 decoration: const BoxDecoration(
-                  color: colorPrimaryPurple,
+                  color: colorPrimaryBlue,
                   borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(24),
                       topRight: Radius.circular(0),
@@ -197,7 +312,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
                 },
                 child: CircleAvatar(
                   radius: 30,
-                  backgroundColor: Colors.grey[300],
+                  backgroundColor: colorMainGrey200,
                   child: FadeInImage.assetNetwork(
                     placeholder: 'assets/images/profile/profile_${(message.senderId % 2) + 1}.png',
                     image: message.profilePictureUrl,
@@ -232,9 +347,9 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
                         const SizedBox(height: 8),
                         Container(
                           padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-                          decoration: BoxDecoration(
-                            color: Colors.grey[300],
-                            borderRadius: const BorderRadius.only(
+                          decoration: const BoxDecoration(
+                            color: colorMainGrey200,
+                            borderRadius: BorderRadius.only(
                                 topLeft: Radius.circular(0),
                                 topRight: Radius.circular(24),
                                 bottomLeft: Radius.circular(24),
@@ -295,7 +410,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
   }
 
   Widget _buildAttachment(String attachment) {
-    if (false && attachment.isNotEmpty) {
+    if (attachment.isNotEmpty) {
       return Container(
         margin: const EdgeInsets.symmetric(vertical: 8),
         padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 22),
@@ -341,10 +456,10 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
   }
 
   Widget _buildImageAttachments(List<String> imageAttachments) {
-    if (false && imageAttachments.isNotEmpty) {
+    if (imageAttachments.isNotEmpty) {
       return Container(
-        height: 100,
-        margin: const EdgeInsets.symmetric(vertical: 8),
+        height: 80,
+        margin: const EdgeInsets.symmetric(horizontal: 64, vertical: 8),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
         ),
@@ -352,8 +467,19 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
           scrollDirection: Axis.horizontal,
           itemCount: imageAttachments.length,
           itemBuilder: (context, index) {
-            return Padding(
+            bool isFirst = index == 0;
+            bool isLast = index == imageAttachments.length - 1;
+            return Container(
               padding: const EdgeInsets.only(right: 4.0),
+              decoration: BoxDecoration(
+                color: colorMainGrey200,
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(isFirst ? 24 : 0),
+                    topRight: Radius.circular(isLast ? 24 : 0),
+                    bottomLeft: Radius.circular(isFirst ? 24 : 0),
+                    bottomRight: Radius.circular(isLast ? 24 : 0)
+                ),
+              ),
               child: FadeInImage.assetNetwork(
                 placeholder: 'assets/images/chats/placeholder_photo.png',
                 image: imageAttachments[index],
@@ -399,9 +525,23 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
     });
   }
 
+  void _checkIfButtonShouldBeEnabled() {
+
+    if (_messageController.text.trim().isNotEmpty) {
+      setState(() {
+        _isButtonDisabled = false;
+      });
+    } else {
+      setState(() {
+        _isButtonDisabled = true;
+      });
+    }
+
+  }
+
   void _sendMessage() {
 
-    if(_messageController.text.isNotEmpty) {
+    if(!_isButtonDisabled) {
 
       final message = MyMessage(
         senderId: 1,

@@ -10,13 +10,14 @@ List<MyMessage> loadMessages() {
 
   messages = List.generate(12, (index) {
     int i = Random().nextInt(99) + 11;
-    bool isMe = (Random().nextInt(2) + 1) == 1;
+    bool isMe = index < 11 ? (Random().nextInt(2) + 1) == 1 : false;
     return MyMessage(
       senderId: i,
       senderName: 'User $i',
       content: 'This is message ${index + 1}',
-      timestamp: '12:00 PM',
-      attachment: '-',
+      timestamp: '12:0$index PM',
+      attachment: index == 11 ? '-' : '',
+      imageAttachments: index == 11 ? ["", "", ""] : [],
       isMe: isMe,
     );
   });

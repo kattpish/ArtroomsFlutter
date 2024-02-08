@@ -159,10 +159,10 @@ class _MyScreenChatroomPhotoState extends State<MyScreenChatroomPhoto> {
                             width: 26,
                             height: 26,
                             decoration: BoxDecoration(
-                              color: file.isSelected ? colorPrimaryPurple : colorMainGrey200.withAlpha(150),
+                              color: file.isSelected ? colorPrimaryBlue : colorMainGrey200.withAlpha(150),
                               shape: BoxShape.circle,
                               border: Border.all(
-                                color: file.isSelected ? colorPrimaryPurple : const Color(0xFFE3E3E3),
+                                color: file.isSelected ? colorPrimaryBlue : const Color(0xFFE3E3E3),
                                 width: 1,
                               ),
                             ),
@@ -182,7 +182,7 @@ class _MyScreenChatroomPhotoState extends State<MyScreenChatroomPhoto> {
         bottomNavigationBar: Container(
           margin: const EdgeInsets.only(left: 16.0, right: 16.0, top: 16, bottom: 42),
           padding: const EdgeInsets.all(4.0),
-          decoration: BoxDecoration(color: _isButtonDisabled ? colorPrimaryPurple400.withAlpha(100) : colorPrimaryPurple,
+          decoration: BoxDecoration(color: _isButtonDisabled ? colorPrimaryBlue400.withAlpha(100) : colorPrimaryBlue,
             borderRadius: BorderRadius.circular(20),
           ),
           child: TextButton(
@@ -207,7 +207,7 @@ class _MyScreenChatroomPhotoState extends State<MyScreenChatroomPhoto> {
         context: context,
         builder: (BuildContext context) {
           return Scaffold(
-            backgroundColor: Colors.black.withOpacity(0.30),
+            backgroundColor: Colors.black.withOpacity(0.40),
             body: Container(
               color: Colors.black.withOpacity(0.5),
               child: Column(

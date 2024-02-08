@@ -419,8 +419,8 @@ class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> {
                     Navigator.of(context).pop();
                   },
                   style: ElevatedButton.styleFrom(
-                    foregroundColor: colorPrimaryPurple,
-                    backgroundColor: colorPrimaryPurple,
+                    foregroundColor: colorPrimaryBlue,
+                    backgroundColor: colorPrimaryBlue,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30.0),
                     ),

@@ -69,7 +69,7 @@ class _MyScreenNotificationsState extends State<MyScreenNotifications> {
                 trailing: const Text(
                   '아룸 (기본)',
                   style: TextStyle(
-                    color: colorPrimaryPurple400,
+                    color: colorPrimaryBlue400,
                     fontSize: 14,
                   ),
                 ),
@@ -85,7 +85,7 @@ class _MyScreenNotificationsState extends State<MyScreenNotifications> {
     return IconButton(
       icon: Icon(
           Icons.check,
-          color: isEnabled ? colorPrimaryPurple : colorMainGrey100
+          color: isEnabled ? colorPrimaryBlue : colorMainGrey100
       ),
       color: isEnabled ? Theme.of(context).primaryColor : null,
       onPressed: () {

@@ -167,7 +167,7 @@ class _MyScreenProfileState extends State<MyScreenProfile> {
               trailing: const Text(
                 'v.24.01.01',
                 style: TextStyle(
-                  color: colorPrimaryPurple400,
+                  color: colorPrimaryBlue400,
                   fontSize: 14,
                 ),
               ),

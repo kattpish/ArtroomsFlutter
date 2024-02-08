@@ -136,7 +136,7 @@ class _MyScreenProfileEditState extends State<MyScreenProfileEdit> {
 
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: colorPrimaryPurple,
+                backgroundColor: colorPrimaryBlue,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(25.0),
                 ),

@@ -27,7 +27,7 @@ class _MyScreeLoginState extends State<MyScreenLogin> {
     return MaterialApp(
       title: 'Login',
       home: Scaffold(
-        backgroundColor: colorPrimaryPurple,
+        backgroundColor: colorPrimaryBlue,
         body: SafeArea(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -100,7 +100,7 @@ class _MyScreeLoginState extends State<MyScreenLogin> {
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         minimumSize: const Size(double.infinity, 48),
-                        foregroundColor: colorPrimaryPurple,
+                        foregroundColor: colorPrimaryBlue,
                         backgroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(vertical: 16.0),
                         shape: RoundedRectangleBorder(

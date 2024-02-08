@@ -102,13 +102,13 @@ class _MyScreenChatsState extends State<MyScreenChats> {
                         ? Icon(
                         Icons.search,
                         size: 30,
-                        color: searchController.text.isNotEmpty ? colorPrimaryPurple : Colors.grey
+                        color: searchController.text.isNotEmpty ? colorPrimaryBlue : Colors.grey
                     ) : Container(
                       width: 20,
                       height: 20,
                       padding: const EdgeInsets.all(15),
                       child: const CircularProgressIndicator(
-                        color: colorPrimaryPurple,
+                        color: colorPrimaryBlue,
                         strokeWidth: 2,
                       ),
                     ),
@@ -158,7 +158,7 @@ class _MyScreenChatsState extends State<MyScreenChats> {
           CustomSlidableAction(
             flex: 1,
             onPressed: _onClickOption2,
-            backgroundColor: colorPrimaryPurple,
+            backgroundColor: colorPrimaryBlue,
             foregroundColor: Colors.white,
             child: Image.asset('assets/images/icons/icon_send.png', width: 24, height: 24),
           ),
@@ -218,7 +218,7 @@ class _MyScreenChatsState extends State<MyScreenChats> {
                 margin: const EdgeInsets.only(right: 4),
                 padding: const EdgeInsets.all(8),
                 decoration: const BoxDecoration(
-                  color: colorPrimaryPurple,
+                  color: colorPrimaryBlue,
                   shape: BoxShape.circle,
                 ),
                 child: Text(
@@ -332,8 +332,8 @@ class _MyScreenChatsState extends State<MyScreenChats> {
                     Navigator.of(context).pop();
                   },
                   style: ElevatedButton.styleFrom(
-                    foregroundColor: colorPrimaryPurple,
-                    backgroundColor: colorPrimaryPurple,
+                    foregroundColor: colorPrimaryBlue,
+                    backgroundColor: colorPrimaryBlue,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30.0),
                     ),
