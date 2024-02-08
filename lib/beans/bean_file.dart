@@ -4,11 +4,13 @@ class FileItem {
 
   String name;
   String date;
+  String path;
   bool isSelected;
 
   FileItem({
     required this.name,
-    required this.date,
+    this.date = "",
+    this.path = "",
     this.isSelected = false
   });
 

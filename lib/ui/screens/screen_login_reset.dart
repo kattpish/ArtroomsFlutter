@@ -68,7 +68,7 @@ class _MyScreenLoginResetState extends State<MyScreenLoginReset> with SingleTick
             ),
           ),
           centerTitle: true,
-          elevation: 1,
+          elevation: 0.5,
           backgroundColor: Colors.white,
           bottom: TabBar(
             controller: _tabController,

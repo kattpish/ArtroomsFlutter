@@ -1,6 +1,8 @@
 
 import 'package:artrooms/ui/screens/screen_chatroom_file.dart';
+import 'package:artrooms/ui/screens/screen_chatroom_photo.dart';
 import 'package:artrooms/ui/screens/screen_memo.dart';
+import 'package:artrooms/ui/screens/screen_notices.dart';
 import 'package:artrooms/ui/screens/screen_notifications_sounds.dart';
 import 'package:flutter/material.dart';
 
@@ -51,7 +53,7 @@ class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> {
             ),
           )
         ],
-        elevation: 1,
+        elevation: 0.5,
         backgroundColor: Colors.white,
       ),
       body: Column(
@@ -245,7 +247,7 @@ class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> {
                         trailing: Icon(Icons.chevron_right),
                         onTap: () {
                           Navigator.push(context, MaterialPageRoute(builder: (context) {
-                            return const MyScreenMemo();
+                            return const MyScreenNotices();
                           }));
                         },
                       ),
@@ -286,7 +288,7 @@ class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> {
                         trailing: const Icon(Icons.chevron_right),
                         onTap: () {
                           Navigator.push(context, MaterialPageRoute(builder: (context) {
-                            return const MyScreenChatroomFile();
+                            return const MyScreenChatroomPhoto();
                           }));
                         },
                       ),

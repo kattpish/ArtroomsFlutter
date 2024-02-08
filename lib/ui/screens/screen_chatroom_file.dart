@@ -4,23 +4,6 @@ import '../../beans/bean_file.dart';
 import '../theme/theme_colors.dart';
 
 
-class MyApp extends StatelessWidget {
-
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'File Manager',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const MyScreenChatroomFile(),
-    );
-  }
-
-}
-
 class MyScreenChatroomFile extends StatefulWidget {
 
   const MyScreenChatroomFile({super.key});
@@ -53,136 +36,139 @@ class _MyScreenChatroomFileState extends State<MyScreenChatroomFile> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        title: const Text(
-          '파일',
-          style: TextStyle(
-              color: colorMainGrey900,
-              fontWeight: FontWeight.w600
+    return MaterialApp(
+      title: 'File Manager',
+      home: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          title: const Text(
+            '파일',
+            style: TextStyle(
+                color: colorMainGrey900,
+                fontWeight: FontWeight.w600
+            ),
           ),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios, color: colorMainGrey250),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+          elevation: 0.5,
         ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: colorMainGrey250),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-        elevation: 0.5,
-      ),
-      backgroundColor: colorMainScreen,
-      body: GridView.builder(
-        padding: const EdgeInsets.only(left: 8, top: 8, right: 8, bottom: 32),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          crossAxisSpacing: 8,
-          mainAxisSpacing: 8,
-          childAspectRatio: 1,
-        ),
-        itemCount: files.length,
-        itemBuilder: (context, index) {
-          var file = files[index];
-          return Card(
-            elevation: 0,
-            color: Colors.white,
-            child: InkWell(
-              onTap: () {
-                setState(() {
-                  file.isSelected = !file.isSelected;
-                  _checkIfButtonShouldBeEnabled();
-                });
-              },
-              child: Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(16.0),
-                  border: Border.all(color: colorMainGrey200, width: 1.0,),
-                ),
-                child: Stack(
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: 24),
-                        Image.asset(
-                          file.isSelected ? 'assets/images/icons/icon_file_selected.png' : 'assets/images/icons/icon_file.png',
-                          width: 30,
-                          height: 30,
-                        ),
-                        const SizedBox(height: 4),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                file.name,
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  color: colorMainGrey700,
-                                  fontWeight: FontWeight.w400,
+        backgroundColor: colorMainScreen,
+        body: GridView.builder(
+          padding: const EdgeInsets.only(left: 8, top: 8, right: 8, bottom: 32),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 8,
+            mainAxisSpacing: 8,
+            childAspectRatio: 1,
+          ),
+          itemCount: files.length,
+          itemBuilder: (context, index) {
+            var file = files[index];
+            return Card(
+              elevation: 0,
+              color: Colors.white,
+              child: InkWell(
+                onTap: () {
+                  setState(() {
+                    file.isSelected = !file.isSelected;
+                    _checkIfButtonShouldBeEnabled();
+                  });
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16.0),
+                    border: Border.all(color: colorMainGrey200, width: 1.0,),
+                  ),
+                  child: Stack(
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 24),
+                          Image.asset(
+                            file.isSelected ? 'assets/images/icons/icon_file_selected.png' : 'assets/images/icons/icon_file.png',
+                            width: 30,
+                            height: 30,
+                          ),
+                          const SizedBox(height: 4),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  file.name,
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    color: colorMainGrey700,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                  maxLines: 2,
                                 ),
-                                maxLines: 2,
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                file.date,
-                                style: const TextStyle(
-                                  fontSize: 16,
+                                const SizedBox(height: 8),
+                                Text(
+                                  file.date,
+                                  style: const TextStyle(
+                                    fontSize: 16,
                                     color: Color(0xFF8F8F8F),
-                                  fontWeight: FontWeight.w300,
+                                    fontWeight: FontWeight.w300,
+                                  ),
+                                  maxLines: 1,
                                 ),
-                                maxLines: 1,
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                    Positioned(
-                      top: 3,
-                      right: 2,
-                      child: Container(
-                        width: 26,
-                        height: 26,
-                        decoration: BoxDecoration(
-                          color: file.isSelected ? colorPrimaryPurple : Colors.transparent,
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: file.isSelected ? colorPrimaryPurple : const Color(0xFFE3E3E3),
-                            width: 1,
-                          ),
-                        ),
-                        child: file.isSelected
-                            ? const Icon(Icons.check, size: 16, color: Colors.white)
-                            : Container(),
+                        ],
                       ),
-                    ),
-                  ],
+                      Positioned(
+                        top: 3,
+                        right: 2,
+                        child: Container(
+                          width: 26,
+                          height: 26,
+                          decoration: BoxDecoration(
+                            color: file.isSelected ? colorPrimaryPurple : Colors.transparent,
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: file.isSelected ? colorPrimaryPurple : const Color(0xFFE3E3E3),
+                              width: 1,
+                            ),
+                          ),
+                          child: file.isSelected
+                              ? const Icon(Icons.check, size: 16, color: Colors.white)
+                              : Container(),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          );
-        },
-      ),
-      bottomNavigationBar: Container(
-        margin: const EdgeInsets.only(left: 16.0, right: 16.0, top: 16, bottom: 42),
-        padding: const EdgeInsets.all(4.0),
-        decoration: BoxDecoration(color: _isButtonDisabled ? colorPrimaryPurple400.withAlpha(100) : colorPrimaryPurple,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: TextButton(
-          onPressed: () {
-            select();
+            );
           },
-          child:const Text(
-              '저장',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 20,
-              )
+        ),
+        bottomNavigationBar: Container(
+          margin: const EdgeInsets.only(left: 16.0, right: 16.0, top: 16, bottom: 42),
+          padding: const EdgeInsets.all(4.0),
+          decoration: BoxDecoration(color: _isButtonDisabled ? colorPrimaryPurple400.withAlpha(100) : colorPrimaryPurple,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: TextButton(
+            onPressed: () {
+              select();
+            },
+            child:const Text(
+                '저장',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                )
+            ),
           ),
         ),
       ),

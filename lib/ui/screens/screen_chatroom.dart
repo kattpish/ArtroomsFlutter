@@ -49,7 +49,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
           ),
         ),
         centerTitle: true,
-        elevation: 1,
+        elevation: 0.5,
         backgroundColor: Colors.white,
         actions: [
           Container(

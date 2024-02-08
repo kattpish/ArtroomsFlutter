@@ -39,7 +39,7 @@ class _MyScreenNotificationsSoundsState extends State<MyScreenNotificationsSound
                 fontWeight: FontWeight.w600
             ),
           ),
-          elevation: 1,
+          elevation: 0.5,
         ),
         backgroundColor: colorMainScreen,
         body: SingleChildScrollView(

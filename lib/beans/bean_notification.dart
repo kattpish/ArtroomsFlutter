@@ -1,17 +1,21 @@
 
 
 class Notice {
+
+  final int index;
   final String date;
   final String title;
   final String body;
-  bool isVisible;
+  bool isAdmin;
 
   Notice(
+      this.index,
       this.date,
       this.title,
       this.body,
       {
-        this.isVisible = true
-      });
+        this.isAdmin = true
+      }
+      );
 
 }

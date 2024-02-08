@@ -26,6 +26,7 @@ flutter:
     - assets/images/icons/
     - assets/images/profile/
     - assets/images/chats/
+    - assets/images/photos/
 
 #  fonts:
 #     - family: Schyler
