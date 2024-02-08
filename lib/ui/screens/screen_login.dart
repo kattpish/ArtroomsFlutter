@@ -1,5 +1,5 @@
 import 'package:artrooms/ui/screens/screen_chats.dart';
-import 'package:artrooms/ui/screens/screen_home.dart';
+import 'package:artrooms/ui/screens/screen_login_reset.dart';
 import 'package:flutter/material.dart';
 
 import '../../utils/utils.dart';
@@ -18,6 +18,9 @@ class MyScreenLogin extends StatefulWidget {
 }
 
 class _MyScreeLoginState extends State<MyScreenLogin> {
+
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -60,6 +63,7 @@ class _MyScreeLoginState extends State<MyScreenLogin> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.0),
                     child: TextField(
+                      controller: _emailController,
                       style: const TextStyle(color: Colors.white),
                       decoration: InputDecoration(
                         filled: true,
@@ -76,6 +80,7 @@ class _MyScreeLoginState extends State<MyScreenLogin> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.0),
                     child: TextField(
+                      controller: _passwordController,
                       obscureText: true,
                       style: const TextStyle(color: Colors.white),
                       decoration: InputDecoration(
@@ -129,7 +134,7 @@ class _MyScreeLoginState extends State<MyScreenLogin> {
                           ),
                           onPressed: () {
                             Navigator.push(context, MaterialPageRoute(builder: (context) {
-                              return const MyScreenHome(tab: 0);
+                              return const MyScreenLoginReset(tab: 0);
                             }));
                           },
                         ),
@@ -146,7 +151,7 @@ class _MyScreeLoginState extends State<MyScreenLogin> {
                           ),
                           onPressed: () {
                             Navigator.push(context, MaterialPageRoute(builder: (context) {
-                              return const MyScreenHome(tab: 1);
+                              return const MyScreenLoginReset(tab: 1);
                             }));
                           },
                         ),

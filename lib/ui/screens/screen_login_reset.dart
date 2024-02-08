@@ -5,25 +5,25 @@ import 'package:flutter/material.dart';
 import '../theme/theme_colors.dart';
 
 
-class MyScreenHome extends StatefulWidget {
+class MyScreenLoginReset extends StatefulWidget {
 
   final int tab;
 
-  const MyScreenHome({super.key, required this.tab});
+  const MyScreenLoginReset({super.key, required this.tab});
 
   @override
   State<StatefulWidget> createState() {
-    return _MyScreenHomeState();
+    return _MyScreenLoginResetState();
   }
 
 }
 
-class _MyScreenHomeState extends State<MyScreenHome> with SingleTickerProviderStateMixin {
+class _MyScreenLoginResetState extends State<MyScreenLoginReset> with SingleTickerProviderStateMixin {
 
   late TabController _tabController;
   final TextEditingController _idController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
   bool _isButtonDisabled = true;
 
   @override
@@ -56,7 +56,9 @@ class _MyScreenHomeState extends State<MyScreenHome> with SingleTickerProviderSt
         appBar: AppBar(
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_ios, color: colorMainGrey250),
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
           ),
           title: const Text(
             '아이디 · 비밀번호 찾기',

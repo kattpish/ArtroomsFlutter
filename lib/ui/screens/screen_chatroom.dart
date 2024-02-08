@@ -1,3 +1,4 @@
+import 'package:artrooms/ui/screens/screen_chatroom_drawer.dart';
 import 'package:artrooms/ui/widgets/widget_loader.dart';
 import 'package:flutter/material.dart';
 import '../../beans/bean_chat.dart';
@@ -66,7 +67,9 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
                   child: Image.asset('assets/images/icons/icon_archive.png', width: 24, height: 24)
               ),
               onTap: () {
-
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return const MyScreenChatroomDrawer();
+                }));
               },
             ),
           ),
@@ -188,21 +191,26 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              CircleAvatar(
-                radius: 30,
-                backgroundColor: Colors.grey[300],
-                child: FadeInImage.assetNetwork(
-                  placeholder: 'assets/images/profile/profile_${(message.senderId % 2) + 1}.png',
-                  image: message.profilePictureUrl,
-                  fit: BoxFit.cover,
-                  fadeInDuration: const Duration(milliseconds: 200),
-                  fadeOutDuration: const Duration(milliseconds: 200),
-                  imageErrorBuilder: (context, error, stackTrace) {
-                    return Image.asset(
-                      'assets/images/profile/profile_${(message.senderId.hashCode % 2) + 1}.png',
-                      fit: BoxFit.cover,
-                    );
-                  },
+              InkWell(
+                onTap: () {
+
+                },
+                child: CircleAvatar(
+                  radius: 30,
+                  backgroundColor: Colors.grey[300],
+                  child: FadeInImage.assetNetwork(
+                    placeholder: 'assets/images/profile/profile_${(message.senderId % 2) + 1}.png',
+                    image: message.profilePictureUrl,
+                    fit: BoxFit.cover,
+                    fadeInDuration: const Duration(milliseconds: 200),
+                    fadeOutDuration: const Duration(milliseconds: 200),
+                    imageErrorBuilder: (context, error, stackTrace) {
+                      return Image.asset(
+                        'assets/images/profile/profile_${(message.senderId.hashCode % 2) + 1}.png',
+                        fit: BoxFit.cover,
+                      );
+                    },
+                  ),
                 ),
               ),
               const SizedBox(width: 6),
