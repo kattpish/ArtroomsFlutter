@@ -1,5 +1,4 @@
 import 'package:artrooms/ui/screens/screen_chatroom_drawer.dart';
-import 'package:artrooms/ui/screens/screen_chatroom_photo.dart';
 import 'package:artrooms/ui/widgets/widget_loader.dart';
 import 'package:flutter/material.dart';
 import '../../beans/bean_chat.dart';
