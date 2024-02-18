@@ -1,10 +1,13 @@
+
 import 'package:artrooms/ui/screens/screen_chatroom_drawer.dart';
 import 'package:artrooms/ui/widgets/widget_loader.dart';
 import 'package:flutter/material.dart';
+import 'package:sendbird_sdk/core/message/base_message.dart';
+import 'package:sendbird_sdk/core/message/user_message.dart';
 import '../../beans/bean_chat.dart';
 import '../../beans/bean_file.dart';
 import '../../beans/bean_message.dart';
-import '../../modules/module_messages.dart';
+import '../../modules/module_sendbird.dart';
 import '../theme/theme_colors.dart';
 import '../widgets/widget_media.dart';
 
@@ -24,23 +27,38 @@ class MyScreenChatroom extends StatefulWidget {
 
 class _MyScreenChatroomState extends State<MyScreenChatroom> {
 
+  bool _isInitialized = false;
   bool _isLoading = true;
   bool _isButtonDisabled = true;
   bool _showAttachment = false;
-  bool _showAttachment1 = false;
+  bool _showAttachmentFull = false;
   final List<MyMessage> messages = [];
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _messageController = TextEditingController();
+
+  MySendBird mySendBird = MySendBird();
+
+  double _boxHeight = 320.0;
+  double _dragStartY = 0.0;
+  double screenWidth = 0;
+  double screenHeight = 0;
 
   @override
   void initState() {
     super.initState();
     _messageController.addListener(_checkIfButtonShouldBeEnabled);
+    _scrollController.addListener(_loadMessages);
     _loadMessages();
   }
 
   @override
   Widget build(BuildContext context) {
+
+    screenWidth = MediaQuery.of(context).size.width;
+    screenHeight = MediaQuery.of(context).size.height;
+
+    Widget attachmentPicker = _attachmentPicker(context, this);
+
     return WillPopScope(
       onWillPop: () async {
         if(_showAttachment) {
@@ -48,9 +66,9 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
             _showAttachment = false;
           });
           return false;
-        }else if(_showAttachment1) {
+        }else if(_showAttachmentFull) {
           setState(() {
-            _showAttachment1 = false;
+            _showAttachmentFull = false;
           });
           return false;
         }
@@ -109,6 +127,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
                     child: messages.isNotEmpty ? ListView.builder(
                       controller: _scrollController,
                       itemCount: messages.length,
+                      reverse: true,
                       itemBuilder: (context, index) {
                         final message = messages[index];
                         return message.isMe
@@ -124,23 +143,27 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
                 Visibility(
                     visible: _showAttachment,
                     child: SizedBox(
-                        height: 320,
-                        child: _attachmentPicker(context, this)
+                        height: _boxHeight,
+                        child: attachmentPicker
                     ),
                 ),
               ],
             ),
           ),
           Visibility(
-            visible: _showAttachment1,
+            visible: _showAttachmentFull,
             child: Scaffold(
               backgroundColor: Colors.black.withOpacity(0.4),
               body: Container(
-                  height: double.infinity,
-                  margin: const EdgeInsets.only(top: 80),
-                  padding: const EdgeInsets.only(top: 16),
-                  color: Colors.white,
-                  child: _attachmentPicker(context, this)
+                height: double.infinity,
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                    height: _boxHeight,
+                    margin: const EdgeInsets.only(top: 80),
+                    padding: const EdgeInsets.only(top: 16),
+                    color: Colors.white,
+                    child: attachmentPicker
+                ),
               ),
             ),
           ),
@@ -159,6 +182,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
             child: InkWell(
               onTap: () {
                 setState(() {
+                  _boxHeight = 320;
                   _showAttachment = !_showAttachment;
                 });
               },
@@ -227,6 +251,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
               ),
               const SizedBox(width: 8),
               Container(
+                constraints: BoxConstraints(maxWidth: screenWidth * 0.6),
                 padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
                 decoration: const BoxDecoration(
                   color: colorPrimaryBlue,
@@ -270,7 +295,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
                   radius: 30,
                   backgroundColor: colorMainGrey200,
                   child: FadeInImage.assetNetwork(
-                    placeholder: 'assets/images/profile/profile_${(message.senderId % 2) + 1}.png',
+                    placeholder: 'assets/images/profile/profile_${(message.index % 2) + 1}.png',
                     image: message.profilePictureUrl,
                     fit: BoxFit.cover,
                     fadeInDuration: const Duration(milliseconds: 200),
@@ -293,15 +318,20 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          message.senderName,
-                          textAlign: TextAlign.start,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
+                        SizedBox(
+                          width: screenWidth / 4,
+                          child: Text(
+                            message.getName(),
+                            textAlign: TextAlign.start,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                            maxLines: 1,
                           ),
                         ),
                         const SizedBox(height: 8),
                         Container(
+                          constraints: BoxConstraints(maxWidth: screenWidth * 0.6),
                           padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
                           decoration: const BoxDecoration(
                             color: colorMainGrey200,
@@ -486,37 +516,24 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
   ];
 
   Widget _attachmentPicker(BuildContext context, State<StatefulWidget> state) {
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: Column(
         children: [
           Center(
             child: GestureDetector(
+              onVerticalDragStart: _onVerticalDragStart,
+              onVerticalDragUpdate: _onVerticalDragUpdate,
               onTap: () {
                 if(_showAttachment) {
                   state.setState(() {
                     _showAttachment = false;
-                    _showAttachment1 = true;
+                    _showAttachmentFull = true;
                   });
-                  // showPicker(context, state);
                 }else {
                   setState(() {
-                    _showAttachment1 = false;
-                  });
-                  // Navigator.of(context).pop();
-                }
-              },
-              onVerticalDragUpdate: (details) {
-                if (details.delta.dy < 0) {
-                  setState(() {
-                    _showAttachment = false;
-                    _showAttachment1 = true;
-                  });
-                }
-                if (details.delta.dy > 0) {
-                  setState(() {
-                    _showAttachment = false;
-                    _showAttachment1 = false;
+                    _showAttachmentFull = false;
                   });
                 }
               },
@@ -788,38 +805,67 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
     );
   }
 
-  void showPicker(BuildContext context, State<StatefulWidget> state) {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return Scaffold(
-            backgroundColor: Colors.black.withOpacity(0.40),
-            body: Container(
-              padding: const EdgeInsets.only(top: 8),
-              color: Colors.white,
-              child: _attachmentPicker(context, state),
-            ),
-          );
-        }
-    );
+  void _onVerticalDragStart(DragStartDetails details) {
+    _dragStartY = details.globalPosition.dy;
   }
 
-  void _loadMessages() {
+  void _onVerticalDragUpdate(DragUpdateDetails details) {
+    final newHeight = _boxHeight - details.globalPosition.dy + _dragStartY;
 
-    messages.clear();
+    setState(() {
+      _boxHeight = newHeight.clamp(100.0, screenHeight);
+      _dragStartY = details.globalPosition.dy;
+
+      if(_boxHeight < screenHeight - 200 && _boxHeight > screenHeight - 300) {
+        _showAttachment = false;
+        _showAttachmentFull = false;
+      }else if(_boxHeight > 320 + 160) {
+        _showAttachment = false;
+        if(!_showAttachmentFull) {
+          _showAttachmentFull = true;
+          _boxHeight = screenHeight;
+        }
+      }else if(_boxHeight < 320 - 160) {
+        _showAttachment = false;
+        _showAttachmentFull = false;
+        _boxHeight = 320;
+      }
+
+    });
+
+  }
+
+  Future<void> _loadMessages() async {
+
+    if(!_isInitialized) {
+      await mySendBird.initSendbird();
+      _isInitialized = true;
+    }
 
     Future.delayed(const Duration(seconds: 1), () {
       if (mounted) {
 
-        setState(() {
-          messages.addAll(loadMessages());
-          _isLoading = false;
-        });
+        mySendBird.loadMessages().then((List<BaseMessage> baseMessages){
 
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (_scrollController.hasClients) {
-            _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+          for(BaseMessage baseMessage in baseMessages) {
+
+            MyMessage myMessage = MyMessage.fromBaseMessage(baseMessage);
+
+            setState(() {
+              messages.add(myMessage);
+            });
+
           }
+
+          if(_isLoading) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (_scrollController.hasClients) {
+                _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+              }
+            });
+          }
+
+          _isLoading = false;
         });
 
       }
@@ -844,27 +890,35 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
 
     if(!_isButtonDisabled) {
 
-      final message = MyMessage(
-        senderId: 1,
-        senderName: 'Me',
-        content: _messageController.text,
-        timestamp: 'Now',
-        isMe: true,
-      );
+      mySendBird.sendMessage(_messageController.text).then((UserMessage userMessage) {
 
-      setState(() {
-        messages.add(message);
-        _messageController.clear();
+        final myMessage = MyMessage.fromBaseMessage(userMessage);
+
+        setState(() {
+          messages.insert(0, myMessage);
+          _messageController.clear();
+        });
+
+        Future.delayed(const Duration(milliseconds: 100), () {
+          _scrollToBottom();
+        });
+
       });
 
-      Future.delayed(const Duration(milliseconds: 100), () {
-        _scrollToBottom();
-      });
     }
 
   }
 
   void _scrollToBottom() {
+    final position = _scrollController.position.minScrollExtent;
+    _scrollController.animateTo(
+      position,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeOut,
+    );
+  }
+
+  void _scrollToTop() {
     _scrollController.animateTo(
       _scrollController.position.maxScrollExtent + 100,
       duration: const Duration(milliseconds: 300),

@@ -1,5 +1,13 @@
 
+import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+
+String formatTimestamp(int timestamp) {
+  var date = DateTime.fromMillisecondsSinceEpoch(timestamp);
+  var formatter = DateFormat('h:mm a'); // Use 'h:mm a' for hour:minute AM/PM
+  return formatter.format(date);
+}
 
 String formatChatDateString(String dateString) {
 
