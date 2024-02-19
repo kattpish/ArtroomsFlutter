@@ -12,6 +12,7 @@ List<MyChat> loadChats() {
       unreadMessages: 3,
       profilePictureUrl: 'https://via.placeholder.com',
       date: "2024-02-06 23:46",
+      messages: [],
     ),
     MyChat(
       id: '2',
@@ -20,6 +21,7 @@ List<MyChat> loadChats() {
       unreadMessages: 1,
       profilePictureUrl: 'https://via.placeholder.com',
       date: "2024-02-04 23:46",
+      messages: [],
     ),
     // MyChat(
     //   id: '3',
@@ -36,6 +38,7 @@ List<MyChat> loadChats() {
       unreadMessages: 3,
       profilePictureUrl: 'https://via.placeholder.com',
       date: "2024-02-01 23:46",
+      messages: [],
     ),
     MyChat(
       id: '5',
@@ -44,6 +47,7 @@ List<MyChat> loadChats() {
       unreadMessages: 0,
       profilePictureUrl: 'https://via.placeholder.com',
       date: "2024-01-26 23:46",
+      messages: [],
     ),
     // MyChat(
     //   id: '6',
@@ -68,6 +72,7 @@ List<MyChat> loadChats() {
       unreadMessages: 8,
       profilePictureUrl: 'https://via.placeholder.com',
       date: "2024-01-25 23:46",
+      messages: [],
     ),
     // MyChat(
     //   id: '9',
@@ -92,6 +97,7 @@ List<MyChat> loadChats() {
       unreadMessages: 0,
       profilePictureUrl: 'https://via.placeholder.com',
       date: "2024-01-24 23:46",
+      messages: [],
     ),
     MyChat(
       id: '12',
@@ -100,6 +106,7 @@ List<MyChat> loadChats() {
       unreadMessages: 0,
       profilePictureUrl: 'https://via.placeholder.com',
       date: "2024-01-20 23:46",
+      messages: [],
     ),
   ];
 

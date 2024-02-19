@@ -1,21 +1,10 @@
 
 import 'dart:math';
 
-import 'package:sendbird_sdk/core/message/base_message.dart';
-
 import '../beans/bean_message.dart';
-import 'module_sendbird.dart';
 
 
 List<MyMessage> loadMessages() {
-
-  MySendBird mySendBird = MySendBird();
-
-  mySendBird.loadMessages().then((List<BaseMessage> baseMessages) {
-
-    baseMessages[0].message;
-
-  });
 
   List<MyMessage> messages = [];
 

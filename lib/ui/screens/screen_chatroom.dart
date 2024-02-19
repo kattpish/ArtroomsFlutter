@@ -29,6 +29,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
 
   bool _isInitialized = false;
   bool _isLoading = true;
+  bool _isLoadMore = false;
   bool _isButtonDisabled = true;
   bool _showAttachment = false;
   bool _showAttachmentFull = false;
@@ -123,20 +124,37 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
                 Expanded(
                   child: _isLoading
                       ? const MyLoader()
-                      : Container(
+                      : Stack(
+                    alignment: AlignmentDirectional.topCenter,
+                        children: [
+                          Container(
                     child: messages.isNotEmpty ? ListView.builder(
-                      controller: _scrollController,
-                      itemCount: messages.length,
-                      reverse: true,
-                      itemBuilder: (context, index) {
-                        final message = messages[index];
-                        return message.isMe
-                            ? _buildMyMessageBubble(message)
-                            : _buildOtherMessageBubble(message);
-                      },
+                          controller: _scrollController,
+                          itemCount: messages.length,
+                          reverse: true,
+                          itemBuilder: (context, index) {
+                            final message = messages[index];
+                            return message.isMe
+                                ? _buildMyMessageBubble(message)
+                                : _buildOtherMessageBubble(message);
+                          },
                     )
-                        : buildNoChats(context),
+                            : buildNoChats(context),
                   ),
+                          Visibility(
+                              visible: _isLoadMore,
+                            child: Container(
+                              width: 20,
+                              height: 20,
+                              margin: const EdgeInsets.only(top: 6),
+                              child: const CircularProgressIndicator(
+                                color: Color(0xFF6A79FF),
+                                strokeWidth: 3,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                 ),
                 _buildMessageInput(),
                 const SizedBox(height: 25),
@@ -838,8 +856,12 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
   Future<void> _loadMessages() async {
 
     if(!_isInitialized) {
-      await mySendBird.initSendbird();
+      await mySendBird.joinChannel(widget.chat.id);
       _isInitialized = true;
+    }
+
+    if(!_isLoadMore) {
+      // _isLoadMore = messages.isNotEmpty;
     }
 
     Future.delayed(const Duration(seconds: 1), () {
@@ -860,12 +882,18 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
           if(_isLoading) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               if (_scrollController.hasClients) {
-                _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+                _scrollController.jumpTo(0);
               }
             });
           }
 
-          _isLoading = false;
+        }).catchError((e) {
+
+        }).whenComplete(() {
+          setState(() {
+            _isLoading = false;
+            _isLoadMore = false;
+          });
         });
 
       }
@@ -910,9 +938,8 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
   }
 
   void _scrollToBottom() {
-    final position = _scrollController.position.minScrollExtent;
     _scrollController.animateTo(
-      position,
+      0,
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeOut,
     );

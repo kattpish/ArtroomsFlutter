@@ -3,8 +3,8 @@
     <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
+        android:name="com.artrooms.MainApplication"
         android:label="Artrooms"
-        android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
 
         <activity

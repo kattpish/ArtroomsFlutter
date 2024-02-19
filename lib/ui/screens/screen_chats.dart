@@ -4,8 +4,11 @@ import 'package:artrooms/ui/screens/screen_notifications_sounds.dart';
 import 'package:artrooms/ui/screens/screen_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:sendbird_sdk/core/channel/group/group_channel.dart';
 
 import '../../beans/bean_chat.dart';
+import '../../modules/module_sendbird.dart';
+import '../../utils/notifications.dart';
 import '../../utils/utils.dart';
 import '../theme/theme_colors.dart';
 import '../widgets/widget_loader.dart';
@@ -27,13 +30,16 @@ class _MyScreenChatsState extends State<MyScreenChats> {
   bool isLoading = true;
   bool isSearching = false;
   final List<MyChat> chats = [];
+  final List<MyChat> chatsAll = [];
   TextEditingController searchController = TextEditingController();
+
+  MySendBird mySendBird = MySendBird();
 
   @override
   void initState() {
     super.initState();
 
-    refreshChats();
+    loadChats();
 
     searchController.addListener(() {
       searchChats(searchController.text);
@@ -165,21 +171,27 @@ class _MyScreenChatsState extends State<MyScreenChats> {
         ],
       ),
       child: ListTile(
-        leading: CircleAvatar(
-          radius: 30,
-          backgroundColor: Colors.transparent,
-          child: FadeInImage.assetNetwork(
-            placeholder: 'assets/images/profile/profile_${(index % 2) + 1}.png',
-            image: chats[index].profilePictureUrl,
-            fit: BoxFit.cover,
-            fadeInDuration: const Duration(milliseconds: 200),
-            fadeOutDuration: const Duration(milliseconds: 200),
-            imageErrorBuilder: (context, error, stackTrace) {
-              return Image.asset(
-                'assets/images/profile/profile_${(index % 2) + 1}.png',
-                fit: BoxFit.cover,
-              );
-            },
+        leading: Container(
+          decoration: const BoxDecoration(
+            shape: BoxShape.circle,
+          ),
+          clipBehavior: Clip.antiAlias,
+          child: CircleAvatar(
+            radius: 30,
+            backgroundColor: Colors.transparent,
+            child: FadeInImage.assetNetwork(
+              placeholder: 'assets/images/profile/profile_${(index % 2) + 1}.png',
+              image: chats[index].profilePictureUrl,
+              fit: BoxFit.cover,
+              fadeInDuration: const Duration(milliseconds: 200),
+              fadeOutDuration: const Duration(milliseconds: 200),
+              imageErrorBuilder: (context, error, stackTrace) {
+                return Image.asset(
+                  'assets/images/profile/profile_${(index % 2) + 1}.png',
+                  fit: BoxFit.cover,
+                );
+              },
+            ),
           ),
         ),
         title: Text(
@@ -355,18 +367,28 @@ class _MyScreenChatsState extends State<MyScreenChats> {
     );
   }
 
-  void refreshChats() {
+  Future<void> loadChats() async {
 
-    setState(() {
-      isLoading = true;
-      chats.clear();
-    });
+    mySendBird.getListOfGroupChannels().then((List<GroupChannel> groupChannels) {
 
-    Future.delayed(const Duration(seconds: 1), () {
+      for (GroupChannel groupChannel in groupChannels) {
+        MyChat myChat = MyChat.fromGroupChannel(groupChannel);
+        chatsAll.add(myChat);
+        showNotificationChat(myChat);
+      }
+
+      setState(() {
+        chats.addAll(chatsAll);
+      });
+
+    }).catchError((e) {
+
+    }).whenComplete(() {
+
       setState(() {
         isLoading = false;
-        chats.addAll(loadChats());
       });
+
     });
 
   }
@@ -379,8 +401,12 @@ class _MyScreenChatsState extends State<MyScreenChats> {
       }
     });
 
-    Future.delayed(const Duration(seconds: 1), () {
-      List<MyChat> filtered = filterChats(query);
+    Future.delayed(const Duration(milliseconds: 100), () {
+
+      List<MyChat> filtered = chatsAll.where((chat) {
+        return chat.name.toLowerCase().contains(query.toLowerCase()) ||
+            chat.lastMessage.toLowerCase().contains(query.toLowerCase());
+      }).toList();
 
       setState(() {
         chats.clear();
@@ -388,6 +414,7 @@ class _MyScreenChatsState extends State<MyScreenChats> {
         isSearching = false;
         isLoading = false;
       });
+
     });
 
   }
