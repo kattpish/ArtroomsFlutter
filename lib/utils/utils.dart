@@ -51,3 +51,7 @@ Future<void> launchInBrowser(Uri url) async {
     throw Exception('Could not launch $url');
   }
 }
+
+bool isEmailValid(String email) {
+  return RegExp(r"^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(email);
+}
