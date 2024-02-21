@@ -11,32 +11,25 @@ class AuthModule {
 
     const String url = 'https://artrooms-api-elasticbeanstalk.com/graphql';
 
+    Map<String, Object> body = {
+      "operationName": "Login",
+      "variables": {
+        "loginUserInput": {
+          "email": email,
+          "password": password,
+          "loginRemember": loginRemember,
+        },
+      },
+      "query": "mutation Login(\$loginUserInput: LoginUserInput) { login(loginUserInput: \$loginUserInput) { ... on Tokens { accessToken refreshToken __typename } __typename } }",
+    };
+
     final response = await http.post(
       Uri.parse(url),
       headers: {"Content-Type": "application/json"},
-      body: jsonEncode({
-        "operationName": "Login",
-        "variables": {
-          "loginUserInput": {
-            "email": email,
-            "password": password,
-            "loginRemember": loginRemember,
-          },
-        },
-        "query": """
-          mutation Login(\$loginUserInput: LoginUserInput) {
-            login(loginUserInput: \$loginUserInput) {
-              ... on Tokens {
-                accessToken
-                refreshToken
-                __typename
-              }
-              __typename
-            }
-          }
-        """,
-      }),
+      body: jsonEncode(body),
     );
+
+    print("${response.statusCode} ${response.body}\n${jsonEncode(body)}");
 
     if (response.statusCode == 200) {
       final responseBody = jsonDecode(response.body);

@@ -2,6 +2,7 @@ import 'package:artrooms/ui/screens/screen_chats.dart';
 import 'package:artrooms/ui/screens/screen_login_reset.dart';
 import 'package:artrooms/ui/widgets/widget_loader.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../modules/module_auth.dart';
 import '../../utils/utils.dart';
@@ -235,20 +236,23 @@ class _MyScreeLoginState extends State<MyScreenLogin> {
       email: _emailController.text,
       password: _passwordController.text,
       loginRemember: true,
-      callback: (bool success, String? accessToken, String? refreshToken) {
-
-        setState(() {
-          _isLoading = false;
-        });
+      callback: (bool success, String? accessToken, String? refreshToken) async {
 
         if (success) {
 
+          final SharedPreferences prefs = await SharedPreferences.getInstance();
+          await prefs.setString('accessToken', accessToken ?? '');
+          await prefs.setString('refreshToken', refreshToken ?? '');
 
           print("Login successful! Access Token: $accessToken, Refresh Token: $refreshToken");
           Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const MyScreenChats()));
         } else {
           _showSnackBar(context, "로그인 실패");
         }
+
+        setState(() {
+          _isLoading = false;
+        });
 
       },
     );
