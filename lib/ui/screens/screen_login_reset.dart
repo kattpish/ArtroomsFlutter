@@ -21,7 +21,7 @@ class MyScreenLoginReset extends StatefulWidget {
 class _MyScreenLoginResetState extends State<MyScreenLoginReset> with SingleTickerProviderStateMixin {
 
   late TabController _tabController;
-  final TextEditingController _idController = TextEditingController();
+  final TextEditingController _idController =  TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _isButtonDisabled = true;

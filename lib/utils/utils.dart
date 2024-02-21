@@ -1,4 +1,6 @@
 
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -54,4 +56,13 @@ Future<void> launchInBrowser(Uri url) async {
 
 bool isEmailValid(String email) {
   return RegExp(r"^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(email);
+}
+
+void showSnackBar(BuildContext context, String message) {
+  final snackBar = SnackBar(content: Text(message));
+  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+}
+
+void closeKeyboard(BuildContext context) {
+  FocusScope.of(context).requestFocus(FocusNode());
 }

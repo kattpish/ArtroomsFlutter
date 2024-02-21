@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
+
 class AuthModule {
+
   Future<void> login({
     required String email,
     required String password,
@@ -42,7 +44,7 @@ class AuthModule {
       }
     }
 
-    // If the response does not match our successful login criteria
     callback(false, null, null);
   }
+
 }

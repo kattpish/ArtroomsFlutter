@@ -1,6 +1,5 @@
 import 'package:artrooms/ui/screens/screen_chats.dart';
 import 'package:artrooms/ui/screens/screen_login_reset.dart';
-import 'package:artrooms/ui/widgets/widget_loader.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -25,6 +24,11 @@ class _MyScreeLoginState extends State<MyScreenLogin> {
   bool _isLoading = false;
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -212,17 +216,17 @@ class _MyScreeLoginState extends State<MyScreenLogin> {
     if(_isLoading) return;
 
     if (_emailController.text.isEmpty) {
-      _showSnackBar(context, "이메일을 입력해주세요");
+      showSnackBar(context, "이메일을 입력해주세요");
       return;
     }
 
     if (!isEmailValid(_emailController.text)) {
-      _showSnackBar(context, "유효한 이메일을 입력해주세요");
+      showSnackBar(context, "유효한 이메일을 입력해주세요");
       return;
     }
 
     if (_passwordController.text.isEmpty) {
-      _showSnackBar(context, "비밀번호를 입력해주세요");
+      showSnackBar(context, "비밀번호를 입력해주세요");
       return;
     }
 
@@ -232,7 +236,8 @@ class _MyScreeLoginState extends State<MyScreenLogin> {
       _isLoading = true;
     });
 
-    AuthModule().login(
+    AuthModule authModule = AuthModule();
+    authModule.login(
       email: _emailController.text,
       password: _passwordController.text,
       loginRemember: true,
@@ -244,10 +249,12 @@ class _MyScreeLoginState extends State<MyScreenLogin> {
           await prefs.setString('accessToken', accessToken ?? '');
           await prefs.setString('refreshToken', refreshToken ?? '');
 
-          print("Login successful! Access Token: $accessToken, Refresh Token: $refreshToken");
-          Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const MyScreenChats()));
+          Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) {
+            return const MyScreenChats();
+          }));
+
         } else {
-          _showSnackBar(context, "로그인 실패");
+          showSnackBar(context, "로그인 실패");
         }
 
         setState(() {
@@ -257,15 +264,6 @@ class _MyScreeLoginState extends State<MyScreenLogin> {
       },
     );
 
-  }
-
-  void _showSnackBar(BuildContext context, String message) {
-    final snackBar = SnackBar(content: Text(message));
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-  }
-
-  void closeKeyboard(BuildContext context) {
-    FocusScope.of(context).requestFocus(FocusNode());
   }
 
 }
