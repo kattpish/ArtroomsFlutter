@@ -47,4 +47,70 @@ class AuthModule {
     callback(false, null, null);
   }
 
+  Future<void> resetPassword({required String email, required Function(bool success, String message) callback}) async {
+
+    const String url = 'https://artrooms-api-elasticbeanstalk.com/graphql';
+
+    Map<String, dynamic> body = {
+      "operationName": "SendEmailForPassword",
+      "variables": {
+        "email": email,
+      },
+      "query": """
+        mutation SendEmailForPassword(\$email: String!) {
+          sendEmailForPassword(email: \$email) {
+            ... on Student {
+              id
+              nickname
+              name
+              phoneNumber
+              acceptMarketing
+              certificationPhone
+              user {
+                id
+                type
+                profileImgId
+                profileImg {
+                  accessUrl
+                  id
+                  __typename
+                }
+                socialImg
+                email
+                __typename
+              }
+              __typename
+            }
+            ... on Error {
+              status
+              message
+              __typename
+            }
+            __typename
+          }
+        }
+      """,
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: json.encode(body),
+      );
+
+      final responseData = json.decode(response.body);
+      if (response.statusCode == 200 && responseData['data']['sendEmailForPassword'] != null && responseData['data']['sendEmailForPassword']['__typename'] == "Error") {
+        callback(false, responseData['data']['sendEmailForPassword']['message']);
+      } else {
+        callback(true, "이메일로 비밀번호 재설정 링크가 전송되었습니다.");
+      }
+
+    } catch (e) {
+      callback(false, "네트워크 오류가 발생했습니다. 다시 시도해주세요.");
+    }
+  }
+
 }

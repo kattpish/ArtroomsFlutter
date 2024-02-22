@@ -101,7 +101,7 @@ class _MyScreeLoginState extends State<MyScreenLogin> {
                           child: TextField(
                             controller: _emailController,
                             focusNode: _emailFocus,
-                            autofocus: true,
+                            autofocus: false,
                             textInputAction: TextInputAction.next,
                             onSubmitted: (_) {
                               FocusScope.of(context).requestFocus(_passwordFocus);
@@ -156,8 +156,8 @@ class _MyScreeLoginState extends State<MyScreenLogin> {
                             ),
                             child: _isLoading
                                 ? const SizedBox(
-                              width: 30,
-                              height: 30,
+                              width: 24,
+                              height: 24,
                               child: CircularProgressIndicator(
                                 color: Color(0xFF6A79FF),
                                 strokeWidth: 3,
@@ -257,12 +257,10 @@ class _MyScreeLoginState extends State<MyScreenLogin> {
       showSnackBar(context, "이메일을 입력해주세요");
       return;
     }
-
     if (!isEmailValid(_emailController.text)) {
       showSnackBar(context, "유효한 이메일을 입력해주세요");
       return;
     }
-
     if (_passwordController.text.isEmpty) {
       showSnackBar(context, "비밀번호를 입력해주세요");
       return;
