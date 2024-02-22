@@ -1,5 +1,5 @@
-import 'package:artrooms/modules/module_chats.dart';
 import 'package:artrooms/ui/screens/screen_chatroom.dart';
+import 'package:artrooms/ui/screens/screen_login.dart';
 import 'package:artrooms/ui/screens/screen_notifications_sounds.dart';
 import 'package:artrooms/ui/screens/screen_profile.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +7,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:sendbird_sdk/core/channel/group/group_channel.dart';
 
 import '../../beans/bean_chat.dart';
+import '../../modules/module_datastore.dart';
 import '../../modules/module_sendbird.dart';
 import '../../utils/notifications.dart';
 import '../../utils/utils.dart';
@@ -38,6 +39,13 @@ class _MyScreenChatsState extends State<MyScreenChats> {
   @override
   void initState() {
     super.initState();
+
+    if(!MyDataStore().isLoggedIn()) {
+      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) {
+        return const MyScreenLogin();
+      }));
+      return;
+    }
 
     loadChats();
 

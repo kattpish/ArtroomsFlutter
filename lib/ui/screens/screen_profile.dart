@@ -3,6 +3,7 @@ import 'package:artrooms/ui/screens/screen_login.dart';
 import 'package:artrooms/ui/screens/screen_profile_edit.dart';
 import 'package:flutter/material.dart';
 
+import '../../modules/module_datastore.dart';
 import '../theme/theme_colors.dart';
 
 
@@ -179,8 +180,8 @@ class _MyScreenProfileState extends State<MyScreenProfile> {
             ListTile(
                 title: const Text('로그아웃'),
                 onTap: () {
-                  Navigator.of(context).pop();
-                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  MyDataStore().logout();
+                  Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) {
                     return const MyScreenLogin();
                   }));
                 }
