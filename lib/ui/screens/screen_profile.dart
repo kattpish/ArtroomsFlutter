@@ -1,11 +1,13 @@
 
 import 'package:artrooms/ui/screens/screen_login.dart';
+import 'package:artrooms/ui/screens/screen_notifications_sounds.dart';
 import 'package:artrooms/ui/screens/screen_profile_edit.dart';
 import 'package:flutter/material.dart';
 
 import '../../beans/bean_profile.dart';
 import '../../data/module_datastore.dart';
 import '../../modules/module_profile.dart';
+import '../../utils/utils.dart';
 import '../theme/theme_colors.dart';
 
 
@@ -156,7 +158,10 @@ class _MyScreenProfileState extends State<MyScreenProfile> {
             ListTile(
               title: const Text('지원하기'),
               onTap: () {
-
+                launchInBrowser(Uri(scheme: 'mailto', path: 'artrooms@artrooms.com', queryParameters: {
+                  'subject': '아트룸즈] 아티스트 지원',
+                  'body': '이름:\n작가명(한글):\n작가명(영문):\n휴대전화번호:\n레퍼런스 링크:',
+                },));
               },
             ),
             const Divider(
@@ -166,19 +171,21 @@ class _MyScreenProfileState extends State<MyScreenProfile> {
             ListTile(
               title: const Text('알림 및 소리'),
               onTap: () {
-
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return const MyScreenNotificationsSounds();
+                }));
               },
             ),
             ListTile(
-              title: const Text('지원하기'),
+              title: const Text('고객센터'),
               onTap: () {
-
+                launchInBrowser(Uri(scheme: 'https', host: 'artrooms.com', path: 'about'));
               },
             ),
             ListTile(
               title: const Text('약관 및 정책'),
               onTap: () {
-
+                launchInBrowser(Uri(scheme: 'https', host: 'artrooms.com', path: 'policy/service'));
               },
             ),
             ListTile(
