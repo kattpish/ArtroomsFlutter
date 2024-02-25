@@ -139,6 +139,7 @@ class _MyScreenProfileEditState extends State<MyScreenProfileEdit> {
                     label: '이름',
                     controller: _nameController,
                     focus: _nameFocus,
+                    readOnly: true,
                     onSubmitted: (_) {
                       FocusScope.of(context).requestFocus(_nicknameFocus);
                     }
@@ -149,7 +150,7 @@ class _MyScreenProfileEditState extends State<MyScreenProfileEdit> {
                     controller: _nicknameController,
                     focus: _nicknameFocus,
                     onSubmitted: (_) {
-                      FocusScope.of(context).requestFocus(_emailFocus);
+                      FocusScope.of(context).requestFocus(_phoneFocus);
                     }
                 ),
                 const SizedBox(height: 16),
@@ -157,6 +158,7 @@ class _MyScreenProfileEditState extends State<MyScreenProfileEdit> {
                     label: '이메일',
                     controller: _emailController,
                     focus: _emailFocus,
+                    readOnly: true,
                     onSubmitted: (_) {
                       FocusScope.of(context).requestFocus(_passwordFocus);
                     }
@@ -231,6 +233,7 @@ class _MyScreenProfileEditState extends State<MyScreenProfileEdit> {
   Widget _buildInputField({
     required String label,
     required TextEditingController controller,
+    bool readOnly = false,
     bool isPassword = false,
     required FocusNode focus,
     textInputAction = TextInputAction.next,
@@ -245,7 +248,7 @@ class _MyScreenProfileEditState extends State<MyScreenProfileEdit> {
           const SizedBox(height: 4),
           Container(
             decoration: BoxDecoration(
-              color: const Color(0xFFF5F5F5),
+              color: readOnly ? const Color(0xFFF5F5F5) : const Color(0xFFF5F5F5),
               borderRadius: BorderRadius.circular(8.0),
               border: Border.all(color: const Color(0xFFE3E3E3), width: 1.0,),
             ),
@@ -259,8 +262,9 @@ class _MyScreenProfileEditState extends State<MyScreenProfileEdit> {
                   borderSide: BorderSide.none,
                 ),
                 filled: true,
-                fillColor: Colors.white,
+                fillColor: readOnly ? const Color(0xFFF5F5F5) : const Color(0xFFFFFFFF),
               ),
+              readOnly: readOnly,
               obscureText: isPassword,
               onSubmitted: onSubmitted,
             ),
@@ -274,6 +278,7 @@ class _MyScreenProfileEditState extends State<MyScreenProfileEdit> {
     required String label,
     required VoidCallback onTap,
     required TextEditingController controller,
+    bool readOnly = false,
     bool isObscure = false,
     textInputAction = TextInputAction.next,
     required void Function(String) onSubmitted,
@@ -288,7 +293,7 @@ class _MyScreenProfileEditState extends State<MyScreenProfileEdit> {
           const SizedBox(height: 4),
           Container(
             decoration: BoxDecoration(
-              color: const Color(0xFFF5F5F5),
+              color: readOnly ? const Color(0xFFF5F5F5) : const Color(0xFFF5F5F5),
               borderRadius: BorderRadius.circular(8.0),
               border: Border.all(color: const Color(0xFFE3E3E3), width: 1.0,),
             ),
@@ -300,11 +305,11 @@ class _MyScreenProfileEditState extends State<MyScreenProfileEdit> {
                     focusNode: focus,
                     obscureText: isObscure,
                     textInputAction: textInputAction,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       hintText: '',
                       filled: true,
-                      fillColor: Colors.white,
-                      border: OutlineInputBorder(
+                      fillColor: readOnly ? const Color(0xFFF5F5F5) : const Color(0xFFFFFFFF),
+                      border: const OutlineInputBorder(
                         borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(8.0),
                           topRight: Radius.circular(0.0),
@@ -313,8 +318,9 @@ class _MyScreenProfileEditState extends State<MyScreenProfileEdit> {
                         ),
                         borderSide: BorderSide.none,
                       ),
-                      contentPadding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
                     ),
+                    readOnly: readOnly,
                     onSubmitted: onSubmitted,
                   ),
                 ),
