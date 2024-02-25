@@ -4,13 +4,16 @@ import 'package:artrooms/ui/screens/screen_notifications_sounds.dart';
 import 'package:artrooms/ui/screens/screen_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:sendbird_sdk/core/channel/group/group_channel.dart';
 
 import '../../beans/bean_chat.dart';
-import '../../modules/module_datastore.dart';
+import '../../modules/module_chats.dart';
+import '../../data/module_datastore.dart';
 import '../../modules/module_sendbird.dart';
-import '../../utils/notifications.dart';
+import '../../utils/utils_notifications.dart';
 import '../../utils/utils.dart';
+import '../../utils/utils_permissions.dart';
 import '../theme/theme_colors.dart';
 import '../widgets/widget_loader.dart';
 
@@ -35,6 +38,7 @@ class _MyScreenChatsState extends State<MyScreenChats> {
   TextEditingController searchController = TextEditingController();
 
   MySendBird mySendBird = MySendBird();
+  ChatModule chatModule = ChatModule();
 
   @override
   void initState() {
@@ -46,6 +50,8 @@ class _MyScreenChatsState extends State<MyScreenChats> {
       }));
       return;
     }
+
+    requestPermissions(context);
 
     loadChats();
 
@@ -207,7 +213,7 @@ class _MyScreenChatsState extends State<MyScreenChats> {
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: const TextStyle(
-            fontSize: 16,
+              fontSize: 16,
               fontWeight: FontWeight.w600
           ),
         ),
@@ -216,7 +222,7 @@ class _MyScreenChatsState extends State<MyScreenChats> {
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
           style: const TextStyle(
-              fontSize: 14,
+            fontSize: 14,
           ),
         ),
         trailing: Column(
@@ -387,6 +393,22 @@ class _MyScreenChatsState extends State<MyScreenChats> {
 
       setState(() {
         chats.addAll(chatsAll);
+      });
+
+    }).catchError((e) {
+
+    }).whenComplete(() {
+
+      setState(() {
+        isLoading = false;
+      });
+
+    });
+
+    chatModule.getUserChats().then((List<MyChat> listChats) {
+
+      setState(() {
+        chats.addAll(listChats);
       });
 
     }).catchError((e) {

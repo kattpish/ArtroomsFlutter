@@ -1,6 +1,7 @@
 import 'package:artrooms/ui/screens/screen_notifications_sounds.dart';
 import 'package:flutter/material.dart';
 
+import '../../data/module_datastore.dart';
 import '../theme/theme_colors.dart';
 
 
@@ -17,10 +18,20 @@ class MyScreenNotifications extends StatefulWidget {
 
 class _MyScreenNotificationsState extends State<MyScreenNotifications> {
 
-  final List<Map<String, dynamic>> _notifications = [
-    {"title": "새로운알림", "enabled": true},
-    {"title": "메시지알림", "enabled": false},
-  ];
+  MyDataStore myDataStore = MyDataStore();
+
+  late final List<Map<String, dynamic>> _notifications;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _notifications = [
+      {"title": "새로운알림", "enabled": myDataStore.getBool("새로운알림", true)},
+      {"title": "메시지알림", "enabled": myDataStore.getBool("메시지알림", false)},
+    ];
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -96,6 +107,7 @@ class _MyScreenNotificationsState extends State<MyScreenNotifications> {
 
   void _toggleNotification(int index, bool value) {
     setState(() {
+      myDataStore.setBool(_notifications[index]['title'], value);
       _notifications[index]['enabled'] = value;
     });
   }

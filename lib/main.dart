@@ -1,5 +1,5 @@
 
-import 'package:artrooms/modules/module_datastore.dart';
+import 'package:artrooms/data/module_datastore.dart';
 import 'package:artrooms/ui/screens/screen_chats.dart';
 import 'package:artrooms/ui/screens/screen_login.dart';
 import 'package:flutter/material.dart';

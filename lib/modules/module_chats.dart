@@ -1,123 +1,73 @@
 
+import 'package:artrooms/data/module_datastore.dart';
+
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+
 import '../beans/bean_chat.dart';
 
 
-List<MyChat> loadChats() {
+class ChatModule {
 
-  final List<MyChat> chats = [
-    MyChat(
-      id: '1',
-      name: '아티스트',
-      lastMessage: '안녕하세요 선생님! 오늘 내주신 수업 과제는 지난주랑 같이 진행하면 될까요? 아니',
-      unreadMessages: 3,
-      profilePictureUrl: 'https://via.placeholder.com',
-      date: "2024-02-06 23:46",
-      messages: [],
-    ),
-    MyChat(
-      id: '2',
-      name: '아티스트',
-      lastMessage: '내일 미팅 준비 다 되셨나요?',
-      unreadMessages: 1,
-      profilePictureUrl: 'https://via.placeholder.com',
-      date: "2024-02-04 23:46",
-      messages: [],
-    ),
-    // MyChat(
-    //   id: '3',
-    //   name: '아티스트',
-    //   lastMessage: '프로젝트 마감일 확인 부탁드립니다.',
-    //   unreadMessages: 5,
-    //   profilePictureUrl: 'https://via.placeholder.com',
-    //   date: "2024-01-16",
-    // ),
-    MyChat(
-      id: '4',
-      name: '아티스트',
-      lastMessage: '안녕하세요! 오늘 프로젝트 어땠나요?',
-      unreadMessages: 3,
-      profilePictureUrl: 'https://via.placeholder.com',
-      date: "2024-02-01 23:46",
-      messages: [],
-    ),
-    MyChat(
-      id: '5',
-      name: '아티스트',
-      lastMessage: '내일 미팅 준비 다 되셨나요?',
-      unreadMessages: 0,
-      profilePictureUrl: 'https://via.placeholder.com',
-      date: "2024-01-26 23:46",
-      messages: [],
-    ),
-    // MyChat(
-    //   id: '6',
-    //   name: '아티스트',
-    //   lastMessage: '프로젝트 마감일 확인 부탁드립니다.',
-    //   unreadMessages: 5,
-    //   profilePictureUrl: 'https://via.placeholder.com',
-    //   date: "2023-07-16",
-    // ),
-    // MyChat(
-    //   id: '7',
-    //   name: '아티스트',
-    //   lastMessage: '안녕하세요! 오늘 프로젝트 어땠나요?',
-    //   unreadMessages: 3,
-    //   profilePictureUrl: 'https://via.placeholder.com',
-    //   date: "2023-07-16",
-    // ),
-    MyChat(
-      id: '8',
-      name: '아티스트',
-      lastMessage: '내일 미팅 준비 다 되셨나요?',
-      unreadMessages: 8,
-      profilePictureUrl: 'https://via.placeholder.com',
-      date: "2024-01-25 23:46",
-      messages: [],
-    ),
-    // MyChat(
-    //   id: '9',
-    //   name: '아티스트',
-    //   lastMessage: '프로젝트 마감일 확인 부탁드립니다.',
-    //   unreadMessages: 5,
-    //   profilePictureUrl: 'https://via.placeholder.com',
-    //   date: "2023-07-16",
-    // ),
-    // MyChat(
-    //   id: '10',
-    //   name: '아티스트',
-    //   lastMessage: '안녕하세요! 오늘 프로젝트 어땠나요?',
-    //   unreadMessages: 2,
-    //   profilePictureUrl: 'https://via.placeholder.com',
-    //   date: "2023-07-16",
-    // ),
-    MyChat(
-      id: '11',
-      name: '아티스트',
-      lastMessage: '내일 미팅 준비 다 되셨나요?',
-      unreadMessages: 0,
-      profilePictureUrl: 'https://via.placeholder.com',
-      date: "2024-01-24 23:46",
-      messages: [],
-    ),
-    MyChat(
-      id: '12',
-      name: '아티스트',
-      lastMessage: '프로젝트 마감일 확인 부탁드립니다.',
-      unreadMessages: 0,
-      profilePictureUrl: 'https://via.placeholder.com',
-      date: "2024-01-20 23:46",
-      messages: [],
-    ),
-  ];
+  Future<List<MyChat>> getUserChats() async {
 
-  return chats;
+    List<MyChat> chats = [];
 
-}
+    await fetchUserChannels().then((List<Map<String, dynamic>> listChannels) {
 
-List<MyChat> filterChats(String query) {
-  List<MyChat> filtered = loadChats().where((chat) {
-    return chat.name.toLowerCase().contains(query.toLowerCase()) ||
-        chat.lastMessage.toLowerCase().contains(query.toLowerCase());
-  }).toList();
-  return filtered;
+      for(Map<String, dynamic> data in listChannels) {
+        MyChat chat = MyChat.fromUrl(data);
+        chats.add(chat);
+      }
+
+      return chats;
+    });
+
+    return chats;
+  }
+
+  Future<List<Map<String, dynamic>>> fetchUserChannels() async {
+
+    MyDataStore myDataStore = MyDataStore();
+
+    String email = myDataStore.getEmail();
+    String encodedEmail = Uri.encodeComponent(email);
+
+    String baseUrl = 'https://api-01cfffe8-f1b8-4bb4-a576-952abdc8d08a.sendbird.com/v3/users/$encodedEmail/my_group_channels';
+    Map<String, String> queryParams = {
+      'token': myDataStore.getAccessToken(),
+      'limit': '20',
+      'order': 'latest_last_message',
+      'show_member': 'true',
+      'show_read_receipt': 'true',
+      'show_delivery_receipt': 'true',
+      'show_empty': 'true',
+      'member_state_filter': 'all',
+      'super_mode': 'all',
+      'public_mode': 'all',
+      'unread_filter': 'all',
+      'hidden_mode': 'unhidden_only',
+      'show_frozen': 'true',
+      'show_metadata': 'true',
+    };
+
+    Uri uri = Uri.parse(baseUrl).replace(queryParameters: queryParams);
+    final response = await http.get(
+      uri,
+      headers: {
+        'Accept': 'application/json',
+        'Api-Token': myDataStore.getAccessToken(),
+      },
+    );
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> data = json.decode(response.body);
+      return data['channels'];
+    } else {
+      print('Error fetching channels: ${response.body}');
+      return [];
+    }
+
+  }
+
 }

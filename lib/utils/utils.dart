@@ -7,13 +7,14 @@ import 'package:url_launcher/url_launcher.dart';
 
 String formatTimestamp(int timestamp) {
   var date = DateTime.fromMillisecondsSinceEpoch(timestamp);
-  var formatter = DateFormat('h:mm a'); // Use 'h:mm a' for hour:minute AM/PM
+  var formatter = DateFormat('h:mm a');
   return formatter.format(date);
 }
 
 String formatChatDateString(String dateString) {
 
   if(dateString.isNotEmpty) {
+
     final DateTime date = DateTime.parse(dateString);
     final DateTime now = DateTime.now();
     final DateTime today = DateTime(now.year, now.month, now.day);

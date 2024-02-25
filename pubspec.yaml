@@ -17,6 +17,8 @@ dependencies:
   # flutter_local_notifications: ^16.3.2
   http: ^0.13.3
   shared_preferences: ^2.0.15
+  image_picker: ^1.0.7
+  permission_handler: ^10.2.0
 
 dev_dependencies:
   flutter_test:

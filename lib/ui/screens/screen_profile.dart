@@ -3,7 +3,9 @@ import 'package:artrooms/ui/screens/screen_login.dart';
 import 'package:artrooms/ui/screens/screen_profile_edit.dart';
 import 'package:flutter/material.dart';
 
-import '../../modules/module_datastore.dart';
+import '../../beans/bean_profile.dart';
+import '../../data/module_datastore.dart';
+import '../../modules/module_profile.dart';
 import '../theme/theme_colors.dart';
 
 
@@ -19,6 +21,19 @@ class MyScreenProfile extends StatefulWidget {
 }
 
 class _MyScreenProfileState extends State<MyScreenProfile> {
+
+  UserModule userModule = UserModule();
+  MyDataStore myDataStore = MyDataStore();
+
+  MyProfile profile = MyProfile();
+
+  @override
+  void initState() {
+    super.initState();
+
+    fetchUserProfile();
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -66,38 +81,44 @@ class _MyScreenProfileState extends State<MyScreenProfile> {
             Row(
               children: [
                 const SizedBox(width: 12),
-                CircleAvatar(
-                  radius: 40,
-                  backgroundColor: Colors.transparent,
-                  child: FadeInImage.assetNetwork(
-                    placeholder: 'assets/images/profile/placeholder.png',
-                    image: 'https://via.placeholder.com',
-                    fit: BoxFit.cover,
-                    fadeInDuration: const Duration(milliseconds: 200),
-                    fadeOutDuration: const Duration(milliseconds: 200),
-                    imageErrorBuilder: (context, error, stackTrace) {
-                      return Image.asset(
-                        'assets/images/profile/placeholder.png',
-                        fit: BoxFit.cover,
-                      );
-                    },
+                Container(
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                  ),
+                  clipBehavior: Clip.antiAlias,
+                  child: CircleAvatar(
+                    radius: 40,
+                    backgroundColor: Colors.transparent,
+                    child: FadeInImage.assetNetwork(
+                      placeholder: 'assets/images/profile/placeholder.png',
+                      image: profile.profileImg,
+                      fit: BoxFit.cover,
+                      fadeInDuration: const Duration(milliseconds: 200),
+                      fadeOutDuration: const Duration(milliseconds: 200),
+                      imageErrorBuilder: (context, error, stackTrace) {
+                        return Image.asset(
+                          'assets/images/profile/placeholder.png',
+                          fit: BoxFit.cover,
+                        );
+                      },
+                    ),
                   ),
                 ),
                 const SizedBox(width: 12),
-                const Column(
+                Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      '이유미',
-                      style: TextStyle(
+                      myDataStore.getNickName(),
+                      style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 24,
                       ),
                     ),
-                    SizedBox(height: 4),
+                    const SizedBox(height: 4),
                     Text(
-                      '직함',
-                      style: TextStyle(
+                      myDataStore.getEmail(),
+                      style: const TextStyle(
                         color: Colors.grey,
                         fontSize: 16,
                       ),
@@ -191,6 +212,22 @@ class _MyScreenProfileState extends State<MyScreenProfile> {
         ),
       ),
     );
+  }
+
+  void fetchUserProfile() async {
+
+    Map<String, dynamic>? profileMap = await userModule.getMyProfile();
+    if (profileMap != null) {
+      myDataStore.saveProfile(profileMap);
+
+      setState(() {
+        profile = MyProfile.fromProfileMap(profileMap);
+      });
+
+      print("User Profile: $profileMap");
+    } else {
+      print("Failed to fetch user profile.");
+    }
   }
 
 }
