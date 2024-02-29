@@ -8,11 +8,12 @@ import 'package:sendbird_sdk/core/channel/group/group_channel.dart';
 import 'package:sendbird_sdk/core/channel/open/open_channel.dart';
 import 'package:sendbird_sdk/core/message/base_message.dart';
 import 'package:sendbird_sdk/core/message/user_message.dart';
-import 'package:sendbird_sdk/params/group_channel_params.dart';
 import 'package:sendbird_sdk/params/message_list_params.dart';
 import 'package:sendbird_sdk/params/user_message_params.dart';
 import 'package:sendbird_sdk/query/channel_list/group_channel_list_query.dart';
 import 'package:sendbird_sdk/sdk/sendbird_sdk_api.dart';
+
+import '../data/module_datastore.dart';
 
 
 const userId = 'alain';
@@ -33,19 +34,19 @@ class MySendBird {
 
     try {
 
+      MyDataStore myDataStore = MyDataStore();
+
+      String email = myDataStore.getEmail();
+
       SendbirdSdk(
           appId: "01CFFFE8-F1B8-4BB4-A576-952ABDC8D08A",
           apiToken: "39ac9b8e2125ad49035c7bd9c105ccc9d4dc7ba4"
       );
 
-      final user = await SendbirdSdk().connect(userId,
-          accessToken: "02de54411c3b107081cc75de3166aeebfb591af3"
-      );
+      final user = await SendbirdSdk().connect(email);
       if (kDebugMode) {
         print('Connected as ${user.userId}');
       }
-
-      // createChannelWithUser("alain1");
 
     } catch (e) {
       if (kDebugMode) {
@@ -84,52 +85,6 @@ class MySendBird {
 
     isLoading = false;
   }
-
-  Future<void> createChannelWithUser(String guestUserId) async {
-    try {
-      List<String> userIds = [userId, guestUserId];
-
-      GroupChannelParams params = GroupChannelParams()
-        ..userIds = userIds
-        ..name = guestUserId
-        ..name = guestUserId
-        ..isDistinct = true;
-
-      GroupChannel.createChannel(params).then((channel) {
-        if (kDebugMode) {
-          print('Channel created successfully with URL: ${channel.channelUrl}');
-        }
-      }).catchError((error) {
-        if (kDebugMode) {
-          print('Error creating channel: $error');
-        }
-      });
-    } catch (e) {
-      if (kDebugMode) {
-        print('Exception when creating channel: $e');
-      }
-    }
-  }
-
-  Future<void> updateGroupName(GroupChannel groupChannel, String newName) async {
-    try {
-
-      GroupChannelParams params = GroupChannelParams()
-        ..name = newName;
-
-      await groupChannel.updateChannel(params, progress: (int sentBytes, int totalBytes) {
-        if (kDebugMode) {
-          print("updateGroupName Progress: $sentBytes / $totalBytes");
-        }
-      });
-
-    } catch (e) {
-      if (kDebugMode) {
-        print("Error updating group channel name: $e");
-      }
-    }
-  }
-
 
   Future<List<GroupChannel>> getListOfGroupChannels() async {
     Completer<List<GroupChannel>> completer = Completer<List<GroupChannel>>();

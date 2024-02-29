@@ -4,7 +4,6 @@ import 'package:artrooms/ui/screens/screen_notifications_sounds.dart';
 import 'package:artrooms/ui/screens/screen_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:sendbird_sdk/core/channel/group/group_channel.dart';
 
 import '../../beans/bean_chat.dart';
@@ -71,8 +70,12 @@ class _MyScreenChatsState extends State<MyScreenChats> {
           title: const Text(
             '채팅',
             style: TextStyle(
-                color: colorMainGrey900,
-                fontWeight: FontWeight.w600
+              color: colorMainGrey900,
+              fontSize: 20,
+              fontFamily: 'SUIT',
+              fontWeight: FontWeight.w700,
+              height: 0,
+              letterSpacing: -0.40,
             ),
           ),
           backgroundColor: Colors.white,
@@ -88,7 +91,10 @@ class _MyScreenChatsState extends State<MyScreenChats> {
                   );
                 }).toList();
               },
-              icon: const Icon(Icons.more_vert, color: Colors.grey),
+              icon: const Icon(
+                  Icons.more_vert,
+                  color: colorMainGrey250
+              ),
               onSelected: (value) {
                 switch (value) {
                   case '설정':
@@ -112,8 +118,9 @@ class _MyScreenChatsState extends State<MyScreenChats> {
           children: [
             Visibility(
               visible: isSearching || chats.isNotEmpty || searchController.text.isNotEmpty,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
+              child: Container(
+                height: 44,
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: TextField(
                   controller: searchController,
                   decoration: InputDecoration(
@@ -122,7 +129,7 @@ class _MyScreenChatsState extends State<MyScreenChats> {
                         ? Icon(
                         Icons.search,
                         size: 30,
-                        color: searchController.text.isNotEmpty ? colorPrimaryBlue : Colors.grey
+                        color: searchController.text.isNotEmpty ? colorPrimaryBlue : colorMainGrey300
                     ) : Container(
                       width: 20,
                       height: 20,
@@ -143,6 +150,7 @@ class _MyScreenChatsState extends State<MyScreenChats> {
                 ),
               ),
             ),
+            const SizedBox(height: 10),
             Expanded(
               child: (chats.isNotEmpty || isSearching)
                   ? ListView.builder(
@@ -180,88 +188,104 @@ class _MyScreenChatsState extends State<MyScreenChats> {
             onPressed: _onClickOption2,
             backgroundColor: colorPrimaryBlue,
             foregroundColor: Colors.white,
-            child: Image.asset('assets/images/icons/icon_send.png', width: 24, height: 24),
+            child: Image.asset('assets/images/icons/icon_forward.png', width: 24, height: 24),
           ),
         ],
       ),
-      child: ListTile(
-        leading: Container(
-          decoration: const BoxDecoration(
-            shape: BoxShape.circle,
-          ),
-          clipBehavior: Clip.antiAlias,
-          child: CircleAvatar(
-            radius: 30,
-            backgroundColor: Colors.transparent,
-            child: FadeInImage.assetNetwork(
-              placeholder: 'assets/images/profile/profile_${(index % 2) + 1}.png',
-              image: chats[index].profilePictureUrl,
-              fit: BoxFit.cover,
-              fadeInDuration: const Duration(milliseconds: 200),
-              fadeOutDuration: const Duration(milliseconds: 200),
-              imageErrorBuilder: (context, error, stackTrace) {
-                return Image.asset(
-                  'assets/images/profile/profile_${(index % 2) + 1}.png',
-                  fit: BoxFit.cover,
-                );
-              },
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 4),
+        child: ListTile(
+          leading: Container(
+            decoration: const BoxDecoration(
+              shape: BoxShape.circle,
             ),
-          ),
-        ),
-        title: Text(
-          chats[index].name,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600
-          ),
-        ),
-        subtitle: Text(
-          chats[index].lastMessage,
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-          style: const TextStyle(
-            fontSize: 14,
-          ),
-        ),
-        trailing: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              formatChatDateString(chats[index].date),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                  color: Colors.grey,
-                  fontSize: 12
+            clipBehavior: Clip.antiAlias,
+            child: CircleAvatar(
+              radius: 30,
+              backgroundColor: Colors.transparent,
+              child: FadeInImage.assetNetwork(
+                placeholder: 'assets/images/profile/profile_${(index % 2) + 1}.png',
+                image: chats[index].profilePictureUrl,
+                fit: BoxFit.cover,
+                fadeInDuration: const Duration(milliseconds: 200),
+                fadeOutDuration: const Duration(milliseconds: 200),
+                imageErrorBuilder: (context, error, stackTrace) {
+                  return Image.asset(
+                    'assets/images/profile/profile_${(index % 2) + 1}.png',
+                    fit: BoxFit.cover,
+                  );
+                },
               ),
             ),
-            Visibility(
-              visible: chats[index].unreadMessages > 0,
-              child: Container(
-                margin: const EdgeInsets.only(right: 4),
-                padding: const EdgeInsets.all(8),
-                decoration: const BoxDecoration(
-                  color: colorPrimaryBlue,
-                  shape: BoxShape.circle,
-                ),
-                child: Text(
-                  chats[index].unreadMessages.toString(),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(color: Colors.white),
+          ),
+          title: Text(
+            chats[index].name,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              color: Color(0xFF1F1F1F),
+              fontSize: 15,
+              fontFamily: 'SUIT',
+              fontWeight: FontWeight.w700,
+              height: 0,
+              letterSpacing: -0.30,
+            ),
+          ),
+          subtitle: Text(
+            chats[index].lastMessage,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              color: Color(0xFF6B6B6B),
+              fontSize: 13,
+              fontFamily: 'SUIT',
+              fontWeight: FontWeight.w400,
+              height: 0,
+              letterSpacing: -0.26,
+            ),
+          ),
+          trailing: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                formatChatDateString(chats[index].date),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  color: Color(0xFF979797),
+                  fontSize: 10,
+                  fontFamily: 'SUIT',
+                  fontWeight: FontWeight.w400,
+                  height: 0,
+                  letterSpacing: -0.20,
                 ),
               ),
-            ),
-          ],
+              Visibility(
+                visible: chats[index].unreadMessages > 0,
+                child: Container(
+                  margin: const EdgeInsets.only(right: 4),
+                  padding: const EdgeInsets.all(8),
+                  decoration: const BoxDecoration(
+                    color: colorPrimaryBlue,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Text(
+                    chats[index].unreadMessages.toString(),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          onTap: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) {
+              return MyScreenChatroom(chat: chats[index]);
+            }));
+          },
         ),
-        onTap: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return MyScreenChatroom(chat: chats[index]);
-          }));
-        },
       ),
     );
   }
@@ -273,24 +297,32 @@ class _MyScreenChatsState extends State<MyScreenChats> {
         children: [
           Image.asset(
             'assets/images/icons/chat_blue.png',
-            width: 80.0,
-            height: 80.0,
+            width: 50.0,
+            height: 50.0,
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 14),
           const Text(
             '채팅방이 없어요',
             style: TextStyle(
-              fontSize: 24.0,
-              fontWeight: FontWeight.bold,
+              color: Color(0xFF565656),
+              fontSize: 16,
+              fontFamily: 'SUIT',
+              fontWeight: FontWeight.w600,
+              height: 0,
+              letterSpacing: -0.32,
             ),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 12),
           const Text(
             '아트룸즈 홈페이지에서 상담신청을 하시거나\n라이브 클래스가 개설되면 채팅방이 개설됩니다',
             textAlign: TextAlign.center,
             style: TextStyle(
-              fontSize: 16.0,
               color: colorMainGrey700,
+              fontSize: 12,
+              fontFamily: 'SUIT',
+              fontWeight: FontWeight.w400,
+              height: 0,
+              letterSpacing: -0.24,
             ),
           ),
         ],
@@ -341,35 +373,58 @@ class _MyScreenChatsState extends State<MyScreenChats> {
                 const SizedBox(height: 20),
                 const Text(
                   '채팅방 나가기',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    color: Color(0xFF1F1F1F),
+                    fontSize: 20,
+                    fontFamily: 'SUIT',
+                    fontWeight: FontWeight.w600,
+                    height: 0,
+                    letterSpacing: -0.40,
+                  ),
                 ),
                 const SizedBox(height: 15),
                 const Text(
                   '대화 내용이 모두 삭제됩니다.',
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 16),
+                  style: TextStyle(
+                    color: Color(0xFF6B6B6B),
+                    fontSize: 16,
+                    fontFamily: 'SUIT',
+                    fontWeight: FontWeight.w400,
+                    height: 0,
+                    letterSpacing: -0.32,
+                  ),
                 ),
                 const SizedBox(height: 50),
-                ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      chats.removeAt(0);
-                    });
-                    Navigator.of(context).pop();
-                  },
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: colorPrimaryBlue,
-                    backgroundColor: colorPrimaryBlue,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30.0),
+                Container(
+                  height: 44,
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        chats.removeAt(0);
+                      });
+                      Navigator.of(context).pop();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      elevation: 0,
+                      foregroundColor: colorPrimaryBlue,
+                      backgroundColor: colorPrimaryBlue,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                      ),
+                      minimumSize: const Size(double.infinity, 50),
                     ),
-                    minimumSize: const Size(double.infinity, 50),
-                  ),
-                  child: const Text(
-                    '확인',
-                    style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.white
+                    child: const Text(
+                      '확인',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontFamily: 'SUIT',
+                        fontWeight: FontWeight.w700,
+                        height: 0,
+                        letterSpacing: -0.32,
+                      ),
                     ),
                   ),
                 ),

@@ -27,8 +27,8 @@ class _MyScreenNotificationsSoundsState extends State<MyScreenNotificationsSound
     super.initState();
 
     _notifications = [
-      {"title": "새로운알림", "enabled": myDataStore.getBool("새로운알림", true)},
-      {"title": "메시지알림", "enabled": myDataStore.getBool("메시지알림", false)},
+      {"title": "채팅알림", "enabled": myDataStore.getBool("채팅알림", true)},
+      {"title": "멘션알림", "enabled": myDataStore.getBool("멘션알림", false)},
     ];
 
   }
@@ -40,18 +40,30 @@ class _MyScreenNotificationsSoundsState extends State<MyScreenNotificationsSound
       home: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.white,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios, color: colorMainGrey250),
-            onPressed: () => Navigator.of(context).pop(),
+          leading: Padding(
+            padding: const EdgeInsets.only(left: 8.0, right: 10.0),
+            child: IconButton(
+              icon: const Icon(
+                Icons.arrow_back_ios,
+                color: colorMainGrey250,
+                size: 20,
+              ),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
           ),
+          leadingWidth: 32,
           title: const Text(
             '알림 및 소리',
             style: TextStyle(
-                color: colorMainGrey900,
-                fontWeight: FontWeight.w600
+              color: colorMainGrey900,
+              fontSize: 18,
+              fontFamily: 'SUIT',
+              fontWeight: FontWeight.w700,
+              height: 0,
+              letterSpacing: -0.36,
             ),
           ),
-          elevation: 0.5,
+          elevation: 0,
         ),
         backgroundColor: colorMainScreen,
         body: SingleChildScrollView(
@@ -61,26 +73,54 @@ class _MyScreenNotificationsSoundsState extends State<MyScreenNotificationsSound
               Column(
                 children: _notifications.map((notification) {
                   int index = _notifications.indexOf(notification);
-                  return ListTile(
-                    title: Text(notification['title']),
-                    trailing: _buildTrailingWidget(notification['enabled'], index),
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: ListTile(
+                      title: Text(
+                        notification['title'],
+                        style: const TextStyle(
+                          color: Color(0xFF111111),
+                          fontSize: 16,
+                          fontFamily: 'SUIT',
+                          fontWeight: FontWeight.w400,
+                          height: 0,
+                          letterSpacing: -0.32,
+                        ),
+                      ),
+                      trailing: _buildTrailingWidget(notification['enabled'], index),
+                    ),
                   );
                 }).toList(),
               ),
-              ListTile(
-                title: const Text(
-                    '알림음'
-                ),
-                onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return const MyScreenNotifications();
-                  }));
-                },
-                trailing: const Text(
-                  '아룸 (기본)',
-                  style: TextStyle(
-                    color: colorPrimaryBlue400,
-                    fontSize: 14,
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: ListTile(
+                  title: const Text(
+                    '알림음',
+                    style: TextStyle(
+                      color: Color(0xFF111111),
+                      fontSize: 16,
+                      fontFamily: 'SUIT',
+                      fontWeight: FontWeight.w400,
+                      height: 0,
+                      letterSpacing: -0.32,
+                    ),
+                  ),
+                  onTap: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) {
+                      return const MyScreenNotifications();
+                    }));
+                  },
+                  trailing: const Text(
+                    '아룸 (기본)',
+                    style: TextStyle(
+                      color: colorPrimaryBlue400,
+                      fontSize: 14,
+                      fontFamily: 'SUIT',
+                      fontWeight: FontWeight.w400,
+                      height: 0,
+                      letterSpacing: -0.32,
+                    ),
                   ),
                 ),
               ),
@@ -92,12 +132,15 @@ class _MyScreenNotificationsSoundsState extends State<MyScreenNotificationsSound
   }
 
   Widget _buildTrailingWidget(bool isEnabled, int index) {
-    return Switch(
-      value: isEnabled,
-      activeColor: colorPrimaryBlue,
-      onChanged: (value) {
-        _toggleNotification(index, value);
+    return GestureDetector(
+      onTap: () {
+        _toggleNotification(index, !isEnabled);
       },
+      child: Image.asset(
+        isEnabled ? 'assets/images/icons/icon_switch_on.png' : 'assets/images/icons/icon_switch_off.png',
+        width: 36,
+        height: 20,
+      ),
     );
   }
 

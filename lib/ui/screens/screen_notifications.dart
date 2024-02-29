@@ -27,8 +27,9 @@ class _MyScreenNotificationsState extends State<MyScreenNotifications> {
     super.initState();
 
     _notifications = [
-      {"title": "새로운알림", "enabled": myDataStore.getBool("새로운알림", true)},
-      {"title": "메시지알림", "enabled": myDataStore.getBool("메시지알림", false)},
+      {"title": "아룸 (기본)", "enabled": myDataStore.getBool("아룸 (기본)", true)},
+      {"title": "알림음", "enabled": myDataStore.getBool("알림음", false)},
+      {"title": "알림음 2", "enabled": myDataStore.getBool("알림음 2", false)},
     ];
 
   }
@@ -40,18 +41,30 @@ class _MyScreenNotificationsState extends State<MyScreenNotifications> {
       home: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.white,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios, color: colorMainGrey250),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-          title: const Text(
-            '알림 및 소리',
-            style: TextStyle(
-                color: colorMainGrey900,
-                fontWeight: FontWeight.w600
+          leading: Padding(
+            padding: const EdgeInsets.only(left: 8.0, right: 10.0),
+            child: IconButton(
+              icon: const Icon(
+                Icons.arrow_back_ios,
+                color: colorMainGrey250,
+                size: 20,
+              ),
+              onPressed: () => Navigator.of(context).pop(),
             ),
           ),
-          elevation: 0.5,
+          leadingWidth: 32,
+          title: const Text(
+            '알림음',
+            style: TextStyle(
+              color: colorMainGrey900,
+              fontSize: 18,
+              fontFamily: 'SUIT',
+              fontWeight: FontWeight.w700,
+              height: 0,
+              letterSpacing: -0.36,
+            ),
+          ),
+          elevation: 0,
         ),
         backgroundColor: colorMainScreen,
         body: SingleChildScrollView(
@@ -61,29 +74,24 @@ class _MyScreenNotificationsState extends State<MyScreenNotifications> {
               Column(
                 children: _notifications.map((notification) {
                   int index = _notifications.indexOf(notification);
-                  return ListTile(
-                    title: Text(notification['title']),
-                    trailing: _buildTrailingWidget(notification['enabled'], index),
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: ListTile(
+                      title: Text(
+                        notification['title'],
+                        style: const TextStyle(
+                          color: Color(0xFF111111),
+                          fontSize: 16,
+                          fontFamily: 'SUIT',
+                          fontWeight: FontWeight.w400,
+                          height: 0,
+                          letterSpacing: -0.32,
+                        ),
+                      ),
+                      trailing: _buildTrailingWidget(notification['enabled'], index),
+                    ),
                   );
                 }).toList(),
-              ),
-              ListTile(
-                title: const Text(
-                    '알림음 2'
-                ),
-                onTap: () {
-                  Navigator.of(context).pop();
-                  Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return const MyScreenNotificationsSounds();
-                  }));
-                },
-                trailing: const Text(
-                  '아룸 (기본)',
-                  style: TextStyle(
-                    color: colorPrimaryBlue400,
-                    fontSize: 14,
-                  ),
-                ),
               ),
             ],
           ),
@@ -92,7 +100,7 @@ class _MyScreenNotificationsState extends State<MyScreenNotifications> {
     );
   }
 
-  Widget _buildTrailingWidget(bool isEnabled, int index) {
+  Widget _buildTrailingWidget1(bool isEnabled, int index) {
     return IconButton(
       icon: Icon(
           Icons.check,
@@ -102,6 +110,19 @@ class _MyScreenNotificationsState extends State<MyScreenNotifications> {
       onPressed: () {
         _toggleNotification(index, !isEnabled);
       },
+    );
+  }
+
+  Widget _buildTrailingWidget(bool isEnabled, int index) {
+    return GestureDetector(
+      onTap: () {
+        _toggleNotification(index, !isEnabled);
+      },
+      child: Image.asset(
+        isEnabled ? 'assets/images/icons/icon_tick_on.png' : 'assets/images/icons/icon_tick_off.png',
+        width: 24,
+        height: 24,
+      ),
     );
   }
 

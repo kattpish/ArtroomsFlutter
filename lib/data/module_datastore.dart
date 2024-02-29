@@ -1,10 +1,12 @@
 
+import 'package:artrooms/beans/bean_chat.dart';
+
 import '../main.dart';
 
 
 class MyDataStore {
 
-  String getString(String key, String defaultValue) {
+  String getString(String key, {String defaultValue = ""}) {
     String? string = sharedPreferences.getString(key);
     return string ?? defaultValue;
   }
@@ -64,6 +66,14 @@ class MyDataStore {
     await sharedPreferences.setString('nickname', student["nickname"] ?? "");
     await sharedPreferences.setString('phoneNumber', student["phoneNumber"] ?? "");
     await sharedPreferences.setString('profileImg', profile["profileImg"]["accessUrl"] ?? "");
+  }
+
+  String getMemo(MyChat myChat) {
+    return getString(myChat.id);
+  }
+
+  void saveMemo(MyChat myChat, String memo) {
+    setString(myChat.id, memo);
   }
 
   Future<void> logout() async {

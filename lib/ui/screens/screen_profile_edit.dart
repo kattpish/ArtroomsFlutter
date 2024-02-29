@@ -61,171 +61,210 @@ class _MyScreenProfileEditState extends State<MyScreenProfileEdit> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: colorMainGrey250),
-          onPressed: () => Navigator.of(context).pop(),
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 8.0, right: 10.0),
+          child: IconButton(
+            icon: const Icon(
+              Icons.arrow_back_ios,
+              color: colorMainGrey250,
+              size: 20,
+            ),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
         ),
+        leadingWidth: 32,
         title: const Text(
           '프로필 수정',
           style: TextStyle(
-              color: colorMainGrey900,
-              fontWeight: FontWeight.w600
+            color: Color(0xFF1F1F1F),
+            fontSize: 18,
+            fontFamily: 'SUIT',
+            fontWeight: FontWeight.w700,
+            height: 0,
+            letterSpacing: -0.36,
           ),
         ),
         backgroundColor: Colors.white,
         elevation: 0,
       ),
       backgroundColor: colorMainScreen,
-      body: Stack(
-        children: [
-          SingleChildScrollView(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Container(
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                  ),
-                  clipBehavior: Clip.antiAlias,
-                  child: CircleAvatar(
-                    radius: 60,
-                    backgroundColor: Colors.transparent,
-                    child: FadeInImage.assetNetwork(
-                      placeholder: 'assets/images/profile/placeholder.png',
-                      image: profile.profileImg,
-                      fit: BoxFit.cover,
-                      fadeInDuration: const Duration(milliseconds: 200),
-                      fadeOutDuration: const Duration(milliseconds: 200),
-                      imageErrorBuilder: (context, error, stackTrace) {
-                        return Image.asset(
-                          'assets/images/profile/placeholder.png',
-                          fit: BoxFit.cover,
-                        );
-                      },
+      body: SafeArea(
+        child: Stack(
+          children: [
+            SingleChildScrollView(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Container(
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
                     ),
-                  ),
-                ),
-                const SizedBox(height: 24),
-                Align(
-                  alignment: Alignment.center,
-                  child: TextButton(
-                    onPressed: () async {
-
-                      requestPermissions(context);
-
-                      final ImagePicker _picker = ImagePicker();
-                      final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-                      if (image != null) {
-                        print("Picked image path: ${image.path}");
-                        setState(() {
-                          profile.profileImg = image.path;
-                        });
-                      }
-
-                    },
-                    style: TextButton.styleFrom(
-                      foregroundColor: Colors.black, padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        side: const BorderSide(color: Colors.grey, width: 1),
-                        borderRadius: BorderRadius.circular(8),
+                    clipBehavior: Clip.antiAlias,
+                    child: CircleAvatar(
+                      radius: 60,
+                      backgroundColor: Colors.transparent,
+                      child: FadeInImage.assetNetwork(
+                        placeholder: 'assets/images/profile/placeholder.png',
+                        image: profile.profileImg,
+                        fit: BoxFit.cover,
+                        fadeInDuration: const Duration(milliseconds: 200),
+                        fadeOutDuration: const Duration(milliseconds: 200),
+                        imageErrorBuilder: (context, error, stackTrace) {
+                          return Image.asset(
+                            'assets/images/profile/placeholder.png',
+                            fit: BoxFit.cover,
+                          );
+                        },
                       ),
                     ),
-                    child: const Text('프로필 바꾸기'),
                   ),
-                ),
-                const SizedBox(height: 32),
-                _buildInputField(
-                    label: '이름',
-                    controller: _nameController,
-                    focus: _nameFocus,
-                    readOnly: true,
-                    onSubmitted: (_) {
-                      FocusScope.of(context).requestFocus(_nicknameFocus);
-                    }
-                ),
-                const SizedBox(height: 16),
-                _buildInputField(
-                    label: '닉네임',
-                    controller: _nicknameController,
-                    focus: _nicknameFocus,
-                    onSubmitted: (_) {
-                      FocusScope.of(context).requestFocus(_phoneFocus);
-                    }
-                ),
-                const SizedBox(height: 16),
-                _buildInputField(
-                    label: '이메일',
-                    controller: _emailController,
-                    focus: _emailFocus,
+                  const SizedBox(height: 20),
+                  Align(
+                    alignment: Alignment.center,
+                    child: Container(
+                      child: TextButton(
+                        onPressed: () async {
+
+                          requestPermissions(context);
+
+                          final ImagePicker _picker = ImagePicker();
+                          final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+                          if (image != null) {
+                            print("Picked image path: ${image.path}");
+                            setState(() {
+                              profile.profileImg = image.path;
+                            });
+                          }
+
+                        },
+                        style: TextButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            side: const BorderSide(color: Color(0xFFD7D7D7), width: 1),
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                        ),
+                        child: const Text(
+                          '프로필 바꾸기',
+                          style: TextStyle(
+                            color: Color(0xFF5F5F5F),
+                            fontSize: 14,
+                            fontFamily: 'Pretendard',
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  _buildInputField(
+                      label: '이름',
+                      controller: _nameController,
+                      focus: _nameFocus,
+                      readOnly: true,
+                      onSubmitted: (_) {
+                        FocusScope.of(context).requestFocus(_nicknameFocus);
+                      }
+                  ),
+                  const SizedBox(height: 16),
+                  _buildInputField(
+                      label: '닉네임',
+                      controller: _nicknameController,
+                      focus: _nicknameFocus,
+                      onSubmitted: (_) {
+                        FocusScope.of(context).requestFocus(_phoneFocus);
+                      }
+                  ),
+                  const SizedBox(height: 16),
+                  _buildInputField(
+                      label: '이메일',
+                      controller: _emailController,
+                      focus: _emailFocus,
+                      readOnly: true,
+                      onSubmitted: (_) {
+                        FocusScope.of(context).requestFocus(_passwordFocus);
+                      }
+                  ),
+                  const SizedBox(height: 16),
+                  _buildPickerField(
+                    label: '휴대전화',
+                    controller: _phoneController,
+                    focus: _phoneFocus,
                     readOnly: true,
                     onSubmitted: (_) {
                       FocusScope.of(context).requestFocus(_passwordFocus);
-                    }
-                ),
-                const SizedBox(height: 16),
-                _buildPickerField(
-                  label: '전화번호',
-                  controller: _phoneController,
-                  focus: _phoneFocus,
-                  onSubmitted: (_) {
-                    FocusScope.of(context).requestFocus(_passwordFocus);
-                  },
-                  onTap: () {
+                    },
+                    onTap: () {
 
-                  },
-                ),
-                const SizedBox(height: 16),
-                _buildPickerField(
-                  label: '비밀번호',
-                  controller: _passwordController,
-                  focus: _passwordFocus,
-                  isObscure: !_isPasswordVisible,
-                  textInputAction: TextInputAction.done,
-                  onSubmitted: (_) {
-                    _doUpdateProfile(context);
-                  },
-                  onTap: () {
-                    setState(() {
-                      _isPasswordVisible = !_isPasswordVisible;
-                    });
-                  },
-                ),
-                const SizedBox(height: 50),
-                ElevatedButton(
-                  onPressed: () {
-                    _doUpdateProfile(context);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: colorPrimaryBlue,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(25.0),
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  _buildPickerField(
+                    label: '비밀번호',
+                    controller: _passwordController,
+                    focus: _passwordFocus,
+                    readOnly: true,
+                    isObscure: !_isPasswordVisible,
+                    textInputAction: TextInputAction.done,
+                    onSubmitted: (_) {
+                      _doUpdateProfile(context);
+                    },
+                    onTap: () {
+                      setState(() {
+                        _isPasswordVisible = !_isPasswordVisible;
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 56),
+                  ElevatedButton(
+                    onPressed: () {
+                      _doUpdateProfile(context);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: colorPrimaryBlue,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                    ),
+                    child: Container(
+                      height: 44,
+                      alignment: Alignment.center,
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 0.0),
+                      child:
+                      _isSubmitting
+                          ? const SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: CircularProgressIndicator(
+                          color: Color(0xFFFFFFFF),
+                          strokeWidth: 3,
+                        ),
+                      )
+                          : const Text(
+                          '저장',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.white,
+                            fontFamily: 'SUIT',
+                            fontWeight: FontWeight.w700,
+                            height: 0,
+                            letterSpacing: -0.32,
+                          )
+                      ),
                     ),
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
-                    child:
-                    _isSubmitting
-                        ? const SizedBox(
-                      width: 24,
-                      height: 24,
-                      child: CircularProgressIndicator(
-                        color: Color(0xFFFFFFFF),
-                        strokeWidth: 3,
-                      ),
-                    )
-                        : const Text('저장'),
-                  ),
-                ),
-                const SizedBox(height: 30),
-              ],
+                  const SizedBox(height: 16),
+                ],
+              ),
             ),
-          ),
-          Visibility(
-              visible: _isLoading,
-              child: const MyLoaderPage()
-          ),
-        ],
+            Visibility(
+                visible: _isLoading,
+                child: const MyLoaderPage()
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -240,16 +279,28 @@ class _MyScreenProfileEditState extends State<MyScreenProfileEdit> {
     required void Function(String) onSubmitted,
   }) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8.0),
+      padding: const EdgeInsets.only(bottom: 20.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label),
+          Text(
+            label,
+            style: const TextStyle(
+              color: Color(0xFF8F8F8F),
+              fontSize: 14,
+              fontFamily: 'Pretendard',
+              fontWeight: FontWeight.w600,
+              height: 0,
+              letterSpacing: -0.28,
+            ),
+          ),
           const SizedBox(height: 4),
           Container(
+            height: 48,
+            alignment: Alignment.centerLeft,
             decoration: BoxDecoration(
               color: readOnly ? const Color(0xFFF5F5F5) : const Color(0xFFF5F5F5),
-              borderRadius: BorderRadius.circular(8.0),
+              borderRadius: BorderRadius.circular(5),
               border: Border.all(color: const Color(0xFFE3E3E3), width: 1.0,),
             ),
             child: TextField(
@@ -257,8 +308,8 @@ class _MyScreenProfileEditState extends State<MyScreenProfileEdit> {
               focusNode: focus,
               textInputAction: textInputAction,
               decoration: InputDecoration(
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8.0),
+                border: UnderlineInputBorder(
+                  borderRadius: BorderRadius.circular(5),
                   borderSide: BorderSide.none,
                 ),
                 filled: true,
@@ -267,6 +318,15 @@ class _MyScreenProfileEditState extends State<MyScreenProfileEdit> {
               readOnly: readOnly,
               obscureText: isPassword,
               onSubmitted: onSubmitted,
+              textAlign: TextAlign.start,
+              style: const TextStyle(
+                color: Color(0xFF1F1F1F),
+                fontSize: 16,
+                fontFamily: 'Pretendard',
+                fontWeight: FontWeight.w400,
+                height: 1.0,
+                letterSpacing: -0.32,
+              ),
             ),
           ),
         ],
@@ -284,17 +344,29 @@ class _MyScreenProfileEditState extends State<MyScreenProfileEdit> {
     required void Function(String) onSubmitted,
     required FocusNode focus,
   }) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8.0),
+    return Container(
+      padding: const EdgeInsets.only(bottom: 20.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label),
+          Text(
+            label,
+            style: const TextStyle(
+              color: Color(0xFF8F8F8F),
+              fontSize: 14,
+              fontFamily: 'Pretendard',
+              fontWeight: FontWeight.w600,
+              height: 0,
+              letterSpacing: -0.28,
+            ),
+          ),
           const SizedBox(height: 4),
           Container(
+            height: 48,
+            alignment: Alignment.centerLeft,
             decoration: BoxDecoration(
-              color: readOnly ? const Color(0xFFF5F5F5) : const Color(0xFFF5F5F5),
-              borderRadius: BorderRadius.circular(8.0),
+              color: readOnly ? const Color(0xFFE3E3E3) : const Color(0xFFE3E3E3),
+              borderRadius: BorderRadius.circular(5),
               border: Border.all(color: const Color(0xFFE3E3E3), width: 1.0,),
             ),
             child: Row(
@@ -309,36 +381,60 @@ class _MyScreenProfileEditState extends State<MyScreenProfileEdit> {
                       hintText: '',
                       filled: true,
                       fillColor: readOnly ? const Color(0xFFF5F5F5) : const Color(0xFFFFFFFF),
-                      border: const OutlineInputBorder(
+                      border: const UnderlineInputBorder(
                         borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(8.0),
-                          topRight: Radius.circular(0.0),
-                          bottomLeft: Radius.circular(8.0),
-                          bottomRight: Radius.circular(0.0),
+                          topLeft: Radius.circular(5.0),
+                          bottomLeft: Radius.circular(5.0),
                         ),
                         borderSide: BorderSide.none,
                       ),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
                     ),
                     readOnly: readOnly,
                     onSubmitted: onSubmitted,
+                    textAlign: TextAlign.start,
+                    style: const TextStyle(
+                      color: Color(0xFF1F1F1F),
+                      fontSize: 16,
+                      fontFamily: 'Pretendard',
+                      fontWeight: FontWeight.w400,
+                      height: 0.9,
+                      letterSpacing: -0.32,
+                    ),
                   ),
                 ),
-                SizedBox(
-                  width: 80,
-                  child: InkWell(
-                    onTap: onTap,
-                    child: Container(
-                      padding: const EdgeInsets.all(8.0),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFF5F5F5),
-                        borderRadius: BorderRadius.circular(8.0),
+                Visibility(
+                  visible: true,
+                  child: Container(
+                    width: 78,
+                    height: 48,
+                    decoration: const BoxDecoration(
+                      border: Border(
+                        left: BorderSide(color: Color(0xFFE3E3E3), width: 1.0),
                       ),
-                      child: Text(
-                        isObscure ? '비밀번호' : '선택',
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-
+                    ),
+                    child: InkWell(
+                      onTap: onTap,
+                      child: Container(
+                        alignment: Alignment.center,
+                        padding: const EdgeInsets.all(8.0),
+                        decoration: const BoxDecoration(
+                          color: Color(0xFFF5F5F5),
+                          borderRadius: BorderRadius.only(
+                            topRight: Radius.circular(5.0),
+                            bottomRight: Radius.circular(5.0),
+                          ),
+                        ),
+                        child: Text(
+                          isObscure ? '변경' : '수정',
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            color: Color(0xFF8F8F8F),
+                            fontSize: 14,
+                            fontFamily: 'Pretendard',
+                            fontWeight: FontWeight.w700,
+                            height: 0,
+                            letterSpacing: -0.28,
+                          ),
                         ),
                       ),
                     ),
@@ -356,7 +452,6 @@ class _MyScreenProfileEditState extends State<MyScreenProfileEdit> {
 
     Map<String, dynamic>? profileMap = await userModule.getMyProfile();
     if (profileMap != null) {
-      print("User Profile: $profileMap");
 
       myDataStore.saveProfile(profileMap);
 
@@ -371,6 +466,7 @@ class _MyScreenProfileEditState extends State<MyScreenProfileEdit> {
         _nameController.text = student["name"];
         _nicknameController.text = student["nickname"];
         _phoneController.text = student["phoneNumber"];
+        _passwordController.text = "**********";
       });
 
       setState(() {

@@ -1,13 +1,13 @@
 
-import 'package:artrooms/beans/bean_notification.dart';
 import 'package:flutter/material.dart';
 
+import '../../beans/bean_notice.dart';
 import '../theme/theme_colors.dart';
 
 
 class MyScreenNoticeDetails extends StatefulWidget {
 
-  final Notice notice;
+  final MyNotice notice;
 
   const MyScreenNoticeDetails({super.key, required this.notice});
 
@@ -33,9 +33,9 @@ class _MyScreenNoticeDetailsState extends State<MyScreenNoticeDetails> {
               Navigator.of(context).pop();
             },
           ),
-          title: Text(
-            widget.notice.title,
-            style: const TextStyle(
+          title: const Text(
+            "공지 상세보기",
+            style: TextStyle(
                 color: colorMainGrey900,
                 fontWeight: FontWeight.w600
             ),
@@ -60,7 +60,7 @@ class _MyScreenNoticeDetailsState extends State<MyScreenNoticeDetails> {
                   child: Row(
                     children: [
                       Text(
-                        widget.notice.date,
+                        widget.notice.getDate(),
                         style: const TextStyle(
                           fontSize: 18,
                           color: colorPrimaryBlue,
@@ -68,7 +68,7 @@ class _MyScreenNoticeDetailsState extends State<MyScreenNoticeDetails> {
                         ),
                       ),
                       Visibility(
-                          visible: widget.notice.isAdmin,
+                          visible: widget.notice.noticeable,
                           child: Container(
                             padding: const EdgeInsets.all(2.0),
                             margin: const EdgeInsets.all(6.0),
@@ -78,9 +78,9 @@ class _MyScreenNoticeDetailsState extends State<MyScreenNoticeDetails> {
                             ),
                             child:const Icon(Icons.star, size:10, color: Colors.white,),)
                       ),
-                      Text(
-                        widget.notice.title,
-                        style: const TextStyle(
+                      const Text(
+                        "widget.notice.title",
+                        style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.normal,
                         ),
@@ -98,7 +98,7 @@ class _MyScreenNoticeDetailsState extends State<MyScreenNoticeDetails> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        widget.notice.body,
+                        widget.notice.notice,
                         style: const TextStyle(
                             fontSize: 15,
                             color: colorMainGrey900,

@@ -35,7 +35,7 @@ class ChatModule {
 
     String baseUrl = 'https://api-01cfffe8-f1b8-4bb4-a576-952abdc8d08a.sendbird.com/v3/users/$encodedEmail/my_group_channels';
     Map<String, String> queryParams = {
-      'token': myDataStore.getAccessToken(),
+      'token': "39ac9b8e2125ad49035c7bd9c105ccc9d4dc7ba4",
       'limit': '20',
       'order': 'latest_last_message',
       'show_member': 'true',
@@ -56,12 +56,13 @@ class ChatModule {
       uri,
       headers: {
         'Accept': 'application/json',
-        'Api-Token': myDataStore.getAccessToken(),
+        'Api-Token': "39ac9b8e2125ad49035c7bd9c105ccc9d4dc7ba4",
       },
     );
 
     if (response.statusCode == 200) {
       Map<String, dynamic> data = json.decode(response.body);
+      print('Fetching channels success: ${response.body}');
       return data['channels'];
     } else {
       print('Error fetching channels: ${response.body}');

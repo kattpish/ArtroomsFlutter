@@ -13,9 +13,9 @@ late final SharedPreferences sharedPreferences;
 Future<void> main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
+  sharedPreferences = await SharedPreferences.getInstance();
   MySendBird mySendBird = MySendBird();
   mySendBird.initSendbird();
-  sharedPreferences = await SharedPreferences.getInstance();
 
   // final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
   // var initializationSettingsAndroid = const AndroidInitializationSettings('@mipmap/ic_launcher');

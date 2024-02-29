@@ -31,7 +31,7 @@ class MyLoaderPage extends StatelessWidget {
     return Container(
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height,
-      color: const Color(0xFFFCDDA8).withOpacity(0.3),
+      color: const Color(0xFF6A79FF).withOpacity(0.2),
       child: const Center(
         child: SizedBox(
           width: 40,

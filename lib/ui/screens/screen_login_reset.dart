@@ -62,7 +62,11 @@ class _MyScreenLoginResetState extends State<MyScreenLoginReset> with SingleTick
         backgroundColor: Colors.white,
         appBar: AppBar(
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios, color: colorMainGrey250),
+            icon: const Icon(
+              Icons.arrow_back_ios,
+              color: colorMainGrey250,
+              size: 20,
+            ),
             onPressed: () {
               Navigator.of(context).pop();
             },
@@ -70,8 +74,12 @@ class _MyScreenLoginResetState extends State<MyScreenLoginReset> with SingleTick
           title: const Text(
             '아이디 · 비밀번호 찾기',
             style: TextStyle(
-                color: colorMainGrey900,
-                fontWeight: FontWeight.w600
+              color: Color(0xFF1F1F1F),
+              fontSize: 18,
+              fontFamily: 'SUIT',
+              fontWeight: FontWeight.w700,
+              height: 0,
+              letterSpacing: -0.36,
             ),
           ),
           centerTitle: true,
@@ -79,13 +87,21 @@ class _MyScreenLoginResetState extends State<MyScreenLoginReset> with SingleTick
           backgroundColor: Colors.white,
           bottom: TabBar(
             controller: _tabController,
-            labelColor: Colors.black,
-            unselectedLabelColor: Colors.grey,
+            labelColor: const Color(0xFF1F1F1F),
+            unselectedLabelColor: const Color(0xFF979797),
             indicatorColor: colorPrimaryBlue,
             indicatorWeight: 2.0,
+            labelStyle: const TextStyle(
+              color: Color(0xFF1F1F1F),
+              fontSize: 18,
+              fontFamily: 'SUIT',
+              fontWeight: FontWeight.w500,
+              height: 0,
+              letterSpacing: -0.36,
+            ),
             tabs: const [
               Tab(
-                  text: '아이디'
+                text: '아이디',
               ),
               Tab(
                   text: '비밀번호'
@@ -93,55 +109,66 @@ class _MyScreenLoginResetState extends State<MyScreenLoginReset> with SingleTick
             ],
           ),
         ),
-        body: Builder(
-          builder: (context) {
-            return Column(
-              children: [
-                Expanded(
-                  child: TabBarView(
-                    controller: _tabController,
-                    children: [
-                      _buildIdTab(),
-                      _buildPasswordTab(),
-                    ],
-                  ),
-                ),
-                Container(
-                  width: MediaQuery.of(context).size.width,
-                  padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 40.0),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      _submit(context);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.white,
-                      backgroundColor: _isButtonDisabled ? colorPrimaryBlue.withAlpha(100) : colorPrimaryBlue,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30.0),
-                      ),
-                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      elevation: 0,
-                      textStyle: const TextStyle(fontSize: 18),
-                      fixedSize: const Size.fromHeight(60),
-                    ),
-                    child:  _isLoading
-                        ? const SizedBox(
-                      width: 24,
-                      height: 24,
-                      child: CircularProgressIndicator(
-                        color: Color(0xFFFFFFFF),
-                        strokeWidth: 3,
-                      ),
-                    )
-                        : const Text(
-                        '인증메일 전송',
-                        style: TextStyle(color: Colors.white)
+        body: SafeArea(
+          child: Builder(
+            builder: (context) {
+              return Column(
+                children: [
+                  Expanded(
+                    child: TabBarView(
+                      controller: _tabController,
+                      children: [
+                        _buildIdTab(),
+                        _buildPasswordTab(),
+                      ],
                     ),
                   ),
-                )
-              ],
-            );
-          },
+                  Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: 44,
+                    margin: const EdgeInsets.symmetric(vertical: 10.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        _submit(context);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        backgroundColor: _isButtonDisabled ? colorPrimaryBlue.withAlpha(100) : colorPrimaryBlue,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30.0),
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        elevation: 0,
+                        textStyle: const TextStyle(fontSize: 18),
+                        fixedSize: const Size.fromHeight(60),
+                      ),
+                      child:  _isLoading
+                          ? const SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: CircularProgressIndicator(
+                          color: Color(0xFFFFFFFF),
+                          strokeWidth: 3,
+                        ),
+                      )
+                          : const Text(
+                          '인증메일 전송',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontFamily: 'SUIT',
+                            fontWeight: FontWeight.w700,
+                            height: 0,
+                            letterSpacing: -0.32,
+                          )
+                      ),
+                    ),
+                  )
+                ],
+              );
+            },
+          ),
         ),
       ),
     );
@@ -150,22 +177,52 @@ class _MyScreenLoginResetState extends State<MyScreenLoginReset> with SingleTick
   Widget _buildIdTab() {
     return SingleChildScrollView(
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 16),
-            const Text('아이디 찾기', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 8),
-            const Text('가입 시 등록했던 이메일 주소를 입력해 주세요.\n비밀번호를 재설정할 수 있는 링크를 보내드립니다.'),
-            const SizedBox(height: 24),
-            const Text('이름', style: TextStyle(fontSize: 16.0, color: Colors.black)),
-            const SizedBox(height: 8),
+            const SizedBox(height: 10),
+            const Text(
+                '아이디 찾기',
+                style: TextStyle(
+                  color: Color(0xFF1F1F1F),
+                  fontSize: 16,
+                  fontFamily: 'SUIT',
+                  fontWeight: FontWeight.w700,
+                  height: 0,
+                  letterSpacing: -0.32,
+                )
+            ),
+            const SizedBox(height: 10),
+            const Text(
+              '가입 시 등록했던 이메일 주소를 입력해 주세요.\n비밀번호를 재설정할 수 있는 링크를 보내드립니다.',
+              style: TextStyle(
+                color: Color(0xFF1F1F1F),
+                fontSize: 14,
+                fontFamily: 'SUIT',
+                fontWeight: FontWeight.w400,
+                height: 0,
+                letterSpacing: -0.28,
+              ),
+            ),
+            const SizedBox(height: 30),
+            const Text(
+                '이름',
+                style: TextStyle(
+                  color: Color(0xFF979797),
+                  fontSize: 16,
+                  fontFamily: 'SUIT',
+                  fontWeight: FontWeight.w600,
+                  height: 0,
+                  letterSpacing: -0.32,
+                )
+            ),
+            const SizedBox(height: 6),
             Container(
               decoration: BoxDecoration(
                 color: const Color(0xFFF5F5F5),
                 borderRadius: BorderRadius.circular(8.0),
-                border: Border.all(color: const Color(0xFFE3E3E3), width: 1.0,),
+                border: Border.all(color: const Color(0xFFE7E7E7), width: 1.0,),
               ),
               child: TextField(
                 controller: _nameController,
@@ -184,16 +241,33 @@ class _MyScreenLoginResetState extends State<MyScreenLoginReset> with SingleTick
                     borderSide: BorderSide.none,
                   ),
                 ),
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontFamily: 'SUIT',
+                  fontWeight: FontWeight.w400,
+                  height: 0,
+                  letterSpacing: -0.32,
+                ),
               ),
             ),
-            const SizedBox(height: 24),
-            const Text('핸드폰 번호', style: TextStyle(fontSize: 16.0, color: Colors.black)),
-            const SizedBox(height: 8),
+            const SizedBox(height: 20),
+            const Text(
+                '핸드폰 번호',
+                style: TextStyle(
+                  color: Color(0xFF979797),
+                  fontSize: 16,
+                  fontFamily: 'SUIT',
+                  fontWeight: FontWeight.w600,
+                  height: 0,
+                  letterSpacing: -0.32,
+                )
+            ),
+            const SizedBox(height: 6),
             Container(
               decoration: BoxDecoration(
                 color: const Color(0xFFF5F5F5),
-                borderRadius: BorderRadius.circular(8.0),
-                border: Border.all(color: const Color(0xFFE3E3E3), width: 1.0,),
+                borderRadius: BorderRadius.circular(10.0),
+                border: Border.all(color: const Color(0xFFE7E7E7), width: 1.0,),
               ),
               child: TextField(
                 controller: _passwordController,
@@ -207,9 +281,16 @@ class _MyScreenLoginResetState extends State<MyScreenLoginReset> with SingleTick
                   filled: true,
                   fillColor: Colors.white,
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12.0),
+                    borderRadius: BorderRadius.circular(10.0),
                     borderSide: BorderSide.none,
                   ),
+                ),
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontFamily: 'SUIT',
+                  fontWeight: FontWeight.w400,
+                  height: 0,
+                  letterSpacing: -0.32,
                 ),
               ),
             ),
@@ -222,20 +303,40 @@ class _MyScreenLoginResetState extends State<MyScreenLoginReset> with SingleTick
   Widget _buildPasswordTab() {
     return SingleChildScrollView(
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 16),
-            const Text('비밀번호 찾기', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 8),
-            const Text('가입 시 등록했던 이메일 주소를 입력해 주세요.'),
-            const SizedBox(height: 24),
+            const SizedBox(height: 10),
+            const Text(
+                '비밀번호 찾기',
+                style: TextStyle(
+                  color: Color(0xFF1F1F1F),
+                  fontSize: 16,
+                  fontFamily: 'SUIT',
+                  fontWeight: FontWeight.w700,
+                  height: 0,
+                  letterSpacing: -0.32,
+                )
+            ),
+            const SizedBox(height: 10),
+            const Text(
+              '가입 시 등록했던 이메일 주소를 입력해 주세요.',
+              style: TextStyle(
+                color: Color(0xFF1F1F1F),
+                fontSize: 14,
+                fontFamily: 'SUIT',
+                fontWeight: FontWeight.w400,
+                height: 0,
+                letterSpacing: -0.28,
+              ),
+            ),
+            const SizedBox(height: 30),
             Container(
               decoration: BoxDecoration(
                 color: const Color(0xFFF5F5F5),
-                borderRadius: BorderRadius.circular(8.0),
-                border: Border.all(color: const Color(0xFFE3E3E3), width: 1.0,),
+                borderRadius: BorderRadius.circular(10.0),
+                border: Border.all(color: const Color(0xFFE7E7E7), width: 1.0,),
               ),
               child: TextField(
                 controller: _emailController,
@@ -248,9 +349,16 @@ class _MyScreenLoginResetState extends State<MyScreenLoginReset> with SingleTick
                   filled: true,
                   fillColor: Colors.white,
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12.0),
+                    borderRadius: BorderRadius.circular(10.0),
                     borderSide: BorderSide.none,
                   ),
+                ),
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontFamily: 'SUIT',
+                  fontWeight: FontWeight.w400,
+                  height: 0,
+                  letterSpacing: -0.32,
                 ),
               ),
             ),
