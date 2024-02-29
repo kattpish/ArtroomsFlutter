@@ -30,10 +30,11 @@ class MyScreenChatroomDrawer extends StatefulWidget {
 class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> with WidgetsBindingObserver {
 
   bool _isLoading = true;
-  String _memo = "";
   MyNotice myNotice = MyNotice();
   final MyDataStore myDataStore = MyDataStore();
   final ModuleNotice moduleNotice = ModuleNotice();
+  final TextEditingController _memoController = TextEditingController();
+  final TextEditingController _noticeController = TextEditingController();
 
   @override
   void initState() {
@@ -337,7 +338,7 @@ class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> with Wi
                               border: Border.all(color: const Color(0xFFF3F3F3), width: 1.0,),
                             ),
                             child: TextFormField(
-                              initialValue: _memo,
+                              controller: _memoController,
                               decoration: InputDecoration(
                                 hintText: '메모가 없습니다.',
                                 border: OutlineInputBorder(
@@ -397,7 +398,7 @@ class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> with Wi
                               border: Border.all(color: const Color(0xFFF3F3F3), width: 1.0,),
                             ),
                             child: TextFormField(
-                              initialValue: myNotice.notice,
+                              controller: _noticeController,
                               decoration: InputDecoration(
                                 hintText: '공지가 없습니다.',
                                 border: OutlineInputBorder(
@@ -416,7 +417,6 @@ class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> with Wi
                                 fontSize: 16,
                                 fontFamily: 'SUIT',
                                 fontWeight: FontWeight.w300,
-                                height: 0.09,
                                 letterSpacing: -0.32,
                               ),
                             ),
@@ -618,7 +618,7 @@ class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> with Wi
   }
 
   void _loadMemo() {
-    _memo = myDataStore.getMemo(widget.myChat);
+    _memoController.text = myDataStore.getMemo(widget.myChat);
   }
 
   void _loadNotice() {
@@ -627,6 +627,7 @@ class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> with Wi
 
       setState(() {
         myNotice = notice;
+        _noticeController.text = myNotice.notice;
       });
 
     }).catchError((e) {

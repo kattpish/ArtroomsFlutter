@@ -1,11 +1,16 @@
 
 import 'dart:convert';
+
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
 
 import '../data/module_datastore.dart';
 
 
 class UserModule {
+
+  final MyDataStore myDataStore = MyDataStore();
 
   Future<Map<String, dynamic>?> getMyProfile() async {
 
@@ -169,7 +174,46 @@ class UserModule {
       Map<String, dynamic> data = jsonDecode(response.body);
       return data['data']['updateUser'] as Map<String, dynamic>?;
     } else {
-      print('Error updating profile: ${response.body}');
+      if (kDebugMode) {
+        print('Error updating profile: ${response.body}');
+      }
+      return null;
+    }
+
+  }
+
+  Future<Map<String, dynamic>?> uploadProfileImage(XFile fileImage) async {
+    try {
+      var uri = Uri.parse('https://artrooms-api-upload.com/file');
+      var request = http.MultipartRequest('POST', uri);
+
+      request.files.add(await http.MultipartFile.fromPath(
+        'file',
+        fileImage.path,
+        contentType: null,
+      ));
+
+      request.headers.addAll({
+        'Accept': 'application/json, text/plain, */*',
+      });
+
+      var streamedResponse = await request.send();
+
+      var response = await http.Response.fromStream(streamedResponse);
+
+      if (response.statusCode == 201) {
+        myDataStore.saveProfilePicture(jsonDecode(response.body));
+        return jsonDecode(response.body) as Map<String, dynamic>;
+      } else {
+        if (kDebugMode) {
+          print('Failed to upload image: ${response.body}');
+        }
+        return null;
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error uploading image: $e');
+      }
       return null;
     }
   }

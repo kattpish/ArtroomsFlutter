@@ -460,21 +460,21 @@ class _MyScreenChatsState extends State<MyScreenChats> {
 
     });
 
-    chatModule.getUserChats().then((List<MyChat> listChats) {
-
-      setState(() {
-        chats.addAll(listChats);
-      });
-
-    }).catchError((e) {
-
-    }).whenComplete(() {
-
-      setState(() {
-        isLoading = false;
-      });
-
-    });
+    // chatModule.getUserChats().then((List<MyChat> listChats) {
+    //
+    //   setState(() {
+    //     chats.addAll(listChats);
+    //   });
+    //
+    // }).catchError((e) {
+    //
+    // }).whenComplete(() {
+    //
+    //   setState(() {
+    //     isLoading = false;
+    //   });
+    //
+    // });
 
   }
 

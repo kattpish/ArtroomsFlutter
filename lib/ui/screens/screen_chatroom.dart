@@ -380,7 +380,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
                         ),
                         const SizedBox(height: 8),
                         Container(
-                          constraints: BoxConstraints(maxWidth: screenWidth * 0.6, minHeight: 40),
+                          constraints: const BoxConstraints(minHeight: 40, minWidth: 46),
                           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           alignment: Alignment.centerLeft,
                           decoration: const BoxDecoration(
@@ -395,15 +395,18 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               const SizedBox(height: 4),
-                              Text(
-                                  message.content,
-                                style: const TextStyle(
-                                  color: Color(0xFF1F1F1F),
-                                  fontSize: 16,
-                                  fontFamily: 'SUIT',
-                                  fontWeight: FontWeight.w400,
-                                  height: 0,
-                                  letterSpacing: -0.32,
+                              Container(
+                                constraints: BoxConstraints(maxWidth: screenWidth * 0.6,),
+                                child: Text(
+                                    message.content,
+                                  style: const TextStyle(
+                                    color: Color(0xFF1F1F1F),
+                                    fontSize: 16,
+                                    fontFamily: 'SUIT',
+                                    fontWeight: FontWeight.w400,
+                                    height: 0,
+                                    letterSpacing: -0.32,
+                                  ),
                                 ),
                               ),
                             ],

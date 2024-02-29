@@ -65,6 +65,27 @@ class _MyScreenNoticesState extends State<MyScreenNotices> {
           ),
           elevation: 0.5,
         ),
+        bottomNavigationBar: BottomAppBar(
+          // BottomAppBar allows for a notch to be cut out for the FloatingActionButton if needed.
+          shape: CircularNotchedRectangle(),
+          notchMargin: 6.0,
+          color: Colors.blue,
+          child: Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              IconButton(icon: Icon(Icons.menu), onPressed: () {}),
+              // Add more icons here
+              IconButton(icon: Icon(Icons.search), onPressed: () {}),
+            ],
+          ),
+        ),
+        // Optional: Use a FloatingActionButton and dock it in the center of the BottomAppBar
+        floatingActionButton: FloatingActionButton(
+          child: Icon(Icons.add),
+          onPressed: () {},
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         backgroundColor: colorMainScreen,
         body: Stack(
           children: [

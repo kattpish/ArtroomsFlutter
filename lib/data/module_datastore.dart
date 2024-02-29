@@ -68,6 +68,10 @@ class MyDataStore {
     await sharedPreferences.setString('profileImg', profile["profileImg"]["accessUrl"] ?? "");
   }
 
+  Future<void> saveProfilePicture(Map<String, dynamic> profileImg) async {
+    await sharedPreferences.setString('profileImg', profileImg["accessUrl"] ?? "");
+  }
+
   String getMemo(MyChat myChat) {
     return getString(myChat.id);
   }

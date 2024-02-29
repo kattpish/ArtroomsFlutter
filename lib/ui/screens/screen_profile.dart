@@ -32,9 +32,12 @@ class _MyScreenProfileState extends State<MyScreenProfile> {
   @override
   void initState() {
     super.initState();
-
     fetchUserProfile();
+  }
 
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override

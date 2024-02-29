@@ -25,6 +25,8 @@ class MySendBird {
   int? _earliestMessageTimestamp;
   bool isLoading = false;
 
+  final MyDataStore myDataStore = MyDataStore();
+
   MySendBird() {
     isLoading = true;
   }
@@ -34,9 +36,7 @@ class MySendBird {
 
     try {
 
-      MyDataStore myDataStore = MyDataStore();
-
-      String email = myDataStore.getEmail();
+      final String email = myDataStore.getEmail();
 
       SendbirdSdk(
           appId: "01CFFFE8-F1B8-4BB4-A576-952ABDC8D08A",
@@ -87,6 +87,7 @@ class MySendBird {
   }
 
   Future<List<GroupChannel>> getListOfGroupChannels() async {
+
     Completer<List<GroupChannel>> completer = Completer<List<GroupChannel>>();
 
     try {

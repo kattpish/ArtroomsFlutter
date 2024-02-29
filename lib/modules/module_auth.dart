@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 
 class AuthModule {
 
+
   Future<void> login({
     required String email,
     required String password,
@@ -30,8 +31,6 @@ class AuthModule {
       headers: {"Content-Type": "application/json"},
       body: jsonEncode(body),
     );
-
-    print("${response.statusCode} ${response.body}\n${jsonEncode(body)}");
 
     if (response.statusCode == 200) {
       final responseBody = jsonDecode(response.body);

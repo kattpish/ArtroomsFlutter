@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:artrooms/utils/utils.dart';
 import 'package:artrooms/utils/utils_permissions.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../beans/bean_profile.dart';
@@ -24,6 +27,7 @@ class _MyScreenProfileEditState extends State<MyScreenProfileEdit> {
 
   bool _isLoading = true;
   bool _isSubmitting = false;
+  bool _isUploading = false;
   bool _isPasswordVisible = false;
   final FocusNode _nameFocus = FocusNode();
   final FocusNode _nicknameFocus = FocusNode();
@@ -36,10 +40,11 @@ class _MyScreenProfileEditState extends State<MyScreenProfileEdit> {
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  UserModule userModule = UserModule();
-  MyDataStore myDataStore = MyDataStore();
-
+  final UserModule userModule = UserModule();
+  final MyDataStore myDataStore = MyDataStore();
   MyProfile profile = MyProfile();
+
+  XFile? fileImage;
 
   @override
   void initState() {
@@ -104,7 +109,8 @@ class _MyScreenProfileEditState extends State<MyScreenProfileEdit> {
                     child: CircleAvatar(
                       radius: 60,
                       backgroundColor: Colors.transparent,
-                      child: FadeInImage.assetNetwork(
+                      child: fileImage == null
+                          ? FadeInImage.assetNetwork(
                         placeholder: 'assets/images/profile/placeholder.png',
                         image: profile.profileImg,
                         fit: BoxFit.cover,
@@ -116,43 +122,61 @@ class _MyScreenProfileEditState extends State<MyScreenProfileEdit> {
                             fit: BoxFit.cover,
                           );
                         },
+                      )
+                          : Image.file(
+                        File(fileImage!.path),
+                        height: 120,
+                        width: 120,
+                        fit: BoxFit.cover,
                       ),
                     ),
                   ),
                   const SizedBox(height: 20),
                   Align(
                     alignment: Alignment.center,
-                    child: Container(
-                      child: TextButton(
-                        onPressed: () async {
+                    child: TextButton(
+                      onPressed: () async {
 
-                          requestPermissions(context);
+                        requestPermissions(context);
 
-                          final ImagePicker _picker = ImagePicker();
-                          final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-                          if (image != null) {
-                            print("Picked image path: ${image.path}");
-                            setState(() {
-                              profile.profileImg = image.path;
-                            });
+                        final ImagePicker picker = ImagePicker();
+                        XFile? xFileImage = await picker.pickImage(source: ImageSource.gallery);
+
+                        setState(() {
+                          fileImage = xFileImage;
+                        });
+
+                        if (fileImage != null) {
+                          _doUploadProfile(context);
+                          if (kDebugMode) {
+                            print("Picked image path: ${fileImage?.path}");
                           }
+                        }
 
-                        },
-                        style: TextButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                          shape: RoundedRectangleBorder(
-                            side: const BorderSide(color: Color(0xFFD7D7D7), width: 1),
-                            borderRadius: BorderRadius.circular(5),
-                          ),
+                      },
+                      style: TextButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          side: const BorderSide(color: Color(0xFFD7D7D7), width: 1),
+                          borderRadius: BorderRadius.circular(5),
                         ),
-                        child: const Text(
-                          '프로필 바꾸기',
-                          style: TextStyle(
-                            color: Color(0xFF5F5F5F),
-                            fontSize: 14,
-                            fontFamily: 'Pretendard',
-                            fontWeight: FontWeight.w400,
-                          ),
+                      ),
+                      child: _isUploading
+                          ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                            child: CircularProgressIndicator(
+                        color: colorPrimaryPurple,
+                        strokeWidth: 3,
+                      ),
+                          )
+                          : const Text(
+                        '프로필 바꾸기',
+                        style: TextStyle(
+                          color: Color(0xFF5F5F5F),
+                          fontSize: 14,
+                          fontFamily: 'Pretendard',
+                          fontWeight: FontWeight.w400,
                         ),
                       ),
                     ),
@@ -504,6 +528,34 @@ class _MyScreenProfileEditState extends State<MyScreenProfileEdit> {
 
     } else {
       showSnackBar(context, "프로필을 업데이트하지 못했습니다.");
+    }
+
+  }
+
+  Future<void> _doUploadProfile(BuildContext context) async {
+
+    if(_isUploading) return;
+
+    if(fileImage != null) {
+
+      setState(() {
+        _isUploading = true;
+      });
+
+      Map<String, dynamic>? resUploadProfile = await userModule.uploadProfileImage(fileImage!);
+
+      if (resUploadProfile != null) {
+
+        setState(() {
+          _isUploading = false;
+        });
+
+        showSnackBar(context, "프로필 사진이 업로드되었습니다.");
+
+      } else {
+        showSnackBar(context, "프로필 사진을 업로드하지 못했습니다..");
+      }
+
     }
 
   }
