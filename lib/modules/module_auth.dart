@@ -1,6 +1,8 @@
+
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
+import '../api/api.dart';
 
 
 class AuthModule {
@@ -12,8 +14,6 @@ class AuthModule {
     required bool loginRemember,
     required Function(bool success, String? accessToken, String? refreshToken) callback,
   }) async {
-
-    const String url = 'https://artrooms-api-elasticbeanstalk.com/graphql';
 
     Map<String, Object> body = {
       "operationName": "Login",
@@ -28,7 +28,7 @@ class AuthModule {
     };
 
     final response = await http.post(
-      Uri.parse(url),
+      Uri.parse(apiUrlGraphQL),
       headers: {"Content-Type": "application/json"},
       body: jsonEncode(body),
     );
@@ -48,8 +48,6 @@ class AuthModule {
   }
 
   Future<void> resetPassword({required String email, required Function(bool success, String message) callback}) async {
-
-    const String url = 'https://artrooms-api-elasticbeanstalk.com/graphql';
 
     Map<String, dynamic> body = {
       "operationName": "SendEmailForPassword",
@@ -94,7 +92,7 @@ class AuthModule {
 
     try {
       final response = await http.post(
-        Uri.parse(url),
+        Uri.parse(apiUrlGraphQL),
         headers: {
           "Content-Type": "application/json",
         },

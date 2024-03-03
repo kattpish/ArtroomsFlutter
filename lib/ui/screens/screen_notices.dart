@@ -6,7 +6,6 @@ import 'package:artrooms/ui/theme/theme_colors.dart';
 import 'package:flutter/material.dart';
 
 import '../../beans/bean_chat.dart';
-import '../widgets/widget_loader.dart';
 
 
 class MyScreenNotices extends StatefulWidget {

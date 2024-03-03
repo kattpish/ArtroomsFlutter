@@ -5,7 +5,9 @@ import 'package:artrooms/data/module_datastore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
+import '../api/api.dart';
 import '../beans/bean_notice.dart';
+
 
 class ModuleNotice {
 
@@ -42,8 +44,7 @@ class ModuleNotice {
 
     List<dynamic> noticesJson = [];
 
-    const String apiUrl = 'https://artrooms-api-elasticbeanstalk.com/graphql';
-    final Uri uri = Uri.parse(apiUrl);
+    final Uri uri = Uri.parse(apiUrlGraphQL);
 
     final response = await http.post(
       uri,

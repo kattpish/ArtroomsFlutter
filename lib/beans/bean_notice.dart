@@ -1,6 +1,7 @@
 
 import 'package:intl/intl.dart';
 
+
 class MyNotice {
 
   int id;

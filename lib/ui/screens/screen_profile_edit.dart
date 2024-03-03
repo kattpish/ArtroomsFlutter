@@ -6,7 +6,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../beans/bean_profile.dart';
-import '../../data/module_datastore.dart';
 import '../../main.dart';
 import '../../modules/module_profile.dart';
 import '../theme/theme_colors.dart';

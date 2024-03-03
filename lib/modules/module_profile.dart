@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 
+import '../api/api.dart';
 import '../data/module_datastore.dart';
 import '../main.dart';
 
@@ -14,8 +15,6 @@ class UserModule {
   Future<Map<String, dynamic>?> getMyProfile() async {
 
     MyDataStore myDataStore = MyDataStore();
-
-    const String url = 'https://artrooms-api-elasticbeanstalk.com/graphql';
 
     const String query = '''
       query WhoAmI {
@@ -74,7 +73,7 @@ class UserModule {
     ;
 
     var response = await http.post(
-      Uri.parse(url),
+      Uri.parse(apiUrlGraphQL),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': myDataStore.getAccessToken(),
@@ -103,8 +102,6 @@ class UserModule {
   }) async {
 
     MyDataStore myDataStore = MyDataStore();
-
-    const String url = 'https://artrooms-api-elasticbeanstalk.com/graphql';
 
     const String mutation = '''
       mutation UpdateUser(\$updateUserId: Int, \$updateStudentInput: UpdateStudentInput) {
@@ -149,7 +146,7 @@ class UserModule {
     ''';
 
     var response = await http.post(
-      Uri.parse(url),
+      Uri.parse(apiUrlGraphQL),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': myDataStore.getAccessToken(),
