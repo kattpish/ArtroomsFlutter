@@ -26,6 +26,7 @@ class _MyScreenNoticeDetailsState extends State<MyScreenNoticeDetails> {
       title: "Notices",
       home: Scaffold(
         appBar: AppBar(
+          toolbarHeight: 0,
           backgroundColor: Colors.white,
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_ios, color: colorMainGrey250),
@@ -43,6 +44,37 @@ class _MyScreenNoticeDetailsState extends State<MyScreenNoticeDetails> {
           elevation: 0.5,
         ),
         backgroundColor: colorMainScreen,
+        bottomNavigationBar: BottomAppBar(
+          notchMargin: 6.0,
+          color: Colors.white,
+          child: Row(
+            mainAxisSize: MainAxisSize.max,
+            children: <Widget>[
+              IconButton(
+                icon: const Icon(
+                  Icons.arrow_back_ios,
+                  color: colorMainGrey250,
+                  size: 20,
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              const SizedBox(width: 2,),
+              const Text(
+                "공지 상세보기",
+                style: TextStyle(
+                  color: colorMainGrey900,
+                  fontSize: 18,
+                  fontFamily: 'SUIT',
+                  fontWeight: FontWeight.w700,
+                  height: 0,
+                  letterSpacing: -0.36,
+                ),
+              )
+            ],
+          ),
+        ),
         body: SingleChildScrollView(
           child: Card(
             margin: const EdgeInsets.only(bottom: 8.0),

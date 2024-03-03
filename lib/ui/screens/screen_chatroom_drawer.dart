@@ -3,6 +3,7 @@ import 'package:artrooms/beans/bean_notice.dart';
 import 'package:artrooms/modules/module_notices.dart';
 import 'package:artrooms/ui/screens/screen_chatroom_file.dart';
 import 'package:artrooms/ui/screens/screen_chatroom_photo.dart';
+import 'package:artrooms/ui/screens/screen_chats.dart';
 import 'package:artrooms/ui/screens/screen_memo.dart';
 import 'package:artrooms/ui/screens/screen_notices.dart';
 import 'package:artrooms/ui/screens/screen_notifications_sounds.dart';
@@ -12,9 +13,7 @@ import 'package:sendbird_sdk/core/message/file_message.dart';
 import 'package:sendbird_sdk/core/models/user.dart';
 
 import '../../beans/bean_chat.dart';
-import '../../data/module_datastore.dart';
 import '../../main.dart';
-import '../../modules/module_sendbird.dart';
 import '../theme/theme_colors.dart';
 import '../widgets/widget_loader.dart';
 
@@ -63,11 +62,7 @@ class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> with Wi
   void didChangeAppLifecycleState(AppLifecycleState state) {
 
     if (state == AppLifecycleState.resumed) {
-
-      setState(() {
-        _loadMemo();
-      });
-
+      _loadMemo();
     }
 
   }
@@ -129,19 +124,34 @@ class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> with Wi
                             width: 64,
                             height: 64,
                             margin: const EdgeInsets.only(left: 16.0),
-                            child: Image.asset(
-                              'assets/images/profile/profile_2.png',
-                              width: 64,
-                              height: 64,
+                            clipBehavior: Clip.antiAlias,
+                            decoration: const BoxDecoration(
+                              shape: BoxShape.circle,
+                            ),
+                            child: CircleAvatar(
+                              radius: 32,
+                              child: FadeInImage.assetNetwork(
+                                placeholder: 'assets/images/profile/profile_2.png',
+                                image: widget.myChat.profilePictureUrl,
+                                fit: BoxFit.cover,
+                                fadeInDuration: const Duration(milliseconds: 100),
+                                fadeOutDuration: const Duration(milliseconds: 100),
+                                imageErrorBuilder: (context, error, stackTrace) {
+                                  return Image.asset(
+                                    'assets/images/profile/profile_2.png',
+                                    fit: BoxFit.cover,
+                                  );
+                                },
+                              ),
                             ),
                           ),
                           const SizedBox(width: 12),
-                          const Column(
+                          Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                '이원빈',
-                                style: TextStyle(
+                                widget.myChat.name,
+                                style: const TextStyle(
                                   fontSize: 18,
                                   color: colorMainGrey900,
                                   fontWeight: FontWeight.w800,
@@ -150,10 +160,10 @@ class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> with Wi
                                   letterSpacing: -0.36,
                                 ),
                               ),
-                              SizedBox(height: 4),
+                              const SizedBox(height: 4),
                               Text(
-                                'LEEWONBIN',
-                                style: TextStyle(
+                                widget.myChat.role,
+                                style: const TextStyle(
                                   color: Color(0xFF565656),
                                   fontSize: 14,
                                   fontFamily: 'SUIT',
@@ -401,7 +411,7 @@ class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> with Wi
                           Container(
                             height: 68,
                             margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 0.0),
-                            padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 10.0),
+                            padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 0.0),
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(10.0),
@@ -615,7 +625,10 @@ class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> with Wi
                 const SizedBox(height: 50),
                 ElevatedButton(
                   onPressed: () {
-                    Navigator.of(context).pop();
+                    moduleSendBird.leaveChannel(widget.myChat.id);
+                    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) {
+                      return const MyScreenChats();
+                    }));
                   },
                   style: ElevatedButton.styleFrom(
                     foregroundColor: colorPrimaryBlue,
@@ -652,6 +665,7 @@ class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> with Wi
                   Container(
                     width: 36,
                     height: 36,
+                    clipBehavior: Clip.antiAlias,
                     decoration: ShapeDecoration(
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(13.76),
@@ -661,8 +675,8 @@ class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> with Wi
                       placeholder: 'assets/images/profile/placeholder.png',
                       image: member.profileUrl != null ? member.profileUrl.toString() : "",
                       fit: BoxFit.cover,
-                      fadeInDuration: const Duration(milliseconds: 200),
-                      fadeOutDuration: const Duration(milliseconds: 200),
+                      fadeInDuration: const Duration(milliseconds: 100),
+                      fadeOutDuration: const Duration(milliseconds: 100),
                       imageErrorBuilder: (context, error, stackTrace) {
                         return Image.asset(
                           'assets/images/profile/placeholder.png',
@@ -690,37 +704,40 @@ class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> with Wi
   }
 
   Widget buildAttachments(BuildContext context, List<BaseMessage> listAttachments) {
-    return Row(
-      children: [
-        for(BaseMessage message in listAttachments)
-          if (message is FileMessage)
-            Container(
-              margin: const EdgeInsets.only(right: 4),
-              child: Container(
-                width: 80,
-                height: 80,
-                decoration: ShapeDecoration(
-                  shape: RoundedRectangleBorder(
-                    side: const BorderSide(width: 1, color: Color(0xFFF3F3F3)),
-                    borderRadius: BorderRadius.circular(10),
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: [
+          for(BaseMessage message in listAttachments)
+            if (message is FileMessage)
+              Container(
+                margin: const EdgeInsets.only(right: 4),
+                child: Container(
+                  width: 80,
+                  height: 80,
+                  decoration: ShapeDecoration(
+                    shape: RoundedRectangleBorder(
+                      side: const BorderSide(width: 1, color: Color(0xFFF3F3F3)),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  child: FadeInImage.assetNetwork(
+                    placeholder: 'assets/images/profile/placeholder.png',
+                    image: message.url,
+                    fit: BoxFit.cover,
+                    fadeInDuration: const Duration(milliseconds: 100),
+                    fadeOutDuration: const Duration(milliseconds: 100),
+                    imageErrorBuilder: (context, error, stackTrace) {
+                      return Image.asset(
+                        'assets/images/profile/placeholder.png',
+                        fit: BoxFit.cover,
+                      );
+                    },
                   ),
                 ),
-                child: FadeInImage.assetNetwork(
-                  placeholder: 'assets/images/profile/placeholder.png',
-                  image: message.url,
-                  fit: BoxFit.cover,
-                  fadeInDuration: const Duration(milliseconds: 200),
-                  fadeOutDuration: const Duration(milliseconds: 200),
-                  imageErrorBuilder: (context, error, stackTrace) {
-                    return Image.asset(
-                      'assets/images/profile/placeholder.png',
-                      fit: BoxFit.cover,
-                    );
-                  },
-                ),
               ),
-            ),
-      ],
+        ],
+      ),
     );
   }
 

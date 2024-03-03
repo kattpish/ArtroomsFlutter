@@ -12,8 +12,10 @@ class MyMessage {
   String senderName;
   String profilePictureUrl = "";
   String content;
-  String timestamp;
-  String attachment = "";
+  int timestamp;
+  String attachmentUrl = "";
+  String attachmentName = "";
+  int attachmentSize = 0;
   List<String> imageAttachments = [];
   bool isMe;
 
@@ -23,8 +25,6 @@ class MyMessage {
     required this.senderName,
     required this.content,
     required this.timestamp,
-    this.attachment = "",
-    this.imageAttachments = const [],
     required this.isMe,
   });
 
@@ -32,19 +32,21 @@ class MyMessage {
       : index = baseMessage.messageId,
         senderId = baseMessage.sender?.userId ?? "",
         senderName = baseMessage.sender?.nickname ?? "",
-        content = baseMessage.message,
-        timestamp = formatTimestamp(baseMessage.createdAt),
+        content = baseMessage.message.trim(),
+        timestamp = baseMessage.createdAt,
         isMe = baseMessage.sender?.userId.toString() == myDataStore.getUid(),
-        attachment = "",
-        imageAttachments = const [],
-        profilePictureUrl = "" {
+        profilePictureUrl = baseMessage.sender?.profileUrl ?? ""
+  {
 
     if (baseMessage is FileMessage) {
       FileMessage fileMessage = baseMessage;
-      // attachment = fileMessage.url;
+      attachmentName = fileMessage.name ?? "";
+      attachmentSize = fileMessage.size ?? 0;
 
       if (fileMessage.type.toString().startsWith('image/')) {
-        // imageAttachments.add(fileMessage.url);
+        imageAttachments.add(fileMessage.url);
+      }else {
+        attachmentUrl = fileMessage.url;
       }
 
     }
@@ -52,6 +54,43 @@ class MyMessage {
 
   String getName() {
     return senderName.isNotEmpty ? senderName : senderId;
+  }
+
+  String getTime() {
+    return formatTime(timestamp);
+  }
+
+  String getDate() {
+    return formatDate(timestamp);
+  }
+
+  String getAttachmentSize() {
+    double size;
+    String unit;
+    if(attachmentSize <= 0) {
+      unit = "Bytes";
+      size = 0;
+    }else if(attachmentSize < 1024) {
+      unit = "Bytes";
+      size = attachmentSize / 1;
+    }else if(attachmentSize < 1024*1024) {
+      unit = "KB";
+      size = attachmentSize/1024;
+    }else if(attachmentSize < 1024*1024*1024) {
+      unit = "MB";
+      size = attachmentSize/(1024*1024);
+    }else if(attachmentSize < 1024*1024*1024) {
+      unit = "GB";
+      size = attachmentSize/(1024*1024*1024);
+    }else {
+      unit = "TB";
+      size = attachmentSize/(1024*1024*1024*1024);
+    }
+    String sizeStr = size.toStringAsFixed(2);
+    if (sizeStr.endsWith('.00')) {
+      sizeStr = sizeStr.substring(0, sizeStr.length - 3);
+    }
+    return "$sizeStr$unit";
   }
 
 }

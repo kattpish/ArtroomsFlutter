@@ -145,7 +145,7 @@ class _MyScreenChatroomPhotoState extends State<MyScreenChatroomPhoto> {
               color: Colors.white,
               child: InkWell(
                 onTap: () {
-                  viewPhoto(context, file);
+                  viewPhotoFile(context, file);
                 },
                 onLongPress: () {
                   setState(() {

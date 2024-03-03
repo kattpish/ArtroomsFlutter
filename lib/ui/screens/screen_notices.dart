@@ -40,6 +40,7 @@ class _MyScreenNoticesState extends State<MyScreenNotices> {
       title: "Notices",
       home: Scaffold(
         appBar: AppBar(
+          toolbarHeight: 0,
           backgroundColor: Colors.white,
           leading: IconButton(
             icon: const Icon(
@@ -66,150 +67,163 @@ class _MyScreenNoticesState extends State<MyScreenNotices> {
           elevation: 0.5,
         ),
         bottomNavigationBar: BottomAppBar(
-          // BottomAppBar allows for a notch to be cut out for the FloatingActionButton if needed.
-          shape: CircularNotchedRectangle(),
           notchMargin: 6.0,
-          color: Colors.blue,
+          color: Colors.white,
           child: Row(
             mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              IconButton(icon: Icon(Icons.menu), onPressed: () {}),
-              // Add more icons here
-              IconButton(icon: Icon(Icons.search), onPressed: () {}),
+              IconButton(
+                icon: const Icon(
+                  Icons.arrow_back_ios,
+                  color: colorMainGrey250,
+                  size: 20,
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              const SizedBox(width: 2,),
+              const Text(
+                '공지',
+                style: TextStyle(
+                  color: colorMainGrey900,
+                  fontSize: 18,
+                  fontFamily: 'SUIT',
+                  fontWeight: FontWeight.w700,
+                  height: 0,
+                  letterSpacing: -0.36,
+                ),
+              )
             ],
           ),
         ),
-        // Optional: Use a FloatingActionButton and dock it in the center of the BottomAppBar
-        floatingActionButton: FloatingActionButton(
-          child: Icon(Icons.add),
-          onPressed: () {},
-        ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         backgroundColor: colorMainScreen,
-        body: Stack(
-          children: [
-            ListView(
-              children: notifications.map((notice) {
-                return Card(
-                  margin: const EdgeInsets.only(bottom: 8.0),
-                  elevation: 0,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children:  [
-                      Divider(
-                        thickness: notice.id > 0 ? 1.0 : 0.0,
-                        color: notice.id > 0 ? colorMainGrey200 : Colors.transparent,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
-                        child: Row(
-                          children: [
-                            Text(
-                              notice.getDate(),
-                              style: const TextStyle(
-                                color: colorPrimaryBlue,
-                                fontSize: 14,
-                                fontFamily: 'SUIT',
-                                fontWeight: FontWeight.w600,
-                                height: 0,
-                                letterSpacing: -0.28,
-                              ),
-                            ),
-                            Visibility(
-                                visible: notice.noticeable,
-                                child: Container(
-                                  padding: const EdgeInsets.all(2.0),
-                                  margin: const EdgeInsets.all(6.0),
-                                  decoration: const BoxDecoration(
-                                    color: colorPrimaryBlue,
-                                    shape:  BoxShape.circle,
-                                  ),
-                                  child:const Icon(Icons.star, size:10, color: Colors.white,),)
-                            ),
-                            Text(
-                              notice.noticeable ? "표시된 공지" : "",
-                              style: const TextStyle(
-                                color: Color(0xFF7D7D7D),
-                                fontSize: 12,
-                                fontFamily: 'SUIT',
-                                fontWeight: FontWeight.w400,
-                                height: 0,
-                                letterSpacing: -0.24,
-                              ),
-                            )
-                          ],
+        body: SafeArea(
+          child: Stack(
+            children: [
+              ListView(
+                children: notifications.map((notice) {
+                  return Card(
+                    margin: const EdgeInsets.only(bottom: 8.0),
+                    elevation: 0,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children:  [
+                        Divider(
+                          thickness: notice.id > 0 ? 1.0 : 0.0,
+                          color: notice.id > 0 ? colorMainGrey200 : Colors.transparent,
                         ),
-                      ),
-                      const Divider(
-                        thickness: 1.0,
-                        color: colorMainGrey200,
-                      ),
-                      Container(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              notice.notice,
-                              style: const TextStyle(
-                                color: colorMainGrey900,
-                                fontSize: 16,
-                                fontFamily: 'SUIT',
-                                fontWeight: FontWeight.w400,
-                                letterSpacing: -0.32,
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
+                          child: Row(
+                            children: [
+                              Text(
+                                notice.getDate(),
+                                style: const TextStyle(
+                                  color: colorPrimaryBlue,
+                                  fontSize: 14,
+                                  fontFamily: 'SUIT',
+                                  fontWeight: FontWeight.w600,
+                                  height: 0,
+                                  letterSpacing: -0.28,
+                                ),
                               ),
-                              maxLines: 6,
-                            ),
-                            InkWell(
-                              onTap: () {
-                                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                  return MyScreenNoticeDetails(notice: notice);
-                                }));
-                              },
-                              child: Column(
-                                children: [
-                                  const SizedBox(height: 16,),
-                                  Visibility(
-                                    visible: notice.noticeable,
-                                    child: const Text(
-                                      "상세보기",
-                                      style: TextStyle(
-                                        color: colorMainGrey500,
-                                        fontSize: 14,
-                                        fontFamily: 'SUIT',
-                                        fontWeight: FontWeight.w300,
-                                        letterSpacing: -0.28,
+                              Visibility(
+                                  visible: notice.noticeable,
+                                  child: Container(
+                                    padding: const EdgeInsets.all(2.0),
+                                    margin: const EdgeInsets.all(6.0),
+                                    decoration: const BoxDecoration(
+                                      color: colorPrimaryBlue,
+                                      shape:  BoxShape.circle,
+                                    ),
+                                    child:const Icon(Icons.star, size:10, color: Colors.white,),)
+                              ),
+                              Text(
+                                notice.noticeable ? "표시된 공지" : "",
+                                style: const TextStyle(
+                                  color: Color(0xFF7D7D7D),
+                                  fontSize: 12,
+                                  fontFamily: 'SUIT',
+                                  fontWeight: FontWeight.w400,
+                                  height: 0,
+                                  letterSpacing: -0.24,
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                        const Divider(
+                          thickness: 1.0,
+                          color: colorMainGrey200,
+                        ),
+                        Container(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                notice.notice,
+                                style: const TextStyle(
+                                  color: colorMainGrey900,
+                                  fontSize: 16,
+                                  fontFamily: 'SUIT',
+                                  fontWeight: FontWeight.w400,
+                                  letterSpacing: -0.32,
+                                ),
+                                maxLines: 6,
+                              ),
+                              InkWell(
+                                onTap: () {
+                                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                    return MyScreenNoticeDetails(notice: notice);
+                                  }));
+                                },
+                                child: Column(
+                                  children: [
+                                    const SizedBox(height: 16,),
+                                    Visibility(
+                                      visible: notice.noticeable,
+                                      child: const Text(
+                                        "상세보기",
+                                        style: TextStyle(
+                                          color: colorMainGrey500,
+                                          fontSize: 14,
+                                          fontFamily: 'SUIT',
+                                          fontWeight: FontWeight.w300,
+                                          letterSpacing: -0.28,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 8,),
-                    ],
-                  ),
-                );
-              }).toList(),
-            ),
-            Visibility(
-                visible: _isLoading,
-                child: const Center(
-                  child: SizedBox(
-                    width: 40,
-                    height: 40,
-                    child: CircularProgressIndicator(
-                      color: Color(0xFF6A79FF),
-                      strokeWidth: 3,
+                        const SizedBox(height: 8,),
+                      ],
                     ),
-                  ),
-                )
-            ),
-          ],
+                  );
+                }).toList(),
+              ),
+              Visibility(
+                  visible: _isLoading,
+                  child: const Center(
+                    child: SizedBox(
+                      width: 40,
+                      height: 40,
+                      child: CircularProgressIndicator(
+                        color: Color(0xFF6A79FF),
+                        strokeWidth: 3,
+                      ),
+                    ),
+                  )
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -5,9 +5,15 @@ import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 
-String formatTimestamp(int timestamp) {
+String formatTime(int timestamp) {
   var date = DateTime.fromMillisecondsSinceEpoch(timestamp);
   var formatter = DateFormat('h:mm a');
+  return formatter.format(date);
+}
+
+String formatDate(int timestamp) {
+  var date = DateTime.fromMillisecondsSinceEpoch(timestamp);
+  var formatter = DateFormat('yyyy.MM.dd');
   return formatter.format(date);
 }
 

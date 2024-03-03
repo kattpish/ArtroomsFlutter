@@ -93,8 +93,8 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
                 title: Text(
                   widget.chat.name,
                   style: const TextStyle(
-                      color: colorMainGrey900,
-                      fontWeight: FontWeight.w600,
+                    color: colorMainGrey900,
+                    fontWeight: FontWeight.w600,
                     fontSize: 18,
                     fontFamily: 'SUIT',
                     height: 0,
@@ -118,9 +118,9 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
                             shape: BoxShape.circle,
                           ),
                           child: Image.asset(
-                              'assets/images/icons/icon_archive.png',
-                              width: 24,
-                              height: 24,
+                            'assets/images/icons/icon_archive.png',
+                            width: 24,
+                            height: 24,
                           )
                       ),
                       onTap: () {
@@ -139,9 +139,10 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
                         ? const MyLoader()
                         : Stack(
                       alignment: AlignmentDirectional.topCenter,
-                          children: [
-                            Container(
-                      child: listMessages.isNotEmpty ? ListView.builder(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(vertical: 8),
+                          child: listMessages.isNotEmpty ? ListView.builder(
                             controller: _scrollController,
                             itemCount: listMessages.length,
                             reverse: true,
@@ -151,32 +152,32 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
                                   ? _buildMyMessageBubble(message)
                                   : _buildOtherMessageBubble(message);
                             },
-                      )
+                          )
                               : buildNoChats(context),
-                    ),
-                            Visibility(
-                                visible: _isLoadMore,
-                              child: Container(
-                                width: 20,
-                                height: 20,
-                                margin: const EdgeInsets.only(top: 6),
-                                child: const CircularProgressIndicator(
-                                  color: Color(0xFF6A79FF),
-                                  strokeWidth: 3,
-                                ),
-                              ),
-                            ),
-                          ],
                         ),
+                        Visibility(
+                          visible: _isLoadMore,
+                          child: Container(
+                            width: 20,
+                            height: 20,
+                            margin: const EdgeInsets.only(top: 6),
+                            child: const CircularProgressIndicator(
+                              color: Color(0xFF6A79FF),
+                              strokeWidth: 3,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                   _buildMessageInput(),
                   const SizedBox(height: 8),
                   Visibility(
-                      visible: _showAttachment,
-                      child: SizedBox(
-                          height: _boxHeight,
-                          child: attachmentPicker
-                      ),
+                    visible: _showAttachment,
+                    child: SizedBox(
+                        height: _boxHeight,
+                        child: attachmentPicker
+                    ),
                   ),
                 ],
               ),
@@ -221,8 +222,8 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
               child: const Padding(
                 padding: EdgeInsets.all(8.0),
                 child: Icon(
-                    Icons.add,
-                    color: colorMainGrey250,
+                  Icons.add,
+                  color: colorMainGrey250,
                   size: 24,
                 ),
               ),
@@ -245,13 +246,13 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
               minLines: 1,
               maxLines: 4,
               style: const TextStyle(
-              color: Color(0xFF111111),
-    fontSize: 16,
-    fontFamily: 'SUIT',
-    fontWeight: FontWeight.w400,
-    height: 0,
-    letterSpacing: -0.32,
-    ),
+                color: Color(0xFF111111),
+                fontSize: 16,
+                fontFamily: 'SUIT',
+                fontWeight: FontWeight.w400,
+                height: 0,
+                letterSpacing: -0.32,
+              ),
             ),
           ),
           const SizedBox(width: 4),
@@ -264,11 +265,11 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Image.asset(
-                    'assets/images/icons/icon_send.png',
-                    width: 24,
-                    height: 24,
-                    color: _isButtonDisabled ? colorMainGrey250 : colorPrimaryBlue,
-                  ),
+                  'assets/images/icons/icon_send.png',
+                  width: 24,
+                  height: 24,
+                  color: _isButtonDisabled ? colorMainGrey250 : colorPrimaryBlue,
+                ),
               ),
             ),
           )
@@ -279,44 +280,52 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
 
   Widget _buildMyMessageBubble(MyMessage message) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                message.timestamp,
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: colorMainGrey300,
-                ),
-              ),
-              const SizedBox(width: 8),
-              Container(
-                constraints: BoxConstraints(maxWidth: screenWidth * 0.6),
-                padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-                decoration: const BoxDecoration(
-                  color: colorPrimaryBlue,
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(24),
-                      topRight: Radius.circular(0),
-                      bottomLeft: Radius.circular(24),
-                      bottomRight: Radius.circular(24)
-                  ),
-                ),
-                child: Text(
-                  message.content,
+          Visibility(
+            visible: message.content.isNotEmpty,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  message.getTime(),
                   style: const TextStyle(
-                    color: Colors.white,
+                    fontSize: 12,
+                    color: colorMainGrey300,
                   ),
                 ),
-              ),
-            ],
+                const SizedBox(width: 8),
+                Container(
+                  constraints: BoxConstraints(maxWidth: screenWidth * 0.6),
+                  padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+                  decoration: const BoxDecoration(
+                    color: colorPrimaryBlue,
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(24),
+                        topRight: Radius.circular(0),
+                        bottomLeft: Radius.circular(24),
+                        bottomRight: Radius.circular(24)
+                    ),
+                  ),
+                  child: Text(
+                    message.content,
+                    style: const TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
-          _buildAttachment(message.attachment),
-          _buildImageAttachments(message.imageAttachments),
+          Container(
+              child: _buildAttachment(message)
+          ),
+          Container(
+              child: _buildImageAttachments(message)
+          ),
         ],
       ),
     );
@@ -324,8 +333,10 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
 
   Widget _buildOtherMessageBubble(MyMessage message) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -339,11 +350,11 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
                   radius: 15,
                   backgroundColor: colorMainGrey200,
                   child: FadeInImage.assetNetwork(
-                    placeholder: 'assets/images/profile/profile_${(message.index % 2) + 1}.png',
+                    placeholder: 'assets/images/profile/placeholder.png',
                     image: message.profilePictureUrl,
                     fit: BoxFit.cover,
-                    fadeInDuration: const Duration(milliseconds: 200),
-                    fadeOutDuration: const Duration(milliseconds: 200),
+                    fadeInDuration: const Duration(milliseconds: 100),
+                    fadeOutDuration: const Duration(milliseconds: 100),
                     imageErrorBuilder: (context, error, stackTrace) {
                       return Image.asset(
                         'assets/images/profile/profile_${(message.senderId.hashCode % 2) + 1}.png',
@@ -358,7 +369,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 4),
+                    margin: const EdgeInsets.only(left: 4, top: 16),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -379,55 +390,65 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
                           ),
                         ),
                         const SizedBox(height: 8),
-                        Container(
-                          constraints: const BoxConstraints(minHeight: 40, minWidth: 46),
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                          alignment: Alignment.centerLeft,
-                          decoration: const BoxDecoration(
-                            color: colorMainGrey200,
-                            borderRadius: BorderRadius.only(
-                              topRight: Radius.circular(20),
-                              bottomLeft: Radius.circular(20),
-                              bottomRight: Radius.circular(20),
+                        Visibility(
+                          visible: message.content.isNotEmpty,
+                          child: Container(
+                            constraints: const BoxConstraints(minHeight: 40, minWidth: 46),
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                            alignment: Alignment.centerLeft,
+                            decoration: const BoxDecoration(
+                              color: colorMainGrey200,
+                              borderRadius: BorderRadius.only(
+                                topRight: Radius.circular(20),
+                                bottomLeft: Radius.circular(20),
+                                bottomRight: Radius.circular(20),
+                              ),
                             ),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const SizedBox(height: 4),
-                              Container(
-                                constraints: BoxConstraints(maxWidth: screenWidth * 0.6,),
-                                child: Text(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const SizedBox(height: 4),
+                                Container(
+                                  constraints: BoxConstraints(maxWidth: screenWidth * 0.6,),
+                                  child: Text(
                                     message.content,
-                                  style: const TextStyle(
-                                    color: Color(0xFF1F1F1F),
-                                    fontSize: 16,
-                                    fontFamily: 'SUIT',
-                                    fontWeight: FontWeight.w400,
-                                    height: 0,
-                                    letterSpacing: -0.32,
+                                    style: const TextStyle(
+                                      color: Color(0xFF1F1F1F),
+                                      fontSize: 16,
+                                      fontFamily: 'SUIT',
+                                      fontWeight: FontWeight.w400,
+                                      height: 0,
+                                      letterSpacing: -0.32,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       ],
                     ),
                   ),
-                  Text(
-                    message.timestamp,
-                    style: const TextStyle(
-                      fontSize: 12,
-                      color: colorMainGrey300,
+                  Visibility(
+                    visible: message.content.isNotEmpty,
+                    child: Text(
+                      message.getTime(),
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: colorMainGrey300,
+                      ),
                     ),
                   ),
                 ],
               ),
             ],
           ),
-          _buildAttachment(message.attachment),
-          _buildImageAttachments(message.imageAttachments),
+          Container(
+            alignment: Alignment.topLeft,
+              margin: const EdgeInsets.only(left: 38),
+              child: _buildAttachment(message)
+          ),
+          _buildImageAttachments(message),
         ],
       ),
     );
@@ -461,44 +482,54 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
     );
   }
 
-  Widget _buildAttachment(String attachment) {
-    if (attachment.isNotEmpty) {
+  Widget _buildAttachment(MyMessage message) {
+    if (message.attachmentUrl.isNotEmpty) {
       return Container(
         margin: const EdgeInsets.symmetric(vertical: 8),
-        padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 22),
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+        constraints: BoxConstraints(maxWidth: screenWidth * 0.6),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(22),
           border: Border.all(color: const Color(0xFFE3E3E3), width: 1.0,),
         ),
-        child: const Column(
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'artrooms_img_file_33.psd',
-              style: TextStyle(
-                  fontSize: 18,
+              message.attachmentName,
+              style: const TextStyle(
                   color: colorMainGrey700,
-                  fontWeight: FontWeight.w500
+                fontSize: 16,
+                fontFamily: 'SUIT',
+                fontWeight: FontWeight.w400,
+                height: 0,
+                letterSpacing: -0.32,
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 10),
             Text(
-              '70.20MB / 2022.08.16 만료',
-              style: TextStyle(
-                  fontSize: 16,
-                  color: colorMainGrey400,
-                  fontWeight: FontWeight.w400
+              '${message.getAttachmentSize()} / ${message.getDate()}',
+              style: const TextStyle(
+                color: colorMainGrey400,
+                fontSize: 14,
+                fontFamily: 'Pretendard',
+                fontWeight: FontWeight.w400,
+                height: 0,
+                letterSpacing: -0.28,
               ),
             ),
-            Text(
-              '저장',
+            const SizedBox(height: 10),
+            const Text(
+              '만료',
               style: TextStyle(
-                  fontSize: 16,
-                  color: colorMainGrey500,
-                  fontWeight: FontWeight.w400
+                color: colorMainGrey400,
+                fontSize: 14,
+                fontFamily: 'Pretendard',
+                fontWeight: FontWeight.w400,
+                height: 0,
+                letterSpacing: -0.28,
               ),
             ),
-            SizedBox(height: 20),
           ],
         ),
       );
@@ -507,43 +538,59 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
     }
   }
 
-  Widget _buildImageAttachments(List<String> imageAttachments) {
-    if (imageAttachments.isNotEmpty) {
+  Widget _buildImageAttachments(MyMessage message) {
+    if (message.imageAttachments.isNotEmpty) {
       return Container(
-        height: 80,
-        margin: const EdgeInsets.symmetric(horizontal: 64, vertical: 8),
+        height: message.imageAttachments.length > 1 ? 80 : 246,
+        constraints: BoxConstraints(maxWidth: screenWidth * 0.6),
+        margin: EdgeInsets.symmetric(horizontal: message.isMe ? 0 : 64, vertical: 8),
+        alignment: message.isMe ? Alignment.topRight : Alignment.topLeft,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
+          color: colorMainGrey250,
         ),
         child: ListView.builder(
           scrollDirection: Axis.horizontal,
-          itemCount: imageAttachments.length,
+          itemCount: message.imageAttachments.length,
           itemBuilder: (context, index) {
             bool isFirst = index == 0;
-            bool isLast = index == imageAttachments.length - 1;
-            return Container(
-              padding: const EdgeInsets.only(right: 4.0),
-              decoration: BoxDecoration(
-                color: colorMainGrey200,
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(isFirst ? 24 : 0),
-                    topRight: Radius.circular(isLast ? 24 : 0),
-                    bottomLeft: Radius.circular(isFirst ? 24 : 0),
-                    bottomRight: Radius.circular(isLast ? 24 : 0)
-                ),
+            bool isLast = index == message.imageAttachments.length - 1;
+            return ClipRRect(
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(isFirst ? 24 : 0),
+                  topRight: Radius.circular(isLast ? 24 : 0),
+                  bottomLeft: Radius.circular(isFirst ? 24 : 0),
+                  bottomRight: Radius.circular(isLast ? 24 : 0)
               ),
-              child: FadeInImage.assetNetwork(
-                placeholder: 'assets/images/chats/placeholder_photo.png',
-                image: imageAttachments[index],
-                fit: BoxFit.cover,
-                fadeInDuration: const Duration(milliseconds: 200),
-                fadeOutDuration: const Duration(milliseconds: 200),
-                imageErrorBuilder: (context, error, stackTrace) {
-                  return Image.asset(
-                    'assets/images/chats/placeholder_photo.png',
+              child: Container(
+                width: (screenWidth * 0.6) / (message.imageAttachments.length > 3 ? 3 : message.imageAttachments.length),
+                decoration: BoxDecoration(
+                  color: colorMainGrey200,
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(isFirst ? 24 : 0),
+                      topRight: Radius.circular(isLast ? 24 : 0),
+                      bottomLeft: Radius.circular(isFirst ? 24 : 0),
+                      bottomRight: Radius.circular(isLast ? 24 : 0)
+                  ),
+                ),
+                child: InkWell(
+                  onTap: () {
+                    viewPhotoUrl(context, message.imageAttachments[index]);
+                  },
+                  child: FadeInImage.assetNetwork(
+                    placeholder: 'assets/images/chats/placeholder_photo.png',
+                    image: message.imageAttachments[index],
                     fit: BoxFit.cover,
-                  );
-                },
+                    fadeInDuration: const Duration(milliseconds: 100),
+                    fadeOutDuration: const Duration(milliseconds: 100),
+                    imageErrorBuilder: (context, error, stackTrace) {
+                      return Image.asset(
+                        'assets/images/chats/placeholder_photo.png',
+                        fit: BoxFit.cover,
+                      );
+                    },
+                  ),
+                ),
               ),
             );
           },
@@ -724,7 +771,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
                     ),
                     child: InkWell(
                       onTap: () {
-                        viewPhoto(context, file);
+                        viewPhotoFile(context, file);
                       },
                       onLongPress: () {
                         state.setState(() {
@@ -780,103 +827,103 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
           ),
           Visibility(
             visible: type == 2,
-              child: Expanded(
-                child: GridView.builder(
-                  padding: const EdgeInsets.only(left: 8, top: 8, right: 8, bottom: 32),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 8,
-                    mainAxisSpacing: 8,
-                    childAspectRatio: 1,
-                  ),
-                  itemCount: filesMedia.length,
-                  itemBuilder: (context, index) {
-                    var file = filesMedia[index];
-                    return Card(
-                      elevation: 0,
-                      color: Colors.white,
-                      child: InkWell(
-                        onTap: () {
-                          setState(() {
-                            file.isSelected = !file.isSelected;
-                            _checkIfFileButtonShouldBeEnabled();
-                          });
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(16.0),
-                            border: Border.all(color: colorMainGrey200, width: 1.0,),
-                          ),
-                          child: Stack(
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const SizedBox(height: 24),
-                                  Image.asset(
-                                    file.isSelected ? 'assets/images/icons/icon_file_selected.png' : 'assets/images/icons/icon_file.png',
-                                    width: 30,
-                                    height: 30,
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          file.name,
-                                          style: const TextStyle(
-                                            fontSize: 16,
-                                            color: colorMainGrey700,
-                                            fontWeight: FontWeight.w400,
-                                          ),
-                                          maxLines: 2,
-                                        ),
-                                        const SizedBox(height: 8),
-                                        Text(
-                                          file.date,
-                                          style: const TextStyle(
-                                            fontSize: 16,
-                                            color: Color(0xFF8F8F8F),
-                                            fontWeight: FontWeight.w300,
-                                          ),
-                                          maxLines: 1,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Positioned(
-                                top: 3,
-                                right: 2,
-                                child: Container(
-                                  width: 26,
-                                  height: 26,
-                                  decoration: BoxDecoration(
-                                    color: file.isSelected ? colorPrimaryBlue : Colors.transparent,
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                      color: file.isSelected ? colorPrimaryBlue : const Color(0xFFE3E3E3),
-                                      width: 1,
-                                    ),
-                                  ),
-                                  child: file.isSelected
-                                      ? const Icon(Icons.check, size: 16, color: Colors.white)
-                                      : Container(),
+            child: Expanded(
+              child: GridView.builder(
+                padding: const EdgeInsets.only(left: 8, top: 8, right: 8, bottom: 32),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 8,
+                  mainAxisSpacing: 8,
+                  childAspectRatio: 1,
+                ),
+                itemCount: filesMedia.length,
+                itemBuilder: (context, index) {
+                  var file = filesMedia[index];
+                  return Card(
+                    elevation: 0,
+                    color: Colors.white,
+                    child: InkWell(
+                      onTap: () {
+                        setState(() {
+                          file.isSelected = !file.isSelected;
+                          _checkIfFileButtonShouldBeEnabled();
+                        });
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(16.0),
+                          border: Border.all(color: colorMainGrey200, width: 1.0,),
+                        ),
+                        child: Stack(
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const SizedBox(height: 24),
+                                Image.asset(
+                                  file.isSelected ? 'assets/images/icons/icon_file_selected.png' : 'assets/images/icons/icon_file.png',
+                                  width: 30,
+                                  height: 30,
                                 ),
+                                const SizedBox(height: 4),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        file.name,
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          color: colorMainGrey700,
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                        maxLines: 2,
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Text(
+                                        file.date,
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          color: Color(0xFF8F8F8F),
+                                          fontWeight: FontWeight.w300,
+                                        ),
+                                        maxLines: 1,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Positioned(
+                              top: 3,
+                              right: 2,
+                              child: Container(
+                                width: 26,
+                                height: 26,
+                                decoration: BoxDecoration(
+                                  color: file.isSelected ? colorPrimaryBlue : Colors.transparent,
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: file.isSelected ? colorPrimaryBlue : const Color(0xFFE3E3E3),
+                                    width: 1,
+                                  ),
+                                ),
+                                child: file.isSelected
+                                    ? const Icon(Icons.check, size: 16, color: Colors.white)
+                                    : Container(),
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ),
-                    );
-                  },
-                ),
-          ),
+                    ),
+                  );
+                },
+              ),
+            ),
           ),
         ],
       ),
@@ -915,38 +962,35 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
 
   Future<void> _loadMessages() async {
 
+    if(moduleMessages.isLoading()) return;
+
     if(!_isLoadMore) {
-      // _isLoadMore = messages.isNotEmpty;
+      _isLoadMore = listMessages.isNotEmpty;
     }
 
-    Future.delayed(const Duration(seconds: 1), () {
-      if (mounted) {
+    moduleMessages.getMessages().then((List<MyMessage> messages){
 
-        moduleMessages.getMessages().then((List<MyMessage> messages){
+      setState(() {
+        listMessages.addAll(messages);
+      });
 
-          setState(() {
-            listMessages.addAll(messages);
-          });
-
-          if(_isLoading) {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              if (_scrollController.hasClients) {
-                _scrollController.jumpTo(0);
-              }
-            });
+      if(_isLoading) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (_scrollController.hasClients) {
+            _scrollController.jumpTo(0);
           }
-
-        }).catchError((e) {
-
-        }).whenComplete(() {
-          setState(() {
-            _isLoading = false;
-            _isLoadMore = false;
-          });
         });
-
       }
+
+    }).catchError((e) {
+
+    }).whenComplete(() {
+      setState(() {
+        _isLoading = false;
+        _isLoadMore = false;
+      });
     });
+
   }
 
   void _checkIfButtonShouldBeEnabled() {
@@ -967,9 +1011,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
 
     if(!_isButtonDisabled) {
 
-      moduleMessages.sendMessage(_messageController.text).then((UserMessage userMessage) {
-
-        final myMessage = MyMessage.fromBaseMessage(userMessage);
+      moduleMessages.sendMessage(_messageController.text).then((MyMessage myMessage) {
 
         setState(() {
           listMessages.insert(0, myMessage);

@@ -1,16 +1,16 @@
+import 'dart:async';
+
+import 'package:artrooms/main.dart';
 import 'package:artrooms/ui/screens/screen_chatroom.dart';
 import 'package:artrooms/ui/screens/screen_login.dart';
 import 'package:artrooms/ui/screens/screen_notifications_sounds.dart';
 import 'package:artrooms/ui/screens/screen_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:sendbird_sdk/core/channel/group/group_channel.dart';
 
 import '../../beans/bean_chat.dart';
-import '../../main.dart';
 import '../../modules/module_chats.dart';
 import '../../data/module_datastore.dart';
-import '../../utils/utils_notifications.dart';
 import '../../utils/utils.dart';
 import '../../utils/utils_permissions.dart';
 import '../theme/theme_colors.dart';
@@ -28,13 +28,14 @@ class MyScreenChats extends StatefulWidget {
 
 }
 
-class _MyScreenChatsState extends State<MyScreenChats> {
+class _MyScreenChatsState extends State<MyScreenChats> with WidgetsBindingObserver  {
 
-  bool isLoading = true;
+  bool isLoading = false;
   bool isSearching = false;
   final List<MyChat> listChats = [];
   final List<MyChat> listChatsAll = [];
   final TextEditingController searchController = TextEditingController();
+  late Timer _timer;
 
   final ChatModule chatModule = ChatModule();
 
@@ -52,11 +53,29 @@ class _MyScreenChatsState extends State<MyScreenChats> {
     requestPermissions(context);
 
     loadChats();
+    _timer = Timer.periodic(const Duration(seconds: 30), (timer) {
+      loadChats();
+    });
 
     searchController.addListener(() {
       searchChats(searchController.text);
     });
 
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+
+    if (state == AppLifecycleState.resumed) {
+      loadChats();
+    }
+
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
   }
 
   @override
@@ -111,7 +130,7 @@ class _MyScreenChatsState extends State<MyScreenChats> {
             ),
           ],
         ),
-        body: isLoading
+        body: isLoading && listChats.isEmpty
             ? const MyLoader()
             : Column(
           children: [
@@ -184,7 +203,9 @@ class _MyScreenChatsState extends State<MyScreenChats> {
           ),
           CustomSlidableAction(
             flex: 1,
-            onPressed: _onClickOption2,
+            onPressed: (context) {
+              _onClickOption2(context, listChats[index]);
+            },
             backgroundColor: colorPrimaryBlue,
             foregroundColor: Colors.white,
             child: Image.asset('assets/images/icons/icon_forward.png', width: 24, height: 24),
@@ -203,14 +224,14 @@ class _MyScreenChatsState extends State<MyScreenChats> {
               radius: 30,
               backgroundColor: Colors.transparent,
               child: FadeInImage.assetNetwork(
-                placeholder: 'assets/images/profile/profile_${(index % 2) + 1}.png',
+                placeholder: 'assets/images/profile/placeholder.png',
                 image: listChats[index].profilePictureUrl,
                 fit: BoxFit.cover,
-                fadeInDuration: const Duration(milliseconds: 200),
-                fadeOutDuration: const Duration(milliseconds: 200),
+                fadeInDuration: const Duration(milliseconds: 100),
+                fadeOutDuration: const Duration(milliseconds: 100),
                 imageErrorBuilder: (context, error, stackTrace) {
                   return Image.asset(
-                    'assets/images/profile/profile_${(index % 2) + 1}.png',
+                    'assets/images/profile/placeholder.png',
                     fit: BoxFit.cover,
                   );
                 },
@@ -333,7 +354,7 @@ class _MyScreenChatsState extends State<MyScreenChats> {
 
   }
 
-  void _onClickOption2(BuildContext context) {
+  void _onClickOption2(BuildContext context, MyChat myChat) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -401,7 +422,8 @@ class _MyScreenChatsState extends State<MyScreenChats> {
                   child: ElevatedButton(
                     onPressed: () {
                       setState(() {
-                        listChats.removeAt(0);
+                        moduleSendBird.leaveChannel(myChat.id);
+                        listChats.remove(myChat);
                       });
                       Navigator.of(context).pop();
                     },
@@ -437,7 +459,16 @@ class _MyScreenChatsState extends State<MyScreenChats> {
 
   Future<void> loadChats() async {
 
+    if(isLoading) return;
+
+    setState(() {
+      isLoading = true;
+    });
+
     await chatModule.getUserChats().then((List<MyChat> chats) {
+
+      listChats.clear();
+      listChatsAll.clear();
 
       setState(() {
         listChats.addAll(chats);

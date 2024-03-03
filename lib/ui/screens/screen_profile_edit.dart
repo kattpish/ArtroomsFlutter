@@ -114,8 +114,8 @@ class _MyScreenProfileEditState extends State<MyScreenProfileEdit> {
                         placeholder: 'assets/images/profile/placeholder.png',
                         image: profile.profileImg,
                         fit: BoxFit.cover,
-                        fadeInDuration: const Duration(milliseconds: 200),
-                        fadeOutDuration: const Duration(milliseconds: 200),
+                        fadeInDuration: const Duration(milliseconds: 100),
+                        fadeOutDuration: const Duration(milliseconds: 100),
                         imageErrorBuilder: (context, error, stackTrace) {
                           return Image.asset(
                             'assets/images/profile/placeholder.png',

@@ -4,12 +4,14 @@ import 'bean_message.dart';
 
 
 class MyChat {
+
   final String id;
   final String name;
   final String lastMessage;
   final int unreadMessages;
-  final String profilePictureUrl;
   final String date;
+  String role = "윰윰";
+  String profilePictureUrl = "";
   List<MyMessage> messages = [];
 
   MyChat({
@@ -33,7 +35,7 @@ class MyChat {
       messageDate = DateTime.fromMillisecondsSinceEpoch(lastMessage.createdAt).toString();
     }
 
-    return MyChat(
+    final MyChat myChat = MyChat(
       id: channel.channelUrl,
       name: channel.name ?? "",
       lastMessage: lastMessageText,
@@ -42,24 +44,12 @@ class MyChat {
       date: messageDate,
       messages: [],
     );
-  }
 
-  factory MyChat.fromUrl(Map<String, dynamic> data) {
+    if(myChat.name == "artrooms") {
+      myChat.profilePictureUrl = "https://d2ous6lm13gwvv.cloudfront.net/image/2310190543464346_bc8443ee-ac3a-4306-adab-fd925492a358.jpg";
+    }
 
-    final Map<String, dynamic> lastMessage = data["last_message"];
-
-    String lastMessageText = lastMessage["message"];
-    String messageDate = DateTime.fromMillisecondsSinceEpoch(lastMessage["created_at"]).toString();
-
-    return MyChat(
-      id: data["channel_url"],
-      name: data["name"],
-      lastMessage: lastMessageText,
-      unreadMessages: data["unread_mention_count"],
-      profilePictureUrl: data["cover_url"],
-      date: messageDate,
-      messages: [],
-    );
+    return myChat;
   }
 
 }

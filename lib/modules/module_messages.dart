@@ -12,6 +12,8 @@ class ModuleMessages {
   late final String _channelUrl;
   late final GroupChannel _groupChannel;
   bool _isInitialized = false;
+  bool _isLoading = false;
+  int? _earliestMessageTimestamp;
 
   ModuleMessages(String channelUrl) {
     _channelUrl = channelUrl;
@@ -30,31 +32,49 @@ class ModuleMessages {
 
   Future<List<MyMessage>> getMessages() async {
 
+    final List<MyMessage> messages = [];
+
+    if(_isLoading) return messages;
+
+    _isLoading = true;
+
     if(!_isInitialized) {
       await initChannel();
     }
 
-    final List<MyMessage> messages = [];
-
-    await moduleSendBird.loadMessages(_groupChannel).then((List<BaseMessage> baseMessages) {
+    await moduleSendBird.loadMessages(_groupChannel, _earliestMessageTimestamp).then((List<BaseMessage> baseMessages) {
 
       for(BaseMessage baseMessage in baseMessages) {
         final MyMessage myMessage = MyMessage.fromBaseMessage(baseMessage);
         messages.add(myMessage);
       }
 
+      if (messages.isNotEmpty) {
+        _earliestMessageTimestamp = baseMessages.last.createdAt;
+      }
+
     });
+
+    _isLoading = false;
 
     return messages;
   }
 
-  Future<UserMessage> sendMessage(String text) async {
+  Future<MyMessage> sendMessage(String text) async {
 
     if(!_isInitialized) {
       await initChannel();
     }
 
-    return await moduleSendBird.sendMessage(_groupChannel, text);
+    final UserMessage userMessage = await moduleSendBird.sendMessage(_groupChannel, text.trim());
+
+    final myMessage = MyMessage.fromBaseMessage(userMessage);
+
+    return myMessage;
+  }
+
+  bool isLoading() {
+    return _isLoading;
   }
 
 }

@@ -6,7 +6,15 @@ import '../../beans/bean_file.dart';
 import '../theme/theme_colors.dart';
 
 
-void viewPhoto(BuildContext context, FileItem file) {
+void viewPhotoUrl(BuildContext context, String imageUrl) {
+  viewPhoto(context, "", imageUrl);
+}
+
+void viewPhotoFile(BuildContext context, FileItem file) {
+  viewPhoto(context, file.path, "");
+}
+
+void viewPhoto(BuildContext context, String imagePath, String imageUrl) {
   showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -45,12 +53,27 @@ void viewPhoto(BuildContext context, FileItem file) {
                   ),
                 ),
                 Expanded(
-                  child: Image.asset(
-                    file.path,
+                  child: imagePath.isNotEmpty
+                      ? Image.asset(
+                    imagePath,
                     width: double.infinity,
                     height: double.infinity,
                     fit: BoxFit.none,
-                  ),
+                  )
+                  : FadeInImage.assetNetwork(
+                    placeholder: 'assets/images/profile/placeholder.png',
+                    image: imageUrl,
+                    fit: BoxFit.cover,
+                    fadeInDuration: const Duration(milliseconds: 100),
+                    fadeOutDuration: const Duration(milliseconds: 100),
+                    imageErrorBuilder: (context, error, stackTrace) {
+                      return Image.asset(
+                        'assets/images/profile/placeholder.png',
+                        fit: BoxFit.cover,
+                      );
+                    },
+                  )
+                  ,
                 ),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),

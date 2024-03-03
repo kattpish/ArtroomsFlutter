@@ -20,7 +20,6 @@ import '../main.dart';
 class ModuleSendBird {
 
   int? _earliestMessageTimestamp;
-  int? _earliestMessageTimestamp1;
 
   Future<void> initSendbird() async {
 
@@ -77,6 +76,37 @@ class ModuleSendBird {
 
   }
 
+  Future<void> leaveChannel(String channelUrl) async {
+
+    late BaseChannel channel;
+
+    try {
+
+      try {
+        channel = await GroupChannel.getChannel(channelUrl);
+      }catch(e) {
+        channel = await OpenChannel.getChannel(channelUrl);
+      }
+
+      if (channel is OpenChannel) {
+        await (channel).exit();
+      } else if (channel is GroupChannel) {
+        await (channel).leave();
+      }
+
+      if (kDebugMode) {
+        print('Channel joined $channelUrl');
+      }
+
+
+    } catch (e) {
+      if (kDebugMode) {
+        print('Join channel error: $channelUrl : $e');
+      }
+    }
+
+  }
+
   Future<List<GroupChannel>> getListOfGroupChannels() async {
 
     Completer<List<GroupChannel>> completer = Completer<List<GroupChannel>>();
@@ -85,7 +115,6 @@ class ModuleSendBird {
       GroupChannelListQuery query = GroupChannelListQuery();
       query.memberStateFilter = MemberStateFilter.all;
       query.order = GroupChannelListOrder.latestLastMessage;
-      query.limit = 15;
       List<GroupChannel> channels = await query.loadNext();
       if (kDebugMode) {
         print('My GroupChannels: ${channels.length}');
@@ -114,7 +143,7 @@ class ModuleSendBird {
     }
   }
 
-  Future<List<BaseMessage>> loadMessages(GroupChannel groupChannel) async {
+  Future<List<BaseMessage>> loadMessages(GroupChannel groupChannel, int? earliestMessageTimestamp) async {
     Completer<List<BaseMessage>> completer = Completer<List<BaseMessage>>();
 
       try {
@@ -122,13 +151,9 @@ class ModuleSendBird {
         params.previousResultSize = 20;
         params.reverse = true;
 
-        final referenceTime = _earliestMessageTimestamp ?? DateTime.now().millisecondsSinceEpoch;
+        final referenceTime = earliestMessageTimestamp ?? DateTime.now().millisecondsSinceEpoch;
 
         final messages = await groupChannel.getMessagesByTimestamp(referenceTime, params);
-
-        if (messages.isNotEmpty) {
-          _earliestMessageTimestamp = messages.last.createdAt;
-        }
 
         completer.complete(messages);
       } catch (e) {
@@ -151,7 +176,7 @@ class ModuleSendBird {
 
       final GroupChannel channel = await GroupChannel.getChannel(channelUrl);
 
-      final referenceTime = _earliestMessageTimestamp1 ?? DateTime.now().millisecondsSinceEpoch;
+      final referenceTime = _earliestMessageTimestamp ?? DateTime.now().millisecondsSinceEpoch;
       final messages = await channel.getMessagesByTimestamp(referenceTime, params);
 
       if (messages.isNotEmpty) {
