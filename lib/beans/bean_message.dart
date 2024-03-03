@@ -1,8 +1,10 @@
+import 'dart:convert';
+
+import 'package:flutter/foundation.dart';
 import 'package:sendbird_sdk/core/message/base_message.dart';
 import 'package:sendbird_sdk/core/message/file_message.dart';
 
 import '../main.dart';
-import '../modules/module_sendbird.dart';
 import '../utils/utils.dart';
 
 
@@ -11,7 +13,7 @@ class MyMessage {
   String senderId;
   String senderName;
   String profilePictureUrl = "";
-  String content;
+  String content = "";
   int timestamp;
   String attachmentUrl = "";
   String attachmentName = "";
@@ -32,7 +34,6 @@ class MyMessage {
       : index = baseMessage.messageId,
         senderId = baseMessage.sender?.userId ?? "",
         senderName = baseMessage.sender?.nickname ?? "",
-        content = baseMessage.message.trim(),
         timestamp = baseMessage.createdAt,
         isMe = baseMessage.sender?.userId.toString() == myDataStore.getUid(),
         profilePictureUrl = baseMessage.sender?.profileUrl ?? ""
@@ -49,7 +50,24 @@ class MyMessage {
         attachmentUrl = fileMessage.url;
       }
 
-    }
+    } else if (baseMessage.message == 'multiple:image') {
+      try {
+        final data = jsonDecode(baseMessage.data ?? "");
+        if (data is Map && data.containsKey('data')) {
+          final images = data['data'];
+          if (images is List) {
+            imageAttachments.addAll(images.cast<String>());
+          }
+        }
+      } catch (e) {
+        if (kDebugMode) {
+          print('Error parsing image attachments: $e');
+        }
+      }
+    }else {
+      content = baseMessage.message.trim();
+  }
+
   }
 
   String getName() {
