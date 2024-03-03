@@ -555,7 +555,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
             bool isFirst = index == 0;
             bool isLast = index == message.imageAttachments.length - 1;
             return Container(
-              margin: EdgeInsets.only(right: isFirst ? 0 : 2),
+              margin: EdgeInsets.only(right: isLast ? 0 : 2),
               child: ClipRRect(
                 borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(isFirst ? 24 : 0),
