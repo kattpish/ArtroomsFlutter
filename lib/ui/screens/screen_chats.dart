@@ -7,9 +7,9 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:sendbird_sdk/core/channel/group/group_channel.dart';
 
 import '../../beans/bean_chat.dart';
+import '../../main.dart';
 import '../../modules/module_chats.dart';
 import '../../data/module_datastore.dart';
-import '../../modules/module_sendbird.dart';
 import '../../utils/utils_notifications.dart';
 import '../../utils/utils.dart';
 import '../../utils/utils_permissions.dart';
@@ -32,12 +32,11 @@ class _MyScreenChatsState extends State<MyScreenChats> {
 
   bool isLoading = true;
   bool isSearching = false;
-  final List<MyChat> chats = [];
-  final List<MyChat> chatsAll = [];
-  TextEditingController searchController = TextEditingController();
+  final List<MyChat> listChats = [];
+  final List<MyChat> listChatsAll = [];
+  final TextEditingController searchController = TextEditingController();
 
-  MySendBird mySendBird = MySendBird();
-  ChatModule chatModule = ChatModule();
+  final ChatModule chatModule = ChatModule();
 
   @override
   void initState() {
@@ -117,7 +116,7 @@ class _MyScreenChatsState extends State<MyScreenChats> {
             : Column(
           children: [
             Visibility(
-              visible: isSearching || chats.isNotEmpty || searchController.text.isNotEmpty,
+              visible: isSearching || listChats.isNotEmpty || searchController.text.isNotEmpty,
               child: Container(
                 height: 44,
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -152,12 +151,12 @@ class _MyScreenChatsState extends State<MyScreenChats> {
             ),
             const SizedBox(height: 10),
             Expanded(
-              child: (chats.isNotEmpty || isSearching)
+              child: (listChats.isNotEmpty || isSearching)
                   ? ListView.builder(
-                itemCount: chats.length,
+                itemCount: listChats.length,
                 itemBuilder: (context, index) {
                   return Container(
-                    key: Key(chats[index].id),
+                    key: Key(listChats[index].id),
                     child: buildListTile(context, index),
                   );
                 },
@@ -205,7 +204,7 @@ class _MyScreenChatsState extends State<MyScreenChats> {
               backgroundColor: Colors.transparent,
               child: FadeInImage.assetNetwork(
                 placeholder: 'assets/images/profile/profile_${(index % 2) + 1}.png',
-                image: chats[index].profilePictureUrl,
+                image: listChats[index].profilePictureUrl,
                 fit: BoxFit.cover,
                 fadeInDuration: const Duration(milliseconds: 200),
                 fadeOutDuration: const Duration(milliseconds: 200),
@@ -219,7 +218,7 @@ class _MyScreenChatsState extends State<MyScreenChats> {
             ),
           ),
           title: Text(
-            chats[index].name,
+            listChats[index].name,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: const TextStyle(
@@ -232,7 +231,7 @@ class _MyScreenChatsState extends State<MyScreenChats> {
             ),
           ),
           subtitle: Text(
-            chats[index].lastMessage,
+            listChats[index].lastMessage,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: const TextStyle(
@@ -249,7 +248,7 @@ class _MyScreenChatsState extends State<MyScreenChats> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                formatChatDateString(chats[index].date),
+                formatChatDateString(listChats[index].date),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
@@ -262,7 +261,7 @@ class _MyScreenChatsState extends State<MyScreenChats> {
                 ),
               ),
               Visibility(
-                visible: chats[index].unreadMessages > 0,
+                visible: listChats[index].unreadMessages > 0,
                 child: Container(
                   margin: const EdgeInsets.only(right: 4),
                   padding: const EdgeInsets.all(8),
@@ -271,7 +270,7 @@ class _MyScreenChatsState extends State<MyScreenChats> {
                     shape: BoxShape.circle,
                   ),
                   child: Text(
-                    chats[index].unreadMessages.toString(),
+                    listChats[index].unreadMessages.toString(),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(color: Colors.white),
@@ -282,7 +281,7 @@ class _MyScreenChatsState extends State<MyScreenChats> {
           ),
           onTap: () {
             Navigator.push(context, MaterialPageRoute(builder: (context) {
-              return MyScreenChatroom(chat: chats[index]);
+              return MyScreenChatroom(chat: listChats[index]);
             }));
           },
         ),
@@ -402,7 +401,7 @@ class _MyScreenChatsState extends State<MyScreenChats> {
                   child: ElevatedButton(
                     onPressed: () {
                       setState(() {
-                        chats.removeAt(0);
+                        listChats.removeAt(0);
                       });
                       Navigator.of(context).pop();
                     },
@@ -438,16 +437,11 @@ class _MyScreenChatsState extends State<MyScreenChats> {
 
   Future<void> loadChats() async {
 
-    mySendBird.getListOfGroupChannels().then((List<GroupChannel> groupChannels) {
-
-      for (GroupChannel groupChannel in groupChannels) {
-        MyChat myChat = MyChat.fromGroupChannel(groupChannel);
-        chatsAll.add(myChat);
-        showNotificationChat(myChat);
-      }
+    await chatModule.getUserChats().then((List<MyChat> chats) {
 
       setState(() {
-        chats.addAll(chatsAll);
+        listChats.addAll(chats);
+        listChatsAll.addAll(chats);
       });
 
     }).catchError((e) {
@@ -459,22 +453,6 @@ class _MyScreenChatsState extends State<MyScreenChats> {
       });
 
     });
-
-    // chatModule.getUserChats().then((List<MyChat> listChats) {
-    //
-    //   setState(() {
-    //     chats.addAll(listChats);
-    //   });
-    //
-    // }).catchError((e) {
-    //
-    // }).whenComplete(() {
-    //
-    //   setState(() {
-    //     isLoading = false;
-    //   });
-    //
-    // });
 
   }
 
@@ -488,14 +466,14 @@ class _MyScreenChatsState extends State<MyScreenChats> {
 
     Future.delayed(const Duration(milliseconds: 100), () {
 
-      List<MyChat> filtered = chatsAll.where((chat) {
+      List<MyChat> filtered = listChatsAll.where((chat) {
         return chat.name.toLowerCase().contains(query.toLowerCase()) ||
             chat.lastMessage.toLowerCase().contains(query.toLowerCase());
       }).toList();
 
       setState(() {
-        chats.clear();
-        chats.addAll(filtered);
+        listChats.clear();
+        listChats.addAll(filtered);
         isSearching = false;
         isLoading = false;
       });

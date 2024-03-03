@@ -7,9 +7,14 @@ import 'package:artrooms/ui/screens/screen_memo.dart';
 import 'package:artrooms/ui/screens/screen_notices.dart';
 import 'package:artrooms/ui/screens/screen_notifications_sounds.dart';
 import 'package:flutter/material.dart';
+import 'package:sendbird_sdk/core/message/base_message.dart';
+import 'package:sendbird_sdk/core/message/file_message.dart';
+import 'package:sendbird_sdk/core/models/user.dart';
 
 import '../../beans/bean_chat.dart';
 import '../../data/module_datastore.dart';
+import '../../main.dart';
+import '../../modules/module_sendbird.dart';
 import '../theme/theme_colors.dart';
 import '../widgets/widget_loader.dart';
 
@@ -31,10 +36,12 @@ class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> with Wi
 
   bool _isLoading = true;
   MyNotice myNotice = MyNotice();
-  final MyDataStore myDataStore = MyDataStore();
   final ModuleNotice moduleNotice = ModuleNotice();
   final TextEditingController _memoController = TextEditingController();
   final TextEditingController _noticeController = TextEditingController();
+
+  List<User> listMembers = [];
+  List<BaseMessage> listAttachments = [];
 
   @override
   void initState() {
@@ -42,6 +49,8 @@ class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> with Wi
     WidgetsBinding.instance.addObserver(this);
     _loadMemo();
     _loadNotice();
+    _loadMembers();
+    _loadAttachments();
   }
 
   @override
@@ -390,6 +399,7 @@ class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> with Wi
                             },
                           ),
                           Container(
+                            height: 68,
                             margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 0.0),
                             padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 10.0),
                             decoration: BoxDecoration(
@@ -449,50 +459,64 @@ class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> with Wi
                               }));
                             },
                           ),
-                          ListTile(
-                            title: const Text(
-                              '파일',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: colorMainGrey900,
-                                fontFamily: 'SUIT',
-                                fontWeight: FontWeight.w600,
-                                height: 0,
-                                letterSpacing: -0.32,
+                          Column(
+                            children: [
+                              ListTile(
+                                title: const Text(
+                                  '파일',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: colorMainGrey900,
+                                    fontFamily: 'SUIT',
+                                    fontWeight: FontWeight.w600,
+                                    height: 0,
+                                    letterSpacing: -0.32,
+                                  ),
+                                ),
+                                trailing: const Icon(
+                                  Icons.chevron_right,
+                                  color: Colors.black,
+                                  size: 20,
+                                ),
+                                onTap: () {
+                                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                    return const MyScreenChatroomFile();
+                                  }));
+                                },
                               ),
-                            ),
-                            trailing: const Icon(
-                              Icons.chevron_right,
-                              color: Colors.black,
-                              size: 20,
-                            ),
-                            onTap: () {
-                              Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                return const MyScreenChatroomFile();
-                              }));
-                            },
+                              Container(
+                                  padding: const EdgeInsets.all(16),
+                                  child: buildAttachments(context, listAttachments)
+                              ),
+                            ],
                           ),
                           const Divider(
                             thickness: 2,
                             color: colorMainGrey150,
                           ),
-                          ListTile(
-                            title: const Text(
-                              '대화상대',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: colorMainGrey900,
-                                fontFamily: 'SUIT',
-                                fontWeight: FontWeight.w600,
-                                height: 0,
-                                letterSpacing: -0.32,
+                          Column(
+                            children: [
+                              ListTile(
+                                title: const Text(
+                                  '대화상대',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: colorMainGrey900,
+                                    fontFamily: 'SUIT',
+                                    fontWeight: FontWeight.w600,
+                                    height: 0,
+                                    letterSpacing: -0.32,
+                                  ),
+                                ),
+                                onTap: () {
+
+                                },
                               ),
-                            ),
-                            onTap: () {
-                              Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                return const MyScreenChatroomFile();
-                              }));
-                            },
+                              Container(
+                                  padding: const EdgeInsets.all(16),
+                                  child: buildMembers(context, listMembers)
+                              ),
+                            ],
                           ),
                         ],
                       )
@@ -617,6 +641,89 @@ class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> with Wi
     );
   }
 
+  Widget buildMembers(BuildContext context, List<User> listMembers) {
+    return Column(
+      children: [
+        for(User member in listMembers)
+          Container(
+            margin: const EdgeInsets.only(bottom: 16),
+            child: Row(
+                children: [
+                  Container(
+                    width: 36,
+                    height: 36,
+                    decoration: ShapeDecoration(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(13.76),
+                      ),
+                    ),
+                    child: FadeInImage.assetNetwork(
+                      placeholder: 'assets/images/profile/placeholder.png',
+                      image: member.profileUrl != null ? member.profileUrl.toString() : "",
+                      fit: BoxFit.cover,
+                      fadeInDuration: const Duration(milliseconds: 200),
+                      fadeOutDuration: const Duration(milliseconds: 200),
+                      imageErrorBuilder: (context, error, stackTrace) {
+                        return Image.asset(
+                          'assets/images/profile/placeholder.png',
+                          fit: BoxFit.cover,
+                        );
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Text(
+                    member.nickname,
+                    style: const TextStyle(
+                      color: Color(0xFF393939),
+                      fontSize: 16,
+                      fontFamily: 'SUIT',
+                      fontWeight: FontWeight.w500,
+                      letterSpacing: -0.32,
+                    ),
+                  ),
+                ]
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget buildAttachments(BuildContext context, List<BaseMessage> listAttachments) {
+    return Row(
+      children: [
+        for(BaseMessage message in listAttachments)
+          if (message is FileMessage)
+            Container(
+              margin: const EdgeInsets.only(right: 4),
+              child: Container(
+                width: 80,
+                height: 80,
+                decoration: ShapeDecoration(
+                  shape: RoundedRectangleBorder(
+                    side: const BorderSide(width: 1, color: Color(0xFFF3F3F3)),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                child: FadeInImage.assetNetwork(
+                  placeholder: 'assets/images/profile/placeholder.png',
+                  image: message.url,
+                  fit: BoxFit.cover,
+                  fadeInDuration: const Duration(milliseconds: 200),
+                  fadeOutDuration: const Duration(milliseconds: 200),
+                  imageErrorBuilder: (context, error, stackTrace) {
+                    return Image.asset(
+                      'assets/images/profile/placeholder.png',
+                      fit: BoxFit.cover,
+                    );
+                  },
+                ),
+              ),
+            ),
+      ],
+    );
+  }
+
   void _loadMemo() {
     _memoController.text = myDataStore.getMemo(widget.myChat);
   }
@@ -640,6 +747,22 @@ class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> with Wi
 
     });
 
+  }
+
+  Future<void> _loadMembers() async {
+    List<User> members = await moduleSendBird.getGroupChannelMembers(widget.myChat.id);
+
+    setState(() {
+      listMembers = members;
+    });
+  }
+
+  void _loadAttachments() async {
+    List<BaseMessage> attachments = await moduleSendBird.fetchAttachments(widget.myChat.id);
+
+    setState(() {
+      listAttachments = attachments;
+    });
   }
 
 }

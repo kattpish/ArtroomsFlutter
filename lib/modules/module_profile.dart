@@ -6,11 +6,10 @@ import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 
 import '../data/module_datastore.dart';
+import '../main.dart';
 
 
 class UserModule {
-
-  final MyDataStore myDataStore = MyDataStore();
 
   Future<Map<String, dynamic>?> getMyProfile() async {
 

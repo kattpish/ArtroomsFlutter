@@ -1,5 +1,7 @@
 import 'package:sendbird_sdk/core/message/base_message.dart';
+import 'package:sendbird_sdk/core/message/file_message.dart';
 
+import '../main.dart';
 import '../modules/module_sendbird.dart';
 import '../utils/utils.dart';
 
@@ -32,10 +34,21 @@ class MyMessage {
         senderName = baseMessage.sender?.nickname ?? "",
         content = baseMessage.message,
         timestamp = formatTimestamp(baseMessage.createdAt),
-        isMe = baseMessage.sender?.userId.toString() == userId,
+        isMe = baseMessage.sender?.userId.toString() == myDataStore.getUid(),
         attachment = "",
         imageAttachments = const [],
-        profilePictureUrl = "";
+        profilePictureUrl = "" {
+
+    if (baseMessage is FileMessage) {
+      FileMessage fileMessage = baseMessage;
+      // attachment = fileMessage.url;
+
+      if (fileMessage.type.toString().startsWith('image/')) {
+        // imageAttachments.add(fileMessage.url);
+      }
+
+    }
+  }
 
   String getName() {
     return senderName.isNotEmpty ? senderName : senderId;

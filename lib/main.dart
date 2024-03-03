@@ -9,13 +9,16 @@ import 'modules/module_sendbird.dart';
 
 
 late final SharedPreferences sharedPreferences;
+late final MyDataStore myDataStore;
+late final ModuleSendBird moduleSendBird;
 
 Future<void> main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
   sharedPreferences = await SharedPreferences.getInstance();
-  MySendBird mySendBird = MySendBird();
-  mySendBird.initSendbird();
+  myDataStore = MyDataStore();
+  moduleSendBird = ModuleSendBird();
+  await moduleSendBird.initSendbird();
 
   // final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
   // var initializationSettingsAndroid = const AndroidInitializationSettings('@mipmap/ic_launcher');

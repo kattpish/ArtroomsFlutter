@@ -8,31 +8,21 @@ import 'package:sendbird_sdk/core/channel/group/group_channel.dart';
 import 'package:sendbird_sdk/core/channel/open/open_channel.dart';
 import 'package:sendbird_sdk/core/message/base_message.dart';
 import 'package:sendbird_sdk/core/message/user_message.dart';
+import 'package:sendbird_sdk/core/models/user.dart';
 import 'package:sendbird_sdk/params/message_list_params.dart';
 import 'package:sendbird_sdk/params/user_message_params.dart';
 import 'package:sendbird_sdk/query/channel_list/group_channel_list_query.dart';
 import 'package:sendbird_sdk/sdk/sendbird_sdk_api.dart';
 
-import '../data/module_datastore.dart';
+import '../main.dart';
 
 
-const userId = 'alain';
-
-class MySendBird {
-
-  late BaseChannel _channel;
+class ModuleSendBird {
 
   int? _earliestMessageTimestamp;
-  bool isLoading = false;
-
-  final MyDataStore myDataStore = MyDataStore();
-
-  MySendBird() {
-    isLoading = true;
-  }
+  int? _earliestMessageTimestamp1;
 
   Future<void> initSendbird() async {
-    isLoading = true;
 
     try {
 
@@ -54,36 +44,37 @@ class MySendBird {
       }
     }
 
-    isLoading = false;
   }
 
   Future<void> joinChannel(id) async {
-    isLoading = true;
+
+    late BaseChannel channel;
 
     try {
 
       try {
-        _channel = await GroupChannel.getChannel(id);
+        channel = await GroupChannel.getChannel(id);
       }catch(e) {
-        _channel = await OpenChannel.getChannel(id);
+        channel = await OpenChannel.getChannel(id);
       }
 
-      if (_channel is OpenChannel) {
-        await (_channel as OpenChannel).enter();
-      } else if (_channel is GroupChannel) {
-        await (_channel as GroupChannel).join();
+      if (channel is OpenChannel) {
+        await (channel).enter();
+      } else if (channel is GroupChannel) {
+        await (channel).join();
       }
 
       if (kDebugMode) {
         print('Channel joined $id');
       }
+
+
     } catch (e) {
       if (kDebugMode) {
         print('Join channel error: $id : $e');
       }
     }
 
-    isLoading = false;
   }
 
   Future<List<GroupChannel>> getListOfGroupChannels() async {
@@ -110,11 +101,21 @@ class MySendBird {
     return completer.future;
   }
 
-  Future<List<BaseMessage>> loadMessages() async {
-    Completer<List<BaseMessage>> completer = Completer<List<BaseMessage>>();
+  Future<List<User>> getGroupChannelMembers(String channelUrl) async {
+    try {
+      var channel = await GroupChannel.getChannel(channelUrl);
+      List<User> members = channel.members;
+      return members;
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error fetching group channel members: $e');
+      }
+      return [];
+    }
+  }
 
-    if(!isLoading) {
-      isLoading = true;
+  Future<List<BaseMessage>> loadMessages(GroupChannel groupChannel) async {
+    Completer<List<BaseMessage>> completer = Completer<List<BaseMessage>>();
 
       try {
         final params = MessageListParams();
@@ -122,7 +123,8 @@ class MySendBird {
         params.reverse = true;
 
         final referenceTime = _earliestMessageTimestamp ?? DateTime.now().millisecondsSinceEpoch;
-        final messages = await _channel.getMessagesByTimestamp(referenceTime, params);
+
+        final messages = await groupChannel.getMessagesByTimestamp(referenceTime, params);
 
         if (messages.isNotEmpty) {
           _earliestMessageTimestamp = messages.last.createdAt;
@@ -136,21 +138,41 @@ class MySendBird {
         completer.completeError(e);
       }
 
-      isLoading = false;
-
-    }else {
-      completer.complete([]);
-    }
-
     return completer.future;
   }
 
-  Future<UserMessage> sendMessage(String text) async {
+  Future<List<BaseMessage>> fetchAttachments(String channelUrl) async {
+    try {
+
+      final params = MessageListParams();
+      params.previousResultSize = 20;
+      params.reverse = true;
+      params.messageType = MessageTypeFilter.file;
+
+      final GroupChannel channel = await GroupChannel.getChannel(channelUrl);
+
+      final referenceTime = _earliestMessageTimestamp1 ?? DateTime.now().millisecondsSinceEpoch;
+      final messages = await channel.getMessagesByTimestamp(referenceTime, params);
+
+      if (messages.isNotEmpty) {
+        _earliestMessageTimestamp = messages.last.createdAt;
+      }
+
+      return messages;
+    } catch (e) {
+      if (kDebugMode) {
+        print("Error fetching attachments: $e");
+      }
+      return [];
+    }
+  }
+
+  Future<UserMessage> sendMessage(GroupChannel groupChannel, String text) async {
     Completer<UserMessage> completer = Completer();
 
     final params = UserMessageParams(message: text);
 
-    _channel.sendUserMessage(params, onCompleted: (UserMessage userMessage, error) {
+    groupChannel.sendUserMessage(params, onCompleted: (UserMessage userMessage, error) {
       if (error != null) {
         if (kDebugMode) {
           print('Send message error: $error');

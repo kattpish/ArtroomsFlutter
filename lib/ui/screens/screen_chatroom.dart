@@ -2,12 +2,12 @@
 import 'package:artrooms/ui/screens/screen_chatroom_drawer.dart';
 import 'package:artrooms/ui/widgets/widget_loader.dart';
 import 'package:flutter/material.dart';
-import 'package:sendbird_sdk/core/message/base_message.dart';
 import 'package:sendbird_sdk/core/message/user_message.dart';
 import '../../beans/bean_chat.dart';
 import '../../beans/bean_file.dart';
 import '../../beans/bean_message.dart';
-import '../../modules/module_sendbird.dart';
+import '../../main.dart';
+import '../../modules/module_messages.dart';
 import '../theme/theme_colors.dart';
 import '../widgets/widget_media.dart';
 
@@ -27,17 +27,16 @@ class MyScreenChatroom extends StatefulWidget {
 
 class _MyScreenChatroomState extends State<MyScreenChatroom> {
 
-  bool _isInitialized = false;
   bool _isLoading = true;
   bool _isLoadMore = false;
   bool _isButtonDisabled = true;
   bool _showAttachment = false;
   bool _showAttachmentFull = false;
-  final List<MyMessage> messages = [];
+  final List<MyMessage> listMessages = [];
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _messageController = TextEditingController();
 
-  MySendBird mySendBird = MySendBird();
+  late final ModuleMessages moduleMessages;
 
   double _boxHeight = 320.0;
   double _dragStartY = 0.0;
@@ -49,6 +48,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
     super.initState();
     _messageController.addListener(_checkIfButtonShouldBeEnabled);
     _scrollController.addListener(_loadMessages);
+    moduleMessages = ModuleMessages(widget.chat.id);
     _loadMessages();
   }
 
@@ -141,12 +141,12 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
                       alignment: AlignmentDirectional.topCenter,
                           children: [
                             Container(
-                      child: messages.isNotEmpty ? ListView.builder(
+                      child: listMessages.isNotEmpty ? ListView.builder(
                             controller: _scrollController,
-                            itemCount: messages.length,
+                            itemCount: listMessages.length,
                             reverse: true,
                             itemBuilder: (context, index) {
-                              final message = messages[index];
+                              final message = listMessages[index];
                               return message.isMe
                                   ? _buildMyMessageBubble(message)
                                   : _buildOtherMessageBubble(message);
@@ -440,16 +440,20 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
         children: [
           Image.asset(
             'assets/images/icons/chat_gray.png',
-            width: 80.0,
-            height: 80.0,
+            width: 54.0,
+            height: 54.0,
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 17),
           const Text(
             '대화내용이 없어요',
             textAlign: TextAlign.center,
             style: TextStyle(
-              fontSize: 16.0,
               color: colorMainGrey700,
+              fontSize: 14,
+              fontFamily: 'SUIT',
+              fontWeight: FontWeight.w400,
+              height: 0,
+              letterSpacing: -0.28,
             ),
           ),
         ],
@@ -486,7 +490,6 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
                   fontWeight: FontWeight.w400
               ),
             ),
-            SizedBox(height: 20),
             Text(
               '저장',
               style: TextStyle(
@@ -495,6 +498,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
                   fontWeight: FontWeight.w400
               ),
             ),
+            SizedBox(height: 20),
           ],
         ),
       );
@@ -911,11 +915,6 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
 
   Future<void> _loadMessages() async {
 
-    if(!_isInitialized) {
-      await mySendBird.joinChannel(widget.chat.id);
-      _isInitialized = true;
-    }
-
     if(!_isLoadMore) {
       // _isLoadMore = messages.isNotEmpty;
     }
@@ -923,17 +922,11 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
     Future.delayed(const Duration(seconds: 1), () {
       if (mounted) {
 
-        mySendBird.loadMessages().then((List<BaseMessage> baseMessages){
+        moduleMessages.getMessages().then((List<MyMessage> messages){
 
-          for(BaseMessage baseMessage in baseMessages) {
-
-            MyMessage myMessage = MyMessage.fromBaseMessage(baseMessage);
-
-            setState(() {
-              messages.add(myMessage);
-            });
-
-          }
+          setState(() {
+            listMessages.addAll(messages);
+          });
 
           if(_isLoading) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -974,12 +967,12 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
 
     if(!_isButtonDisabled) {
 
-      mySendBird.sendMessage(_messageController.text).then((UserMessage userMessage) {
+      moduleMessages.sendMessage(_messageController.text).then((UserMessage userMessage) {
 
         final myMessage = MyMessage.fromBaseMessage(userMessage);
 
         setState(() {
-          messages.insert(0, myMessage);
+          listMessages.insert(0, myMessage);
           _messageController.clear();
         });
 

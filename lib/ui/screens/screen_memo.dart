@@ -4,6 +4,7 @@ import 'package:artrooms/ui/theme/theme_colors.dart';
 import 'package:flutter/material.dart';
 
 import '../../beans/bean_chat.dart';
+import '../../main.dart';
 
 
 class MyScreenMemo extends StatefulWidget {
@@ -23,7 +24,6 @@ class _MyScreenMemoState extends State<MyScreenMemo> {
 
   bool _isButtonEnabled = true;
   final TextEditingController _memoController = TextEditingController();
-  final MyDataStore myDataStore = MyDataStore();
 
   @override
   void initState() {

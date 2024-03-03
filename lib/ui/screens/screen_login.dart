@@ -1,9 +1,11 @@
 import 'package:artrooms/data/module_datastore.dart';
 import 'package:artrooms/ui/screens/screen_chats.dart';
 import 'package:artrooms/ui/screens/screen_login_reset.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../main.dart';
 import '../../modules/module_auth.dart';
 import '../../modules/module_profile.dart';
 import '../../utils/utils.dart';
@@ -29,8 +31,8 @@ class _MyScreeLoginState extends State<MyScreenLogin> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  UserModule userModule = UserModule();
-  MyDataStore myDataStore = MyDataStore();
+  final UserModule userModule = UserModule();
+  final AuthModule authModule = AuthModule();
 
   @override
   void initState() {
@@ -341,7 +343,6 @@ class _MyScreeLoginState extends State<MyScreenLogin> {
 
     String email = _emailController.text;
 
-    AuthModule authModule = AuthModule();
     authModule.login(
       email: email,
       password: _passwordController.text,
@@ -357,10 +358,14 @@ class _MyScreeLoginState extends State<MyScreenLogin> {
 
             await myDataStore.saveProfile(profile);
 
-            print("User Profile: $profile");
+            if (kDebugMode) {
+              print("User Profile: $profile");
+            }
 
           } else {
-            print("Failed to fetch user profile.");
+            if (kDebugMode) {
+              print("Failed to fetch user profile.");
+            }
           }
 
           Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) {

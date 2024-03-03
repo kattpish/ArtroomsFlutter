@@ -28,6 +28,11 @@ class MyDataStore {
     return getAccessToken().isNotEmpty;
   }
 
+  String getUid() {
+    String? uid = sharedPreferences.getString("email");
+    return uid ?? "";
+  }
+
   String getEmail() {
     String? email = sharedPreferences.getString("email");
     return email ?? "";

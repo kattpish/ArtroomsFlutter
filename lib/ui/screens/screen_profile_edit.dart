@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../beans/bean_profile.dart';
 import '../../data/module_datastore.dart';
+import '../../main.dart';
 import '../../modules/module_profile.dart';
 import '../theme/theme_colors.dart';
 import '../widgets/widget_loader.dart';
@@ -41,7 +42,6 @@ class _MyScreenProfileEditState extends State<MyScreenProfileEdit> {
   final TextEditingController _passwordController = TextEditingController();
 
   final UserModule userModule = UserModule();
-  final MyDataStore myDataStore = MyDataStore();
   MyProfile profile = MyProfile();
 
   XFile? fileImage;
