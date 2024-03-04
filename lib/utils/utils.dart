@@ -1,5 +1,4 @@
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -7,14 +6,22 @@ import 'package:url_launcher/url_launcher.dart';
 
 String formatTime(int timestamp) {
   var date = DateTime.fromMillisecondsSinceEpoch(timestamp);
-  var formatter = DateFormat('h:mm a');
-  return formatter.format(date);
+  final DateFormat formatter = DateFormat('a h:mm');
+  String time = formatter.format(date);
+  time = time.replaceFirst("AM", "오전");
+  time = time.replaceFirst("PM", "오후");
+  return time;
 }
 
 String formatDate(int timestamp) {
   var date = DateTime.fromMillisecondsSinceEpoch(timestamp);
   var formatter = DateFormat('yyyy.MM.dd');
   return formatter.format(date);
+}
+
+String formatDateTime(int timestamp) {
+  var date = DateTime.fromMillisecondsSinceEpoch(timestamp);
+  return date.toString();
 }
 
 String formatChatDateString(String dateString) {
@@ -31,20 +38,20 @@ String formatChatDateString(String dateString) {
       return "${date.hour.toString().padLeft(2, '0')}:${date.minute.toString()
           .padLeft(2, '0')}";
     } else if (date.isAfter(yesterday)) {
-      return "Yesterday";
+      return "어제";
     } else if (date.isAfter(aWeekAgo)) {
       List<String> weekdays = [
-        'Monday',
-        'Tuesday',
-        'Wednesday',
-        'Thursday',
-        'Friday',
-        'Saturday',
-        'Sunday'
+        '월요일',
+        '화요일',
+        '수요일',
+        '목요일',
+        '금요일',
+        '토요일',
+        '일요일'
       ];
       return weekdays[date.weekday - 1];
     } else {
-      return "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day
+      return "${date.year}.${date.month.toString().padLeft(2, '0')}.${date.day
           .toString().padLeft(2, '0')}";
     }
   }

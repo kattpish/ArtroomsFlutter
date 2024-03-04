@@ -237,7 +237,6 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
                 border: UnderlineInputBorder(
                   borderRadius: BorderRadius.circular(25),
                   borderSide: BorderSide.none,
-
                 ),
                 filled: true,
                 fillColor: const Color(0xFFF3F3F3),
@@ -249,7 +248,6 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
                 fontSize: 16,
                 fontFamily: 'SUIT',
                 fontWeight: FontWeight.w400,
-                height: 0,
                 letterSpacing: -0.32,
               ),
             ),
@@ -298,7 +296,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
                 ),
                 const SizedBox(width: 8),
                 Container(
-                  constraints: BoxConstraints(maxWidth: screenWidth * 0.65),
+                  constraints: BoxConstraints(maxWidth: screenWidth * 0.55),
                   padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
                   decoration: const BoxDecoration(
                     color: colorPrimaryBlue,
@@ -408,7 +406,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
                               children: [
                                 const SizedBox(height: 4),
                                 Container(
-                                  constraints: BoxConstraints(maxWidth: screenWidth * 0.65,),
+                                  constraints: BoxConstraints(maxWidth: screenWidth * 0.55,),
                                   child: Text(
                                     message.content,
                                     style: const TextStyle(
@@ -486,7 +484,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
       return Container(
         margin: const EdgeInsets.symmetric(vertical: 8),
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
-        constraints: BoxConstraints(maxWidth: screenWidth * 0.65),
+        constraints: BoxConstraints(maxWidth: screenWidth * 0.55),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(22),
           border: Border.all(color: const Color(0xFFE3E3E3), width: 1.0,),
@@ -541,7 +539,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
     if (message.imageAttachments.isNotEmpty) {
       return Container(
         height: message.imageAttachments.length > 1 ? 80 : 246,
-        constraints: BoxConstraints(maxWidth: screenWidth * 0.65),
+        constraints: BoxConstraints(maxWidth: screenWidth * 0.55),
         margin: EdgeInsets.symmetric(horizontal: message.isMe ? 0 : 40, vertical: 8),
         alignment: message.isMe ? Alignment.topRight : Alignment.topLeft,
         decoration: BoxDecoration(
@@ -564,7 +562,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
                     bottomRight: Radius.circular(isLast ? 24 : 0)
                 ),
                 child: Container(
-                  width: (screenWidth * 0.65) / (message.imageAttachments.length > 3 ? 3 : message.imageAttachments.length),
+                  width: (screenWidth * 0.55) / (message.imageAttachments.length > 3 ? 3 : message.imageAttachments.length),
                   decoration: BoxDecoration(
                     color: colorMainGrey200,
                     borderRadius: BorderRadius.only(

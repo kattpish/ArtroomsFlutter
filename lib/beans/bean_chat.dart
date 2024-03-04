@@ -1,5 +1,6 @@
 
 import 'package:sendbird_sdk/sendbird_sdk.dart';
+import '../utils/utils.dart';
 import 'bean_message.dart';
 
 
@@ -32,7 +33,7 @@ class MyChat {
 
     if (lastMessage != null) {
       lastMessageText = lastMessage.message;
-      messageDate = DateTime.fromMillisecondsSinceEpoch(lastMessage.createdAt).toString();
+      messageDate = formatDateTime(lastMessage.createdAt);
     }
 
     final MyChat myChat = MyChat(
