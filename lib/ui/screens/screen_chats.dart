@@ -347,7 +347,7 @@ class _MyScreenChatsState extends State<MyScreenChats> with WidgetsBindingObserv
             ],
           ),
           onTap: () {
-            onSelectChat(myChat);
+            onSelectChat(context, myChat);
           },
         ),
       ),
@@ -501,7 +501,7 @@ class _MyScreenChatsState extends State<MyScreenChats> with WidgetsBindingObserv
     );
   }
 
-  void onSelectChat(MyChat myChat) {
+  void onSelectChat(BuildContext context, MyChat myChat) {
     if(myChat.id == selectChatId) return;
 
     if(isTablet(context)) {

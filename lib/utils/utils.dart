@@ -6,7 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 String formatTime(int timestamp) {
   var date = DateTime.fromMillisecondsSinceEpoch(timestamp);
-  final DateFormat formatter = DateFormat('a h:mm');
+  final DateFormat formatter = DateFormat('a h:mm', 'ko_KR');
   String time = formatter.format(date);
   time = time.replaceFirst("AM", "오전");
   time = time.replaceFirst("PM", "오후");
@@ -15,7 +15,7 @@ String formatTime(int timestamp) {
 
 String formatDate(int timestamp) {
   var date = DateTime.fromMillisecondsSinceEpoch(timestamp);
-  var formatter = DateFormat('yyyy.MM.dd');
+  var formatter = DateFormat('yyyy.MM.dd', 'ko_KR');
   return formatter.format(date);
 }
 

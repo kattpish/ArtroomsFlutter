@@ -1,8 +1,13 @@
 
+import 'dart:convert';
+
 import 'package:artrooms/data/module_datastore.dart';
 import 'package:artrooms/ui/screens/screen_chats.dart';
 import 'package:artrooms/ui/screens/screen_login.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:intl/date_symbol_data_custom.dart';
+import 'package:intl/date_symbols.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'modules/module_sendbird.dart';
@@ -18,6 +23,15 @@ double screenHeight = 0;
 Future<void> main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
+
+  String symbolsDataString = await rootBundle.loadString('assets/locale/symbols/ko_KR.json');
+  Map<String, dynamic> symbolsData = json.decode(symbolsDataString);
+  initializeDateFormattingCustom(
+    locale: 'ko_KR',
+    symbols: DateSymbols.deserializeFromMap(symbolsData),
+    patterns: {},
+  );
+
   sharedPreferences = await SharedPreferences.getInstance();
   myDataStore = MyDataStore();
   moduleSendBird = ModuleSendBird();

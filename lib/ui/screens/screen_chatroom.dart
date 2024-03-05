@@ -2,10 +2,12 @@
 import 'dart:async';
 
 import 'package:artrooms/beans/bean_notice.dart';
+import 'package:artrooms/modules/module_notices.dart';
 import 'package:artrooms/ui/screens/screen_chatroom_drawer.dart';
 import 'package:artrooms/ui/screens/screen_notice_details.dart';
 import 'package:artrooms/ui/widgets/widget_loader.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import '../../beans/bean_chat.dart';
 import '../../beans/bean_file.dart';
 import '../../beans/bean_message.dart';
@@ -42,6 +44,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
   final TextEditingController _messageController = TextEditingController();
 
   late final ModuleMessages moduleMessages;
+  ModuleNotice moduleNotice = ModuleNotice();
   MyNotice myNotice = MyNotice();
 
   double _boxHeight = 320.0;
@@ -65,6 +68,14 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
     moduleMessages = ModuleMessages(widget.chat.id);
     _loadMessages();
     _loadNotice();
+  }
+
+  @override
+  void dispose() {
+    _messageController.dispose();
+    _scrollController.dispose();
+    _scrollTimer?.cancel();
+    super.dispose();
   }
 
   @override
@@ -196,8 +207,9 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
                             ),
                           ),
                         ),
-                        Visibility(
-                          visible: _showDateContainer,
+                        AnimatedOpacity(
+                          opacity: _showDateContainer ? 1.0 : 0.0,
+                          duration: const Duration(milliseconds: 500),
                           child: Container(
                             width: 139,
                             height: 31,
@@ -229,8 +241,9 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
                             ),
                           ),
                         ),
-                        Visibility(
-                          visible: myNotice.notice.isNotEmpty,
+                        AnimatedOpacity(
+                          opacity: myNotice.notice.isNotEmpty ? 1.0 : 0.0,
+                          duration: const Duration(milliseconds: 500),
                           child: buildNoticePin(context),
                         )
                       ],
@@ -1095,8 +1108,9 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  SizedBox(
+                                  Container(
                                     width: 267,
+                                    alignment: Alignment.center,
                                     child: Text(
                                       myNotice.notice,
                                       style: const TextStyle(
@@ -1107,6 +1121,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
                                         height: 0,
                                         letterSpacing: -0.28,
                                       ),
+                                      textAlign: TextAlign.center,
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
@@ -1179,29 +1194,44 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
     if (_scrollTimer?.isActive ?? false) _scrollTimer?.cancel();
 
     var firstVisibleItemIndex = _findFirstVisibleItem();
-    var firstVisibleMessage = listMessages[firstVisibleItemIndex];
 
-    setState(() {
-      _showDateContainer = true;
-      _currentDate = _formatDate(firstVisibleMessage.timestamp);
-    });
+    if(listMessages.isNotEmpty) {
+      var firstVisibleMessage = listMessages[firstVisibleItemIndex];
 
-    _scrollTimer = Timer(const Duration(seconds: 3), () {
       setState(() {
-        _showDateContainer = false;
+        _showDateContainer = true;
+        _currentDate = _formatDate(firstVisibleMessage.timestamp);
       });
-    });
+
+      _scrollTimer = Timer(const Duration(seconds: 3), () {
+        setState(() {
+          _showDateContainer = false;
+        });
+      });
+    }
 
     _loadMessages();
 
   }
 
   int _findFirstVisibleItem() {
-    return 0;
+
+    if (!_scrollController.hasClients) return 0;
+
+    const double itemHeight = 100.0;
+
+    double scrollPosition = _scrollController.position.pixels;
+
+    int firstVisibleItemIndex = (scrollPosition / itemHeight).floor();
+
+    return firstVisibleItemIndex;
   }
 
   String _formatDate(int timestamp) {
-    return "2022년 3월 10일 목요일";
+    final DateTime date = DateTime.fromMillisecondsSinceEpoch(timestamp);
+    final DateFormat formatter = DateFormat('y년 M월 d일 EEEE', 'ko_KR'); // ko_KR
+    final String formattedDate = formatter.format(date);
+    return formattedDate;
   }
 
   Future<void> _loadMessages() async {
@@ -1239,9 +1269,19 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
 
   void _loadNotice() {
 
-    setState(() {
+    moduleNotice.getNotices(widget.chat.id).then((List<MyNotice> listNotices) {
 
-      myNotice.notice = "[공지] 5월 5일은 휴강입니다. 즐거운 휴일 되시";
+      setState(() {
+
+        for(MyNotice notice in listNotices) {
+          myNotice = notice;
+        }
+
+      });
+
+    }).catchError((e) {
+
+    }).whenComplete(() {
 
     });
 

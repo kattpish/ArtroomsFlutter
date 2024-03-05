@@ -36,7 +36,7 @@ class MyNotice {
   String getDate() {
     if(createdAt.isNotEmpty) {
       DateTime dateTime = DateTime.parse(createdAt);
-      return DateFormat('yyyy.M.d').format(dateTime);
+      return DateFormat('yyyy.M.d', 'ko_KR').format(dateTime);
     }else {
       return "";
     }
