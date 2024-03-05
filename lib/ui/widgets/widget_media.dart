@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:photo_view/photo_view.dart';
 
 import '../../beans/bean_file.dart';
 import '../theme/theme_colors.dart';
@@ -15,92 +16,87 @@ void viewPhotoFile(BuildContext context, FileItem file) {
 
 void viewPhoto(BuildContext context, String imagePath, String imageUrl) {
   showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return Scaffold(
-          backgroundColor: Colors.black.withOpacity(0.40),
-          body: Container(
-            color: Colors.black.withOpacity(0.5),
-            child: Column(
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Container(
-                        width: 30,
-                        height: 30,
-                        decoration: const BoxDecoration(
-                          color: colorMainGrey200,
-                          shape: BoxShape.circle,
-                        ),
-                        child: IconButton(
-                          icon: const Icon(
-                            Icons.close,
-                            size: 22,
-                            color: Colors.black,
-                          ),
-                          padding: const EdgeInsets.all(4),
-                          constraints: const BoxConstraints(),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: imagePath.isNotEmpty
-                      ? Image.asset(
-                    imagePath,
-                    width: double.infinity,
-                    height: double.infinity,
-                    fit: BoxFit.none,
-                  )
-                  : FadeInImage.assetNetwork(
-                    placeholder: 'assets/images/profile/placeholder.png',
-                    image: imageUrl,
-                    fit: BoxFit.cover,
-                    fadeInDuration: const Duration(milliseconds: 100),
-                    fadeOutDuration: const Duration(milliseconds: 100),
-                    imageErrorBuilder: (context, error, stackTrace) {
-                      return Image.asset(
-                        'assets/images/profile/placeholder.png',
-                        fit: BoxFit.cover,
-                      );
-                    },
-                  )
-                  ,
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
-                  child: Row(
-                    children: [
-                      SizedBox(
-                        width: 40,
-                        height: 40,
-                        child: IconButton(
-                          icon: const Icon(
-                            Icons.file_download_outlined,
-                            size: 32,
-                            color: colorMainGrey300,
-                          ),
-                          padding: const EdgeInsets.all(4),
-                          constraints: const BoxConstraints(),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
+    context: context,
+    builder: (BuildContext context) {
+
+      ImageProvider imageProvider;
+      if (imagePath.isNotEmpty) {
+        imageProvider = AssetImage(imagePath);
+      } else {
+        imageProvider = NetworkImage(imageUrl);
       }
+
+      return Scaffold(
+        backgroundColor: Colors.black.withOpacity(0.40),
+        body: Container(
+          color: Colors.black.withOpacity(0.5),
+          child: Stack(
+            children: [
+              PhotoView(
+                imageProvider: imageProvider,
+                backgroundDecoration: BoxDecoration(
+                  color: Colors.black.withOpacity(0.5),
+                ),
+                loadingBuilder: (context, event) => Center(
+                  child: CircularProgressIndicator(
+                    value: event == null ? 0 : event.cumulativeBytesLoaded / event.expectedTotalBytes!,
+                  ),
+                ),
+                errorBuilder: (context, error, stackTrace) {
+                  return Image.asset(
+                    'assets/images/profile/placeholder.png',
+                    fit: BoxFit.cover,
+                  );
+                },
+              ),
+              Positioned(
+                top: 18,
+                right: 18,
+                  child: Container(
+                    width: 30,
+                    height: 30,
+                    decoration: const BoxDecoration(
+                      color: colorMainGrey250,
+                      shape: BoxShape.circle,
+                    ),
+                    child: IconButton(
+                      icon: const Icon(
+                        Icons.close,
+                        size: 22,
+                        color: Colors.black,
+                      ),
+                      padding: const EdgeInsets.all(4),
+                      constraints: const BoxConstraints(),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  )
+              ),
+              Positioned(
+                bottom: 18,
+                left: 29,
+                  child: SizedBox(
+                    width: 40,
+                    height: 40,
+                    child: IconButton(
+                      icon: const Icon(
+                        Icons.file_download_outlined,
+                        size: 32,
+                        color: colorMainGrey300,
+                      ),
+                      padding: const EdgeInsets.all(4),
+                      constraints: const BoxConstraints(),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  )
+              ),
+            ],
+          ),
+        ),
+      );
+    },
   );
 }

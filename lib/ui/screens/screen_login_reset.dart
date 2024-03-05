@@ -24,10 +24,10 @@ class _MyScreenLoginResetState extends State<MyScreenLoginReset> with SingleTick
   bool _isLoading = false;
   late TabController _tabController;
   final FocusNode _nameFocus = FocusNode();
-  final FocusNode _passwordFocus = FocusNode();
+  final FocusNode _phoneFocus = FocusNode();
   final TextEditingController _nameController =  TextEditingController();
   final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
   bool _isButtonDisabled = true;
 
   @override
@@ -36,7 +36,7 @@ class _MyScreenLoginResetState extends State<MyScreenLoginReset> with SingleTick
     _tabController = TabController(length: 2, vsync: this);
     _tabController.addListener(_handleTabSelection);
     _nameController.addListener(_checkIfButtonShouldBeEnabled);
-    _passwordController.addListener(_checkIfButtonShouldBeEnabled);
+    _phoneController.addListener(_checkIfButtonShouldBeEnabled);
     _emailController.addListener(_checkIfButtonShouldBeEnabled);
 
     _tabController.index = widget.tab;
@@ -46,9 +46,9 @@ class _MyScreenLoginResetState extends State<MyScreenLoginReset> with SingleTick
   void dispose() {
     _tabController.dispose();
     _nameFocus.dispose();
-    _passwordFocus.dispose();
+    _phoneFocus.dispose();
     _nameController.dispose();
-    _passwordController.dispose();
+    _phoneController.dispose();
     _emailController.dispose();
     super.dispose();
   }
@@ -83,6 +83,7 @@ class _MyScreenLoginResetState extends State<MyScreenLoginReset> with SingleTick
           ),
           centerTitle: true,
           elevation: 0.5,
+          toolbarHeight: 60,
           backgroundColor: Colors.white,
           bottom: TabBar(
             controller: _tabController,
@@ -227,9 +228,10 @@ class _MyScreenLoginResetState extends State<MyScreenLoginReset> with SingleTick
                 controller: _nameController,
                 focusNode: _nameFocus,
                 autofocus: false,
+                keyboardType: TextInputType.name,
                 textInputAction: TextInputAction.next,
                 onSubmitted: (_) {
-                  FocusScope.of(context).requestFocus(_passwordFocus);
+                  FocusScope.of(context).requestFocus(_phoneFocus);
                 },
                 decoration: InputDecoration(
                   hintText: '실명을 입력해주세요',
@@ -269,8 +271,8 @@ class _MyScreenLoginResetState extends State<MyScreenLoginReset> with SingleTick
                 border: Border.all(color: const Color(0xFFE7E7E7), width: 1.0,),
               ),
               child: TextField(
-                controller: _passwordController,
-                focusNode: _passwordFocus,
+                controller: _phoneController,
+                focusNode: _phoneFocus,
                 textInputAction: TextInputAction.done,
                 onSubmitted: (_) {
                   _submit(context);
@@ -339,6 +341,7 @@ class _MyScreenLoginResetState extends State<MyScreenLoginReset> with SingleTick
               ),
               child: TextField(
                 controller: _emailController,
+                keyboardType: TextInputType.emailAddress,
                 textInputAction: TextInputAction.done,
                 onSubmitted: (_) {
                   _submit(context);
@@ -375,7 +378,7 @@ class _MyScreenLoginResetState extends State<MyScreenLoginReset> with SingleTick
 
   void _checkIfButtonShouldBeEnabled() {
     if(_tabController.index == 0) {
-      if (_nameController.text.isEmpty || _passwordController.text.isEmpty) {
+      if (_nameController.text.isEmpty || _phoneController.text.isEmpty) {
         setState(() {
           _isButtonDisabled = true;
         });
@@ -420,7 +423,7 @@ class _MyScreenLoginResetState extends State<MyScreenLoginReset> with SingleTick
       showSnackBar(context, "당신의 이름을 입력 해주세요");
       return;
     }
-    if (_passwordController.text.isEmpty) {
+    if (_phoneController.text.isEmpty) {
       showSnackBar(context, "비밀번호를 입력해주세요");
       return;
     }

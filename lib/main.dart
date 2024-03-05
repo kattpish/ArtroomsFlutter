@@ -12,6 +12,9 @@ late final SharedPreferences sharedPreferences;
 late final MyDataStore myDataStore;
 late final ModuleSendBird moduleSendBird;
 
+double screenWidth = 0;
+double screenHeight = 0;
+
 Future<void> main() async {
 
   WidgetsFlutterBinding.ensureInitialized();

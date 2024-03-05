@@ -6,6 +6,7 @@ import '../../beans/bean_chat.dart';
 import '../../beans/bean_file.dart';
 import '../../beans/bean_message.dart';
 import '../../modules/module_messages.dart';
+import '../../utils/utils_screen.dart';
 import '../theme/theme_colors.dart';
 import '../widgets/widget_media.dart';
 
@@ -41,6 +42,10 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
   double screenWidth = 0;
   double screenHeight = 0;
 
+  int crossAxisCount = 2;
+  double crossAxisSpacing = 8;
+  double mainAxisSpacing = 8;
+
   @override
   void initState() {
     super.initState();
@@ -55,6 +60,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
 
     screenWidth = MediaQuery.of(context).size.width;
     screenHeight = MediaQuery.of(context).size.height;
+    crossAxisCount = isTablet(context) ? 4 : 2;
 
     Widget attachmentPicker = _attachmentPicker(context, this);
 
@@ -101,6 +107,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
                 ),
                 centerTitle: true,
                 elevation: 0.5,
+                toolbarHeight: 60,
                 backgroundColor: Colors.white,
                 actions: [
                   Container(
@@ -754,8 +761,8 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
             child: Expanded(
               child: GridView.builder(
                 padding: const EdgeInsets.only(bottom: 32),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: isTablet(context) ? 6 : 3,
                   crossAxisSpacing: 5,
                   mainAxisSpacing: 5,
                   childAspectRatio: 1,
@@ -830,11 +837,11 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
             child: Expanded(
               child: GridView.builder(
                 padding: const EdgeInsets.only(left: 8, top: 8, right: 8, bottom: 32),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 8,
-                  mainAxisSpacing: 8,
-                  childAspectRatio: 1,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: crossAxisCount,
+                  crossAxisSpacing: crossAxisSpacing,
+                  mainAxisSpacing: mainAxisSpacing,
+                  childAspectRatio: (screenWidth / crossAxisCount - crossAxisSpacing) / 157,
                 ),
                 itemCount: filesMedia.length,
                 itemBuilder: (context, index) {

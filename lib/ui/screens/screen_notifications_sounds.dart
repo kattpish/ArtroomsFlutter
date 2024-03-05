@@ -52,6 +52,7 @@ class _MyScreenNotificationsSoundsState extends State<MyScreenNotificationsSound
               onPressed: () => Navigator.of(context).pop(),
             ),
           ),
+          toolbarHeight: 60,
           leadingWidth: 32,
           title: const Text(
             '알림 및 소리',

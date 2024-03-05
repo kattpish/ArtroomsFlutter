@@ -98,6 +98,7 @@ class _MyScreenChatsState extends State<MyScreenChats> with WidgetsBindingObserv
             ),
           ),
           backgroundColor: Colors.white,
+          toolbarHeight: 60,
           elevation: 0,
           actions: [
             PopupMenuButton<String>(

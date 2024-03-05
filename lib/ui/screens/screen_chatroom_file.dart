@@ -1,4 +1,5 @@
 
+import 'package:artrooms/utils/utils_screen.dart';
 import 'package:flutter/material.dart';
 
 import '../../beans/bean_file.dart';
@@ -20,6 +21,11 @@ class _MyScreenChatroomFileState extends State<MyScreenChatroomFile> {
 
   bool _isButtonFileDisabled = true;
 
+  int crossAxisCount = 2;
+  double crossAxisSpacing = 8;
+  double mainAxisSpacing = 8;
+  double screenWidth = 0;
+
   List<FileItem> filesMedia = [
     FileItem(name: 'artrooms_img_file_final_1', date: '2022.08.16 만료'),
     FileItem(name: 'artrooms_img_file_final_2', date: '2022.08.16 만료'),
@@ -36,7 +42,16 @@ class _MyScreenChatroomFileState extends State<MyScreenChatroomFile> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
+
+    crossAxisCount = isTablet(context) ? 4 : 2;
+    screenWidth = MediaQuery.of(context).size.width;
+
     return MaterialApp(
       title: 'File Manager',
       home: Scaffold(
@@ -46,25 +61,31 @@ class _MyScreenChatroomFileState extends State<MyScreenChatroomFile> {
             '파일',
             style: TextStyle(
                 color: colorMainGrey900,
-                fontWeight: FontWeight.w600
+              fontSize: 19,
+              fontFamily: 'SUIT',
+              fontWeight: FontWeight.w700,
+              height: 0,
+              letterSpacing: -0.38,
             ),
           ),
+          toolbarHeight: 60,
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_ios, color: colorMainGrey250),
             onPressed: () {
               Navigator.of(context).pop();
             },
           ),
+          leadingWidth: 32,
           elevation: 0.5,
         ),
         backgroundColor: colorMainScreen,
         body: GridView.builder(
-          padding: const EdgeInsets.only(left: 8, top: 8, right: 8, bottom: 32),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            crossAxisSpacing: 8,
-            mainAxisSpacing: 8,
-            childAspectRatio: 1,
+          padding: const EdgeInsets.only(left: 16, top: 12, right: 16, bottom: 32),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: crossAxisCount,
+            crossAxisSpacing: crossAxisSpacing,
+            mainAxisSpacing: mainAxisSpacing,
+            childAspectRatio: (screenWidth / crossAxisCount - crossAxisSpacing) / 157,
           ),
           itemCount: filesMedia.length,
           itemBuilder: (context, index) {
@@ -83,7 +104,7 @@ class _MyScreenChatroomFileState extends State<MyScreenChatroomFile> {
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(16.0),
+                    borderRadius: BorderRadius.circular(10),
                     border: Border.all(color: colorMainGrey200, width: 1.0,),
                   ),
                   child: Stack(
@@ -97,33 +118,38 @@ class _MyScreenChatroomFileState extends State<MyScreenChatroomFile> {
                             width: 30,
                             height: 30,
                           ),
-                          const SizedBox(height: 4),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  file.name,
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    color: colorMainGrey700,
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                  maxLines: 2,
+                          const SizedBox(height: 20),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                file.name,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  color: colorMainGrey700,
+                                  fontFamily: 'SUIT',
+                                  fontWeight: FontWeight.w400,
+                                  height: 0.08,
+                                  letterSpacing: -0.32,
                                 ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  file.date,
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    color: Color(0xFF8F8F8F),
-                                    fontWeight: FontWeight.w300,
-                                  ),
-                                  maxLines: 1,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              const SizedBox(height: 10),
+                              Text(
+                                file.date,
+                                style: const TextStyle(
+                                  color: Color(0xFF8F8F8F),
+                                  fontSize: 12,
+                                  fontFamily: 'SUIT',
+                                  fontWeight: FontWeight.w400,
+                                  height: 0,
+                                  letterSpacing: -0.24,
                                 ),
-                              ],
-                            ),
+                                maxLines: 1,
+                              ),
+                            ],
                           ),
                         ],
                       ),
@@ -131,8 +157,8 @@ class _MyScreenChatroomFileState extends State<MyScreenChatroomFile> {
                         top: 3,
                         right: 2,
                         child: Container(
-                          width: 26,
-                          height: 26,
+                          width: 24,
+                          height: 24,
                           decoration: BoxDecoration(
                             color: file.isSelected ? colorPrimaryBlue : Colors.transparent,
                             shape: BoxShape.circle,

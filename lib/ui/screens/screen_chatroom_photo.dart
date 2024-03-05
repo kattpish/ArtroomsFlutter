@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 
 import '../../beans/bean_file.dart';
+import '../../utils/utils_screen.dart';
 import '../theme/theme_colors.dart';
 import '../widgets/widget_media.dart';
 
@@ -30,8 +31,6 @@ class _MyScreenChatroomPhotoState extends State<MyScreenChatroomPhoto> {
     FileItem(name: '', path: 'assets/images/photos/photo_4.png'),
   ];
 
-  bool _isButtonFileDisabled = true;
-
   List<FileItem> files = [
     FileItem(name: 'artrooms_img_file_final_1', date: '2022.08.16 만료'),
     FileItem(name: 'artrooms_img_file_final_2', date: '2022.08.16 만료'),
@@ -57,11 +56,16 @@ class _MyScreenChatroomPhotoState extends State<MyScreenChatroomPhoto> {
           title: Text(
             !_selectMode ? '이미지' : "$_selected개 선택",
             style: const TextStyle(
-                fontSize: 16,
+                fontSize: 18,
                 color: colorMainGrey900,
-                fontWeight: FontWeight.w600
+              fontFamily: 'SUIT',
+              fontWeight: FontWeight.w700,
+              height: 0,
+              letterSpacing: -0.36,
             ),
           ),
+          toolbarHeight: 60,
+          leadingWidth: 48,
           centerTitle: _selectMode,
           leading: Row(
             children: [
@@ -89,9 +93,12 @@ class _MyScreenChatroomPhotoState extends State<MyScreenChatroomPhoto> {
                         child: const Text(
                             '취소',
                             style: TextStyle(
-                                fontSize: 14,
+                                fontSize: 16,
                                 color: colorMainGrey600,
-                                fontWeight: FontWeight.w600
+                              fontFamily: 'SUIT',
+                              fontWeight: FontWeight.w400,
+                              height: 0,
+                              letterSpacing: -0.32,
                             )
                         ),
                       ),
@@ -117,9 +124,12 @@ class _MyScreenChatroomPhotoState extends State<MyScreenChatroomPhoto> {
                       child: const Text(
                           '선택 해제',
                           style: TextStyle(
-                              fontSize: 14,
-                              color: colorMainGrey600,
-                              fontWeight: FontWeight.w600
+                            fontSize: 16,
+                            color: colorMainGrey600,
+                            fontFamily: 'SUIT',
+                            fontWeight: FontWeight.w400,
+                            height: 0,
+                            letterSpacing: -0.32,
                           )
                       ),
                     ),
@@ -133,8 +143,8 @@ class _MyScreenChatroomPhotoState extends State<MyScreenChatroomPhoto> {
         backgroundColor: colorMainScreen,
         body: GridView.builder(
           padding: const EdgeInsets.only(bottom: 32),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 3,
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: isTablet(context) ? 6 : 3,
             crossAxisSpacing: 0,
             mainAxisSpacing: 0,
             childAspectRatio: 1,
@@ -202,7 +212,7 @@ class _MyScreenChatroomPhotoState extends State<MyScreenChatroomPhoto> {
           margin: const EdgeInsets.only(left: 16.0, right: 16.0, top: 16, bottom: 42),
           padding: const EdgeInsets.all(4.0),
           decoration: BoxDecoration(color: _isButtonDisabled ? colorPrimaryBlue400.withAlpha(100) : colorPrimaryBlue,
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(30),
           ),
           child: TextButton(
             onPressed: () {
@@ -212,7 +222,11 @@ class _MyScreenChatroomPhotoState extends State<MyScreenChatroomPhoto> {
                 '저장',
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: 20,
+                  fontSize: 16,
+                  fontFamily: 'SUIT',
+                  fontWeight: FontWeight.w700,
+                  height: 0,
+                  letterSpacing: -0.32,
                 )
             ),
           ),

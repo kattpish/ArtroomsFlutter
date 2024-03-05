@@ -46,8 +46,8 @@ class _MyScreeLoginState extends State<MyScreenLogin> {
       return;
     }
 
-    // _emailController.text = "artrooms@test.com";
-    // _passwordController.text = "1234";
+    _emailController.text = "artrooms@test.com";
+    _passwordController.text = "1234";
   }
 
   @override
@@ -115,6 +115,7 @@ class _MyScreeLoginState extends State<MyScreenLogin> {
                                         controller: _emailController,
                                         focusNode: _emailFocus,
                                         autofocus: false,
+                                        keyboardType: TextInputType.emailAddress,
                                         textInputAction: TextInputAction.next,
                                         onSubmitted: (_) {
                                           FocusScope.of(context).requestFocus(_passwordFocus);

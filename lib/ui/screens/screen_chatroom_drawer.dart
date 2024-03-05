@@ -83,6 +83,7 @@ class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> with Wi
             letterSpacing: -0.36,
           ),
         ),
+        toolbarHeight: 60,
         leadingWidth: 0,
         actions: [
           Container(
@@ -465,7 +466,7 @@ class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> with Wi
                             ),
                             onTap: () {
                               Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                return const MyScreenChatroomPhoto();
+                                return const MyScreenChatroomFile();
                               }));
                             },
                           ),
@@ -490,11 +491,12 @@ class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> with Wi
                                 ),
                                 onTap: () {
                                   Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                    return const MyScreenChatroomFile();
+                                    return const MyScreenChatroomPhoto();
                                   }));
                                 },
                               ),
                               Container(
+                                alignment: Alignment.topLeft,
                                   padding: const EdgeInsets.all(16),
                                   child: buildAttachments(context, listAttachments)
                               ),
@@ -707,6 +709,7 @@ class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> with Wi
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           for(BaseMessage message in listAttachments)
             if (message is FileMessage)
@@ -715,6 +718,7 @@ class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> with Wi
                 child: Container(
                   width: 80,
                   height: 80,
+                  clipBehavior: Clip.antiAlias,
                   decoration: ShapeDecoration(
                     shape: RoundedRectangleBorder(
                       side: const BorderSide(width: 1, color: Color(0xFFF3F3F3)),

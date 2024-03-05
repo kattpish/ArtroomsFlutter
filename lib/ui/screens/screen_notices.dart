@@ -6,6 +6,7 @@ import 'package:artrooms/ui/theme/theme_colors.dart';
 import 'package:flutter/material.dart';
 
 import '../../beans/bean_chat.dart';
+import '../../utils/utils_screen.dart';
 
 
 class MyScreenNotices extends StatefulWidget {
@@ -39,7 +40,7 @@ class _MyScreenNoticesState extends State<MyScreenNotices> {
       title: "Notices",
       home: Scaffold(
         appBar: AppBar(
-          toolbarHeight: 0,
+          toolbarHeight: isTablet(context) ? 60 : 0,
           backgroundColor: Colors.white,
           leading: IconButton(
             icon: const Icon(
@@ -66,6 +67,7 @@ class _MyScreenNoticesState extends State<MyScreenNotices> {
           elevation: 0.5,
         ),
         bottomNavigationBar: BottomAppBar(
+          height: isTablet(context) ? 0 : 60,
           notchMargin: 6.0,
           color: Colors.white,
           child: Row(

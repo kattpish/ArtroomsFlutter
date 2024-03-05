@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 
 import '../../beans/bean_notice.dart';
+import '../../utils/utils_screen.dart';
 import '../theme/theme_colors.dart';
 
 
@@ -26,7 +27,7 @@ class _MyScreenNoticeDetailsState extends State<MyScreenNoticeDetails> {
       title: "Notices",
       home: Scaffold(
         appBar: AppBar(
-          toolbarHeight: 0,
+          toolbarHeight: isTablet(context) ? 60 : 0,
           backgroundColor: Colors.white,
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_ios, color: colorMainGrey250),
@@ -45,6 +46,7 @@ class _MyScreenNoticeDetailsState extends State<MyScreenNoticeDetails> {
         ),
         backgroundColor: colorMainScreen,
         bottomNavigationBar: BottomAppBar(
+          height: isTablet(context) ? 0 : 60,
           notchMargin: 6.0,
           color: Colors.white,
           child: Row(

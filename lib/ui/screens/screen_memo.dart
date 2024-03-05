@@ -51,6 +51,7 @@ class _MyScreenMemoState extends State<MyScreenMemo> {
             Navigator.pop(context);
           },
         ),
+        toolbarHeight: 60,
         leadingWidth: 32,
         title: const Text(
           '메모',

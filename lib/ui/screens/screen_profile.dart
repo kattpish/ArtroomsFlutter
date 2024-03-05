@@ -55,6 +55,7 @@ class _MyScreenProfileState extends State<MyScreenProfile> {
             letterSpacing: -0.36,
           ),
         ),
+        toolbarHeight: 60,
         leadingWidth: 0,
         actions: [
           Container(
@@ -118,7 +119,7 @@ class _MyScreenProfileState extends State<MyScreenProfile> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      myDataStore.getNickName(),
+                      myDataStore.getName(),
                       style: const TextStyle(
                         color: Color(0xFF111111),
                         fontSize: 20,
@@ -130,7 +131,7 @@ class _MyScreenProfileState extends State<MyScreenProfile> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      myDataStore.getEmail(),
+                      myDataStore.getNickName(),
                       style: const TextStyle(
                         color: Color(0xFF565656),
                         fontSize: 14,

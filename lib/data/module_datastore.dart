@@ -38,6 +38,11 @@ class MyDataStore {
     return email ?? "";
   }
 
+  String getName() {
+    String? name = sharedPreferences.getString("name");
+    return name ?? "";
+  }
+
   String getNickName() {
     String? nickname = sharedPreferences.getString("nickname");
     return nickname ?? "";
@@ -68,6 +73,7 @@ class MyDataStore {
 
     Map<String, dynamic> student = profile["student"];
 
+    await sharedPreferences.setString('name', student["name"] ?? "");
     await sharedPreferences.setString('nickname', student["nickname"] ?? "");
     await sharedPreferences.setString('phoneNumber', student["phoneNumber"] ?? "");
     await sharedPreferences.setString('profileImg', profile["profileImg"]["accessUrl"] ?? "");
