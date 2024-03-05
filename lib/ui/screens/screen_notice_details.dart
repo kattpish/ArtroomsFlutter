@@ -8,9 +8,9 @@ import '../theme/theme_colors.dart';
 
 class MyScreenNoticeDetails extends StatefulWidget {
 
-  final MyNotice notice;
+  final MyNotice myNotice;
 
-  const MyScreenNoticeDetails({super.key, required this.notice});
+  const MyScreenNoticeDetails({super.key, required this.myNotice});
 
   @override
   State<StatefulWidget> createState() {
@@ -78,9 +78,8 @@ class _MyScreenNoticeDetailsState extends State<MyScreenNoticeDetails> {
           ),
         ),
         body: SingleChildScrollView(
-          child: Card(
+          child: Container(
             margin: const EdgeInsets.only(bottom: 8.0),
-            elevation: 0,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -94,7 +93,7 @@ class _MyScreenNoticeDetailsState extends State<MyScreenNoticeDetails> {
                   child: Row(
                     children: [
                       Text(
-                        widget.notice.getDate(),
+                        widget.myNotice.getDate(),
                         style: const TextStyle(
                           fontSize: 18,
                           color: colorPrimaryBlue,
@@ -102,7 +101,7 @@ class _MyScreenNoticeDetailsState extends State<MyScreenNoticeDetails> {
                         ),
                       ),
                       Visibility(
-                          visible: widget.notice.noticeable,
+                          visible: widget.myNotice.noticeable,
                           child: Container(
                             padding: const EdgeInsets.all(2.0),
                             margin: const EdgeInsets.all(6.0),
@@ -112,9 +111,9 @@ class _MyScreenNoticeDetailsState extends State<MyScreenNoticeDetails> {
                             ),
                             child:const Icon(Icons.star, size:10, color: Colors.white,),)
                       ),
-                      const Text(
-                        "widget.notice.title",
-                        style: TextStyle(
+                      Text(
+                        widget.myNotice.title,
+                        style: const TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.normal,
                         ),
@@ -132,7 +131,7 @@ class _MyScreenNoticeDetailsState extends State<MyScreenNoticeDetails> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        widget.notice.notice,
+                        widget.myNotice.notice,
                         style: const TextStyle(
                             fontSize: 15,
                             color: colorMainGrey900,

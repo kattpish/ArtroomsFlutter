@@ -1,5 +1,9 @@
 
+import 'dart:async';
+
+import 'package:artrooms/beans/bean_notice.dart';
 import 'package:artrooms/ui/screens/screen_chatroom_drawer.dart';
+import 'package:artrooms/ui/screens/screen_notice_details.dart';
 import 'package:artrooms/ui/widgets/widget_loader.dart';
 import 'package:flutter/material.dart';
 import '../../beans/bean_chat.dart';
@@ -14,8 +18,10 @@ import '../widgets/widget_media.dart';
 class MyScreenChatroom extends StatefulWidget {
 
   final MyChat chat;
+  final double widthRatio;
+  final VoidCallback? onBackPressed;
 
-  const MyScreenChatroom({super.key, required this.chat});
+  const MyScreenChatroom({super.key, required this.chat, this.widthRatio = 1.0, this.onBackPressed});
 
   @override
   State<StatefulWidget> createState() {
@@ -36,6 +42,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
   final TextEditingController _messageController = TextEditingController();
 
   late final ModuleMessages moduleMessages;
+  MyNotice myNotice = MyNotice();
 
   double _boxHeight = 320.0;
   double _dragStartY = 0.0;
@@ -46,19 +53,24 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
   double crossAxisSpacing = 8;
   double mainAxisSpacing = 8;
 
+  Timer? _scrollTimer;
+  String _currentDate = '';
+  bool _showDateContainer = false;
+
   @override
   void initState() {
     super.initState();
     _messageController.addListener(_checkIfButtonShouldBeEnabled);
-    _scrollController.addListener(_loadMessages);
+    _scrollController.addListener(_onScroll);
     moduleMessages = ModuleMessages(widget.chat.id);
     _loadMessages();
+    _loadNotice();
   }
 
   @override
   Widget build(BuildContext context) {
 
-    screenWidth = MediaQuery.of(context).size.width;
+    screenWidth = MediaQuery.of(context).size.width * widget.widthRatio;
     screenHeight = MediaQuery.of(context).size.height;
     crossAxisCount = isTablet(context) ? 4 : 2;
 
@@ -77,7 +89,12 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
           });
           return false;
         }
-        return true;
+        if(widget.onBackPressed != null) {
+          widget.onBackPressed!.call();
+          return false;
+        }else {
+          return true;
+        }
       },
       child: SafeArea(
         child: Stack(
@@ -91,7 +108,11 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
                     size: 20,
                   ),
                   onPressed: () {
-                    Navigator.of(context).pop();
+                    if(widget.onBackPressed != null) {
+                      widget.onBackPressed!.call();
+                    }else {
+                      Navigator.of(context).pop();
+                    }
                   },
                 ),
                 title: Text(
@@ -137,6 +158,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
                   ),
                 ],
               ),
+              backgroundColor: Colors.white,
               body: Column(
                 children: [
                   Expanded(
@@ -154,9 +176,10 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
                             itemBuilder: (context, index) {
                               final message = listMessages[index];
                               final isPreviousSame = index == 0 ? false : listMessages[index - 1].senderId == message.senderId;
+                              final isNextSame = index == listMessages.length - 1 ? false : listMessages[index + 1].senderId == message.senderId;
                               return message.isMe
                                   ? _buildMyMessageBubble(message)
-                                  : _buildOtherMessageBubble(message, isPreviousSame);
+                                  : _buildOtherMessageBubble(message, isPreviousSame, isNextSame);
                             },
                           )
                               : buildNoChats(context),
@@ -164,15 +187,52 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
                         Visibility(
                           visible: _isLoadMore,
                           child: Container(
-                            width: 20,
-                            height: 20,
-                            margin: const EdgeInsets.only(top: 6),
+                            width: 12,
+                            height: 12,
+                            margin: const EdgeInsets.only(top: 2),
                             child: const CircularProgressIndicator(
                               color: Color(0xFF6A79FF),
-                              strokeWidth: 3,
+                              strokeWidth: 2,
                             ),
                           ),
                         ),
+                        Visibility(
+                          visible: _showDateContainer,
+                          child: Container(
+                            width: 139,
+                            height: 31,
+                            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                            decoration: ShapeDecoration(
+                              color: const Color(0xFFF9F9F9),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  _currentDate,
+                                  style: const TextStyle(
+                                    color: Color(0xFF7D7D7D),
+                                    fontSize: 12,
+                                    fontFamily: 'SUIT',
+                                    fontWeight: FontWeight.w400,
+                                    height: 0,
+                                    letterSpacing: -0.24,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        Visibility(
+                          visible: myNotice.notice.isNotEmpty,
+                          child: buildNoticePin(context),
+                        )
                       ],
                     ),
                   ),
@@ -335,9 +395,13 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
     );
   }
 
-  Widget _buildOtherMessageBubble(MyMessage message, bool isPreviousSame) {
+  Widget _buildOtherMessageBubble(MyMessage message, bool isPreviousSame, bool isNextSame) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
+      margin: EdgeInsets.only(
+          left: 16,
+          right: 16,
+          bottom: isPreviousSame ? 0 : 9
+      ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -352,19 +416,22 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
                 },
                 child: CircleAvatar(
                   radius: 15,
-                  backgroundColor: colorMainGrey200,
-                  child: FadeInImage.assetNetwork(
-                    placeholder: 'assets/images/profile/placeholder.png',
-                    image: message.profilePictureUrl,
-                    fit: BoxFit.cover,
-                    fadeInDuration: const Duration(milliseconds: 100),
-                    fadeOutDuration: const Duration(milliseconds: 100),
-                    imageErrorBuilder: (context, error, stackTrace) {
-                      return Image.asset(
-                        'assets/images/profile/profile_${(message.senderId.hashCode % 2) + 1}.png',
-                        fit: BoxFit.cover,
-                      );
-                    },
+                  backgroundColor: isNextSame ? Colors.transparent : colorMainGrey200,
+                  child: Visibility(
+                    visible: !isNextSame,
+                    child: FadeInImage.assetNetwork(
+                      placeholder: 'assets/images/profile/placeholder.png',
+                      image: message.profilePictureUrl,
+                      fit: BoxFit.cover,
+                      fadeInDuration: const Duration(milliseconds: 100),
+                      fadeOutDuration: const Duration(milliseconds: 100),
+                      imageErrorBuilder: (context, error, stackTrace) {
+                        return Image.asset(
+                          'assets/images/profile/profile_${(message.senderId.hashCode % 2) + 1}.png',
+                          fit: BoxFit.cover,
+                        );
+                      },
+                    ),
                   ),
                 ),
               ),
@@ -373,24 +440,29 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Container(
-                    margin: const EdgeInsets.only(left: 4, top: 16),
+                    margin: EdgeInsets.only(
+                        left: 4,
+                        top: isNextSame ? 0 : 16
+                    ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        SizedBox(
-                          width: screenWidth / 4,
-                          child: Text(
-                            message.getName(),
-                            textAlign: TextAlign.start,
-                            style: const TextStyle(
-                              color: Color(0xFF393939),
-                              fontSize: 14,
-                              fontFamily: 'SUIT',
-                              fontWeight: FontWeight.w600,
-                              height: 0.07,
-                              letterSpacing: -0.28,
+                        Visibility(
+                          visible: !isNextSame,
+                          child: SizedBox(
+                            child: Text(
+                              message.getName(),
+                              textAlign: TextAlign.start,
+                              style: const TextStyle(
+                                color: Color(0xFF393939),
+                                fontSize: 14,
+                                fontFamily: 'SUIT',
+                                fontWeight: FontWeight.w600,
+                                height: 0.07,
+                                letterSpacing: -0.28,
+                              ),
+                              maxLines: 1,
                             ),
-                            maxLines: 1,
                           ),
                         ),
                         const SizedBox(height: 8),
@@ -449,10 +521,12 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
           ),
           Container(
             alignment: Alignment.topLeft,
-              margin: const EdgeInsets.only(left: 38),
-              child: _buildAttachment(message)
+            margin: const EdgeInsets.only(left: 38),
+            child: _buildAttachment(message),
           ),
-          _buildImageAttachments(message),
+          Container(
+            child: _buildImageAttachments(message),
+          ),
         ],
       ),
     );
@@ -489,7 +563,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
   Widget _buildAttachment(MyMessage message) {
     if (message.attachmentUrl.isNotEmpty) {
       return Container(
-        margin: const EdgeInsets.symmetric(vertical: 8),
+        margin: const EdgeInsets.symmetric(vertical: 2),
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
         constraints: BoxConstraints(maxWidth: screenWidth * 0.55),
         decoration: BoxDecoration(
@@ -502,7 +576,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
             Text(
               message.attachmentName,
               style: const TextStyle(
-                  color: colorMainGrey700,
+                color: colorMainGrey700,
                 fontSize: 16,
                 fontFamily: 'SUIT',
                 fontWeight: FontWeight.w400,
@@ -547,7 +621,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
       return Container(
         height: message.imageAttachments.length > 1 ? 80 : 246,
         constraints: BoxConstraints(maxWidth: screenWidth * 0.55),
-        margin: EdgeInsets.symmetric(horizontal: message.isMe ? 0 : 40, vertical: 8),
+        margin: EdgeInsets.symmetric(horizontal: message.isMe ? 0 : 40, vertical: 0),
         alignment: message.isMe ? Alignment.topRight : Alignment.topLeft,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
@@ -937,6 +1011,139 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
     );
   }
 
+  Widget buildNoticePin(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        Navigator.push(context, MaterialPageRoute(builder: (context) {
+          return MyScreenNoticeDetails(myNotice: myNotice);
+        }));
+      },
+      child: Container(
+        width: 347,
+        height: 36,
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: ShapeDecoration(
+          color: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(18),
+          ),
+          shadows: const [
+            BoxShadow(
+              color: Color(0x19000000),
+              blurRadius: 10,
+              offset: Offset(0, 0),
+              spreadRadius: 0,
+            )
+          ],
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: SizedBox(
+                height: 20,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: 20,
+                      height: 20,
+                      padding: const EdgeInsets.only(
+                        top: 2.55,
+                        left: 1.64,
+                        right: 1.77,
+                        bottom: 2.46,
+                      ),
+                      clipBehavior: Clip.antiAlias,
+                      decoration: const BoxDecoration(),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Container(
+                            width: 16.5,
+                            height: 15,
+                            decoration: const BoxDecoration(
+                              image: DecorationImage(
+                                image: AssetImage("assets/images/icons/icon_notice.png"),
+                                fit: BoxFit.fill,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: SizedBox(
+                        height: 20,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              width: 267,
+                              height: 17,
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  SizedBox(
+                                    width: 267,
+                                    child: Text(
+                                      myNotice.notice,
+                                      style: const TextStyle(
+                                        color: Color(0xFF3A3A3A),
+                                        fontSize: 14,
+                                        fontFamily: 'Pretendard',
+                                        fontWeight: FontWeight.w400,
+                                        height: 0,
+                                        letterSpacing: -0.28,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Container(
+                      width: 20,
+                      height: 20,
+                      clipBehavior: Clip.antiAlias,
+                      decoration: const BoxDecoration(color: Colors.white),
+                      child: Container(
+                        width: 20,
+                        height: 20,
+                        decoration: const BoxDecoration(
+                          image: DecorationImage(
+                            image: AssetImage("assets/images/icons/icon_arrow_down.png"),
+                            fit: BoxFit.fill,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   void _onVerticalDragStart(DragStartDetails details) {
     _dragStartY = details.globalPosition.dy;
   }
@@ -965,6 +1172,36 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
 
     });
 
+  }
+
+  void _onScroll() {
+
+    if (_scrollTimer?.isActive ?? false) _scrollTimer?.cancel();
+
+    var firstVisibleItemIndex = _findFirstVisibleItem();
+    var firstVisibleMessage = listMessages[firstVisibleItemIndex];
+
+    setState(() {
+      _showDateContainer = true;
+      _currentDate = _formatDate(firstVisibleMessage.timestamp);
+    });
+
+    _scrollTimer = Timer(const Duration(seconds: 3), () {
+      setState(() {
+        _showDateContainer = false;
+      });
+    });
+
+    _loadMessages();
+
+  }
+
+  int _findFirstVisibleItem() {
+    return 0;
+  }
+
+  String _formatDate(int timestamp) {
+    return "2022년 3월 10일 목요일";
   }
 
   Future<void> _loadMessages() async {
@@ -996,6 +1233,16 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
         _isLoading = false;
         _isLoadMore = false;
       });
+    });
+
+  }
+
+  void _loadNotice() {
+
+    setState(() {
+
+      myNotice.notice = "[공지] 5월 5일은 휴강입니다. 즐거운 휴일 되시";
+
     });
 
   }

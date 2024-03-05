@@ -4,7 +4,8 @@ import 'package:intl/intl.dart';
 
 class MyNotice {
 
-  int id;
+  int id = 0;
+  String title;
   String notice;
   String url;
   int artistId;
@@ -13,6 +14,7 @@ class MyNotice {
 
   MyNotice({
     this.id = 0,
+    this.title = "",
     this.notice = "",
     this.url = "",
     this.artistId = 0,

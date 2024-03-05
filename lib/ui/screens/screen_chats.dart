@@ -14,6 +14,7 @@ import '../../modules/module_chats.dart';
 import '../../data/module_datastore.dart';
 import '../../utils/utils.dart';
 import '../../utils/utils_permissions.dart';
+import '../../utils/utils_screen.dart';
 import '../theme/theme_colors.dart';
 import '../widgets/widget_loader.dart';
 
@@ -33,12 +34,17 @@ class _MyScreenChatsState extends State<MyScreenChats> with WidgetsBindingObserv
 
   bool isLoading = false;
   bool isSearching = false;
+  bool isChat = false;
   final List<MyChat> listChats = [];
   final List<MyChat> listChatsAll = [];
   final TextEditingController searchController = TextEditingController();
   late Timer _timer;
 
   final ChatModule chatModule = ChatModule();
+
+  String selectChatId = "";
+  bool isLoadingChatroom = false;
+  Map<String, MyScreenChatroom> listScreenChatrooms = {};
 
   @override
   void initState() {
@@ -81,116 +87,154 @@ class _MyScreenChatsState extends State<MyScreenChats> with WidgetsBindingObserv
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Chats',
-      home: Scaffold(
-        backgroundColor: Colors.white,
-        appBar: AppBar(
-          title: const Text(
-            '채팅',
-            style: TextStyle(
-              color: colorMainGrey900,
-              fontSize: 20,
-              fontFamily: 'SUIT',
-              fontWeight: FontWeight.w700,
-              height: 0,
-              letterSpacing: -0.40,
-            ),
-          ),
-          backgroundColor: Colors.white,
-          toolbarHeight: 60,
-          elevation: 0,
-          actions: [
-            PopupMenuButton<String>(
-              itemBuilder: (BuildContext context) {
-                return {'설정', '알림 및 소리'}
-                    .map((String choice) {
-                  return PopupMenuItem<String>(
-                    value: choice,
-                    child: Text(choice),
-                  );
-                }).toList();
-              },
-              icon: const Icon(
-                  Icons.more_vert,
-                  color: colorMainGrey250
+    return Row(
+      children: [
+        Expanded(
+          flex: 38,
+          child: MaterialApp(
+            title: 'Chats',
+            home: Scaffold(
+              backgroundColor: Colors.white,
+              appBar: AppBar(
+                title: const Text(
+                  '채팅',
+                  style: TextStyle(
+                    color: colorMainGrey900,
+                    fontSize: 20,
+                    fontFamily: 'SUIT',
+                    fontWeight: FontWeight.w700,
+                    height: 0,
+                    letterSpacing: -0.40,
+                  ),
+                ),
+                backgroundColor: Colors.white,
+                toolbarHeight: 60,
+                elevation: 0,
+                actions: [
+                  PopupMenuButton<String>(
+                    itemBuilder: (BuildContext context) {
+                      return {'설정', '알림 및 소리'}
+                          .map((String choice) {
+                        return PopupMenuItem<String>(
+                          value: choice,
+                          child: Text(choice),
+                        );
+                      }).toList();
+                    },
+                    icon: const Icon(
+                        Icons.more_vert,
+                        color: colorMainGrey250
+                    ),
+                    onSelected: (value) {
+                      switch (value) {
+                        case '설정':
+                          Navigator.push(context, MaterialPageRoute(builder: (context) {
+                            return const MyScreenProfile();
+                          }));
+                          break;
+                        case '알림 및 소리':
+                          Navigator.push(context, MaterialPageRoute(builder: (context) {
+                            return const MyScreenNotificationsSounds();
+                          }));
+                          break;
+                      }
+                    },
+                  ),
+                ],
               ),
-              onSelected: (value) {
-                switch (value) {
-                  case '설정':
-                    Navigator.push(context, MaterialPageRoute(builder: (context) {
-                      return const MyScreenProfile();
-                    }));
-                    break;
-                  case '알림 및 소리':
-                    Navigator.push(context, MaterialPageRoute(builder: (context) {
-                      return const MyScreenNotificationsSounds();
-                    }));
-                    break;
-                }
-              },
-            ),
-          ],
-        ),
-        body: isLoading && listChats.isEmpty
-            ? const MyLoader()
-            : Column(
-          children: [
-            Visibility(
-              visible: isSearching || listChats.isNotEmpty || searchController.text.isNotEmpty,
-              child: Container(
-                height: 44,
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: TextField(
-                  controller: searchController,
-                  decoration: InputDecoration(
-                    hintText: '',
-                    suffixIcon: !isSearching
-                        ? Icon(
-                        Icons.search,
-                        size: 30,
-                        color: searchController.text.isNotEmpty ? colorPrimaryBlue : colorMainGrey300
-                    ) : Container(
-                      width: 20,
-                      height: 20,
-                      padding: const EdgeInsets.all(15),
-                      child: const CircularProgressIndicator(
-                        color: colorPrimaryBlue,
-                        strokeWidth: 2,
+              body: isLoading && listChats.isEmpty
+                  ? const MyLoader()
+                  : Column(
+                children: [
+                  Visibility(
+                    visible: isSearching || listChats.isNotEmpty || searchController.text.isNotEmpty,
+                    child: Container(
+                      height: 44,
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: TextField(
+                        controller: searchController,
+                        decoration: InputDecoration(
+                          hintText: '',
+                          suffixIcon: !isSearching
+                              ? Icon(
+                              Icons.search,
+                              size: 30,
+                              color: searchController.text.isNotEmpty ? colorPrimaryBlue : colorMainGrey300
+                          ) : Container(
+                            width: 20,
+                            height: 20,
+                            padding: const EdgeInsets.all(15),
+                            child: const CircularProgressIndicator(
+                              color: colorPrimaryBlue,
+                              strokeWidth: 2,
+                            ),
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30),
+                            borderSide: BorderSide.none,
+                          ),
+                          filled: true,
+                          fillColor: Colors.grey[200],
+                        ),
+                        onChanged: (value) {},
                       ),
                     ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30),
-                      borderSide: BorderSide.none,
-                    ),
-                    filled: true,
-                    fillColor: Colors.grey[200],
                   ),
-                  onChanged: (value) {},
+                  const SizedBox(height: 10),
+                  Expanded(
+                    child: (listChats.isNotEmpty || isSearching)
+                        ? ListView.builder(
+                      itemCount: listChats.length,
+                      itemBuilder: (context, index) {
+                        MyChat myChat = listChats[index];
+                        return Container(
+                          key: Key(listChats[index].id),
+                          child: buildListTile(context, index, myChat),
+                        );
+                      },
+                    )
+                        : buildNoChats(context),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+
+        Visibility(
+          visible: selectChatId.isNotEmpty || isLoadingChatroom,
+          child: Expanded(
+            flex: 62,
+            child: Container(
+              clipBehavior: Clip.antiAlias,
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                border: Border(
+                  left: BorderSide(width: 2, color: Color(0xFFF3F3F3)),
+                ),
+              ),
+              child: listScreenChatrooms.containsKey(selectChatId) && !isLoadingChatroom
+                  ? listScreenChatrooms[selectChatId]!
+                  : Center(
+                child: Container(
+                  width: 40,
+                  height: 40,
+                  margin: const EdgeInsets.only(bottom: 20),
+                  child: const CircularProgressIndicator(
+                    color: colorPrimaryBlue,
+                    strokeWidth: 2,
+                  ),
                 ),
               ),
             ),
-            const SizedBox(height: 10),
-            Expanded(
-              child: (listChats.isNotEmpty || isSearching)
-                  ? ListView.builder(
-                itemCount: listChats.length,
-                itemBuilder: (context, index) {
-                  return Container(
-                    key: Key(listChats[index].id),
-                    child: buildListTile(context, index),
-                  );
-                },
-              )
-                  : buildNoChats(context),
-            ),
-          ],
-        ),
-      ),
+          ),
+        )
+
+      ],
     );
   }
 
-  Slidable buildListTile(BuildContext context, int index) {
+  Slidable buildListTile(BuildContext context, int index, MyChat myChat) {
     return Slidable(
       key: const ValueKey(0),
       endActionPane: ActionPane(
@@ -206,7 +250,7 @@ class _MyScreenChatsState extends State<MyScreenChats> with WidgetsBindingObserv
           CustomSlidableAction(
             flex: 1,
             onPressed: (context) {
-              _onClickOption2(context, listChats[index]);
+              _onClickOption2(context, myChat);
             },
             backgroundColor: colorPrimaryBlue,
             foregroundColor: Colors.white,
@@ -227,7 +271,7 @@ class _MyScreenChatsState extends State<MyScreenChats> with WidgetsBindingObserv
               backgroundColor: Colors.transparent,
               child: FadeInImage.assetNetwork(
                 placeholder: 'assets/images/profile/placeholder.png',
-                image: listChats[index].profilePictureUrl,
+                image: myChat.profilePictureUrl,
                 fit: BoxFit.cover,
                 fadeInDuration: const Duration(milliseconds: 100),
                 fadeOutDuration: const Duration(milliseconds: 100),
@@ -241,7 +285,7 @@ class _MyScreenChatsState extends State<MyScreenChats> with WidgetsBindingObserv
             ),
           ),
           title: Text(
-            listChats[index].name,
+            myChat.name,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: const TextStyle(
@@ -254,7 +298,7 @@ class _MyScreenChatsState extends State<MyScreenChats> with WidgetsBindingObserv
             ),
           ),
           subtitle: Text(
-            listChats[index].lastMessage,
+            myChat.lastMessage,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: const TextStyle(
@@ -271,7 +315,7 @@ class _MyScreenChatsState extends State<MyScreenChats> with WidgetsBindingObserv
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                formatChatDateString(listChats[index].date),
+                formatChatDateString(myChat.date),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
@@ -284,7 +328,7 @@ class _MyScreenChatsState extends State<MyScreenChats> with WidgetsBindingObserv
                 ),
               ),
               Visibility(
-                visible: listChats[index].unreadMessages > 0,
+                visible: myChat.unreadMessages > 0,
                 child: Container(
                   margin: const EdgeInsets.only(right: 4),
                   padding: const EdgeInsets.all(8),
@@ -293,7 +337,7 @@ class _MyScreenChatsState extends State<MyScreenChats> with WidgetsBindingObserv
                     shape: BoxShape.circle,
                   ),
                   child: Text(
-                    listChats[index].unreadMessages.toString(),
+                    myChat.unreadMessages.toString(),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(color: Colors.white),
@@ -303,9 +347,7 @@ class _MyScreenChatsState extends State<MyScreenChats> with WidgetsBindingObserv
             ],
           ),
           onTap: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) {
-              return MyScreenChatroom(chat: listChats[index]);
-            }));
+            onSelectChat(myChat);
           },
         ),
       ),
@@ -457,6 +499,50 @@ class _MyScreenChatsState extends State<MyScreenChats> with WidgetsBindingObserv
         );
       },
     );
+  }
+
+  void onSelectChat(MyChat myChat) {
+    if(myChat.id == selectChatId) return;
+
+    if(isTablet(context)) {
+
+      setState(() {
+        isLoadingChatroom = true;
+      });
+
+      if(listScreenChatrooms.containsKey(myChat.id)) {
+        listScreenChatrooms.remove(myChat.id);
+      }
+
+      Future.delayed(const Duration(milliseconds: 100), () {
+
+        if(!listScreenChatrooms.containsKey(myChat.id)) {
+
+          MyScreenChatroom myScreenChatroom = MyScreenChatroom(
+            chat: myChat,
+            widthRatio: 0.62,
+            onBackPressed: () {
+              setState(() {
+                selectChatId = "";
+              });
+            },
+          );
+
+          listScreenChatrooms[myChat.id] = myScreenChatroom;
+        }
+
+        setState(() {
+          selectChatId = myChat.id;
+          isLoadingChatroom = false;
+        });
+
+      });
+
+    }else {
+      Navigator.push(context, MaterialPageRoute(builder: (context) {
+        return MyScreenChatroom(chat: myChat);
+      }));
+    }
   }
 
   Future<void> loadChats() async {

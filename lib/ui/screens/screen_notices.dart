@@ -179,7 +179,7 @@ class _MyScreenNoticesState extends State<MyScreenNotices> {
                               InkWell(
                                 onTap: () {
                                   Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                    return MyScreenNoticeDetails(notice: notice);
+                                    return MyScreenNoticeDetails(myNotice: notice);
                                   }));
                                 },
                                 child: Column(
