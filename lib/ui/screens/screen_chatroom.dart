@@ -461,7 +461,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
                 children: [
                   Container(
                     margin: EdgeInsets.only(
-                        left: 4,
+                        left: isNextSame ? 34 : 4,
                         top: isNextSame ? 0 : 16
                     ),
                     child: Column(
