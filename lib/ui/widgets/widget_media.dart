@@ -32,22 +32,28 @@ void viewPhoto(BuildContext context, String imagePath, String imageUrl) {
           color: Colors.black.withOpacity(0.5),
           child: Stack(
             children: [
-              PhotoView(
-                imageProvider: imageProvider,
-                backgroundDecoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.5),
+              Center(
+                child: Stack(
+                  children: [
+                    PhotoView(
+                      imageProvider: imageProvider,
+                      backgroundDecoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.5),
+                      ),
+                      loadingBuilder: (context, event) => Center(
+                        child: CircularProgressIndicator(
+                          value: event == null ? 0 : event.cumulativeBytesLoaded / event.expectedTotalBytes!,
+                        ),
+                      ),
+                      errorBuilder: (context, error, stackTrace) {
+                        return Image.asset(
+                          'assets/images/profile/placeholder.png',
+                          fit: BoxFit.cover,
+                        );
+                      },
+                    ),
+                  ],
                 ),
-                loadingBuilder: (context, event) => Center(
-                  child: CircularProgressIndicator(
-                    value: event == null ? 0 : event.cumulativeBytesLoaded / event.expectedTotalBytes!,
-                  ),
-                ),
-                errorBuilder: (context, error, stackTrace) {
-                  return Image.asset(
-                    'assets/images/profile/placeholder.png',
-                    fit: BoxFit.cover,
-                  );
-                },
               ),
               Positioned(
                 top: 18,

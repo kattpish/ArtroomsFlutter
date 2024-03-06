@@ -7,11 +7,11 @@ import 'package:artrooms/ui/screens/screen_chatroom_drawer.dart';
 import 'package:artrooms/ui/screens/screen_notice_details.dart';
 import 'package:artrooms/ui/widgets/widget_loader.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import '../../beans/bean_chat.dart';
 import '../../beans/bean_file.dart';
 import '../../beans/bean_message.dart';
 import '../../modules/module_messages.dart';
+import '../../utils/utils.dart';
 import '../../utils/utils_screen.dart';
 import '../theme/theme_colors.dart';
 import '../widgets/widget_media.dart';
@@ -211,10 +211,11 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
                           opacity: _showDateContainer ? 1.0 : 0.0,
                           duration: const Duration(milliseconds: 500),
                           child: Container(
-                            width: 139,
+                            width: 145,
                             height: 31,
                             margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                            alignment: Alignment.center,
                             decoration: ShapeDecoration(
                               color: const Color(0xFFF9F9F9),
                               shape: RoundedRectangleBorder(
@@ -236,6 +237,9 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
                                     height: 0,
                                     letterSpacing: -0.24,
                                   ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  textAlign: TextAlign.center,
                                 ),
                               ],
                             ),
@@ -357,44 +361,51 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
 
   Widget _buildMyMessageBubble(MyMessage message) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           Visibility(
             visible: message.content.isNotEmpty,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(
-                  message.getTime(),
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: colorMainGrey300,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Container(
-                  constraints: BoxConstraints(maxWidth: screenWidth * 0.55),
-                  padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-                  decoration: const BoxDecoration(
-                    color: colorPrimaryBlue,
-                    borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(24),
-                        topRight: Radius.circular(0),
-                        bottomLeft: Radius.circular(24),
-                        bottomRight: Radius.circular(24)
-                    ),
-                  ),
-                  child: Text(
-                    message.content,
+            child: Container(
+              margin: const EdgeInsets.symmetric(vertical: 4),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    message.getTime(),
                     style: const TextStyle(
-                      color: Colors.white,
+                      color: colorMainGrey300,
+                      fontSize: 10,
+                      fontFamily: 'Pretendard',
+                      fontWeight: FontWeight.w400,
+                      height: 0.15,
+                      letterSpacing: -0.20,
                     ),
                   ),
-                ),
-              ],
+                  const SizedBox(width: 8),
+                  Container(
+                    constraints: BoxConstraints(maxWidth: screenWidth * 0.55),
+                    padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+                    decoration: const BoxDecoration(
+                      color: colorPrimaryBlue,
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(24),
+                          topRight: Radius.circular(0),
+                          bottomLeft: Radius.circular(24),
+                          bottomRight: Radius.circular(24)
+                      ),
+                    ),
+                    child: Text(
+                      message.content,
+                      style: const TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
           Container(
@@ -410,11 +421,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
 
   Widget _buildOtherMessageBubble(MyMessage message, bool isPreviousSame, bool isNextSame) {
     return Container(
-      margin: EdgeInsets.only(
-          left: 16,
-          right: 16,
-          bottom: isPreviousSame ? 0 : 9
-      ),
+      margin: EdgeInsets.only(left: 16, right: 16, bottom: isPreviousSame ? 0 : 9),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -427,11 +434,11 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
                 onTap: () {
 
                 },
-                child: CircleAvatar(
-                  radius: 15,
-                  backgroundColor: isNextSame ? Colors.transparent : colorMainGrey200,
-                  child: Visibility(
-                    visible: !isNextSame,
+                child: Visibility(
+                  visible: !isNextSame,
+                  child: CircleAvatar(
+                    radius: 15,
+                    backgroundColor: isNextSame ? Colors.transparent : colorMainGrey200,
                     child: FadeInImage.assetNetwork(
                       placeholder: 'assets/images/profile/placeholder.png',
                       image: message.profilePictureUrl,
@@ -440,7 +447,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
                       fadeOutDuration: const Duration(milliseconds: 100),
                       imageErrorBuilder: (context, error, stackTrace) {
                         return Image.asset(
-                          'assets/images/profile/profile_${(message.senderId.hashCode % 2) + 1}.png',
+                          'assets/images/profile/profile_1.png',
                           fit: BoxFit.cover,
                         );
                       },
@@ -523,9 +530,15 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
                     child: Text(
                       message.getTime(),
                       style: const TextStyle(
-                        fontSize: 12,
                         color: colorMainGrey300,
+                        fontSize: 10,
+                        fontFamily: 'Pretendard',
+                        fontWeight: FontWeight.w400,
+                        height: 0.15,
+                        letterSpacing: -0.20,
                       ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ],
@@ -576,7 +589,8 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
   Widget _buildAttachment(MyMessage message) {
     if (message.attachmentUrl.isNotEmpty) {
       return Container(
-        margin: const EdgeInsets.symmetric(vertical: 2),
+        width: 216,
+        margin: const EdgeInsets.symmetric(vertical: 0),
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
         constraints: BoxConstraints(maxWidth: screenWidth * 0.55),
         decoration: BoxDecoration(
@@ -630,66 +644,119 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
   }
 
   Widget _buildImageAttachments(MyMessage message) {
-    if (message.imageAttachments.isNotEmpty) {
-      return Container(
-        height: message.imageAttachments.length > 1 ? 80 : 246,
-        constraints: BoxConstraints(maxWidth: screenWidth * 0.55),
-        margin: EdgeInsets.symmetric(horizontal: message.isMe ? 0 : 40, vertical: 0),
-        alignment: message.isMe ? Alignment.topRight : Alignment.topLeft,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          color: Colors.white,
-        ),
-        child: ListView.builder(
-          scrollDirection: Axis.horizontal,
-          itemCount: message.imageAttachments.length,
-          itemBuilder: (context, index) {
-            bool isFirst = index == 0;
-            bool isLast = index == message.imageAttachments.length - 1;
-            return Container(
-              margin: EdgeInsets.only(right: isLast ? 0 : 2),
-              child: ClipRRect(
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(isFirst ? 24 : 0),
-                    topRight: Radius.circular(isLast ? 24 : 0),
-                    bottomLeft: Radius.circular(isFirst ? 24 : 0),
-                    bottomRight: Radius.circular(isLast ? 24 : 0)
-                ),
+    if (message.attachmentImages.isNotEmpty) {
+
+      List<Widget> rows = [];
+      int itemsPlaced = 0;
+      int rowIndex = 1;
+      final int itemCount = message.attachmentImages.length;
+
+      while (itemsPlaced < itemCount) {
+        int itemsInRow;
+
+        if (itemCount == 4 && itemsPlaced == 0) {
+          itemsInRow = 2;
+        }else if (itemCount - itemsPlaced == 7 || itemCount - itemsPlaced == 8) {
+          itemsInRow = rowIndex <= 2 ? 3 : 2;
+        } else if (itemCount - itemsPlaced <= 3) {
+          itemsInRow = itemCount - itemsPlaced;
+        } else {
+          itemsInRow = rowIndex % 2 == 0 ? 2 : 3;
+        }
+
+        double height;
+        if(itemCount == 1) {
+          height = 200;
+        }else if(itemCount == 2) {
+          height = 112;
+        }else {
+          height = 74;
+        }
+
+        rows.add(Container(
+          margin: const EdgeInsets.only(bottom: 2),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List.generate(itemsInRow, (index) {
+              String attachment = message.attachmentImages[itemsPlaced];
+              bool isLast = index == itemsInRow - 1;
+              itemsPlaced++;
+              return Expanded(
                 child: Container(
-                  width: (screenWidth * 0.55) / (message.imageAttachments.length > 3 ? 3 : message.imageAttachments.length),
-                  decoration: BoxDecoration(
-                    color: colorMainGrey200,
-                    borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(isFirst ? 24 : 0),
-                        topRight: Radius.circular(isLast ? 24 : 0),
-                        bottomLeft: Radius.circular(isFirst ? 24 : 0),
-                        bottomRight: Radius.circular(isLast ? 24 : 0)
+                  height: height,
+                  margin: EdgeInsets.only(right: isLast ? 0 : 2),
+                  child: Container(
+                    width: (screenWidth * 0.55) / (message.attachmentImages.length > 3 ? 3 : message.attachmentImages.length),
+                    decoration: const BoxDecoration(
+                      color: colorMainGrey200,
                     ),
-                  ),
-                  child: InkWell(
-                    onTap: () {
-                      viewPhotoUrl(context, message.imageAttachments[index]);
-                    },
-                    child: FadeInImage.assetNetwork(
-                      placeholder: 'assets/images/chats/placeholder_photo.png',
-                      image: message.imageAttachments[index],
-                      fit: BoxFit.cover,
-                      fadeInDuration: const Duration(milliseconds: 100),
-                      fadeOutDuration: const Duration(milliseconds: 100),
-                      imageErrorBuilder: (context, error, stackTrace) {
-                        return Image.asset(
-                          'assets/images/chats/placeholder_photo.png',
-                          fit: BoxFit.cover,
-                        );
+                    child: InkWell(
+                      onTap: () {
+                        viewPhotoUrl(context, attachment);
                       },
+                      child: FadeInImage.assetNetwork(
+                        placeholder: 'assets/images/chats/placeholder_photo.png',
+                        image: attachment,
+                        fit: BoxFit.cover,
+                        fadeInDuration: const Duration(milliseconds: 100),
+                        fadeOutDuration: const Duration(milliseconds: 100),
+                        imageErrorBuilder: (context, error, stackTrace) {
+                          return Image.asset(
+                            'assets/images/chats/placeholder_photo.png',
+                            fit: BoxFit.cover,
+                          );
+                        },
+                      ),
                     ),
                   ),
+                ),
+              );
+            }),
+          ),
+        ));
+
+      }
+
+      return Row(
+        textDirection: message.isMe ? TextDirection.rtl : TextDirection.ltr,
+        mainAxisAlignment: message.isMe ? MainAxisAlignment.start : MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Container(
+            margin: EdgeInsets.only(left: message.isMe ? 0 : 40),
+            child: ClipRRect(
+              borderRadius: const BorderRadius.all(Radius.circular(24)
+              ),
+              child: Container(
+                constraints: BoxConstraints(maxWidth: screenWidth * 0.55),
+                alignment: message.isMe ? Alignment.topRight : Alignment.topLeft,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(24),
+                  color: Colors.white,
+                ),
+                child: Column(
+                    children: rows
                 ),
               ),
-            );
-          },
-        ),
+            ),
+          ),
+          const SizedBox(width: 6),
+          Text(
+            message.getTime(),
+            style: const TextStyle(
+              color: colorMainGrey300,
+              fontSize: 10,
+              fontFamily: 'Pretendard',
+              fontWeight: FontWeight.w400,
+              height: 0.15,
+              letterSpacing: -0.20,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ],
       );
+
     }else {
       return const SizedBox.shrink();
     }
@@ -1200,7 +1267,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
 
       setState(() {
         _showDateContainer = true;
-        _currentDate = _formatDate(firstVisibleMessage.timestamp);
+        _currentDate = formatDateLastMessage(firstVisibleMessage.timestamp);
       });
 
       _scrollTimer = Timer(const Duration(seconds: 3), () {
@@ -1225,13 +1292,6 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
     int firstVisibleItemIndex = (scrollPosition / itemHeight).floor();
 
     return firstVisibleItemIndex;
-  }
-
-  String _formatDate(int timestamp) {
-    final DateTime date = DateTime.fromMillisecondsSinceEpoch(timestamp);
-    final DateFormat formatter = DateFormat('y년 M월 d일 EEEE', 'ko_KR'); // ko_KR
-    final String formattedDate = formatter.format(date);
-    return formattedDate;
   }
 
   Future<void> _loadMessages() async {
@@ -1323,8 +1383,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
   }
 
   void _scrollToBottom() {
-    _scrollController.animateTo(
-      0,
+    _scrollController.animateTo(0,
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeOut,
     );

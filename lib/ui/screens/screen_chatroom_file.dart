@@ -2,13 +2,18 @@
 import 'package:artrooms/utils/utils_screen.dart';
 import 'package:flutter/material.dart';
 
-import '../../beans/bean_file.dart';
+import '../../beans/bean_chat.dart';
+import '../../beans/bean_message.dart';
+import '../../modules/module_messages.dart';
 import '../theme/theme_colors.dart';
+import '../widgets/widget_loader.dart';
 
 
 class MyScreenChatroomFile extends StatefulWidget {
 
-  const MyScreenChatroomFile({super.key});
+  final MyChat myChat;
+
+  const MyScreenChatroomFile({super.key, required this.myChat});
 
   @override
   State<MyScreenChatroomFile> createState() {
@@ -19,6 +24,7 @@ class MyScreenChatroomFile extends StatefulWidget {
 
 class _MyScreenChatroomFileState extends State<MyScreenChatroomFile> {
 
+  bool _isLoading = true;
   bool _isButtonFileDisabled = true;
 
   int crossAxisCount = 2;
@@ -26,24 +32,15 @@ class _MyScreenChatroomFileState extends State<MyScreenChatroomFile> {
   double mainAxisSpacing = 8;
   double screenWidth = 0;
 
-  List<FileItem> filesMedia = [
-    FileItem(name: 'artrooms_img_file_final_1', date: '2022.08.16 만료'),
-    FileItem(name: 'artrooms_img_file_final_2', date: '2022.08.16 만료'),
-    FileItem(name: 'artrooms_img_file_final_1', date: '2022.08.16 만료'),
-    FileItem(name: 'artrooms_img_file_final_2', date: '2022.08.16 만료'),
-    FileItem(name: 'artrooms_img_file_final_1', date: '2022.08.16 만료'),
-    FileItem(name: 'artrooms_img_file_final_2', date: '2022.08.16 만료'),
-    FileItem(name: 'artrooms_img_file_final_1', date: '2022.08.16 만료'),
-    FileItem(name: 'artrooms_img_file_final_2', date: '2022.08.16 만료'),
-    FileItem(name: 'artrooms_img_file_final_1', date: '2022.08.16 만료'),
-    FileItem(name: 'artrooms_img_file_final_2', date: '2022.08.16 만료'),
-    FileItem(name: 'artrooms_img_file_final_1', date: '2022.08.16 만료'),
-    FileItem(name: 'artrooms_img_file_final_2', date: '2022.08.16 만료'),
-  ];
+  late final ModuleMessages moduleMessages;
+
+  List<MyMessage> _attachmentsFiles = [];
 
   @override
   void initState() {
     super.initState();
+    moduleMessages = ModuleMessages(widget.myChat.id);
+    _loadAttachmentsFiles();
   }
 
   @override
@@ -79,111 +76,114 @@ class _MyScreenChatroomFileState extends State<MyScreenChatroomFile> {
           elevation: 0.5,
         ),
         backgroundColor: colorMainScreen,
-        body: GridView.builder(
-          padding: const EdgeInsets.only(left: 16, top: 12, right: 16, bottom: 32),
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: crossAxisCount,
-            crossAxisSpacing: crossAxisSpacing,
-            mainAxisSpacing: mainAxisSpacing,
-            childAspectRatio: (screenWidth / crossAxisCount - crossAxisSpacing) / 157,
-          ),
-          itemCount: filesMedia.length,
-          itemBuilder: (context, index) {
-            var file = filesMedia[index];
-            return Card(
-              elevation: 0,
-              color: Colors.white,
-              child: InkWell(
-                onTap: () {
-                  setState(() {
-                    file.isSelected = !file.isSelected;
-                    _checkIfFileButtonShouldBeEnabled();
-                  });
-                },
-                child: Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: colorMainGrey200, width: 1.0,),
-                  ),
-                  child: Stack(
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const SizedBox(height: 24),
-                          Image.asset(
-                            file.isSelected ? 'assets/images/icons/icon_file_selected.png' : 'assets/images/icons/icon_file.png',
-                            width: 30,
-                            height: 30,
-                          ),
-                          const SizedBox(height: 20),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                file.name,
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  color: colorMainGrey700,
-                                  fontFamily: 'SUIT',
-                                  fontWeight: FontWeight.w400,
-                                  height: 0.08,
-                                  letterSpacing: -0.32,
-                                ),
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              const SizedBox(height: 10),
-                              Text(
-                                file.date,
-                                style: const TextStyle(
-                                  color: Color(0xFF8F8F8F),
-                                  fontSize: 12,
-                                  fontFamily: 'SUIT',
-                                  fontWeight: FontWeight.w400,
-                                  height: 0,
-                                  letterSpacing: -0.24,
-                                ),
-                                maxLines: 1,
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      Positioned(
-                        top: 3,
-                        right: 2,
-                        child: Container(
-                          width: 24,
-                          height: 24,
-                          decoration: BoxDecoration(
-                            color: file.isSelected ? colorPrimaryBlue : Colors.transparent,
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: file.isSelected ? colorPrimaryBlue : const Color(0xFFE3E3E3),
-                              width: 1,
+        body: SafeArea(
+          child: _isLoading
+              ? const MyLoader()
+              : GridView.builder(
+            padding: const EdgeInsets.only(left: 16, top: 12, right: 16, bottom: 32),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: crossAxisCount,
+              crossAxisSpacing: crossAxisSpacing,
+              mainAxisSpacing: mainAxisSpacing,
+              childAspectRatio: (screenWidth / crossAxisCount - crossAxisSpacing) / (200),
+            ),
+            itemCount: _attachmentsFiles.length,
+            itemBuilder: (context, index) {
+              var attachmentFile = _attachmentsFiles[index];
+              return Card(
+                elevation: 0,
+                color: Colors.white,
+                child: InkWell(
+                  onTap: () {
+                    setState(() {
+                      attachmentFile.isSelected = !attachmentFile.isSelected;
+                      _checkIfFileButtonShouldBeEnabled();
+                    });
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: attachmentFile.isSelected ? colorPrimaryPurple : colorMainGrey200, width: 1.0,),
+                    ),
+                    child: Stack(
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 24),
+                            Image.asset(
+                              attachmentFile.isSelected ? 'assets/images/icons/icon_file_selected.png' : 'assets/images/icons/icon_file.png',
+                              width: 30,
+                              height: 30,
                             ),
-                          ),
-                          child: file.isSelected
-                              ? const Icon(Icons.check, size: 16, color: Colors.white)
-                              : Container(),
+                            const SizedBox(height: 20),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  attachmentFile.attachmentName,
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    color: colorMainGrey700,
+                                    fontFamily: 'SUIT',
+                                    fontWeight: FontWeight.w400,
+                                    letterSpacing: -0.32,
+                                  ),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                const SizedBox(height: 10),
+                                Text(
+                                  attachmentFile.getDate(),
+                                  style: const TextStyle(
+                                    color: Color(0xFF8F8F8F),
+                                    fontSize: 12,
+                                    fontFamily: 'SUIT',
+                                    fontWeight: FontWeight.w400,
+                                    height: 0,
+                                    letterSpacing: -0.24,
+                                  ),
+                                  maxLines: 1,
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
-                      ),
-                    ],
+                        Positioned(
+                          top: 3,
+                          right: 2,
+                          child: Container(
+                            width: 24,
+                            height: 24,
+                            decoration: BoxDecoration(
+                              color: attachmentFile.isSelected ? colorPrimaryBlue : Colors.transparent,
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: attachmentFile.isSelected ? colorPrimaryBlue : const Color(0xFFE3E3E3),
+                                width: 1,
+                              ),
+                            ),
+                            child: attachmentFile.isSelected
+                                ? const Icon(Icons.check, size: 16, color: Colors.white)
+                                : Container(),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            );
-          },
+              );
+            },
+          ),
         ),
         bottomNavigationBar: Container(
-          margin: const EdgeInsets.only(left: 16.0, right: 16.0, top: 16, bottom: 42),
-          padding: const EdgeInsets.all(4.0),
+          height: 44,
+          margin: const EdgeInsets.only(left: 16.0, right: 16.0, top: 16, bottom: 40),
           decoration: BoxDecoration(color: _isButtonFileDisabled ? colorPrimaryBlue400.withAlpha(100) : colorPrimaryBlue,
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(30),
           ),
           child: TextButton(
             onPressed: () {
@@ -193,7 +193,11 @@ class _MyScreenChatroomFileState extends State<MyScreenChatroomFile> {
                 '저장',
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: 20,
+                  fontSize: 16,
+                  fontFamily: 'SUIT',
+                  fontWeight: FontWeight.w700,
+                  height: 0,
+                  letterSpacing: -0.32,
                 )
             ),
           ),
@@ -202,11 +206,28 @@ class _MyScreenChatroomFileState extends State<MyScreenChatroomFile> {
     );
   }
 
+  void _loadAttachmentsFiles() async {
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    List<MyMessage> attachmentsFiles = await moduleMessages.fetchAttachmentsFiles();
+    setState(() {
+      _attachmentsFiles = attachmentsFiles;
+    });
+
+    setState(() {
+      _isLoading = false;
+    });
+
+  }
+
   void _checkIfFileButtonShouldBeEnabled() {
 
     int n = 0;
-    for(FileItem fileItem in filesMedia) {
-      if(fileItem.isSelected) {
+    for(MyMessage attachmentFile in _attachmentsFiles) {
+      if(attachmentFile.isSelected) {
         n++;
       }
     }

@@ -1,6 +1,7 @@
 
 import 'package:sendbird_sdk/core/channel/group/group_channel.dart';
 import 'package:sendbird_sdk/core/message/base_message.dart';
+import 'package:sendbird_sdk/core/message/file_message.dart';
 import 'package:sendbird_sdk/core/message/user_message.dart';
 
 import '../beans/bean_message.dart';
@@ -14,6 +15,7 @@ class ModuleMessages {
   bool _isInitialized = false;
   bool _isLoading = false;
   int? _earliestMessageTimestamp;
+  int? _earliestMessageTimestamp1;
 
   ModuleMessages(String channelUrl) {
     _channelUrl = channelUrl;
@@ -77,5 +79,72 @@ class ModuleMessages {
     return _isLoading;
   }
 
-}
+  Future<List<MyMessage>> fetchAttachments() async {
 
+    if(!_isInitialized) {
+      await initChannel();
+    }
+
+    List<MyMessage> attachmentsImages = [];
+
+    List<BaseMessage> attachments = await moduleSendBird.fetchAttachments(_groupChannel, _earliestMessageTimestamp1);
+
+    for (BaseMessage message in attachments) {
+      if(message is FileMessage) {
+
+        MyMessage myMessage = MyMessage.fromBaseMessage(message);
+        attachmentsImages.add(myMessage);
+
+      }
+    }
+
+    if (attachments.isNotEmpty) {
+      _earliestMessageTimestamp1 = attachments.last.createdAt;
+    }
+
+    return attachmentsImages;
+  }
+
+  Future<List<MyMessage>> fetchAttachmentsImages() async {
+
+    if(!_isInitialized) {
+      await initChannel();
+    }
+
+    List<MyMessage> attachmentsImages = [];
+
+    List<MyMessage> attachments = await fetchAttachments();
+
+    for (MyMessage myMessage in attachments) {
+
+        if(myMessage.isImage) {
+          attachmentsImages.add(myMessage);
+        }
+
+    }
+
+    return attachmentsImages;
+  }
+
+  Future<List<MyMessage>> fetchAttachmentsFiles() async {
+
+    if(!_isInitialized) {
+      await initChannel();
+    }
+
+    List<MyMessage> attachmentsImages = [];
+
+    List<MyMessage> attachments = await fetchAttachments();
+
+    for (MyMessage myMessage in attachments) {
+
+      if(myMessage.isFile) {
+        attachmentsImages.add(myMessage);
+      }
+
+    }
+
+    return attachmentsImages;
+  }
+
+}

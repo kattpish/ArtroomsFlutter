@@ -19,8 +19,6 @@ import '../main.dart';
 
 class ModuleSendBird {
 
-  int? _earliestMessageTimestamp;
-
   Future<void> initSendbird() async {
 
     try {
@@ -166,7 +164,7 @@ class ModuleSendBird {
     return completer.future;
   }
 
-  Future<List<BaseMessage>> fetchAttachments(String channelUrl) async {
+  Future<List<BaseMessage>> fetchAttachments(GroupChannel channel, int? earliestMessageTimestamp) async {
     try {
 
       final params = MessageListParams();
@@ -174,14 +172,8 @@ class ModuleSendBird {
       params.reverse = true;
       params.messageType = MessageTypeFilter.file;
 
-      final GroupChannel channel = await GroupChannel.getChannel(channelUrl);
-
-      final referenceTime = _earliestMessageTimestamp ?? DateTime.now().millisecondsSinceEpoch;
+      final referenceTime = earliestMessageTimestamp ?? DateTime.now().millisecondsSinceEpoch;
       final messages = await channel.getMessagesByTimestamp(referenceTime, params);
-
-      if (messages.isNotEmpty) {
-        _earliestMessageTimestamp = messages.last.createdAt;
-      }
 
       return messages;
     } catch (e) {

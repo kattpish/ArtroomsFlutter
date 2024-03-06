@@ -24,6 +24,13 @@ String formatDateTime(int timestamp) {
   return date.toString();
 }
 
+String formatDateLastMessage(int timestamp) {
+  final DateTime date = DateTime.fromMillisecondsSinceEpoch(timestamp);
+  final DateFormat formatter = DateFormat('y년 M월 d일 EEEE', 'ko_KR');
+  final String formattedDate = formatter.format(date);
+  return formattedDate;
+}
+
 String formatChatDateString(String dateString) {
 
   if(dateString.isNotEmpty) {
@@ -35,8 +42,7 @@ String formatChatDateString(String dateString) {
     final DateTime aWeekAgo = today.subtract(const Duration(days: 7));
 
     if (date.isAfter(today.subtract(const Duration(seconds: 1)))) {
-      return "${date.hour.toString().padLeft(2, '0')}:${date.minute.toString()
-          .padLeft(2, '0')}";
+      return "${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}";
     } else if (date.isAfter(yesterday)) {
       return "어제";
     } else if (date.isAfter(aWeekAgo)) {
@@ -47,12 +53,11 @@ String formatChatDateString(String dateString) {
         '목요일',
         '금요일',
         '토요일',
-        '일요일'
+        '일요일',
       ];
       return weekdays[date.weekday - 1];
     } else {
-      return "${date.year}.${date.month.toString().padLeft(2, '0')}.${date.day
-          .toString().padLeft(2, '0')}";
+      return "${date.year}.${date.month.toString().padLeft(2, '0')}.${date.day.toString().padLeft(2, '0')}";
     }
   }
 

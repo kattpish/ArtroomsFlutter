@@ -1,5 +1,7 @@
 
+import 'package:artrooms/beans/bean_message.dart';
 import 'package:artrooms/beans/bean_notice.dart';
+import 'package:artrooms/modules/module_messages.dart';
 import 'package:artrooms/modules/module_notices.dart';
 import 'package:artrooms/ui/screens/screen_chatroom_file.dart';
 import 'package:artrooms/ui/screens/screen_chatroom_photo.dart';
@@ -7,9 +9,8 @@ import 'package:artrooms/ui/screens/screen_chats.dart';
 import 'package:artrooms/ui/screens/screen_memo.dart';
 import 'package:artrooms/ui/screens/screen_notices.dart';
 import 'package:artrooms/ui/screens/screen_notifications_sounds.dart';
+import 'package:artrooms/ui/widgets/widget_media.dart';
 import 'package:flutter/material.dart';
-import 'package:sendbird_sdk/core/message/base_message.dart';
-import 'package:sendbird_sdk/core/message/file_message.dart';
 import 'package:sendbird_sdk/core/models/user.dart';
 
 import '../../beans/bean_chat.dart';
@@ -39,13 +40,16 @@ class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> with Wi
   final TextEditingController _memoController = TextEditingController();
   final TextEditingController _noticeController = TextEditingController();
 
+  late final ModuleMessages moduleMessages;
+
   List<User> listMembers = [];
-  List<BaseMessage> listAttachments = [];
+  List<MyMessage> listAttachmentsImages = [];
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    moduleMessages = ModuleMessages(widget.myChat.id);
     _loadMemo();
     _loadNotice();
     _loadMembers();
@@ -466,7 +470,7 @@ class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> with Wi
                             ),
                             onTap: () {
                               Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                return const MyScreenChatroomFile();
+                                return MyScreenChatroomFile(myChat: widget.myChat,);
                               }));
                             },
                           ),
@@ -491,14 +495,14 @@ class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> with Wi
                                 ),
                                 onTap: () {
                                   Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                    return const MyScreenChatroomPhoto();
+                                    return MyScreenChatroomPhoto(myChat: widget.myChat,);
                                   }));
                                 },
                               ),
                               Container(
                                 alignment: Alignment.topLeft,
                                   padding: const EdgeInsets.all(16),
-                                  child: buildAttachments(context, listAttachments)
+                                  child: buildAttachmentsImages(context, listAttachmentsImages)
                               ),
                             ],
                           ),
@@ -705,38 +709,42 @@ class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> with Wi
     );
   }
 
-  Widget buildAttachments(BuildContext context, List<BaseMessage> listAttachments) {
+  Widget buildAttachmentsImages(BuildContext context, List<MyMessage> listAttachmentsImages) {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          for(BaseMessage message in listAttachments)
-            if (message is FileMessage)
+          for(MyMessage message in listAttachmentsImages)
               Container(
                 margin: const EdgeInsets.only(right: 4),
-                child: Container(
-                  width: 80,
-                  height: 80,
-                  clipBehavior: Clip.antiAlias,
-                  decoration: ShapeDecoration(
-                    shape: RoundedRectangleBorder(
-                      side: const BorderSide(width: 1, color: Color(0xFFF3F3F3)),
-                      borderRadius: BorderRadius.circular(10),
+                child: InkWell(
+                  onTap: () {
+                    viewPhotoUrl(context, message.getImageUrl());
+                  },
+                  child: Container(
+                    width: 80,
+                    height: 80,
+                    clipBehavior: Clip.antiAlias,
+                    decoration: ShapeDecoration(
+                      shape: RoundedRectangleBorder(
+                        side: const BorderSide(width: 1, color: Color(0xFFF3F3F3)),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                     ),
-                  ),
-                  child: FadeInImage.assetNetwork(
-                    placeholder: 'assets/images/profile/placeholder.png',
-                    image: message.url,
-                    fit: BoxFit.cover,
-                    fadeInDuration: const Duration(milliseconds: 100),
-                    fadeOutDuration: const Duration(milliseconds: 100),
-                    imageErrorBuilder: (context, error, stackTrace) {
-                      return Image.asset(
-                        'assets/images/profile/placeholder.png',
-                        fit: BoxFit.cover,
-                      );
-                    },
+                    child: FadeInImage.assetNetwork(
+                      placeholder: 'assets/images/profile/placeholder.png',
+                      image: message.getImageUrl(),
+                      fit: BoxFit.cover,
+                      fadeInDuration: const Duration(milliseconds: 100),
+                      fadeOutDuration: const Duration(milliseconds: 100),
+                      imageErrorBuilder: (context, error, stackTrace) {
+                        return Image.asset(
+                          'assets/images/profile/placeholder.png',
+                          fit: BoxFit.cover,
+                        );
+                      },
+                    ),
                   ),
                 ),
               ),
@@ -779,10 +787,10 @@ class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> with Wi
   }
 
   void _loadAttachments() async {
-    List<BaseMessage> attachments = await moduleSendBird.fetchAttachments(widget.myChat.id);
+    List<MyMessage> attachmentsImages = await moduleMessages.fetchAttachmentsImages();
 
     setState(() {
-      listAttachments = attachments;
+      listAttachmentsImages = attachmentsImages;
     });
   }
 

@@ -19,8 +19,12 @@ class MyMessage {
   String attachmentUrl = "";
   String attachmentName = "";
   int attachmentSize = 0;
-  List<String> imageAttachments = [];
+  List<String> attachmentImages = [];
   bool isMe;
+
+  bool isImage = false;
+  bool isFile = false;
+  bool isSelected = false;
 
   MyMessage.fromBaseMessageWithDetails({
     required this.index,
@@ -41,14 +45,17 @@ class MyMessage {
   {
 
     if (baseMessage is FileMessage) {
+
       FileMessage fileMessage = baseMessage;
       attachmentName = fileMessage.name ?? "";
       attachmentSize = fileMessage.size ?? 0;
 
       if (fileMessage.type.toString().startsWith('image/')) {
-        imageAttachments.add(fileMessage.url);
+        attachmentImages.add(fileMessage.url);
+        isImage = true;
       }else {
         attachmentUrl = fileMessage.url;
+        isFile = true;
       }
 
     } else if (baseMessage.message == 'multiple:image') {
@@ -57,17 +64,19 @@ class MyMessage {
         if (data is Map && data.containsKey('data')) {
           final images = data['data'];
           if (images is List) {
-            imageAttachments.addAll(images.cast<String>());
+            attachmentImages.addAll(images.cast<String>());
           }
         }
+        isImage = true;
       } catch (e) {
         if (kDebugMode) {
           print('Error parsing image attachments: $e');
         }
       }
+
     }else {
       content = baseMessage.message.trim();
-  }
+    }
 
   }
 
@@ -81,6 +90,10 @@ class MyMessage {
 
   String getDate() {
     return formatDate(timestamp);
+  }
+
+  String getImageUrl() {
+    return attachmentImages.isNotEmpty ? attachmentImages[0] : attachmentUrl;
   }
 
   String getAttachmentSize() {
