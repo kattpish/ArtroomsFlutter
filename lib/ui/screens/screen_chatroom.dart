@@ -692,7 +692,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
                     ),
                     child: InkWell(
                       onTap: () {
-                        viewPhotoUrl(context, attachment);
+                        viewPhoto(context, this, imagePath:attachment, fileName:message.attachmentName);
                       },
                       child: FadeInImage.assetNetwork(
                         placeholder: 'assets/images/chats/placeholder_photo.png',
@@ -932,7 +932,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
                     ),
                     child: InkWell(
                       onTap: () {
-                        viewPhotoFile(context, file);
+                        viewPhoto(context, this, imagePath:file.path, fileName:file.name);
                       },
                       onLongPress: () {
                         state.setState(() {
@@ -1099,8 +1099,9 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
         }));
       },
       child: Container(
-        width: 347,
+        // width: 347,
         height: 36,
+        margin: const EdgeInsets.symmetric(horizontal: 14, vertical: 2),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: ShapeDecoration(
           color: Colors.white,

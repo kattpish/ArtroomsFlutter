@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 import '../../main.dart';
 import '../../modules/module_auth.dart';
 import '../../modules/module_profile.dart';
+import '../../modules/module_sendbird.dart';
 import '../../utils/utils.dart';
 import '../theme/theme_colors.dart';
 
@@ -137,7 +138,7 @@ class _MyScreeLoginState extends State<MyScreenLogin> {
                                             borderRadius: BorderRadius.circular(30.0),
                                             borderSide: BorderSide.none,
                                           ),
-                                            contentPadding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16),
+                                          contentPadding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16),
                                         ),
                                       ),
                                     ),
@@ -369,6 +370,8 @@ class _MyScreeLoginState extends State<MyScreenLogin> {
               print("Failed to fetch user profile.");
             }
           }
+
+          await moduleSendBird.initSendbird();
 
           Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) {
             return const MyScreenChats();

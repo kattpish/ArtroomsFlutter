@@ -2,22 +2,16 @@
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 
-import '../../beans/bean_file.dart';
+import '../../utils/utils_media.dart';
 import '../theme/theme_colors.dart';
 
 
-void viewPhotoUrl(BuildContext context, String imageUrl) {
-  viewPhoto(context, "", imageUrl);
-}
-
-void viewPhotoFile(BuildContext context, FileItem file) {
-  viewPhoto(context, file.path, "");
-}
-
-void viewPhoto(BuildContext context, String imagePath, String imageUrl) {
+void viewPhoto(BuildContext context, State state, {String imagePath="", String imageUrl="", String fileName=""}) {
   showDialog(
     context: context,
     builder: (BuildContext context) {
+
+      bool isDownloading = false;
 
       ImageProvider imageProvider;
       if (imagePath.isNotEmpty) {
@@ -79,25 +73,47 @@ void viewPhoto(BuildContext context, String imagePath, String imageUrl) {
                     ),
                   )
               ),
-              Positioned(
-                bottom: 18,
-                left: 29,
-                  child: SizedBox(
-                    width: 40,
-                    height: 40,
-                    child: IconButton(
-                      icon: const Icon(
-                        Icons.file_download_outlined,
-                        size: 32,
-                        color: colorMainGrey300,
+              Visibility(
+                visible: imageUrl.isNotEmpty,
+                child: Positioned(
+                  bottom: 18,
+                  left: 29,
+                    child: SizedBox(
+                      width: 40,
+                      height: 40,
+                      child: isDownloading
+                          ? SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: CircularProgressIndicator(
+                          color: Color(0xFF6A79FF),
+                          strokeWidth: 3,
+                        ),
+                      )
+                          : IconButton(
+                        icon: const Icon(
+                          Icons.file_download_outlined,
+                          size: 32,
+                          color: colorMainGrey300,
+                        ),
+                        padding: const EdgeInsets.all(4),
+                        constraints: const BoxConstraints(),
+                        onPressed: () async {
+
+                          state.setState(() {
+                            isDownloading = true;
+                          });
+
+                          await downloadFile(imageUrl, fileName);
+
+                          state.setState(() {
+                            isDownloading = false;
+                          });
+
+                        },
                       ),
-                      padding: const EdgeInsets.all(4),
-                      constraints: const BoxConstraints(),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                  )
+                    )
+                ),
               ),
             ],
           ),

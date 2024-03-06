@@ -28,7 +28,7 @@ class MyNotice {
       notice: json['notice'] as String,
       url: json['url'] as String,
       artistId: json['artistId'] as int,
-      noticeable: json['noticeable'] as bool,
+      noticeable: true || json['noticeable'] as bool,
       createdAt: json['createdAt'] as String,
     );
   }

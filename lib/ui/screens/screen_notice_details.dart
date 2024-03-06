@@ -27,7 +27,7 @@ class _MyScreenNoticeDetailsState extends State<MyScreenNoticeDetails> {
       title: "Notices",
       home: Scaffold(
         appBar: AppBar(
-          toolbarHeight: isTablet(context) ? 60 : 0,
+          toolbarHeight: isTablet(context) ? 60 : 60,
           backgroundColor: Colors.white,
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_ios, color: colorMainGrey250),
@@ -39,14 +39,19 @@ class _MyScreenNoticeDetailsState extends State<MyScreenNoticeDetails> {
             "공지 상세보기",
             style: TextStyle(
                 color: colorMainGrey900,
-                fontWeight: FontWeight.w600
+              fontSize: 19,
+              fontFamily: 'SUIT',
+              fontWeight: FontWeight.w700,
+              height: 0,
+              letterSpacing: -0.38,
             ),
           ),
+          leadingWidth: 32,
           elevation: 0.5,
         ),
         backgroundColor: colorMainScreen,
         bottomNavigationBar: BottomAppBar(
-          height: isTablet(context) ? 0 : 60,
+          height: isTablet(context) ? 0 : 0,
           notchMargin: 6.0,
           color: Colors.white,
           child: Row(
@@ -95,9 +100,12 @@ class _MyScreenNoticeDetailsState extends State<MyScreenNoticeDetails> {
                       Text(
                         widget.myNotice.getDate(),
                         style: const TextStyle(
-                          fontSize: 18,
                           color: colorPrimaryBlue,
-                          fontWeight: FontWeight.w400,
+                          fontSize: 15,
+                          fontFamily: 'SUIT',
+                          fontWeight: FontWeight.w600,
+                          height: 0,
+                          letterSpacing: -0.30,
                         ),
                       ),
                       Visibility(
@@ -114,13 +122,18 @@ class _MyScreenNoticeDetailsState extends State<MyScreenNoticeDetails> {
                       Text(
                         widget.myNotice.title,
                         style: const TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.normal,
+                          color: Color(0xFF7D7D7D),
+                          fontSize: 13,
+                          fontFamily: 'SUIT',
+                          fontWeight: FontWeight.w400,
+                          height: 0,
+                          letterSpacing: -0.26,
                         ),
                       )
                     ],
                   ),
                 ),
+                const SizedBox(height: 4,),
                 const Divider(
                   thickness: 1.0,
                   color: colorMainGrey200,
@@ -133,8 +146,12 @@ class _MyScreenNoticeDetailsState extends State<MyScreenNoticeDetails> {
                       Text(
                         widget.myNotice.notice,
                         style: const TextStyle(
-                            fontSize: 15,
-                            color: colorMainGrey900,
+                          color: colorMainGrey900,
+                          fontSize: 19,
+                          fontFamily: 'SUIT',
+                          fontWeight: FontWeight.w700,
+                          height: 0,
+                          letterSpacing: -0.38,
                         ),
                       ),
                     ],

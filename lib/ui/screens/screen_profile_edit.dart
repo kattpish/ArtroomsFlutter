@@ -426,7 +426,7 @@ class _MyScreenProfileEditState extends State<MyScreenProfileEdit> {
                   ),
                 ),
                 Visibility(
-                  visible: true,
+                  visible: !readOnly,
                   child: Container(
                     width: 78,
                     height: 48,

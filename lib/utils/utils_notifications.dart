@@ -30,3 +30,22 @@ Future<void> showNotification(int id, String message) async {
   //   payload: 'item x',
   // );
 }
+
+Future<void> showDownloadCompleteNotification(String filePath) async {
+  // const AndroidNotificationDetails androidPlatformChannelSpecifics =
+  // AndroidNotificationDetails(
+  //     'download_complete', 'Download Complete',
+  //     channelDescription: 'Notification channel for download completion',
+  //     importance: Importance.max,
+  //     priority: Priority.high,
+  //     showWhen: false);
+  // const IOSNotificationDetails iOSPlatformChannelSpecifics = IOSNotificationDetails();
+  // const NotificationDetails platformChannelSpecifics = NotificationDetails(
+  //     android: androidPlatformChannelSpecifics, iOS: iOSPlatformChannelSpecifics);
+  // await flutterLocalNotificationsPlugin.show(
+  //     0,
+  //     'Download Complete',
+  //     'File has been downloaded: $filePath',
+  //     platformChannelSpecifics,
+  //     payload: 'item x');
+}

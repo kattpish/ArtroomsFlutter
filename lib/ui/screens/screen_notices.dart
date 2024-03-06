@@ -40,7 +40,7 @@ class _MyScreenNoticesState extends State<MyScreenNotices> {
       title: "Notices",
       home: Scaffold(
         appBar: AppBar(
-          toolbarHeight: isTablet(context) ? 60 : 0,
+          toolbarHeight: isTablet(context) ? 60 : 60,
           backgroundColor: Colors.white,
           leading: IconButton(
             icon: const Icon(
@@ -67,7 +67,7 @@ class _MyScreenNoticesState extends State<MyScreenNotices> {
           elevation: 0.5,
         ),
         bottomNavigationBar: BottomAppBar(
-          height: isTablet(context) ? 0 : 60,
+          height: isTablet(context) ? 0 : 0,
           notchMargin: 6.0,
           color: Colors.white,
           child: Row(

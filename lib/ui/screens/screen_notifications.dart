@@ -22,14 +22,18 @@ class _MyScreenNotificationsState extends State<MyScreenNotifications> {
 
   late final List<Map<String, dynamic>> _notifications;
 
+  late String _notificationEnabled;
+
   @override
   void initState() {
     super.initState();
 
+    _notificationEnabled = myDataStore.getNotificationValue();
+
     _notifications = [
-      {"title": "아룸 (기본)", "enabled": myDataStore.getBool("아룸 (기본)", true)},
-      {"title": "알림음", "enabled": myDataStore.getBool("알림음", false)},
-      {"title": "알림음 2", "enabled": myDataStore.getBool("알림음 2", false)},
+      {"title": "아룸 (기본)"},
+      {"title": "알림음"},
+      {"title": "알림음 2"},
     ];
 
   }
@@ -89,7 +93,7 @@ class _MyScreenNotificationsState extends State<MyScreenNotifications> {
                           letterSpacing: -0.32,
                         ),
                       ),
-                      trailing: _buildTrailingWidget(notification['enabled'], index),
+                      trailing: _buildTrailingWidget(notification, index),
                     ),
                   );
                 }).toList(),
@@ -114,7 +118,10 @@ class _MyScreenNotificationsState extends State<MyScreenNotifications> {
     );
   }
 
-  Widget _buildTrailingWidget(bool isEnabled, int index) {
+  Widget _buildTrailingWidget(Map<String, dynamic> notification, int index) {
+
+    bool isEnabled = notification['title'] == _notificationEnabled;
+
     return GestureDetector(
       onTap: () {
         _toggleNotification(index, !isEnabled);
@@ -128,10 +135,13 @@ class _MyScreenNotificationsState extends State<MyScreenNotifications> {
   }
 
   void _toggleNotification(int index, bool value) {
+
+    myDataStore.setNotificationValue(_notifications[index]['title']);
+
     setState(() {
-      myDataStore.setBool(_notifications[index]['title'], value);
-      _notifications[index]['enabled'] = value;
+      _notificationEnabled = _notifications[index]["title"];
     });
+
   }
 
 }

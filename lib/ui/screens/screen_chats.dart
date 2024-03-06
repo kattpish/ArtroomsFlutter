@@ -175,6 +175,7 @@ class _MyScreenChatsState extends State<MyScreenChats> with WidgetsBindingObserv
                           ),
                           filled: true,
                           fillColor: Colors.grey[200],
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
                         ),
                         onChanged: (value) {},
                       ),

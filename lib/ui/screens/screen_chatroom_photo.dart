@@ -66,10 +66,12 @@ class _MyScreenChatroomPhotoState extends State<MyScreenChatroomPhoto> {
               Visibility(
                 visible: !_selectMode,
                 child: IconButton(
-                  icon: const Icon(Icons.arrow_back_ios, color: colorMainGrey250),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
+                  icon: const Icon(
+                    Icons.arrow_back_ios,
+                    color: colorMainGrey250,
+                    size: 20,
+                  ),
+                  onPressed: () => Navigator.of(context).pop(),
                 ),
               ),
               Visibility(
@@ -131,6 +133,36 @@ class _MyScreenChatroomPhotoState extends State<MyScreenChatroomPhoto> {
                 ),
               ),
             ),
+            Visibility(
+              visible: !_selectMode,
+              child: Container(
+                height: double.infinity,
+                margin: const EdgeInsets.only(left: 8.0),
+                child: Center(
+                  child: InkWell(
+                    onTap: () {
+                      setState(() {
+                        _selectMode = true;
+                      });
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(8.0),
+                      child: const Text(
+                          '선택',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: colorMainGrey600,
+                            fontFamily: 'SUIT',
+                            fontWeight: FontWeight.w400,
+                            height: 0,
+                            letterSpacing: -0.32,
+                          )
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
           ],
           elevation: 0.5,
         ),
@@ -153,7 +185,7 @@ class _MyScreenChatroomPhotoState extends State<MyScreenChatroomPhoto> {
                 color: Colors.white,
                 child: InkWell(
                   onTap: () {
-                    viewPhotoUrl(context, attachmentImage.getImageUrl());
+                    viewPhoto(context, this, imageUrl:attachmentImage.getImageUrl(), fileName:attachmentImage.attachmentName);
                   },
                   onLongPress: () {
                     setState(() {

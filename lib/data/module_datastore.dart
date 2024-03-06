@@ -91,6 +91,15 @@ class MyDataStore {
     setString(myChat.id, memo);
   }
 
+  void setNotificationValue(String value) {
+    sharedPreferences.setString("NOTIFICATION", value);
+  }
+
+  String getNotificationValue() {
+    String? notification = sharedPreferences.getString("NOTIFICATION");
+    return notification ?? "아룸 (기본)";
+  }
+
   Future<void> logout() async {
     await sharedPreferences.setString('accessToken', "");
     await sharedPreferences.setString('refreshToken', "");

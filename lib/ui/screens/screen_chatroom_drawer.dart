@@ -451,34 +451,12 @@ class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> with Wi
                       const SizedBox(height: 16),
                       Column(
                         children:[
-                          ListTile(
-                            title: const Text(
-                              '이미지',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: colorMainGrey900,
-                                fontFamily: 'SUIT',
-                                fontWeight: FontWeight.w600,
-                                height: 0,
-                                letterSpacing: -0.32,
-                              ),
-                            ),
-                            trailing: const Icon(
-                              Icons.chevron_right,
-                              color: Colors.black,
-                              size: 20,
-                            ),
-                            onTap: () {
-                              Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                return MyScreenChatroomFile(myChat: widget.myChat,);
-                              }));
-                            },
-                          ),
                           Column(
                             children: [
                               ListTile(
+                                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0.0),
                                 title: const Text(
-                                  '파일',
+                                  '이미지',
                                   style: TextStyle(
                                     fontSize: 16,
                                     color: colorMainGrey900,
@@ -500,11 +478,35 @@ class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> with Wi
                                 },
                               ),
                               Container(
-                                alignment: Alignment.topLeft,
-                                  padding: const EdgeInsets.all(16),
+                                  alignment: Alignment.topLeft,
+                                  padding: const EdgeInsets.symmetric(horizontal: 16),
                                   child: buildAttachmentsImages(context, listAttachmentsImages)
                               ),
                             ],
+                          ),
+                          ListTile(
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0.0),
+                            title: const Text(
+                              '파일',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: colorMainGrey900,
+                                fontFamily: 'SUIT',
+                                fontWeight: FontWeight.w600,
+                                height: 0,
+                                letterSpacing: -0.32,
+                              ),
+                            ),
+                            trailing: const Icon(
+                              Icons.chevron_right,
+                              color: Colors.black,
+                              size: 20,
+                            ),
+                            onTap: () {
+                              Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                return MyScreenChatroomFile(myChat: widget.myChat,);
+                              }));
+                            },
                           ),
                           const Divider(
                             thickness: 2,
@@ -529,7 +531,7 @@ class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> with Wi
                                 },
                               ),
                               Container(
-                                  padding: const EdgeInsets.all(16),
+                                  padding: const EdgeInsets.symmetric(horizontal: 16),
                                   child: buildMembers(context, listMembers)
                               ),
                             ],
@@ -720,7 +722,7 @@ class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> with Wi
                 margin: const EdgeInsets.only(right: 4),
                 child: InkWell(
                   onTap: () {
-                    viewPhotoUrl(context, message.getImageUrl());
+                    viewPhoto(context, this, imageUrl:message.getImageUrl(), fileName:message.attachmentName);
                   },
                   child: Container(
                     width: 80,
