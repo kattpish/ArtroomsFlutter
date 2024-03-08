@@ -103,6 +103,8 @@ class _MyScreenProfileState extends State<MyScreenProfile> {
                       placeholder: 'assets/images/profile/placeholder.png',
                       image: profile.profileImg,
                       fit: BoxFit.cover,
+                      height: 64,
+                      width: 64,
                       fadeInDuration: const Duration(milliseconds: 100),
                       fadeOutDuration: const Duration(milliseconds: 100),
                       imageErrorBuilder: (context, error, stackTrace) {
@@ -170,10 +172,11 @@ class _MyScreenProfileState extends State<MyScreenProfile> {
                     letterSpacing: -0.28,
                   ),
                 ),
-                onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                onPressed: () async {
+                  await Navigator.push(context, MaterialPageRoute(builder: (context) {
                     return const MyScreenProfileEdit();
                   }));
+                  fetchUserProfile();
                 },
               ),
             ),
@@ -344,6 +347,7 @@ class _MyScreenProfileState extends State<MyScreenProfile> {
     } else {
       print("Failed to fetch user profile.");
     }
+
   }
 
 }

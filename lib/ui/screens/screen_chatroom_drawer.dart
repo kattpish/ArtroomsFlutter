@@ -32,7 +32,7 @@ class MyScreenChatroomDrawer extends StatefulWidget {
 
 }
 
-class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> with WidgetsBindingObserver {
+class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> {
 
   bool _isLoading = true;
   MyNotice myNotice = MyNotice();
@@ -48,7 +48,6 @@ class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> with Wi
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addObserver(this);
     moduleMessages = ModuleMessages(widget.myChat.id);
     _loadMemo();
     _loadNotice();
@@ -58,17 +57,7 @@ class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> with Wi
 
   @override
   void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-
-    if (state == AppLifecycleState.resumed) {
-      _loadMemo();
-    }
-
   }
 
   @override
@@ -346,14 +335,15 @@ class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> with Wi
                               color: Colors.black,
                               size: 20,
                             ),
-                            onTap: () {
-                              Navigator.push(context, MaterialPageRoute(builder: (context) {
+                            onTap: () async {
+                              await Navigator.push(context, MaterialPageRoute(builder: (context) {
                                 return MyScreenMemo(myChat: widget.myChat,);
                               }));
+                              _loadMemo();
                             },
                           ),
                           Container(
-                            height: 68,
+                            height: 82,
                             margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 0.0),
                             padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 0.0),
                             decoration: BoxDecoration(
@@ -372,8 +362,8 @@ class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> with Wi
                                 filled: true,
                                 fillColor: Colors.white,
                               ),
-                              minLines: 3,
-                              maxLines: null,
+                              minLines: 2,
+                              maxLines: 2,
                               readOnly: true,
                               keyboardType: TextInputType.multiline,
                               style: const TextStyle(
@@ -414,7 +404,7 @@ class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> with Wi
                             },
                           ),
                           Container(
-                            height: 68,
+                            height: 82,
                             margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 0.0),
                             padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 0.0),
                             decoration: BoxDecoration(
@@ -434,7 +424,7 @@ class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> with Wi
                                 fillColor: Colors.white,
                               ),
                               minLines: 2,
-                              maxLines: null,
+                              maxLines: 2,
                               readOnly: true,
                               keyboardType: TextInputType.multiline,
                               style: const TextStyle(
@@ -722,7 +712,7 @@ class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> with Wi
                 margin: const EdgeInsets.only(right: 4),
                 child: InkWell(
                   onTap: () {
-                    viewPhoto(context, this, imageUrl:message.getImageUrl(), fileName:message.attachmentName);
+                    viewPhoto(context, imageUrl:message.getImageUrl(), fileName:message.attachmentName);
                   },
                   child: Container(
                     width: 80,
@@ -756,7 +746,9 @@ class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> with Wi
   }
 
   void _loadMemo() {
-    _memoController.text = myDataStore.getMemo(widget.myChat);
+    setState(() {
+      _memoController.text = myDataStore.getMemo(widget.myChat).replaceAll("\n\n", "");
+    });
   }
 
   void _loadNotice() {
@@ -765,7 +757,7 @@ class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> with Wi
 
       setState(() {
         myNotice = notice;
-        _noticeController.text = myNotice.notice;
+        _noticeController.text = myNotice.notice.replaceAll("\n\n", "");
       });
 
     }).catchError((e) {

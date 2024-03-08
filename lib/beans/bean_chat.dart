@@ -13,7 +13,6 @@ class MyChat {
   final String date;
   String role = "윰윰";
   String profilePictureUrl = "";
-  List<MyMessage> messages = [];
 
   MyChat({
     required this.id,
@@ -22,18 +21,18 @@ class MyChat {
     required this.unreadMessages,
     required this.profilePictureUrl,
     required this.date,
-    required List<MyMessage> messages,
   });
 
   factory MyChat.fromGroupChannel(GroupChannel channel) {
 
-    final lastMessage = channel.lastMessage;
+    final BaseMessage? lastBaseMessage = channel.lastMessage;
     String lastMessageText = '';
     String messageDate = '';
 
-    if (lastMessage != null) {
-      lastMessageText = lastMessage.message;
-      messageDate = formatDateTime(lastMessage.createdAt);
+    if (lastBaseMessage != null) {
+      MyMessage lastMessage = MyMessage.fromBaseMessage(lastBaseMessage);
+      lastMessageText = lastMessage.getSummary();
+      messageDate = formatDateTime(lastBaseMessage.createdAt);
     }
 
     final MyChat myChat = MyChat(
@@ -43,7 +42,6 @@ class MyChat {
       unreadMessages: channel.unreadMessageCount,
       profilePictureUrl: channel.coverUrl ?? '',
       date: messageDate,
-      messages: [],
     );
 
     if(myChat.name == "artrooms") {

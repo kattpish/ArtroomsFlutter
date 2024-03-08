@@ -240,10 +240,20 @@ class _MyScreenChatroomFileState extends State<MyScreenChatroomFile> {
 
   }
 
+  void _deselectAllFiles() {
+
+    for(MyMessage attachmentImage in _attachmentsFiles) {
+      setState(() {
+        attachmentImage.isSelected = false;
+      });
+    }
+
+  }
+
   void selectFiles() {
 
     if(!_isButtonFileDisabled) {
-      Navigator.pop(context);
+      _deselectAllFiles();
     }
 
   }

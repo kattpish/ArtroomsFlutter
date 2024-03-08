@@ -2,16 +2,15 @@
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 
+import '../../utils/utils.dart';
 import '../../utils/utils_media.dart';
 import '../theme/theme_colors.dart';
 
 
-void viewPhoto(BuildContext context, State state, {String imagePath="", String imageUrl="", String fileName=""}) {
+void viewPhoto(BuildContext context, {String imagePath="", String imageUrl="", String fileName=""}) {
   showDialog(
     context: context,
     builder: (BuildContext context) {
-
-      bool isDownloading = false;
 
       ImageProvider imageProvider;
       if (imagePath.isNotEmpty) {
@@ -81,16 +80,7 @@ void viewPhoto(BuildContext context, State state, {String imagePath="", String i
                     child: SizedBox(
                       width: 40,
                       height: 40,
-                      child: isDownloading
-                          ? SizedBox(
-                        width: 24,
-                        height: 24,
-                        child: CircularProgressIndicator(
-                          color: Color(0xFF6A79FF),
-                          strokeWidth: 3,
-                        ),
-                      )
-                          : IconButton(
+                      child: IconButton(
                         icon: const Icon(
                           Icons.file_download_outlined,
                           size: 32,
@@ -100,15 +90,9 @@ void viewPhoto(BuildContext context, State state, {String imagePath="", String i
                         constraints: const BoxConstraints(),
                         onPressed: () async {
 
-                          state.setState(() {
-                            isDownloading = true;
-                          });
-
                           await downloadFile(imageUrl, fileName);
 
-                          state.setState(() {
-                            isDownloading = false;
-                          });
+                          showSnackBar(context, "이미지가 다운로드됨");
 
                         },
                       ),

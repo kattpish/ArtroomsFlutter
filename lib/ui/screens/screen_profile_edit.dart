@@ -113,6 +113,8 @@ class _MyScreenProfileEditState extends State<MyScreenProfileEdit> {
                         placeholder: 'assets/images/profile/placeholder.png',
                         image: profile.profileImg,
                         fit: BoxFit.cover,
+                        width: 120,
+                        height: 120,
                         fadeInDuration: const Duration(milliseconds: 100),
                         fadeOutDuration: const Duration(milliseconds: 100),
                         imageErrorBuilder: (context, error, stackTrace) {
@@ -510,7 +512,7 @@ class _MyScreenProfileEditState extends State<MyScreenProfileEdit> {
     });
 
     Map<String, dynamic>? resUpdateProfile = await userModule.updateProfile(
-      userId: 1,
+      userId: myDataStore.getUserId(),
       name: _nameController.text,
       nickname: _nicknameController.text,
       acceptMarketing: false,

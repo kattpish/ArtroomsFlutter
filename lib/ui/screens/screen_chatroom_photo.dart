@@ -1,9 +1,12 @@
 
+import 'package:artrooms/utils/utils.dart';
 import 'package:flutter/material.dart';
+import 'package:photo_view/photo_view.dart';
 
 import '../../beans/bean_chat.dart';
 import '../../beans/bean_message.dart';
 import '../../modules/module_messages.dart';
+import '../../utils/utils_media.dart';
 import '../../utils/utils_screen.dart';
 import '../theme/theme_colors.dart';
 import '../widgets/widget_loader.dart';
@@ -185,7 +188,7 @@ class _MyScreenChatroomPhotoState extends State<MyScreenChatroomPhoto> {
                 color: Colors.white,
                 child: InkWell(
                   onTap: () {
-                    viewPhoto(context, this, imageUrl:attachmentImage.getImageUrl(), fileName:attachmentImage.attachmentName);
+                    viewPhoto(context, imageUrl:attachmentImage.getImageUrl(), fileName:attachmentImage.attachmentName);
                   },
                   onLongPress: () {
                     setState(() {
@@ -195,22 +198,20 @@ class _MyScreenChatroomPhotoState extends State<MyScreenChatroomPhoto> {
                   },
                   child: Stack(
                     children: [
-                      Container(
-                        child: FadeInImage.assetNetwork(
-                          placeholder: 'assets/images/profile/placeholder.png',
-                          image: attachmentImage.getImageUrl(),
-                          fit: BoxFit.cover,
-                          width: double.infinity,
-                          height: double.infinity,
-                          fadeInDuration: const Duration(milliseconds: 100),
-                          fadeOutDuration: const Duration(milliseconds: 100),
-                          imageErrorBuilder: (context, error, stackTrace) {
-                            return Image.asset(
-                              'assets/images/profile/profile_1.png',
-                              fit: BoxFit.cover,
-                            );
-                          },
-                        ),
+                      FadeInImage.assetNetwork(
+                        placeholder: 'assets/images/profile/placeholder.png',
+                        image: attachmentImage.getImageUrl(),
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        height: double.infinity,
+                        fadeInDuration: const Duration(milliseconds: 100),
+                        fadeOutDuration: const Duration(milliseconds: 100),
+                        imageErrorBuilder: (context, error, stackTrace) {
+                          return Image.asset(
+                            'assets/images/profile/profile_1.png',
+                            fit: BoxFit.cover,
+                          );
+                        },
                       ),
                       Positioned(
                         top: 3,
@@ -340,7 +341,7 @@ class _MyScreenChatroomPhotoState extends State<MyScreenChatroomPhoto> {
   void selectPhotos() {
 
     if(!_isButtonDisabled) {
-      Navigator.pop(context);
+      _deselectAllPhotos(true);
     }
 
   }

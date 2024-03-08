@@ -96,6 +96,10 @@ class MyMessage {
     return attachmentImages.isNotEmpty ? attachmentImages[0] : attachmentUrl;
   }
 
+  String getSummary() {
+    return isImage ? "첨부 파일" : (isFile ? "첨부 이미지" : content);
+  }
+
   String getAttachmentSize() {
     double size;
     String unit;

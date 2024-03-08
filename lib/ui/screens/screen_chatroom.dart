@@ -12,6 +12,7 @@ import '../../beans/bean_file.dart';
 import '../../beans/bean_message.dart';
 import '../../modules/module_messages.dart';
 import '../../utils/utils.dart';
+import '../../utils/utils_media.dart';
 import '../../utils/utils_screen.dart';
 import '../theme/theme_colors.dart';
 import '../widgets/widget_media.dart';
@@ -692,7 +693,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
                     ),
                     child: InkWell(
                       onTap: () {
-                        viewPhoto(context, this, imagePath:attachment, fileName:message.attachmentName);
+                        viewPhoto(context, imageUrl:attachment, fileName:message.attachmentName);
                       },
                       child: FadeInImage.assetNetwork(
                         placeholder: 'assets/images/chats/placeholder_photo.png',
@@ -932,7 +933,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
                     ),
                     child: InkWell(
                       onTap: () {
-                        viewPhoto(context, this, imagePath:file.path, fileName:file.name);
+                        viewPhoto(context, imagePath:file.path, fileName:file.name);
                       },
                       onLongPress: () {
                         state.setState(() {

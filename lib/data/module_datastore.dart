@@ -28,6 +28,11 @@ class MyDataStore {
     return getAccessToken().isNotEmpty;
   }
 
+  int getUserId() {
+    int? userId = sharedPreferences.getInt("userId");
+    return userId ?? 0;
+  }
+
   String getUid() {
     String? uid = sharedPreferences.getString("email");
     return uid ?? "";
@@ -72,11 +77,15 @@ class MyDataStore {
   Future<void> saveProfile(Map<String, dynamic> profile) async {
 
     Map<String, dynamic> student = profile["student"];
+    Map<String, dynamic> profileImg = profile["profileImg"];
 
+    await sharedPreferences.setString('userId', profile["id"] ?? "");
+    await sharedPreferences.setString('email', profile["email"] ?? "");
+    await sharedPreferences.setString('userType', profile["type"] ?? "");
     await sharedPreferences.setString('name', student["name"] ?? "");
     await sharedPreferences.setString('nickname', student["nickname"] ?? "");
     await sharedPreferences.setString('phoneNumber', student["phoneNumber"] ?? "");
-    await sharedPreferences.setString('profileImg', profile["profileImg"]["accessUrl"] ?? "");
+    await sharedPreferences.setString('profileImg', profileImg["accessUrl"] ?? "");
   }
 
   Future<void> saveProfilePicture(Map<String, dynamic> profileImg) async {

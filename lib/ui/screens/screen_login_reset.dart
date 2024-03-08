@@ -1,4 +1,5 @@
 
+import 'package:artrooms/ui/screens/screen_login.dart';
 import 'package:flutter/material.dart';
 
 import '../../modules/module_auth.dart';
@@ -440,7 +441,13 @@ class _MyScreenLoginResetState extends State<MyScreenLoginReset> with SingleTick
       callback: (bool success, String message) async {
 
         if(success) {
+
           Navigator.of(context).pop();
+
+          Navigator.push(context, MaterialPageRoute(builder: (context) {
+            return const MyScreenLogin();
+          }));
+
         } else {
           showSnackBar(context, "로그인 실패");
         }
@@ -479,7 +486,13 @@ class _MyScreenLoginResetState extends State<MyScreenLoginReset> with SingleTick
       callback: (bool success, String message) async {
 
         if(success) {
+
           Navigator.of(context).pop();
+
+          Navigator.push(context, MaterialPageRoute(builder: (context) {
+            return const MyScreenLogin();
+          }));
+
         } else {
           showSnackBar(context, "로그인 실패");
         }
