@@ -6,6 +6,7 @@ import 'package:artrooms/modules/module_notices.dart';
 import 'package:artrooms/ui/screens/screen_chatroom_drawer.dart';
 import 'package:artrooms/ui/widgets/widget_loader.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import '../../beans/bean_chat.dart';
 import '../../beans/bean_file.dart';
 import '../../beans/bean_message.dart';
@@ -32,7 +33,7 @@ class MyScreenChatroom extends StatefulWidget {
 
 }
 
-class _MyScreenChatroomState extends State<MyScreenChatroom> {
+class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerProviderStateMixin {
 
   bool _isLoading = true;
   bool _isLoadMore = false;
@@ -41,8 +42,13 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
   bool _isExpandNotice = false;
   bool _showAttachment = false;
   bool _showAttachmentFull = false;
+  bool _listReachedTop = false;
+  bool _listReachedBottom = false;
+
   final List<MyMessage> listMessages = [];
   final ScrollController _scrollController = ScrollController();
+  final ScrollController _scrollControllerAttachment1 = ScrollController();
+  final ScrollController _scrollControllerAttachment2 = ScrollController();
   final TextEditingController _messageController = TextEditingController();
 
   late final ModuleMessages moduleMessages;
@@ -51,6 +57,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
   DataNotice dataNotice = DataNotice();
 
   double _boxHeight = 320.0;
+  final double _boxHeightMin = 320.0;
   double _dragStartY = 0.0;
   double screenWidth = 0;
   double screenHeight = 0;
@@ -63,23 +70,59 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
   String _currentDate = '';
   bool _showDateContainer = false;
   Map<int, GlobalKey> itemKeys = {};
+
   late Widget attachmentPicker;
+
+  late AnimationController _animationController;
+  late Animation<double> _animation;
 
   @override
   void initState() {
     super.initState();
     _messageController.addListener(_checkIfButtonShouldBeEnabled);
     _scrollController.addListener(_onScroll);
+    _scrollControllerAttachment1.addListener(_scrollListener);
+    _scrollControllerAttachment2.addListener(_scrollListener);
     moduleMessages = ModuleMessages(widget.chat.id);
     _loadMessages();
     _loadNotice();
+
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1000),
+    );
+
+    double interval = 0;
+    _animation = Tween(begin: _boxHeight, end: screenHeight).animate(_animationController)..addListener(() {
+
+      if(interval <= 0) {
+        interval = (screenHeight - _boxHeight) / 10;
+      }
+
+      setState(() {
+        if(_boxHeight < screenHeight) {
+          _boxHeight += interval;
+        }
+        if(_boxHeight > screenHeight) {
+          _boxHeight = screenHeight;
+        }
+      });
+
+      if(_boxHeight == screenHeight) {
+        _animationController.stop();
+      }
+
+    });
   }
 
   @override
   void dispose() {
     _messageController.dispose();
     _scrollController.dispose();
+    _scrollControllerAttachment1.dispose();
+    _scrollControllerAttachment2.dispose();
     _scrollTimer?.cancel();
+    _animationController.dispose();
     super.dispose();
   }
 
@@ -345,7 +388,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
 
   Widget _buildMessageInput() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      padding: const EdgeInsets.only(left: 8.0, right: 8.0, top: 3.0),
       child: Row(
         children: [
           Container(
@@ -356,7 +399,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
                   _boxHeight = 320;
                   _showAttachment = !_showAttachment;
                 });
-                _attachmentPickerSheet(context, this);
+                // _attachmentPickerSheet(context, this);
               },
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -893,9 +936,9 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
         maxChildSize: 1.0,
         builder: (_, controller) {
           return Container(
-          color: Colors.white,
-          child: attachmentPicker,
-        );
+            color: Colors.white,
+            child: attachmentPicker,
+          );
         },
       ),
     );
@@ -904,25 +947,26 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
   Widget _attachmentPicker(BuildContext context, State<StatefulWidget> state) {
 
     return Container(
+      height: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: Column(
-        children: [
-          Center(
-            child: GestureDetector(
-              onVerticalDragStart: _onVerticalDragStart,
-              onVerticalDragUpdate: _onVerticalDragUpdate,
-              onTap: () {
-                if(_showAttachment) {
-                  state.setState(() {
-                    _showAttachment = false;
-                    _showAttachmentFull = true;
-                  });
-                }else {
-                  setState(() {
-                    _showAttachmentFull = false;
-                  });
-                }
-              },
+      child: GestureDetector(
+        onVerticalDragStart: _onVerticalDragStart,
+        onVerticalDragUpdate: _onVerticalDragUpdate,
+        onTap: () {
+          if(_showAttachment) {
+            state.setState(() {
+              _showAttachment = false;
+              _showAttachmentFull = true;
+            });
+          }else {
+            setState(() {
+              _showAttachmentFull = false;
+            });
+          }
+        },
+        child: Column(
+          children: [
+            Center(
               child: Container(
                 height: 16,
                 padding: const EdgeInsets.all(4.0),
@@ -936,147 +980,249 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
                 ),
               ),
             ),
-          ),
-          const SizedBox(height: 10,),
-          Row(
-            children: [
-              Expanded(
-                child: Container(
-                  width: double.infinity,
-                  height: 44,
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                  decoration: BoxDecoration(color: colorPrimaryPurple,
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  child: TextButton(
-                    onPressed: () {
-                      state.setState(() {
-                        type = 1;
-                      });
-                    },
-                    child: const Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.camera_alt,
-                          color: Colors.white,
-                          size: 20,
-                        ),
-                        SizedBox(width: 6),
-                        Text(
-                            '카메라',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontFamily: 'Pretendard',
-                              fontWeight: FontWeight.w500,
-                              height: 0,
-                              letterSpacing: -0.32,
-                            )
-                        ),
-                      ],
+            const SizedBox(height: 10,),
+            Row(
+              children: [
+                Expanded(
+                  child: Container(
+                    width: double.infinity,
+                    height: 44,
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    decoration: BoxDecoration(color: colorPrimaryPurple,
+                      borderRadius: BorderRadius.circular(30),
                     ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 4,),
-              Expanded(
-                child: Container(
-                  width: double.infinity,
-                  height: 44,
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                  decoration: BoxDecoration(color: colorPrimaryBlue,
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  child: TextButton(
-                    onPressed: () {
-                      state.setState(() {
-                        type = 2;
-                      });
-                    },
-                    child: const Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.folder,
-                          color: Colors.white,
-                          size: 20,
-                        ),
-                        SizedBox(width: 6),
-                        Text(
-                            '파일',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontFamily: 'Pretendard',
-                              fontWeight: FontWeight.w500,
-                              height: 0,
-                              letterSpacing: -0.32,
-                            )
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12,),
-          Visibility(
-            visible: type == 1,
-            child: Expanded(
-              child: GridView.builder(
-                padding: const EdgeInsets.only(bottom: 32),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: isTablet(context) ? 6 : 3,
-                  crossAxisSpacing: 5,
-                  mainAxisSpacing: 5,
-                  childAspectRatio: 1,
-                ),
-                itemCount: files.length,
-                itemBuilder: (context, index) {
-                  var file = files[index];
-                  return Container(
-                    clipBehavior: Clip.antiAlias,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: InkWell(
-                      onTap: () {
-                        viewPhoto(context, imagePath:file.path, fileName:file.name);
-                      },
-                      onLongPress: () {
+                    child: TextButton(
+                      onPressed: () {
                         state.setState(() {
-                          file.isSelected = !file.isSelected;
+                          type = 1;
                         });
-                        _checkIfPhotoShouldBeEnabled();
                       },
-                      child: Stack(
+                      child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Image.asset(
-                            file.path,
-                            width: double.infinity,
-                            height: double.infinity,
-                            fit: BoxFit.cover,
+                          Icon(
+                            Icons.camera_alt,
+                            color: Colors.white,
+                            size: 20,
                           ),
-                          Positioned(
-                            top: 3,
-                            right: 4,
-                            child: Visibility(
-                              visible: _selectMode,
-                              child: InkWell(
-                                onTap: () {
-                                  state.setState(() {
-                                    file.isSelected = !file.isSelected;
-                                    _checkIfPhotoShouldBeEnabled();
-                                  });
-                                },
+                          SizedBox(width: 6),
+                          Text(
+                              '카메라',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontFamily: 'Pretendard',
+                                fontWeight: FontWeight.w500,
+                                height: 0,
+                                letterSpacing: -0.32,
+                              )
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 4,),
+                Expanded(
+                  child: Container(
+                    width: double.infinity,
+                    height: 44,
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    decoration: BoxDecoration(color: colorPrimaryBlue,
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    child: TextButton(
+                      onPressed: () {
+                        state.setState(() {
+                          type = 2;
+                        });
+                      },
+                      child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.folder,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                          SizedBox(width: 6),
+                          Text(
+                              '파일',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontFamily: 'Pretendard',
+                                fontWeight: FontWeight.w500,
+                                height: 0,
+                                letterSpacing: -0.32,
+                              )
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12,),
+            Visibility(
+              visible: type == 1,
+              child: Expanded(
+                child: GridView.builder(
+                  controller: _scrollControllerAttachment1,
+                  padding: const EdgeInsets.only(bottom: 32),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: isTablet(context) ? 6 : 3,
+                    crossAxisSpacing: 5,
+                    mainAxisSpacing: 5,
+                    childAspectRatio: 1,
+                  ),
+                  itemCount: files.length,
+                  itemBuilder: (context, index) {
+                    var file = files[index];
+                    return Container(
+                      clipBehavior: Clip.antiAlias,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: InkWell(
+                        onTap: () {
+                          viewPhoto(context, imagePath:file.path, fileName:file.name);
+                        },
+                        onLongPress: () {
+                          state.setState(() {
+                            file.isSelected = !file.isSelected;
+                          });
+                          _checkIfPhotoShouldBeEnabled();
+                        },
+                        child: Stack(
+                          children: [
+                            Image.asset(
+                              file.path,
+                              width: double.infinity,
+                              height: double.infinity,
+                              fit: BoxFit.cover,
+                            ),
+                            Positioned(
+                              top: 3,
+                              right: 4,
+                              child: Visibility(
+                                visible: _selectMode,
+                                child: InkWell(
+                                  onTap: () {
+                                    state.setState(() {
+                                      file.isSelected = !file.isSelected;
+                                      _checkIfPhotoShouldBeEnabled();
+                                    });
+                                  },
+                                  child: Container(
+                                    width: 26,
+                                    height: 26,
+                                    decoration: BoxDecoration(
+                                      color: file.isSelected ? colorPrimaryBlue : colorMainGrey200.withAlpha(150),
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                        color: file.isSelected ? colorPrimaryBlue : const Color(0xFFE3E3E3),
+                                        width: 1,
+                                      ),
+                                    ),
+                                    child: file.isSelected
+                                        ? const Icon(Icons.check, size: 16, color: Colors.white)
+                                        : Container(),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+            Visibility(
+              visible: type == 2,
+              child: Expanded(
+                child: GridView.builder(
+                  controller: _scrollControllerAttachment2,
+                  padding: const EdgeInsets.only(left: 8, top: 8, right: 8, bottom: 32),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: crossAxisCount,
+                    crossAxisSpacing: crossAxisSpacing,
+                    mainAxisSpacing: mainAxisSpacing,
+                    childAspectRatio: (screenWidth / crossAxisCount - crossAxisSpacing) / 197,
+                  ),
+                  itemCount: filesMedia.length,
+                  itemBuilder: (context, index) {
+                    var file = filesMedia[index];
+                    return Card(
+                      elevation: 0,
+                      color: Colors.white,
+                      child: InkWell(
+                        onTap: () {
+                          setState(() {
+                            file.isSelected = !file.isSelected;
+                            _checkIfFileButtonShouldBeEnabled();
+                          });
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(16.0),
+                            border: Border.all(color: colorMainGrey200, width: 1.0,),
+                          ),
+                          child: Stack(
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const SizedBox(height: 24),
+                                  Image.asset(
+                                    file.isSelected ? 'assets/images/icons/icon_file_selected.png' : 'assets/images/icons/icon_file.png',
+                                    width: 30,
+                                    height: 30,
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          file.name,
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            color: colorMainGrey700,
+                                            fontWeight: FontWeight.w400,
+                                          ),
+                                          maxLines: 2,
+                                        ),
+                                        const SizedBox(height: 8),
+                                        Text(
+                                          file.date,
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            color: Color(0xFF8F8F8F),
+                                            fontWeight: FontWeight.w300,
+                                          ),
+                                          maxLines: 1,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Positioned(
+                                top: 3,
+                                right: 2,
                                 child: Container(
                                   width: 26,
                                   height: 26,
                                   decoration: BoxDecoration(
-                                    color: file.isSelected ? colorPrimaryBlue : colorMainGrey200.withAlpha(150),
+                                    color: file.isSelected ? colorPrimaryBlue : Colors.transparent,
                                     shape: BoxShape.circle,
                                     border: Border.all(
                                       color: file.isSelected ? colorPrimaryBlue : const Color(0xFFE3E3E3),
@@ -1088,117 +1234,17 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
                                       : Container(),
                                 ),
                               ),
-                            ),
+                            ],
                           ),
-                        ],
+                        ),
                       ),
-                    ),
-                  );
-                },
-              ),
-            ),
-          ),
-          Visibility(
-            visible: type == 2,
-            child: Expanded(
-              child: GridView.builder(
-                padding: const EdgeInsets.only(left: 8, top: 8, right: 8, bottom: 32),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: crossAxisCount,
-                  crossAxisSpacing: crossAxisSpacing,
-                  mainAxisSpacing: mainAxisSpacing,
-                  childAspectRatio: (screenWidth / crossAxisCount - crossAxisSpacing) / 157,
+                    );
+                  },
                 ),
-                itemCount: filesMedia.length,
-                itemBuilder: (context, index) {
-                  var file = filesMedia[index];
-                  return Card(
-                    elevation: 0,
-                    color: Colors.white,
-                    child: InkWell(
-                      onTap: () {
-                        setState(() {
-                          file.isSelected = !file.isSelected;
-                          _checkIfFileButtonShouldBeEnabled();
-                        });
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(16.0),
-                          border: Border.all(color: colorMainGrey200, width: 1.0,),
-                        ),
-                        child: Stack(
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const SizedBox(height: 24),
-                                Image.asset(
-                                  file.isSelected ? 'assets/images/icons/icon_file_selected.png' : 'assets/images/icons/icon_file.png',
-                                  width: 30,
-                                  height: 30,
-                                ),
-                                const SizedBox(height: 4),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        file.name,
-                                        style: const TextStyle(
-                                          fontSize: 16,
-                                          color: colorMainGrey700,
-                                          fontWeight: FontWeight.w400,
-                                        ),
-                                        maxLines: 2,
-                                      ),
-                                      const SizedBox(height: 8),
-                                      Text(
-                                        file.date,
-                                        style: const TextStyle(
-                                          fontSize: 16,
-                                          color: Color(0xFF8F8F8F),
-                                          fontWeight: FontWeight.w300,
-                                        ),
-                                        maxLines: 1,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Positioned(
-                              top: 3,
-                              right: 2,
-                              child: Container(
-                                width: 26,
-                                height: 26,
-                                decoration: BoxDecoration(
-                                  color: file.isSelected ? colorPrimaryBlue : Colors.transparent,
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                    color: file.isSelected ? colorPrimaryBlue : const Color(0xFFE3E3E3),
-                                    width: 1,
-                                  ),
-                                ),
-                                child: file.isSelected
-                                    ? const Icon(Icons.check, size: 16, color: Colors.white)
-                                    : Container(),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  );
-                },
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -1303,7 +1349,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
                                 child: Container(
                                   width: double.infinity,
                                   height: 32,
-                                  margin: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 10.0),
+                                  margin: const EdgeInsets.only(top: 10.0),
                                   padding: const EdgeInsets.only(bottom: 0.0),
                                   child: TextButton(
                                     style: ElevatedButton.styleFrom(
@@ -1311,7 +1357,6 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
                                       minimumSize: const Size(double.infinity, 48),
                                       foregroundColor: colorPrimaryBlue,
                                       backgroundColor: colorMainGrey200,
-                                      padding: const EdgeInsets.symmetric(vertical: 16.0),
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(5.0),
                                       ),
@@ -1319,7 +1364,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
                                     child: const Text(
                                       '다시 열지 않음',
                                       style: TextStyle(
-                                        color: Color(0xFF434343),
+                                        color: colorMainGrey900,
                                         fontSize: 13,
                                         fontFamily: 'Pretendard',
                                         fontWeight: FontWeight.w400,
@@ -1397,6 +1442,55 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
 
     });
 
+  }
+
+  void _scrollListener() {
+
+    if (_scrollControllerAttachment1.offset <= _scrollControllerAttachment1.position.minScrollExtent && _scrollControllerAttachment1.position.userScrollDirection == ScrollDirection.forward) {
+      if (!_listReachedTop) {
+        setState(() {
+          _listReachedTop = true;
+        });
+      }else {
+        setState(() {
+          _showAttachment = true;
+          _showAttachmentFull = false;
+          _boxHeight = _boxHeightMin;
+        });
+      }
+    }else if (_scrollControllerAttachment1.offset <= _scrollControllerAttachment1.position.minScrollExtent && _scrollControllerAttachment1.position.userScrollDirection == ScrollDirection.reverse) {
+      if (_listReachedTop) {
+        setState(() {
+          _listReachedTop = false;
+        });
+      }
+    }else if (_scrollControllerAttachment1.offset >= _scrollControllerAttachment1.position.maxScrollExtent && !_scrollControllerAttachment1.position.outOfRange) {
+      if (!_listReachedBottom) {
+        setState(() {
+          _listReachedBottom = true;
+        });
+      }
+    } else {
+      if (_listReachedBottom) {
+        setState(() {
+          _listReachedBottom = false;
+        });
+      }else {
+        setState(() {
+          _showAttachment = false;
+          _showAttachmentFull = true;
+        });
+        animateHeight();
+      }
+    }
+  }
+
+  void animateHeight() {
+    if (_animationController.isAnimating) {
+      _animationController.stop();
+    } else {
+      _animationController.forward(from: 0.0);
+    }
   }
 
   void _onScroll() {
