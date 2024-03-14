@@ -19,7 +19,7 @@ class MyScreenNotificationsSounds extends StatefulWidget {
 
 class _MyScreenNotificationsSoundsState extends State<MyScreenNotificationsSounds> {
 
-  MyDataStore myDataStore = MyDataStore();
+  DBStore dbStore = DBStore();
 
   late final List<Map<String, dynamic>> _notifications;
 
@@ -28,8 +28,8 @@ class _MyScreenNotificationsSoundsState extends State<MyScreenNotificationsSound
     super.initState();
 
     _notifications = [
-      {"title": "채팅알림", "enabled": myDataStore.getBool("채팅알림", true)},
-      {"title": "멘션알림", "enabled": myDataStore.getBool("멘션알림", false)},
+      {"title": "채팅알림", "enabled": dbStore.getBool("채팅알림", true)},
+      {"title": "멘션알림", "enabled": dbStore.getBool("멘션알림", false)},
     ];
 
   }
@@ -148,7 +148,7 @@ class _MyScreenNotificationsSoundsState extends State<MyScreenNotificationsSound
 
   void _toggleNotification(int index, bool value) {
     setState(() {
-      myDataStore.setBool(_notifications[index]['title'], value);
+      dbStore.setBool(_notifications[index]['title'], value);
       _notifications[index]['enabled'] = value;
     });
   }

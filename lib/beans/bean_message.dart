@@ -26,6 +26,15 @@ class MyMessage {
   bool isFile = false;
   bool isSelected = false;
 
+  MyMessage.empty({
+    this.index = 0,
+    this.senderId = "",
+    this.senderName = "",
+    this.content = "",
+    this.timestamp = 0,
+    this.isMe = false,
+  });
+
   MyMessage.fromBaseMessageWithDetails({
     required this.index,
     required this.senderId,
@@ -40,7 +49,7 @@ class MyMessage {
         senderId = baseMessage.sender?.userId ?? "",
         senderName = baseMessage.sender?.nickname ?? "",
         timestamp = baseMessage.createdAt,
-        isMe = baseMessage.sender?.userId.toString() == myDataStore.getUid(),
+        isMe = baseMessage.sender?.userId.toString() == dbStore.getUid(),
         profilePictureUrl = baseMessage.sender?.profileUrl ?? ""
   {
 
@@ -90,6 +99,10 @@ class MyMessage {
 
   String getDate() {
     return formatDate(timestamp);
+  }
+
+  String getDateTime() {
+    return "${getDate()} ${getTime()}";
   }
 
   String getImageUrl() {

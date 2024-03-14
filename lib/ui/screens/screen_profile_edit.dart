@@ -478,7 +478,7 @@ class _MyScreenProfileEditState extends State<MyScreenProfileEdit> {
     Map<String, dynamic>? profileMap = await userModule.getMyProfile();
     if (profileMap != null) {
 
-      myDataStore.saveProfile(profileMap);
+      dbStore.saveProfile(profileMap);
 
       setState(() {
         profile = MyProfile.fromProfileMap(profileMap);
@@ -512,7 +512,7 @@ class _MyScreenProfileEditState extends State<MyScreenProfileEdit> {
     });
 
     Map<String, dynamic>? resUpdateProfile = await userModule.updateProfile(
-      userId: myDataStore.getUserId(),
+      userId: dbStore.getUserId(),
       name: _nameController.text,
       nickname: _nicknameController.text,
       acceptMarketing: false,

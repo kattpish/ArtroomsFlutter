@@ -15,7 +15,7 @@ import 'modules/module_sendbird.dart';
 
 
 late final SharedPreferences sharedPreferences;
-late final MyDataStore myDataStore;
+late final DBStore dbStore;
 late final ModuleSendBird moduleSendBird;
 final MyRouteObserver routeObserver = MyRouteObserver();
 
@@ -35,7 +35,7 @@ Future<void> main() async {
   );
 
   sharedPreferences = await SharedPreferences.getInstance();
-  myDataStore = MyDataStore();
+  dbStore = DBStore();
   moduleSendBird = ModuleSendBird();
   await moduleSendBird.initSendbird();
 
@@ -47,7 +47,7 @@ Future<void> main() async {
 
   runApp(
     MaterialApp(
-      home: MyDataStore().isLoggedIn() ? const MyScreenChats() : const MyScreenLogin(),
+      home: DBStore().isLoggedIn() ? const MyScreenChats() : const MyScreenLogin(),
       debugShowCheckedModeBanner: false,
       navigatorObservers: [routeObserver],
     ),

@@ -35,7 +35,7 @@ class MyScreenChatroomDrawer extends StatefulWidget {
 class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> {
 
   bool _isLoading = true;
-  MyNotice myNotice = MyNotice();
+  DataNotice dataNotice = DataNotice();
   final ModuleNotice moduleNotice = ModuleNotice();
   final TextEditingController _memoController = TextEditingController();
   final TextEditingController _noticeController = TextEditingController();
@@ -747,17 +747,17 @@ class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> {
 
   void _loadMemo() {
     setState(() {
-      _memoController.text = myDataStore.getMemo(widget.myChat).replaceAll("\n\n", "");
+      _memoController.text = dbStore.getMemo(widget.myChat).replaceAll("\n\n", "");
     });
   }
 
   void _loadNotice() {
 
-    moduleNotice.getNotice(widget.myChat.id).then((MyNotice notice) {
+    moduleNotice.getNotice(widget.myChat.id).then((DataNotice notice) {
 
       setState(() {
-        myNotice = notice;
-        _noticeController.text = myNotice.notice.replaceAll("\n\n", "");
+        dataNotice = notice;
+        _noticeController.text = dataNotice.notice.replaceAll("\n\n", "");
       });
 
     }).catchError((e) {

@@ -18,7 +18,7 @@ class MyScreenNotifications extends StatefulWidget {
 
 class _MyScreenNotificationsState extends State<MyScreenNotifications> {
 
-  MyDataStore myDataStore = MyDataStore();
+  DBStore dbStore = DBStore();
 
   late final List<Map<String, dynamic>> _notifications;
 
@@ -28,7 +28,7 @@ class _MyScreenNotificationsState extends State<MyScreenNotifications> {
   void initState() {
     super.initState();
 
-    _notificationEnabled = myDataStore.getNotificationValue();
+    _notificationEnabled = dbStore.getNotificationValue();
 
     _notifications = [
       {"title": "아룸 (기본)"},
@@ -136,7 +136,7 @@ class _MyScreenNotificationsState extends State<MyScreenNotifications> {
 
   void _toggleNotification(int index, bool value) {
 
-    myDataStore.setNotificationValue(_notifications[index]['title']);
+    dbStore.setNotificationValue(_notifications[index]['title']);
 
     setState(() {
       _notificationEnabled = _notifications[index]["title"];

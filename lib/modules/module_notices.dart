@@ -11,30 +11,30 @@ import '../beans/bean_notice.dart';
 
 class ModuleNotice {
 
-  final MyDataStore myDataStore = MyDataStore();
+  final DBStore dbStore = DBStore();
 
 
-  Future<MyNotice> getNotice(final String channelUrl) async {
+  Future<DataNotice> getNotice(final String channelUrl) async {
 
-    final MyNotice myNotice;
+    final DataNotice dataNotice;
 
-    final List<MyNotice> notices = await getNotices(channelUrl);
+    final List<DataNotice> notices = await getNotices(channelUrl);
 
     if(notices.isNotEmpty) {
-      myNotice = notices[0];
+      dataNotice = notices[0];
     }else {
-      myNotice = MyNotice();
+      dataNotice = DataNotice();
     }
 
-    return myNotice;
+    return dataNotice;
   }
 
-  Future<List<MyNotice>> getNotices(final String channelUrl) async {
+  Future<List<DataNotice>> getNotices(final String channelUrl) async {
 
     final List<dynamic> noticesJson = await fetchNotices(channelUrl);
 
-    final List<MyNotice> notices = noticesJson.map((json) {
-      return MyNotice.fromJson(json);
+    final List<DataNotice> notices = noticesJson.map((json) {
+      return DataNotice.fromJson(json);
     }).toList();
 
     return notices;
@@ -50,7 +50,7 @@ class ModuleNotice {
       uri,
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ${myDataStore.getAccessToken()}',
+        'Authorization': 'Bearer ${dbStore.getAccessToken()}',
       },
       body: jsonEncode({
         "operationName": "SearchChattingNotice",

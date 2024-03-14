@@ -25,7 +25,7 @@ class MyScreenProfile extends StatefulWidget {
 class _MyScreenProfileState extends State<MyScreenProfile> {
 
   UserModule userModule = UserModule();
-  MyDataStore myDataStore = MyDataStore();
+  DBStore dbStore = DBStore();
 
   MyProfile profile = MyProfile();
 
@@ -121,7 +121,7 @@ class _MyScreenProfileState extends State<MyScreenProfile> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      myDataStore.getName(),
+                      dbStore.getName(),
                       style: const TextStyle(
                         color: Color(0xFF111111),
                         fontSize: 20,
@@ -133,7 +133,7 @@ class _MyScreenProfileState extends State<MyScreenProfile> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      myDataStore.getNickName(),
+                      dbStore.getNickName(),
                       style: const TextStyle(
                         color: Color(0xFF565656),
                         fontSize: 14,
@@ -315,7 +315,7 @@ class _MyScreenProfileState extends State<MyScreenProfile> {
                     ),
                   ),
                   onTap: () {
-                    MyDataStore().logout();
+                    DBStore().logout();
                     Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) {
                       return const MyScreenLogin();
                     }));
@@ -337,7 +337,7 @@ class _MyScreenProfileState extends State<MyScreenProfile> {
 
     Map<String, dynamic>? profileMap = await userModule.getMyProfile();
     if (profileMap != null) {
-      myDataStore.saveProfile(profileMap);
+      dbStore.saveProfile(profileMap);
 
       setState(() {
         profile = MyProfile.fromProfileMap(profileMap);

@@ -2,7 +2,7 @@
 import 'package:intl/intl.dart';
 
 
-class MyNotice {
+class DataNotice {
 
   int id = 0;
   String title;
@@ -12,7 +12,7 @@ class MyNotice {
   bool noticeable;
   String createdAt;
 
-  MyNotice({
+  DataNotice({
     this.id = 0,
     this.title = "",
     this.notice = "",
@@ -22,8 +22,8 @@ class MyNotice {
     this.createdAt = "",
   });
 
-  factory MyNotice.fromJson(Map<String, dynamic> json) {
-    return MyNotice(
+  factory DataNotice.fromJson(Map<String, dynamic> json) {
+    return DataNotice(
       id: json['id'] as int,
       notice: json['notice'] as String,
       url: json['url'] as String,

@@ -1,10 +1,11 @@
 
 import 'package:artrooms/beans/bean_chat.dart';
+import 'package:artrooms/beans/bean_notice.dart';
 
 import '../main.dart';
 
 
-class MyDataStore {
+class DBStore {
 
   String getString(String key, {String defaultValue = ""}) {
     String? string = sharedPreferences.getString(key);
@@ -101,12 +102,20 @@ class MyDataStore {
   }
 
   void setNotificationValue(String value) {
-    sharedPreferences.setString("NOTIFICATION", value);
+    setString("NOTIFICATION", value);
   }
 
   String getNotificationValue() {
-    String? notification = sharedPreferences.getString("NOTIFICATION");
+    String? notification = getString("NOTIFICATION");
     return notification ?? "아룸 (기본)";
+  }
+
+  void setNoticeHide(DataNotice dataNotice, bool hide) {
+    setBool("NOTICE-${dataNotice.id}", hide);
+  }
+
+  bool isNoticeHide(DataNotice dataNotice) {
+    return getBool("NOTICE-${dataNotice.id}", false);
   }
 
   Future<void> logout() async {

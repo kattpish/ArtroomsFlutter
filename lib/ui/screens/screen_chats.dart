@@ -50,7 +50,7 @@ class _MyScreenChatsState extends State<MyScreenChats> with WidgetsBindingObserv
   void initState() {
     super.initState();
 
-    if(!MyDataStore().isLoggedIn()) {
+    if(!DBStore().isLoggedIn()) {
       Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) {
         return const MyScreenLogin();
       }));

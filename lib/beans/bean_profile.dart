@@ -4,7 +4,7 @@ import '../data/module_datastore.dart';
 
 class MyProfile {
 
-  String profileImg = MyDataStore().getProfileImg();
+  String profileImg = DBStore().getProfileImg();
 
   MyProfile({
     profileImg = ""

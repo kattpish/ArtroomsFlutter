@@ -4,15 +4,14 @@ import 'dart:async';
 import 'package:artrooms/beans/bean_notice.dart';
 import 'package:artrooms/modules/module_notices.dart';
 import 'package:artrooms/ui/screens/screen_chatroom_drawer.dart';
-import 'package:artrooms/ui/screens/screen_notice_details.dart';
 import 'package:artrooms/ui/widgets/widget_loader.dart';
 import 'package:flutter/material.dart';
 import '../../beans/bean_chat.dart';
 import '../../beans/bean_file.dart';
 import '../../beans/bean_message.dart';
+import '../../data/module_datastore.dart';
 import '../../modules/module_messages.dart';
 import '../../utils/utils.dart';
-import '../../utils/utils_media.dart';
 import '../../utils/utils_screen.dart';
 import '../theme/theme_colors.dart';
 import '../widgets/widget_media.dart';
@@ -38,6 +37,8 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
   bool _isLoading = true;
   bool _isLoadMore = false;
   bool _isButtonDisabled = true;
+  bool _isHideNotice = false;
+  bool _isExpandNotice = false;
   bool _showAttachment = false;
   bool _showAttachmentFull = false;
   final List<MyMessage> listMessages = [];
@@ -46,7 +47,8 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
 
   late final ModuleMessages moduleMessages;
   ModuleNotice moduleNotice = ModuleNotice();
-  MyNotice myNotice = MyNotice();
+  DBStore dbStore = DBStore();
+  DataNotice dataNotice = DataNotice();
 
   double _boxHeight = 320.0;
   double _dragStartY = 0.0;
@@ -60,6 +62,8 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
   Timer? _scrollTimer;
   String _currentDate = '';
   bool _showDateContainer = false;
+  Map<int, GlobalKey> itemKeys = {};
+  late Widget attachmentPicker;
 
   @override
   void initState() {
@@ -86,7 +90,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
     screenHeight = MediaQuery.of(context).size.height;
     crossAxisCount = isTablet(context) ? 4 : 2;
 
-    Widget attachmentPicker = _attachmentPicker(context, this);
+    attachmentPicker = _attachmentPicker(context, this);
 
     return WillPopScope(
       onWillPop: () async {
@@ -180,18 +184,68 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
                       alignment: AlignmentDirectional.topCenter,
                       children: [
                         Container(
-                          padding: const EdgeInsets.symmetric(vertical: 8),
+                          padding: const EdgeInsets.symmetric(vertical: 0),
                           child: listMessages.isNotEmpty ? ListView.builder(
                             controller: _scrollController,
                             itemCount: listMessages.length,
                             reverse: true,
                             itemBuilder: (context, index) {
+                              itemKeys[index] = GlobalKey();
                               final message = listMessages[index];
-                              final isPreviousSame = index == 0 ? false : listMessages[index - 1].senderId == message.senderId;
-                              final isNextSame = index == listMessages.length - 1 ? false : listMessages[index + 1].senderId == message.senderId;
-                              return message.isMe
-                                  ? _buildMyMessageBubble(message)
-                                  : _buildOtherMessageBubble(message, isPreviousSame, isNextSame);
+                              final messageNext = index > 0 ? listMessages[index - 1] : MyMessage.empty();
+                              final messagePrevious = index < listMessages.length - 1 ? listMessages[index + 1] : MyMessage.empty();
+                              final isPreviousSame = messagePrevious.senderId == message.senderId;
+                              final isNextSame = messageNext.senderId == message.senderId;
+                              final isPreviousDate = messagePrevious.getDate() == message.getDate();
+                              final isPreviousSameDateTime = isPreviousSame && messagePrevious.getDateTime() == message.getDateTime();
+                              final isNextSameTime = isNextSame && messageNext.getDateTime() == message.getDateTime();
+                              return Column(
+                                key: itemKeys[index],
+                                children: [
+                                  Visibility(
+                                    visible: !isPreviousDate,
+                                    child: Container(
+                                      width: 145,
+                                      height: 31,
+                                      margin: EdgeInsets.only(left: 16, right: 16, top: index == 0 ? 4 : 16, bottom: index == 0 ? 4 : 8),
+                                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                                      alignment: Alignment.center,
+                                      decoration: ShapeDecoration(
+                                        color: const Color(0xFFF9F9F9),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(20),
+                                        ),
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            formatDateLastMessage(message.timestamp),
+                                            style: const TextStyle(
+                                              color: Color(0xFF7D7D7D),
+                                              fontSize: 12,
+                                              fontFamily: 'SUIT',
+                                              fontWeight: FontWeight.w400,
+                                              height: 0,
+                                              letterSpacing: -0.24,
+                                            ),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    child: message.isMe
+                                        ? _buildMyMessageBubble(message, isPreviousSameDateTime, isNextSameTime)
+                                        : _buildOtherMessageBubble(message, isPreviousSame, isNextSame, isPreviousSameDateTime, isNextSameTime),
+                                  ),
+                                ],
+                              );
                             },
                           )
                               : buildNoChats(context),
@@ -209,13 +263,18 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
                           ),
                         ),
                         AnimatedOpacity(
-                          opacity: _showDateContainer ? 1.0 : 0.0,
+                          opacity: !_isHideNotice && dataNotice.notice.isNotEmpty ? 1.0 : 0.0,
+                          duration: const Duration(milliseconds: 500),
+                          child: buildNoticePin(context),
+                        ),
+                        AnimatedOpacity(
+                          opacity: _showDateContainer ? 0.0 : 0.0,
                           duration: const Duration(milliseconds: 500),
                           child: Container(
                             width: 145,
                             height: 31,
-                            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                             alignment: Alignment.center,
                             decoration: ShapeDecoration(
                               color: const Color(0xFFF9F9F9),
@@ -246,11 +305,6 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
                             ),
                           ),
                         ),
-                        AnimatedOpacity(
-                          opacity: myNotice.notice.isNotEmpty ? 1.0 : 0.0,
-                          duration: const Duration(milliseconds: 500),
-                          child: buildNoticePin(context),
-                        )
                       ],
                     ),
                   ),
@@ -302,13 +356,14 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
                   _boxHeight = 320;
                   _showAttachment = !_showAttachment;
                 });
+                _attachmentPickerSheet(context, this);
               },
-              child: const Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Icon(
-                  Icons.add,
-                  color: colorMainGrey250,
-                  size: 24,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Image.asset(
+                  _showAttachment ? 'assets/images/icons/icon_times.png' : 'assets/images/icons/icon_plus.png',
+                  width: 24,
+                  height: 24,
                 ),
               ),
             ),
@@ -360,42 +415,45 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
     );
   }
 
-  Widget _buildMyMessageBubble(MyMessage message) {
+  Widget _buildMyMessageBubble(MyMessage message, bool isPreviousSameDateTime, bool isNextSameTime) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      margin: const EdgeInsets.only(left: 16, right: 16, top: 0, bottom: 0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           Visibility(
             visible: message.content.isNotEmpty,
             child: Container(
-              margin: const EdgeInsets.symmetric(vertical: 4),
+              margin: const EdgeInsets.symmetric(vertical: 2),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Text(
-                    message.getTime(),
-                    style: const TextStyle(
-                      color: colorMainGrey300,
-                      fontSize: 10,
-                      fontFamily: 'Pretendard',
-                      fontWeight: FontWeight.w400,
-                      height: 0.15,
-                      letterSpacing: -0.20,
+                  Visibility(
+                    visible: ((isPreviousSameDateTime && !isNextSameTime) || (!isPreviousSameDateTime && !isNextSameTime)) && message.content.isNotEmpty,
+                    child: Text(
+                      message.getTime(),
+                      style: const TextStyle(
+                        color: colorMainGrey300,
+                        fontSize: 10,
+                        fontFamily: 'Pretendard',
+                        fontWeight: FontWeight.w400,
+                        height: 0.15,
+                        letterSpacing: -0.20,
+                      ),
                     ),
                   ),
                   const SizedBox(width: 8),
                   Container(
                     constraints: BoxConstraints(maxWidth: screenWidth * 0.55),
                     padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-                    decoration: const BoxDecoration(
+                    decoration: BoxDecoration(
                       color: colorPrimaryBlue,
                       borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(24),
-                          topRight: Radius.circular(0),
-                          bottomLeft: Radius.circular(24),
-                          bottomRight: Radius.circular(24)
+                          topLeft: const Radius.circular(24),
+                          topRight: Radius.circular(isPreviousSameDateTime ? 24 : 0),
+                          bottomLeft: const Radius.circular(24),
+                          bottomRight: const Radius.circular(24)
                       ),
                     ),
                     child: Text(
@@ -413,6 +471,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
               child: _buildAttachment(message)
           ),
           Container(
+              margin: const EdgeInsets.only(top: 4),
               child: _buildImageAttachments(message)
           ),
         ],
@@ -420,9 +479,9 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
     );
   }
 
-  Widget _buildOtherMessageBubble(MyMessage message, bool isPreviousSame, bool isNextSame) {
+  Widget _buildOtherMessageBubble(MyMessage message, bool isPreviousSame, bool isNextSame, bool isPreviousSameDateTime, bool isNextSameTime) {
     return Container(
-      margin: EdgeInsets.only(left: 16, right: 16, bottom: isPreviousSame ? 0 : 9),
+      margin: EdgeInsets.only(left: 16, right: 16, top: 0, bottom: isNextSame ? 0 : 9),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -436,10 +495,10 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
 
                 },
                 child: Visibility(
-                  visible: !isNextSame,
+                  visible: !isPreviousSame,
                   child: CircleAvatar(
                     radius: 15,
-                    backgroundColor: isNextSame ? Colors.transparent : colorMainGrey200,
+                    backgroundColor: isPreviousSame ? Colors.transparent : colorMainGrey200,
                     child: FadeInImage.assetNetwork(
                       placeholder: 'assets/images/profile/placeholder.png',
                       image: message.profilePictureUrl,
@@ -462,14 +521,14 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
                 children: [
                   Container(
                     margin: EdgeInsets.only(
-                        left: isNextSame ? 34 : 4,
-                        top: isNextSame ? 0 : 16
+                        left: isPreviousSame ? 34 : 4,
+                        top: isPreviousSame ? 0 : 16
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Visibility(
-                          visible: !isNextSame,
+                          visible: !isPreviousSame,
                           child: SizedBox(
                             child: Text(
                               message.getName(),
@@ -493,12 +552,13 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
                             constraints: const BoxConstraints(minHeight: 40, minWidth: 46),
                             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                             alignment: Alignment.centerLeft,
-                            decoration: const BoxDecoration(
+                            decoration: BoxDecoration(
                               color: colorMainGrey200,
                               borderRadius: BorderRadius.only(
-                                topRight: Radius.circular(20),
-                                bottomLeft: Radius.circular(20),
-                                bottomRight: Radius.circular(20),
+                                topLeft: Radius.circular(isPreviousSameDateTime ? 20 : 0),
+                                topRight: const Radius.circular(20),
+                                bottomLeft: const Radius.circular(20),
+                                bottomRight: const Radius.circular(20),
                               ),
                             ),
                             child: Column(
@@ -527,7 +587,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
                     ),
                   ),
                   Visibility(
-                    visible: message.content.isNotEmpty,
+                    visible: ((isPreviousSameDateTime && !isNextSameTime) || (!isPreviousSameDateTime && !isNextSameTime)) && message.content.isNotEmpty,
                     child: Text(
                       message.getTime(),
                       style: const TextStyle(
@@ -773,6 +833,26 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
     FileItem(name: '', path: 'assets/images/photos/photo_2.png'),
     FileItem(name: '', path: 'assets/images/photos/photo_3.png'),
     FileItem(name: '', path: 'assets/images/photos/photo_4.png'),
+    FileItem(name: '', path: 'assets/images/photos/photo_1.png'),
+    FileItem(name: '', path: 'assets/images/photos/photo_2.png'),
+    FileItem(name: '', path: 'assets/images/photos/photo_3.png'),
+    FileItem(name: '', path: 'assets/images/photos/photo_4.png'),
+    FileItem(name: '', path: 'assets/images/photos/photo_1.png'),
+    FileItem(name: '', path: 'assets/images/photos/photo_2.png'),
+    FileItem(name: '', path: 'assets/images/photos/photo_3.png'),
+    FileItem(name: '', path: 'assets/images/photos/photo_4.png'),
+    FileItem(name: '', path: 'assets/images/photos/photo_1.png'),
+    FileItem(name: '', path: 'assets/images/photos/photo_2.png'),
+    FileItem(name: '', path: 'assets/images/photos/photo_3.png'),
+    FileItem(name: '', path: 'assets/images/photos/photo_4.png'),
+    FileItem(name: '', path: 'assets/images/photos/photo_1.png'),
+    FileItem(name: '', path: 'assets/images/photos/photo_2.png'),
+    FileItem(name: '', path: 'assets/images/photos/photo_3.png'),
+    FileItem(name: '', path: 'assets/images/photos/photo_4.png'),
+    FileItem(name: '', path: 'assets/images/photos/photo_1.png'),
+    FileItem(name: '', path: 'assets/images/photos/photo_2.png'),
+    FileItem(name: '', path: 'assets/images/photos/photo_3.png'),
+    FileItem(name: '', path: 'assets/images/photos/photo_4.png'),
   ];
 
   List<FileItem> filesMedia = [
@@ -788,7 +868,38 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
     FileItem(name: 'artrooms_img_file_final_2', date: '2022.08.16 만료'),
     FileItem(name: 'artrooms_img_file_final_1', date: '2022.08.16 만료'),
     FileItem(name: 'artrooms_img_file_final_2', date: '2022.08.16 만료'),
+    FileItem(name: 'artrooms_img_file_final_1', date: '2022.08.16 만료'),
+    FileItem(name: 'artrooms_img_file_final_2', date: '2022.08.16 만료'),
+    FileItem(name: 'artrooms_img_file_final_1', date: '2022.08.16 만료'),
+    FileItem(name: 'artrooms_img_file_final_2', date: '2022.08.16 만료'),
+    FileItem(name: 'artrooms_img_file_final_1', date: '2022.08.16 만료'),
+    FileItem(name: 'artrooms_img_file_final_2', date: '2022.08.16 만료'),
+    FileItem(name: 'artrooms_img_file_final_1', date: '2022.08.16 만료'),
+    FileItem(name: 'artrooms_img_file_final_2', date: '2022.08.16 만료'),
+    FileItem(name: 'artrooms_img_file_final_1', date: '2022.08.16 만료'),
+    FileItem(name: 'artrooms_img_file_final_2', date: '2022.08.16 만료'),
+    FileItem(name: 'artrooms_img_file_final_1', date: '2022.08.16 만료'),
+    FileItem(name: 'artrooms_img_file_final_2', date: '2022.08.16 만료'),
   ];
+
+  void _attachmentPickerSheet(BuildContext context, State<StatefulWidget> state) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => DraggableScrollableSheet(
+        initialChildSize: 0.4,
+        minChildSize: 0.25,
+        maxChildSize: 1.0,
+        builder: (_, controller) {
+          return Container(
+          color: Colors.white,
+          child: attachmentPicker,
+        );
+        },
+      ),
+    );
+  }
 
   Widget _attachmentPicker(BuildContext context, State<StatefulWidget> state) {
 
@@ -1093,136 +1204,166 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
   }
 
   Widget buildNoticePin(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        Navigator.push(context, MaterialPageRoute(builder: (context) {
-          return MyScreenNoticeDetails(myNotice: myNotice);
-        }));
-      },
-      child: Container(
-        // width: 347,
-        height: 36,
-        margin: const EdgeInsets.symmetric(horizontal: 14, vertical: 2),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        decoration: ShapeDecoration(
-          color: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(18),
-          ),
-          shadows: const [
-            BoxShadow(
-              color: Color(0x19000000),
-              blurRadius: 10,
-              offset: Offset(0, 0),
-              spreadRadius: 0,
-            )
-          ],
+    return Container(
+      // width: 347,
+      height: _isExpandNotice ? null : 36,
+      margin: const EdgeInsets.symmetric(horizontal: 14, vertical: 2),
+      constraints: BoxConstraints(minHeight: _isExpandNotice ? 50 : 36),
+      decoration: ShapeDecoration(
+        color: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(18),
         ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: SizedBox(
-                height: 20,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      width: 20,
-                      height: 20,
-                      padding: const EdgeInsets.only(
-                        top: 2.55,
-                        left: 1.64,
-                        right: 1.77,
-                        bottom: 2.46,
-                      ),
-                      clipBehavior: Clip.antiAlias,
-                      decoration: const BoxDecoration(),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Container(
-                            width: 16.5,
-                            height: 15,
-                            decoration: const BoxDecoration(
-                              image: DecorationImage(
-                                image: AssetImage("assets/images/icons/icon_notice.png"),
-                                fit: BoxFit.fill,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: SizedBox(
+        shadows: const [
+          BoxShadow(
+            color: Color(0x19000000),
+            blurRadius: 10,
+            offset: Offset(0, 0),
+            spreadRadius: 0,
+          )
+        ],
+      ),
+      child: InkWell(
+        onTap: () {
+          setState(() {
+            _isExpandNotice = !_isExpandNotice;
+          });
+        },
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: SizedBox(
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: 20,
                         height: 20,
-                        child: Column(
+                        padding: const EdgeInsets.only(
+                          top: 2.55,
+                          left: 1.64,
+                          right: 1.77,
+                          bottom: 2.46,
+                        ),
+                        clipBehavior: Clip.antiAlias,
+                        decoration: const BoxDecoration(),
+                        child: Row(
                           mainAxisSize: MainAxisSize.min,
                           mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            SizedBox(
-                              width: 267,
-                              height: 17,
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Container(
-                                    width: 267,
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      myNotice.notice,
-                                      style: const TextStyle(
-                                        color: Color(0xFF3A3A3A),
-                                        fontSize: 14,
-                                        fontFamily: 'Pretendard',
-                                        fontWeight: FontWeight.w400,
-                                        height: 0,
-                                        letterSpacing: -0.28,
-                                      ),
-                                      textAlign: TextAlign.center,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                ],
+                            Container(
+                              width: 16.5,
+                              height: 15,
+                              decoration: const BoxDecoration(
+                                image: DecorationImage(
+                                  image: AssetImage("assets/images/icons/icon_notice.png"),
+                                  fit: BoxFit.fill,
+                                ),
                               ),
                             ),
                           ],
                         ),
                       ),
-                    ),
-                    const SizedBox(width: 8),
-                    Container(
-                      width: 20,
-                      height: 20,
-                      clipBehavior: Clip.antiAlias,
-                      decoration: const BoxDecoration(color: Colors.white),
-                      child: Container(
-                        width: 20,
-                        height: 20,
-                        decoration: const BoxDecoration(
-                          image: DecorationImage(
-                            image: AssetImage("assets/images/icons/icon_arrow_down.png"),
-                            fit: BoxFit.fill,
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: SizedBox(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                alignment: _isExpandNotice ? Alignment.topLeft : Alignment.topLeft,
+                                child: Text(
+                                  dataNotice.notice,
+                                  style: const TextStyle(
+                                    color: Color(0xFF3A3A3A),
+                                    fontSize: 14,
+                                    fontFamily: 'Pretendard',
+                                    fontWeight: FontWeight.w400,
+                                    height: 0,
+                                    letterSpacing: -0.28,
+                                  ),
+                                  maxLines: _isExpandNotice ? 5 : 1,
+                                  textAlign: TextAlign.center,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              Visibility(
+                                visible: _isExpandNotice,
+                                child: Container(
+                                  width: double.infinity,
+                                  height: 32,
+                                  margin: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 10.0),
+                                  padding: const EdgeInsets.only(bottom: 0.0),
+                                  child: TextButton(
+                                    style: ElevatedButton.styleFrom(
+                                      elevation: 0,
+                                      minimumSize: const Size(double.infinity, 48),
+                                      foregroundColor: colorPrimaryBlue,
+                                      backgroundColor: colorMainGrey200,
+                                      padding: const EdgeInsets.symmetric(vertical: 16.0),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(5.0),
+                                      ),
+                                    ),
+                                    child: const Text(
+                                      '다시 열지 않음',
+                                      style: TextStyle(
+                                        color: Color(0xFF434343),
+                                        fontSize: 13,
+                                        fontFamily: 'Pretendard',
+                                        fontWeight: FontWeight.w400,
+                                        height: 0,
+                                        letterSpacing: -0.26,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    onPressed: () {
+                                      setState(() {
+                                        _isHideNotice = true;
+                                        dbStore.setNoticeHide(dataNotice, _isHideNotice);
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                      const SizedBox(width: 8),
+                      Container(
+                        width: 20,
+                        height: 20,
+                        clipBehavior: Clip.antiAlias,
+                        decoration: const BoxDecoration(color: Colors.white),
+                        child: Container(
+                          width: 20,
+                          height: 20,
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: AssetImage(_isExpandNotice ? "assets/images/icons/icon_arrow_up.png" : "assets/images/icons/icon_arrow_down.png"),
+                              fit: BoxFit.fill,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -1285,15 +1426,22 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
 
   int _findFirstVisibleItem() {
 
-    if (!_scrollController.hasClients) return 0;
+    final scrollPosition = _scrollController.position.pixels;
+    final viewportHeight = _scrollController.position.viewportDimension;
 
-    const double itemHeight = 100.0;
+    for (int i = 0; i < itemKeys.length; i++) {
+      final key = itemKeys[i];
+      final RenderBox? box = key?.currentContext?.findRenderObject() as RenderBox?;
 
-    double scrollPosition = _scrollController.position.pixels;
+      if (box != null) {
+        final position = box.localToGlobal(Offset.zero);
+        if (position.dy < (scrollPosition + viewportHeight) && position.dy > scrollPosition) {
+          return i;
+        }
+      }
+    }
 
-    int firstVisibleItemIndex = (scrollPosition / itemHeight).floor();
-
-    return firstVisibleItemIndex;
+    return 0;
   }
 
   Future<void> _loadMessages() async {
@@ -1301,7 +1449,9 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
     if(moduleMessages.isLoading()) return;
 
     if(!_isLoadMore) {
-      _isLoadMore = listMessages.isNotEmpty;
+      setState(() {
+        // _isLoadMore = listMessages.isNotEmpty;
+      });
     }
 
     moduleMessages.getMessages().then((List<MyMessage> messages){
@@ -1331,13 +1481,15 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> {
 
   void _loadNotice() {
 
-    moduleNotice.getNotices(widget.chat.id).then((List<MyNotice> listNotices) {
+    moduleNotice.getNotices(widget.chat.id).then((List<DataNotice> listNotices) {
 
       setState(() {
 
-        for(MyNotice notice in listNotices) {
-          myNotice = notice;
+        for(DataNotice notice in listNotices) {
+          dataNotice = notice;
         }
+
+        _isHideNotice = dbStore.isNoticeHide(dataNotice);
 
       });
 

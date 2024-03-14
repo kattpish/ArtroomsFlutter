@@ -27,7 +27,7 @@ class _MyScreenMemoState extends State<MyScreenMemo> {
   @override
   void initState() {
     super.initState();
-    _memoController.text = myDataStore.getMemo(widget.myChat);
+    _memoController.text = dbStore.getMemo(widget.myChat);
     _isButtonEnabled = _memoController.text.isNotEmpty;
     _memoController.addListener(_checkIfButtonShouldBeEnabled);
   }
@@ -135,7 +135,7 @@ class _MyScreenMemoState extends State<MyScreenMemo> {
   void save() {
 
     if(_isButtonEnabled) {
-      myDataStore.saveMemo(widget.myChat, _memoController.text);
+      dbStore.saveMemo(widget.myChat, _memoController.text);
       Navigator.pop(context);
     }
 

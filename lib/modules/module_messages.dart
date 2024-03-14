@@ -90,12 +90,13 @@ class ModuleMessages {
     List<BaseMessage> attachments = await moduleSendBird.fetchAttachments(_groupChannel, _earliestMessageTimestamp1);
 
     for (BaseMessage message in attachments) {
-      if(message is FileMessage) {
 
-        MyMessage myMessage = MyMessage.fromBaseMessage(message);
+      MyMessage myMessage = MyMessage.fromBaseMessage(message);
+
+      if(myMessage.isImage || myMessage.isFile) {
         attachmentsImages.add(myMessage);
-
       }
+
     }
 
     if (attachments.isNotEmpty) {
@@ -118,7 +119,26 @@ class ModuleMessages {
     for (MyMessage myMessage in attachments) {
 
         if(myMessage.isImage) {
-          attachmentsImages.add(myMessage);
+
+          for(String attachmentUrl in myMessage.attachmentImages) {
+
+            MyMessage myMessage1 = MyMessage.fromBaseMessageWithDetails(
+              index: myMessage.index,
+              senderId: myMessage.senderId,
+              senderName: myMessage.senderName,
+              content: myMessage.content,
+              timestamp: myMessage.timestamp,
+              isMe: myMessage.isMe,
+            );
+
+            myMessage1.isImage = true;
+            myMessage1.attachmentUrl = attachmentUrl;
+            myMessage1.attachmentName = myMessage.attachmentName;
+            myMessage1.attachmentSize = myMessage.attachmentSize;
+
+            attachmentsImages.add(myMessage1);
+          }
+
         }
 
     }

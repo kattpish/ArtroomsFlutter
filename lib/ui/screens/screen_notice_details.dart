@@ -8,9 +8,9 @@ import '../theme/theme_colors.dart';
 
 class MyScreenNoticeDetails extends StatefulWidget {
 
-  final MyNotice myNotice;
+  final DataNotice dataNotice;
 
-  const MyScreenNoticeDetails({super.key, required this.myNotice});
+  const MyScreenNoticeDetails({super.key, required this.dataNotice});
 
   @override
   State<StatefulWidget> createState() {
@@ -98,7 +98,7 @@ class _MyScreenNoticeDetailsState extends State<MyScreenNoticeDetails> {
                   child: Row(
                     children: [
                       Text(
-                        widget.myNotice.getDate(),
+                        widget.dataNotice.getDate(),
                         style: const TextStyle(
                           color: colorPrimaryBlue,
                           fontSize: 15,
@@ -109,7 +109,7 @@ class _MyScreenNoticeDetailsState extends State<MyScreenNoticeDetails> {
                         ),
                       ),
                       Visibility(
-                          visible: widget.myNotice.noticeable,
+                          visible: widget.dataNotice.noticeable,
                           child: Container(
                             padding: const EdgeInsets.all(2.0),
                             margin: const EdgeInsets.all(6.0),
@@ -120,7 +120,7 @@ class _MyScreenNoticeDetailsState extends State<MyScreenNoticeDetails> {
                             child:const Icon(Icons.star, size:10, color: Colors.white,),)
                       ),
                       Text(
-                        widget.myNotice.title,
+                        widget.dataNotice.title,
                         style: const TextStyle(
                           color: Color(0xFF7D7D7D),
                           fontSize: 13,
@@ -144,7 +144,7 @@ class _MyScreenNoticeDetailsState extends State<MyScreenNoticeDetails> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        widget.myNotice.notice,
+                        widget.dataNotice.notice,
                         style: const TextStyle(
                           color: colorMainGrey900,
                           fontSize: 19,

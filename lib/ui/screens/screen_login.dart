@@ -40,7 +40,7 @@ class _MyScreeLoginState extends State<MyScreenLogin> {
   void initState() {
     super.initState();
 
-    if(MyDataStore().isLoggedIn()) {
+    if(DBStore().isLoggedIn()) {
       Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) {
         return const MyScreenChats();
       }));
@@ -354,12 +354,12 @@ class _MyScreeLoginState extends State<MyScreenLogin> {
 
         if (success) {
 
-          await myDataStore.saveTokens(email, accessToken, refreshToken);
+          await dbStore.saveTokens(email, accessToken, refreshToken);
 
           Map<String, dynamic>? profile = await userModule.getMyProfile();
           if (profile != null) {
 
-            await myDataStore.saveProfile(profile);
+            await dbStore.saveProfile(profile);
 
             if (kDebugMode) {
               print("User Profile: $profile");

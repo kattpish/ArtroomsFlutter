@@ -23,7 +23,7 @@ class ModuleSendBird {
 
     try {
 
-      final String email = myDataStore.getEmail();
+      final String email = dbStore.getEmail();
 
       SendbirdSdk(
           appId: "01CFFFE8-F1B8-4BB4-A576-952ABDC8D08A",
@@ -150,7 +150,6 @@ class ModuleSendBird {
         params.reverse = true;
 
         final referenceTime = earliestMessageTimestamp ?? DateTime.now().millisecondsSinceEpoch;
-
         final messages = await groupChannel.getMessagesByTimestamp(referenceTime, params);
 
         completer.complete(messages);
@@ -168,9 +167,9 @@ class ModuleSendBird {
     try {
 
       final params = MessageListParams();
-      params.previousResultSize = 20;
+      params.previousResultSize = 200;
       params.reverse = true;
-      params.messageType = MessageTypeFilter.file;
+      // params.messageType = MessageTypeFilter.file;
 
       final referenceTime = earliestMessageTimestamp ?? DateTime.now().millisecondsSinceEpoch;
       final messages = await channel.getMessagesByTimestamp(referenceTime, params);

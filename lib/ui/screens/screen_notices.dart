@@ -25,7 +25,7 @@ class MyScreenNotices extends StatefulWidget {
 class _MyScreenNoticesState extends State<MyScreenNotices> {
 
   bool _isLoading = true;
-  final List<MyNotice> notifications = [];
+  final List<DataNotice> notifications = [];
   final ModuleNotice moduleNotice = ModuleNotice();
   
   @override
@@ -179,7 +179,7 @@ class _MyScreenNoticesState extends State<MyScreenNotices> {
                               InkWell(
                                 onTap: () {
                                   Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                    return MyScreenNoticeDetails(myNotice: notice);
+                                    return MyScreenNoticeDetails(dataNotice: notice);
                                   }));
                                 },
                                 child: Column(
@@ -232,7 +232,7 @@ class _MyScreenNoticesState extends State<MyScreenNotices> {
 
   void _loadNotices() {
 
-    moduleNotice.getNotices(widget.myChat.id).then((List<MyNotice> listNotices) {
+    moduleNotice.getNotices(widget.myChat.id).then((List<DataNotice> listNotices) {
 
       setState(() {
         notifications.addAll(listNotices);

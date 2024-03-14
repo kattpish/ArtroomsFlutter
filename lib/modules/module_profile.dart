@@ -14,7 +14,7 @@ class UserModule {
 
   Future<Map<String, dynamic>?> getMyProfile() async {
 
-    MyDataStore myDataStore = MyDataStore();
+    DBStore dbStore = DBStore();
 
     const String query = '''
       query WhoAmI {
@@ -76,7 +76,7 @@ class UserModule {
       Uri.parse(apiUrlGraphQL),
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': myDataStore.getAccessToken(),
+        'Authorization': dbStore.getAccessToken(),
       },
       body: jsonEncode({
         'query': query,
@@ -101,7 +101,7 @@ class UserModule {
     bool certificationPhone = false,
   }) async {
 
-    MyDataStore myDataStore = MyDataStore();
+    DBStore dbStore = DBStore();
 
     const String mutation = '''
       mutation UpdateUser(\$updateUserId: Int, \$updateStudentInput: UpdateStudentInput) {
@@ -149,7 +149,7 @@ class UserModule {
       Uri.parse(apiUrlGraphQL),
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': myDataStore.getAccessToken(),
+        'Authorization': dbStore.getAccessToken(),
       },
       body: jsonEncode({
         'operationName': 'UpdateUser',
@@ -182,7 +182,7 @@ class UserModule {
     required int userId,
     required int profileImgId,
   }) async {
-    MyDataStore myDataStore = MyDataStore();
+    DBStore dbStore = DBStore();
 
     const String mutation = '''
       mutation UpdateUser(\$updateUserId: Int, \$updateStudentInput: UpdateStudentInput) {
@@ -230,7 +230,7 @@ class UserModule {
       Uri.parse(apiUrlGraphQL),
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': myDataStore.getAccessToken(),
+        'Authorization': dbStore.getAccessToken(),
       },
       body: jsonEncode({
         'operationName': 'UpdateUser',
@@ -282,11 +282,11 @@ class UserModule {
         int profileImgId = profileImg["id"] ?? 0;
 
         await updateProfilePicture(
-            userId: myDataStore.getUserId(),
+            userId: dbStore.getUserId(),
             profileImgId: profileImgId
         );
 
-        myDataStore.saveProfilePicture(profileImg);
+        dbStore.saveProfilePicture(profileImg);
 
         return jsonDecode(response.body) as Map<String, dynamic>;
       } else {
