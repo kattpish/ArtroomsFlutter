@@ -74,7 +74,6 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
   late Widget attachmentPicker;
 
   late AnimationController _animationController;
-  late Animation<double> _animation;
 
   @override
   void initState() {
@@ -93,7 +92,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
     );
 
     double interval = 0;
-    _animation = Tween(begin: _boxHeight, end: screenHeight).animate(_animationController)..addListener(() {
+    Tween(begin: _boxHeight, end: screenHeight).animate(_animationController).addListener(() {
 
       if(interval <= 0) {
         interval = (screenHeight - _boxHeight) / 10;
@@ -311,7 +310,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
                           child: buildNoticePin(context),
                         ),
                         AnimatedOpacity(
-                          opacity: _showDateContainer ? 0.0 : 0.0,
+                          opacity: _showDateContainer ? 1.0 : 0.0,
                           duration: const Duration(milliseconds: 500),
                           child: Container(
                             width: 145,
@@ -350,6 +349,10 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
                         ),
                       ],
                     ),
+                  ),
+                  Visibility(
+                      visible: _showAttachment,
+                      child: _attachmentSelected(context)
                   ),
                   _buildMessageInput(),
                   const SizedBox(height: 8),
@@ -398,8 +401,9 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
                 setState(() {
                   _boxHeight = 320;
                   _showAttachment = !_showAttachment;
+                  _deselectAll(false);
+                  closeKeyboard(context);
                 });
-                // _attachmentPickerSheet(context, this);
               },
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -869,9 +873,10 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
 
   int type = 1;
   int _selected = 0;
-  bool _selectMode = false;
+  bool _selectMode = true;
   bool _isButtonFileDisabled = true;
-  List<FileItem> files = [
+
+  List<FileItem> filesImages = [
     FileItem(name: '', path: 'assets/images/photos/photo_1.png'),
     FileItem(name: '', path: 'assets/images/photos/photo_2.png'),
     FileItem(name: '', path: 'assets/images/photos/photo_3.png'),
@@ -925,27 +930,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
     FileItem(name: 'artrooms_img_file_final_2', date: '2022.08.16 만료'),
   ];
 
-  void _attachmentPickerSheet(BuildContext context, State<StatefulWidget> state) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => DraggableScrollableSheet(
-        initialChildSize: 0.4,
-        minChildSize: 0.25,
-        maxChildSize: 1.0,
-        builder: (_, controller) {
-          return Container(
-            color: Colors.white,
-            child: attachmentPicker,
-          );
-        },
-      ),
-    );
-  }
-
   Widget _attachmentPicker(BuildContext context, State<StatefulWidget> state) {
-
     return Container(
       height: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -963,6 +948,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
               _showAttachmentFull = false;
             });
           }
+          closeKeyboard(context);
         },
         child: Column(
           children: [
@@ -995,6 +981,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
                       onPressed: () {
                         state.setState(() {
                           type = 1;
+                          closeKeyboard(context);
                         });
                       },
                       child: const Row(
@@ -1035,6 +1022,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
                       onPressed: () {
                         state.setState(() {
                           type = 2;
+                          closeKeyboard(context);
                         });
                       },
                       child: const Row(
@@ -1070,16 +1058,16 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
               child: Expanded(
                 child: GridView.builder(
                   controller: _scrollControllerAttachment1,
-                  padding: const EdgeInsets.only(bottom: 32),
+                  padding: const EdgeInsets.only(bottom: 24),
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: isTablet(context) ? 6 : 3,
                     crossAxisSpacing: 5,
                     mainAxisSpacing: 5,
                     childAspectRatio: 1,
                   ),
-                  itemCount: files.length,
+                  itemCount: filesImages.length,
                   itemBuilder: (context, index) {
-                    var file = files[index];
+                    var file = filesImages[index];
                     return Container(
                       clipBehavior: Clip.antiAlias,
                       decoration: BoxDecoration(
@@ -1093,8 +1081,9 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
                         onLongPress: () {
                           state.setState(() {
                             file.isSelected = !file.isSelected;
+                            closeKeyboard(context);
                           });
-                          _checkIfPhotoShouldBeEnabled();
+                          _checkIfFileShouldBeEnabled();
                         },
                         child: Stack(
                           children: [
@@ -1113,7 +1102,8 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
                                   onTap: () {
                                     state.setState(() {
                                       file.isSelected = !file.isSelected;
-                                      _checkIfPhotoShouldBeEnabled();
+                                      _checkIfFileShouldBeEnabled();
+                                      closeKeyboard(context);
                                     });
                                   },
                                   child: Container(
@@ -1147,7 +1137,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
               child: Expanded(
                 child: GridView.builder(
                   controller: _scrollControllerAttachment2,
-                  padding: const EdgeInsets.only(left: 8, top: 8, right: 8, bottom: 32),
+                  padding: const EdgeInsets.only(left: 8, top: 8, right: 8, bottom: 24),
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: crossAxisCount,
                     crossAxisSpacing: crossAxisSpacing,
@@ -1156,15 +1146,16 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
                   ),
                   itemCount: filesMedia.length,
                   itemBuilder: (context, index) {
-                    var file = filesMedia[index];
+                    var fileMedia = filesMedia[index];
                     return Card(
                       elevation: 0,
                       color: Colors.white,
                       child: InkWell(
                         onTap: () {
                           setState(() {
-                            file.isSelected = !file.isSelected;
+                            // fileMedia.isSelected = !fileMedia.isSelected;
                             _checkIfFileButtonShouldBeEnabled();
+                            closeKeyboard(context);
                           });
                         },
                         child: Container(
@@ -1181,7 +1172,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
                                 children: [
                                   const SizedBox(height: 24),
                                   Image.asset(
-                                    file.isSelected ? 'assets/images/icons/icon_file_selected.png' : 'assets/images/icons/icon_file.png',
+                                    fileMedia.isSelected ? 'assets/images/icons/icon_file_selected.png' : 'assets/images/icons/icon_file.png',
                                     width: 30,
                                     height: 30,
                                   ),
@@ -1192,7 +1183,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
                                         Text(
-                                          file.name,
+                                          fileMedia.name,
                                           style: const TextStyle(
                                             fontSize: 16,
                                             color: colorMainGrey700,
@@ -1202,7 +1193,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
                                         ),
                                         const SizedBox(height: 8),
                                         Text(
-                                          file.date,
+                                          fileMedia.date,
                                           style: const TextStyle(
                                             fontSize: 16,
                                             color: Color(0xFF8F8F8F),
@@ -1222,14 +1213,14 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
                                   width: 26,
                                   height: 26,
                                   decoration: BoxDecoration(
-                                    color: file.isSelected ? colorPrimaryBlue : Colors.transparent,
+                                    color: fileMedia.isSelected ? colorPrimaryBlue : Colors.transparent,
                                     shape: BoxShape.circle,
                                     border: Border.all(
-                                      color: file.isSelected ? colorPrimaryBlue : const Color(0xFFE3E3E3),
+                                      color: fileMedia.isSelected ? colorPrimaryBlue : const Color(0xFFE3E3E3),
                                       width: 1,
                                     ),
                                   ),
-                                  child: file.isSelected
+                                  child: fileMedia.isSelected
                                       ? const Icon(Icons.check, size: 16, color: Colors.white)
                                       : Container(),
                                 ),
@@ -1243,6 +1234,86 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
                 ),
               ),
             ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _attachmentSelected(BuildContext context) {
+
+    List<FileItem> filesAttachment = [];
+
+    for(FileItem fileImage in filesImages) {
+      if(fileImage.isSelected) {
+        filesAttachment.add(fileImage);
+      }
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 4),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            for(FileItem fileItem in filesAttachment)
+              Container(
+                margin: const EdgeInsets.only(right: 4, top: 4, bottom: 4),
+                child: InkWell(
+                  onTap: () {
+                    viewPhoto(context, imagePath:fileItem.path, fileName:fileItem.name);
+                  },
+                  child: Stack(
+                    children: [
+                      Container(
+                        width: 80,
+                        height: 80,
+                        clipBehavior: Clip.antiAlias,
+                        decoration: ShapeDecoration(
+                          shape: RoundedRectangleBorder(
+                            side: const BorderSide(width: 1, color: Color(0xFFF3F3F3)),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        child: Image.asset(
+                          fileItem.path,
+                          width: double.infinity,
+                          height: double.infinity,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      Positioned(
+                        top: 0,
+                        right: 0,
+                        child: Container(
+                          width: 20,
+                          height: 20,
+                          decoration: const BoxDecoration(
+                            color: colorMainGrey400,
+                            shape: BoxShape.circle,
+                          ),
+                          child: IconButton(
+                            icon: const Icon(
+                              Icons.close,
+                              size: 12,
+                              color: Colors.white,
+                            ),
+                            padding: const EdgeInsets.all(4),
+                            constraints: const BoxConstraints(),
+                            onPressed: () {
+                              setState(() {
+                                fileItem.isSelected = false;
+                                closeKeyboard(context);
+                              });
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
           ],
         ),
       ),
@@ -1273,6 +1344,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
         onTap: () {
           setState(() {
             _isExpandNotice = !_isExpandNotice;
+            closeKeyboard(context);
           });
         },
         child: Container(
@@ -1446,16 +1518,21 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
 
   void _scrollListener() {
 
-    if (_scrollControllerAttachment1.offset <= _scrollControllerAttachment1.position.minScrollExtent && _scrollControllerAttachment1.position.userScrollDirection == ScrollDirection.forward) {
+    print("_scrollController-offset: ${_scrollControllerAttachment1.offset}");
+    print("_scrollController-minScrollExtent: ${_scrollControllerAttachment1.position.minScrollExtent}");
+    print("_scrollController-userScrollDirection: ${_scrollControllerAttachment1.position.userScrollDirection}");
+
+    if (_scrollControllerAttachment1.offset == 0 && _scrollControllerAttachment1.position.minScrollExtent == 0 && _scrollControllerAttachment1.position.userScrollDirection == ScrollDirection.forward) {
+      setState(() {
+        _listReachedTop = true;
+        _showAttachment = true;
+        _showAttachmentFull = false;
+        _boxHeight = _boxHeightMin;
+      });
+    }else if (_scrollControllerAttachment1.offset <= _scrollControllerAttachment1.position.minScrollExtent && _scrollControllerAttachment1.position.userScrollDirection == ScrollDirection.forward) {
       if (!_listReachedTop) {
         setState(() {
           _listReachedTop = true;
-        });
-      }else {
-        setState(() {
-          _showAttachment = true;
-          _showAttachmentFull = false;
-          _boxHeight = _boxHeightMin;
         });
       }
     }else if (_scrollControllerAttachment1.offset <= _scrollControllerAttachment1.position.minScrollExtent && _scrollControllerAttachment1.position.userScrollDirection == ScrollDirection.reverse) {
@@ -1481,6 +1558,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
           _showAttachmentFull = true;
         });
         animateHeight();
+        closeKeyboard(context);
       }
     }
   }
@@ -1613,18 +1691,74 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
 
     if(!_isButtonDisabled) {
 
-      moduleMessages.sendMessage(_messageController.text).then((MyMessage myMessage) {
+      if (_messageController.text.isNotEmpty) {
 
-        setState(() {
-          listMessages.insert(0, myMessage);
-          _messageController.clear();
+        moduleMessages.sendMessage(_messageController.text).then((
+            MyMessage myMessage) {
+          setState(() {
+            listMessages.insert(0, myMessage);
+            _messageController.clear();
+          });
+
+          Future.delayed(const Duration(milliseconds: 100), () {
+            _scrollToBottom();
+          });
         });
 
-        Future.delayed(const Duration(milliseconds: 100), () {
-          _scrollToBottom();
-        });
+      }
+
+      int selectedImages = 0;
+      int selectedMedia = 0;
+
+      MyMessage myMessage1 = MyMessage.fromBaseMessageWithDetails(
+        index: 0,
+        senderId: "",
+        senderName: "",
+        content: "",
+        timestamp: 0,
+        isMe: true,
+      );
+      for(FileItem fileItem in filesImages) {
+        if(fileItem.isSelected) {
+          selectedImages++;
+          myMessage1.attachmentImages.add(fileItem.path);
+        }
+      }
+
+      MyMessage myMessage2 = MyMessage.fromBaseMessageWithDetails(
+        index: 0,
+        senderId: "",
+        senderName: "",
+        content: "",
+        timestamp: 0,
+        isMe: true,
+      );
+      for(FileItem fileItem in filesMedia) {
+        if(fileItem.isSelected) {
+          selectedMedia++;
+          myMessage2.attachmentUrl = fileItem.path;
+        }
+      }
+
+      setState(() {
+
+        if(selectedImages > 0) {
+          listMessages.insert(0, myMessage1);
+        }
+
+        if(selectedMedia > 0) {
+          listMessages.insert(0, myMessage2);
+        }
 
       });
+
+      setState(() {
+        _showAttachment = false;
+        _showAttachmentFull = false;
+      });
+
+      _deselectAll(false);
+      closeKeyboard(context);
 
     }
 
@@ -1637,19 +1771,18 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
     );
   }
 
-  void _scrollToTop() {
-    _scrollController.animateTo(
-      _scrollController.position.maxScrollExtent + 100,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeOut,
-    );
-  }
-
-  void _checkIfPhotoShouldBeEnabled() {
+  void _checkIfFileShouldBeEnabled() {
 
     _selected = 0;
-    for(FileItem fileItem in files) {
-      if(fileItem.isSelected) {
+    for(FileItem fileImage in filesImages) {
+      if(fileImage.isSelected) {
+        setState(() {
+          _selected++;
+        });
+      }
+    }
+    for(FileItem fileMedia in filesMedia) {
+      if(fileMedia.isSelected) {
         setState(() {
           _selected++;
         });
@@ -1675,9 +1808,15 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
       _selected = 0;
     });
 
-    for(FileItem fileItem in files) {
+    for(FileItem fileImage in filesImages) {
       setState(() {
-        fileItem.isSelected = false;
+        fileImage.isSelected = false;
+      });
+    }
+
+    for(FileItem fileMedia in filesMedia) {
+      setState(() {
+        fileMedia.isSelected = false;
       });
     }
 
@@ -1686,7 +1825,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
         _selectMode = false;
       });
 
-      _checkIfPhotoShouldBeEnabled();
+      _checkIfFileShouldBeEnabled();
     }
 
   }
@@ -1702,8 +1841,13 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
   void _checkIfFileButtonShouldBeEnabled() {
 
     int n = 0;
-    for(FileItem fileItem in files) {
-      if(fileItem.isSelected) {
+    for(FileItem fileImage in filesImages) {
+      if(fileImage.isSelected) {
+        n++;
+      }
+    }
+    for(FileItem fileMedia in filesMedia) {
+      if(fileMedia.isSelected) {
         n++;
       }
     }

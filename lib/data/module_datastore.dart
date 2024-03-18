@@ -106,8 +106,8 @@ class DBStore {
   }
 
   String getNotificationValue() {
-    String? notification = getString("NOTIFICATION");
-    return notification ?? "아룸 (기본)";
+    String? notification = getString("NOTIFICATION", defaultValue: "아룸 (기본)");
+    return notification;
   }
 
   void setNoticeHide(DataNotice dataNotice, bool hide) {
@@ -115,7 +115,7 @@ class DBStore {
   }
 
   bool isNoticeHide(DataNotice dataNotice) {
-    return getBool("NOTICE-${dataNotice.id}", false);
+    return false && getBool("NOTICE-${dataNotice.id}", false);
   }
 
   Future<void> logout() async {
