@@ -12,7 +12,7 @@ String getFileName(File file) {
   return path.basename(Uri.parse(file.path).path);
 }
 
-Future<void> downloadFile(BuildContext context, String url, String fileName) async {
+Future<void> downloadFile(BuildContext context, String url, String fileName, {showNotification=true}) async {
 
   print('File downloading: $url $fileName');
 
@@ -40,5 +40,7 @@ Future<void> downloadFile(BuildContext context, String url, String fileName) asy
 
   print('File saved: ${file.path}');
 
-  showNotificationDownload(filePath, fileName);
+  if(showNotification) {
+    showNotificationDownload(filePath, fileName);
+  }
 }

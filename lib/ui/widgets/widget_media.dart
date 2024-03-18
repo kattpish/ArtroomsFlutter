@@ -40,7 +40,8 @@ void viewPhoto(BuildContext buildContext, {String imagePath="", String imageUrl=
                       ),
                       errorBuilder: (context, error, stackTrace) {
                         return Image.asset(
-                          'assets/images/profile/placeholder.png',
+                          'assets/images/chats/placeholder_photo.png',
+                          width: 0,
                           fit: BoxFit.cover,
                         );
                       },

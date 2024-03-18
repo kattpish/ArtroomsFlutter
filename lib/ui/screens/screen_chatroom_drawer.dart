@@ -725,14 +725,14 @@ class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> {
                       ),
                     ),
                     child: FadeInImage.assetNetwork(
-                      placeholder: 'assets/images/profile/placeholder.png',
+                      placeholder: 'assets/images/chats/placeholder_photo.png',
                       image: message.getImageUrl(),
                       fit: BoxFit.cover,
                       fadeInDuration: const Duration(milliseconds: 100),
                       fadeOutDuration: const Duration(milliseconds: 100),
                       imageErrorBuilder: (context, error, stackTrace) {
                         return Image.asset(
-                          'assets/images/profile/placeholder.png',
+                          'assets/images/chats/placeholder_photo.png',
                           fit: BoxFit.cover,
                         );
                       },

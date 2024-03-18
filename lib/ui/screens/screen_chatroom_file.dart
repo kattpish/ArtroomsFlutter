@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import '../../beans/bean_chat.dart';
 import '../../beans/bean_message.dart';
 import '../../modules/module_messages.dart';
+import '../../utils/utils_media.dart';
 import '../theme/theme_colors.dart';
 import '../widgets/widget_loader.dart';
 
@@ -34,7 +35,7 @@ class _MyScreenChatroomFileState extends State<MyScreenChatroomFile> {
 
   late final ModuleMessages moduleMessages;
 
-  List<MyMessage> _attachmentsFiles = [];
+  List<MyMessage> _attachmentsMedia = [];
 
   @override
   void initState() {
@@ -87,9 +88,9 @@ class _MyScreenChatroomFileState extends State<MyScreenChatroomFile> {
               mainAxisSpacing: mainAxisSpacing,
               childAspectRatio: (screenWidth / crossAxisCount - crossAxisSpacing) / (200),
             ),
-            itemCount: _attachmentsFiles.length,
+            itemCount: _attachmentsMedia.length,
             itemBuilder: (context, index) {
-              var attachmentFile = _attachmentsFiles[index];
+              var attachmentFile = _attachmentsMedia[index];
               return Card(
                 elevation: 0,
                 color: Colors.white,
@@ -214,7 +215,7 @@ class _MyScreenChatroomFileState extends State<MyScreenChatroomFile> {
 
     List<MyMessage> attachmentsFiles = await moduleMessages.fetchAttachmentsFiles();
     setState(() {
-      _attachmentsFiles = attachmentsFiles;
+      _attachmentsMedia = attachmentsFiles;
     });
 
     setState(() {
@@ -226,7 +227,7 @@ class _MyScreenChatroomFileState extends State<MyScreenChatroomFile> {
   void _checkIfFileButtonShouldBeEnabled() {
 
     int n = 0;
-    for(MyMessage attachmentFile in _attachmentsFiles) {
+    for(MyMessage attachmentFile in _attachmentsMedia) {
       if(attachmentFile.isSelected) {
         n++;
       }
@@ -242,7 +243,7 @@ class _MyScreenChatroomFileState extends State<MyScreenChatroomFile> {
 
   void _deselectAllFiles() {
 
-    for(MyMessage attachmentImage in _attachmentsFiles) {
+    for(MyMessage attachmentImage in _attachmentsMedia) {
       setState(() {
         attachmentImage.isSelected = false;
       });
@@ -253,6 +254,13 @@ class _MyScreenChatroomFileState extends State<MyScreenChatroomFile> {
   void selectFiles() {
 
     if(!_isButtonFileDisabled) {
+
+      for(MyMessage attachmentMedia in _attachmentsMedia) {
+        if(attachmentMedia.isSelected) {
+          downloadFile(context, attachmentMedia.attachmentUrl, attachmentMedia.attachmentName, showNotification: true);
+        }
+      }
+
       _deselectAllFiles();
     }
 

@@ -199,7 +199,7 @@ class _MyScreenChatroomPhotoState extends State<MyScreenChatroomPhoto> {
                   child: Stack(
                     children: [
                       FadeInImage.assetNetwork(
-                        placeholder: 'assets/images/profile/placeholder.png',
+                        placeholder: 'assets/images/chats/placeholder_photo.png',
                         image: attachmentImage.getImageUrl(),
                         fit: BoxFit.cover,
                         width: double.infinity,
@@ -208,7 +208,7 @@ class _MyScreenChatroomPhotoState extends State<MyScreenChatroomPhoto> {
                         fadeOutDuration: const Duration(milliseconds: 100),
                         imageErrorBuilder: (context, error, stackTrace) {
                           return Image.asset(
-                            'assets/images/profile/profile_1.png',
+                            'assets/images/chats/placeholder_photo.png',
                             fit: BoxFit.cover,
                           );
                         },
@@ -341,7 +341,15 @@ class _MyScreenChatroomPhotoState extends State<MyScreenChatroomPhoto> {
   void selectPhotos() {
 
     if(!_isButtonDisabled) {
+
+      for(MyMessage attachmentImage in _attachmentsImages) {
+        if(attachmentImage.isSelected) {
+          downloadFile(context, attachmentImage.attachmentUrl, attachmentImage.attachmentName, showNotification: true);
+        }
+      }
+
       _deselectAllPhotos(true);
+
     }
 
   }
