@@ -25,6 +25,7 @@ class MyMessage {
   bool isImage = false;
   bool isFile = false;
   bool isSelected = false;
+  bool isSending = false;
 
   MyMessage.empty({
     this.index = 0,
@@ -69,14 +70,20 @@ class MyMessage {
 
     } else if (baseMessage.message == 'multiple:image') {
       try {
-        final data = jsonDecode(baseMessage.data ?? "");
-        if (data is Map && data.containsKey('data')) {
-          final images = data['data'];
-          if (images is List) {
-            attachmentImages.addAll(images.cast<String>());
+        try {
+          final data = jsonDecode(baseMessage.data ?? "");
+          if (data is Map && data.containsKey('data')) {
+            final images = data['data'];
+            if (images is List) {
+              attachmentImages.addAll(images.cast<String>());
+            }
+          }
+          isImage = true;
+        }catch(e) {
+          if (kDebugMode) {
+            print("Error fromBaseMessage: $e");
           }
         }
-        isImage = true;
       } catch (e) {
         if (kDebugMode) {
           print('Error parsing image attachments: $e');

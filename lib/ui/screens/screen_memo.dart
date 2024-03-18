@@ -8,7 +8,7 @@ import '../../main.dart';
 
 class MyScreenMemo extends StatefulWidget {
 
-  final MyChat myChat;
+  final DataChat myChat;
 
   const MyScreenMemo({super.key, required this.myChat});
 

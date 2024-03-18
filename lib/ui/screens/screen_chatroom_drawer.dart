@@ -21,7 +21,7 @@ import '../widgets/widget_loader.dart';
 
 class MyScreenChatroomDrawer extends StatefulWidget {
 
-  final MyChat myChat;
+  final DataChat myChat;
 
   const MyScreenChatroomDrawer({super.key, required this.myChat});
 

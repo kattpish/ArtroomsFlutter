@@ -6,6 +6,7 @@ import 'package:artrooms/ui/screens/screen_chatroom.dart';
 import 'package:artrooms/ui/screens/screen_login.dart';
 import 'package:artrooms/ui/screens/screen_notifications_sounds.dart';
 import 'package:artrooms/ui/screens/screen_profile.dart';
+import 'package:artrooms/utils/utils_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
@@ -35,8 +36,8 @@ class _MyScreenChatsState extends State<MyScreenChats> with WidgetsBindingObserv
   bool isLoading = false;
   bool isSearching = false;
   bool isChat = false;
-  final List<MyChat> listChats = [];
-  final List<MyChat> listChatsAll = [];
+  final List<DataChat> listChats = [];
+  final List<DataChat> listChatsAll = [];
   final TextEditingController searchController = TextEditingController();
   late Timer _timer;
 
@@ -187,7 +188,7 @@ class _MyScreenChatsState extends State<MyScreenChats> with WidgetsBindingObserv
                         ? ListView.builder(
                       itemCount: listChats.length,
                       itemBuilder: (context, index) {
-                        MyChat myChat = listChats[index];
+                        DataChat myChat = listChats[index];
                         return Container(
                           key: Key(listChats[index].id),
                           child: buildListTile(context, index, myChat),
@@ -234,7 +235,7 @@ class _MyScreenChatsState extends State<MyScreenChats> with WidgetsBindingObserv
     );
   }
 
-  Slidable buildListTile(BuildContext context, int index, MyChat myChat) {
+  Slidable buildListTile(BuildContext context, int index, DataChat myChat) {
     return Slidable(
       key: const ValueKey(0),
       endActionPane: ActionPane(
@@ -298,7 +299,7 @@ class _MyScreenChatsState extends State<MyScreenChats> with WidgetsBindingObserv
             ),
           ),
           subtitle: Text(
-            myChat.lastMessage,
+            myChat.lastMessage.getSummary(),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: const TextStyle(
@@ -398,7 +399,7 @@ class _MyScreenChatsState extends State<MyScreenChats> with WidgetsBindingObserv
 
   }
 
-  void _onClickOption2(BuildContext context, MyChat myChat) {
+  void _onClickOption2(BuildContext context, DataChat myChat) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -501,7 +502,7 @@ class _MyScreenChatsState extends State<MyScreenChats> with WidgetsBindingObserv
     );
   }
 
-  void onSelectChat(BuildContext context, MyChat myChat) {
+  void onSelectChat(BuildContext context, DataChat myChat) {
     if(myChat.id == selectChatId) return;
 
     if(isTablet(context)) {
@@ -553,7 +554,7 @@ class _MyScreenChatsState extends State<MyScreenChats> with WidgetsBindingObserv
       isLoading = true;
     });
 
-    await chatModule.getUserChats().then((List<MyChat> chats) {
+    await chatModule.getUserChats().then((List<DataChat> chats) {
 
       listChats.clear();
       listChatsAll.clear();
@@ -562,6 +563,10 @@ class _MyScreenChatsState extends State<MyScreenChats> with WidgetsBindingObserv
         listChats.addAll(chats);
         listChatsAll.addAll(chats);
       });
+
+      for(DataChat chat in chats) {
+        showNotificationChat(chat);
+      }
 
     }).catchError((e) {
 
@@ -585,9 +590,9 @@ class _MyScreenChatsState extends State<MyScreenChats> with WidgetsBindingObserv
 
     Future.delayed(const Duration(milliseconds: 100), () {
 
-      List<MyChat> filtered = listChatsAll.where((chat) {
+      List<DataChat> filtered = listChatsAll.where((chat) {
         return chat.name.toLowerCase().contains(query.toLowerCase()) ||
-            chat.lastMessage.toLowerCase().contains(query.toLowerCase());
+            chat.lastMessage.content.toLowerCase().contains(query.toLowerCase());
       }).toList();
 
       setState(() {

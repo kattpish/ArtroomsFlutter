@@ -4,17 +4,17 @@ import '../utils/utils.dart';
 import 'bean_message.dart';
 
 
-class MyChat {
+class DataChat {
 
   final String id;
   final String name;
-  final String lastMessage;
   final int unreadMessages;
   final String date;
   String role = "윰윰";
   String profilePictureUrl = "";
+  MyMessage lastMessage = MyMessage.empty();
 
-  MyChat({
+  DataChat({
     required this.id,
     required this.name,
     required this.lastMessage,
@@ -23,22 +23,21 @@ class MyChat {
     required this.date,
   });
 
-  factory MyChat.fromGroupChannel(GroupChannel channel) {
+  factory DataChat.fromGroupChannel(GroupChannel channel) {
 
     final BaseMessage? lastBaseMessage = channel.lastMessage;
-    String lastMessageText = '';
     String messageDate = '';
 
+    MyMessage lastMessage = MyMessage.empty();
     if (lastBaseMessage != null) {
-      MyMessage lastMessage = MyMessage.fromBaseMessage(lastBaseMessage);
-      lastMessageText = lastMessage.getSummary();
+      lastMessage = MyMessage.fromBaseMessage(lastBaseMessage);
       messageDate = formatDateTime(lastBaseMessage.createdAt);
     }
 
-    final MyChat myChat = MyChat(
+    final DataChat myChat = DataChat(
       id: channel.channelUrl,
       name: channel.name ?? "",
-      lastMessage: lastMessageText,
+      lastMessage: lastMessage,
       unreadMessages: channel.unreadMessageCount,
       profilePictureUrl: channel.coverUrl ?? '',
       date: messageDate,

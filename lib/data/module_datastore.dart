@@ -93,11 +93,11 @@ class DBStore {
     await sharedPreferences.setString('profileImg', profileImg["accessUrl"] ?? "");
   }
 
-  String getMemo(MyChat myChat) {
+  String getMemo(DataChat myChat) {
     return getString(myChat.id);
   }
 
-  void saveMemo(MyChat myChat, String memo) {
+  void saveMemo(DataChat myChat, String memo) {
     setString(myChat.id, memo);
   }
 

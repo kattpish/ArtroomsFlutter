@@ -15,7 +15,7 @@ import '../widgets/widget_media.dart';
 
 class MyScreenChatroomPhoto extends StatefulWidget {
 
-  final MyChat myChat;
+  final DataChat myChat;
 
   const MyScreenChatroomPhoto({super.key, required this.myChat});
 

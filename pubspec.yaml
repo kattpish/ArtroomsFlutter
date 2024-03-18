@@ -22,6 +22,7 @@ dependencies:
   path_provider: ^2.0.2
   photo_manager: ^3.0.0
   flutter_local_notifications: ^16.3.2
+  # background_fetch: ^1.2.2
 
 dev_dependencies:
   flutter_test:

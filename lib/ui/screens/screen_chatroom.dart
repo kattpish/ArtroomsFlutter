@@ -5,12 +5,14 @@ import 'package:artrooms/beans/bean_notice.dart';
 import 'package:artrooms/modules/module_notices.dart';
 import 'package:artrooms/ui/screens/screen_chatroom_drawer.dart';
 import 'package:artrooms/ui/widgets/widget_loader.dart';
+import 'package:artrooms/utils/utils_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import '../../beans/bean_chat.dart';
 import '../../beans/bean_file.dart';
 import '../../beans/bean_message.dart';
 import '../../data/module_datastore.dart';
+import '../../modules/module_media.dart';
 import '../../modules/module_messages.dart';
 import '../../utils/utils.dart';
 import '../../utils/utils_screen.dart';
@@ -20,7 +22,7 @@ import '../widgets/widget_media.dart';
 
 class MyScreenChatroom extends StatefulWidget {
 
-  final MyChat chat;
+  final DataChat chat;
   final double widthRatio;
   final VoidCallback? onBackPressed;
 
@@ -53,6 +55,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
 
   late final ModuleMessages moduleMessages;
   ModuleNotice moduleNotice = ModuleNotice();
+  ModuleMedia moduleMedia = ModuleMedia();
   DBStore dbStore = DBStore();
   DataNotice dataNotice = DataNotice();
 
@@ -85,6 +88,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
     moduleMessages = ModuleMessages(widget.chat.id);
     _loadMessages();
     _loadNotice();
+    _loadMedia();
 
     _animationController = AnimationController(
       vsync: this,
@@ -234,6 +238,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
                             itemBuilder: (context, index) {
                               itemKeys[index] = GlobalKey();
                               final message = listMessages[index];
+                              final isLast = index == 0;
                               final messageNext = index > 0 ? listMessages[index - 1] : MyMessage.empty();
                               final messagePrevious = index < listMessages.length - 1 ? listMessages[index + 1] : MyMessage.empty();
                               final isPreviousSame = messagePrevious.senderId == message.senderId;
@@ -283,8 +288,8 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
                                   ),
                                   Container(
                                     child: message.isMe
-                                        ? _buildMyMessageBubble(message, isPreviousSameDateTime, isNextSameTime)
-                                        : _buildOtherMessageBubble(message, isPreviousSame, isNextSame, isPreviousSameDateTime, isNextSameTime),
+                                        ? _buildMyMessageBubble(message, isLast, isPreviousSameDateTime, isNextSameTime)
+                                        : _buildOtherMessageBubble(message, isLast, isPreviousSame, isNextSame, isPreviousSameDateTime, isNextSameTime),
                                   ),
                                 ],
                               );
@@ -310,7 +315,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
                           child: buildNoticePin(context),
                         ),
                         AnimatedOpacity(
-                          opacity: _showDateContainer ? 1.0 : 0.0,
+                          opacity: _showDateContainer ? 0.0 : 0.0,
                           duration: const Duration(milliseconds: 500),
                           child: Container(
                             width: 145,
@@ -401,8 +406,12 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
                 setState(() {
                   _boxHeight = 320;
                   _showAttachment = !_showAttachment;
-                  _deselectAll(false);
                   closeKeyboard(context);
+                  if(_showAttachment) {
+                    _loadMedia();
+                  }else {
+                    _deselectAll(false);
+                  }
                 });
               },
               child: Padding(
@@ -462,9 +471,9 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
     );
   }
 
-  Widget _buildMyMessageBubble(MyMessage message, bool isPreviousSameDateTime, bool isNextSameTime) {
+  Widget _buildMyMessageBubble(MyMessage message, bool isLast, bool isPreviousSameDateTime, bool isNextSameTime) {
     return Container(
-      margin: const EdgeInsets.only(left: 16, right: 16, top: 0, bottom: 0),
+      margin: EdgeInsets.only(left: 16, right: 16, top: 0, bottom: isLast ? 9 : 0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
@@ -514,21 +523,27 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
               ),
             ),
           ),
-          Container(
-              child: _buildAttachment(message)
-          ),
-          Container(
-              margin: const EdgeInsets.only(top: 4),
-              child: _buildImageAttachments(message)
+          Stack(
+            children: [
+              Container(
+                alignment: Alignment.topRight,
+                  child: _buildAttachment(message)
+              ),
+              Container(
+                  alignment: Alignment.topRight,
+                  margin: const EdgeInsets.only(top: 4),
+                  child: _buildImageAttachments(message)
+              ),
+            ],
           ),
         ],
       ),
     );
   }
 
-  Widget _buildOtherMessageBubble(MyMessage message, bool isPreviousSame, bool isNextSame, bool isPreviousSameDateTime, bool isNextSameTime) {
+  Widget _buildOtherMessageBubble(MyMessage message, bool isLast, bool isPreviousSame, bool isNextSame, bool isPreviousSameDateTime, bool isNextSameTime) {
     return Container(
-      margin: EdgeInsets.only(left: 16, right: 16, top: 0, bottom: isNextSame ? 0 : 9),
+      margin: EdgeInsets.only(left: 16, right: 16, top: 0, bottom: isLast ? 9 : (isNextSame ? 0 : 9)),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -659,6 +674,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
             child: _buildAttachment(message),
           ),
           Container(
+            alignment: Alignment.topLeft,
             child: _buildImageAttachments(message),
           ),
         ],
@@ -698,51 +714,72 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
     if (message.attachmentUrl.isNotEmpty) {
       return Container(
         width: 216,
-        margin: const EdgeInsets.symmetric(vertical: 0),
+        margin: const EdgeInsets.symmetric(vertical: 4),
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
         constraints: BoxConstraints(maxWidth: screenWidth * 0.55),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(22),
           border: Border.all(color: const Color(0xFFE3E3E3), width: 1.0,),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Stack(
           children: [
-            Text(
-              message.attachmentName,
-              style: const TextStyle(
-                color: colorMainGrey700,
-                fontSize: 16,
-                fontFamily: 'SUIT',
-                fontWeight: FontWeight.w400,
-                height: 0,
-                letterSpacing: -0.32,
-              ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  message.attachmentName,
+                  style: const TextStyle(
+                    color: colorMainGrey700,
+                    fontSize: 16,
+                    fontFamily: 'SUIT',
+                    fontWeight: FontWeight.w400,
+                    height: 0,
+                    letterSpacing: -0.32,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  '${message.getAttachmentSize()} / ${message.getDate()}',
+                  style: const TextStyle(
+                    color: colorMainGrey400,
+                    fontSize: 14,
+                    fontFamily: 'Pretendard',
+                    fontWeight: FontWeight.w400,
+                    height: 0,
+                    letterSpacing: -0.28,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                const Text(
+                  '만료',
+                  style: TextStyle(
+                    color: colorMainGrey400,
+                    fontSize: 14,
+                    fontFamily: 'Pretendard',
+                    fontWeight: FontWeight.w400,
+                    height: 0,
+                    letterSpacing: -0.28,
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 10),
-            Text(
-              '${message.getAttachmentSize()} / ${message.getDate()}',
-              style: const TextStyle(
-                color: colorMainGrey400,
-                fontSize: 14,
-                fontFamily: 'Pretendard',
-                fontWeight: FontWeight.w400,
-                height: 0,
-                letterSpacing: -0.28,
-              ),
-            ),
-            const SizedBox(height: 10),
-            const Text(
-              '만료',
-              style: TextStyle(
-                color: colorMainGrey400,
-                fontSize: 14,
-                fontFamily: 'Pretendard',
-                fontWeight: FontWeight.w400,
-                height: 0,
-                letterSpacing: -0.28,
-              ),
-            ),
+            Visibility(
+                visible: message.isSending,
+                child: Container(
+                  constraints: BoxConstraints(maxWidth: screenWidth * 0.55),
+                  child: Center(
+                    child: Container(
+                      width: 10,
+                      height: 10,
+                      alignment: Alignment.bottomRight,
+                      child: const CircularProgressIndicator(
+                        color: Color(0xFF6A79FF),
+                        strokeWidth: 2,
+                      ),
+                    ),
+                  ),
+                )
+            )
           ],
         ),
       );
@@ -758,6 +795,8 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
       int itemsPlaced = 0;
       int rowIndex = 1;
       final int itemCount = message.attachmentImages.length;
+
+      double heights = 0;
 
       while (itemsPlaced < itemCount) {
         int itemsInRow;
@@ -781,6 +820,8 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
           height = 74;
         }
 
+        heights += height;
+
         rows.add(Container(
           margin: const EdgeInsets.only(bottom: 2),
           child: Row(
@@ -800,7 +841,9 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
                     ),
                     child: InkWell(
                       onTap: () {
-                        viewPhoto(context, imageUrl:attachment, fileName:message.attachmentName);
+                        if(!message.isSending) {
+                          viewPhoto(context, imageUrl: attachment, fileName: message.attachmentName);
+                        }
                       },
                       child: FadeInImage.assetNetwork(
                         placeholder: 'assets/images/chats/placeholder_photo.png',
@@ -842,8 +885,30 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
                   borderRadius: BorderRadius.circular(24),
                   color: Colors.white,
                 ),
-                child: Column(
-                    children: rows
+                child: Stack(
+                  children: [
+                    Column(
+                        children: rows
+                    ),
+                    Visibility(
+                        visible: message.isSending,
+                        child: Container(
+                          height: heights,
+                          constraints: BoxConstraints(maxWidth: screenWidth * 0.55),
+                          child: Center(
+                            child: Container(
+                              width: 30,
+                              height: 30,
+                              alignment: Alignment.topRight,
+                              child: const CircularProgressIndicator(
+                                color: Color(0xFF6A79FF),
+                                strokeWidth: 2,
+                              ),
+                            ),
+                          ),
+                        )
+                    )
+                  ],
                 ),
               ),
             ),
@@ -872,65 +937,16 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
 
 
   int type = 1;
-  int _selected = 0;
+  int _selectedImages = 0;
+  int _selectedMedia = 0;
   bool _selectMode = true;
   bool _isButtonFileDisabled = true;
 
-  List<FileItem> filesImages = [
-    FileItem(name: '', path: 'assets/images/photos/photo_1.png'),
-    FileItem(name: '', path: 'assets/images/photos/photo_2.png'),
-    FileItem(name: '', path: 'assets/images/photos/photo_3.png'),
-    FileItem(name: '', path: 'assets/images/photos/photo_4.png'),
-    FileItem(name: '', path: 'assets/images/photos/photo_1.png'),
-    FileItem(name: '', path: 'assets/images/photos/photo_2.png'),
-    FileItem(name: '', path: 'assets/images/photos/photo_3.png'),
-    FileItem(name: '', path: 'assets/images/photos/photo_4.png'),
-    FileItem(name: '', path: 'assets/images/photos/photo_1.png'),
-    FileItem(name: '', path: 'assets/images/photos/photo_2.png'),
-    FileItem(name: '', path: 'assets/images/photos/photo_3.png'),
-    FileItem(name: '', path: 'assets/images/photos/photo_4.png'),
-    FileItem(name: '', path: 'assets/images/photos/photo_1.png'),
-    FileItem(name: '', path: 'assets/images/photos/photo_2.png'),
-    FileItem(name: '', path: 'assets/images/photos/photo_3.png'),
-    FileItem(name: '', path: 'assets/images/photos/photo_4.png'),
-    FileItem(name: '', path: 'assets/images/photos/photo_1.png'),
-    FileItem(name: '', path: 'assets/images/photos/photo_2.png'),
-    FileItem(name: '', path: 'assets/images/photos/photo_3.png'),
-    FileItem(name: '', path: 'assets/images/photos/photo_4.png'),
-    FileItem(name: '', path: 'assets/images/photos/photo_1.png'),
-    FileItem(name: '', path: 'assets/images/photos/photo_2.png'),
-    FileItem(name: '', path: 'assets/images/photos/photo_3.png'),
-    FileItem(name: '', path: 'assets/images/photos/photo_4.png'),
-  ];
-
-  List<FileItem> filesMedia = [
-    FileItem(name: 'artrooms_img_file_final_1', date: '2022.08.16 만료'),
-    FileItem(name: 'artrooms_img_file_final_2', date: '2022.08.16 만료'),
-    FileItem(name: 'artrooms_img_file_final_1', date: '2022.08.16 만료'),
-    FileItem(name: 'artrooms_img_file_final_2', date: '2022.08.16 만료'),
-    FileItem(name: 'artrooms_img_file_final_1', date: '2022.08.16 만료'),
-    FileItem(name: 'artrooms_img_file_final_2', date: '2022.08.16 만료'),
-    FileItem(name: 'artrooms_img_file_final_1', date: '2022.08.16 만료'),
-    FileItem(name: 'artrooms_img_file_final_2', date: '2022.08.16 만료'),
-    FileItem(name: 'artrooms_img_file_final_1', date: '2022.08.16 만료'),
-    FileItem(name: 'artrooms_img_file_final_2', date: '2022.08.16 만료'),
-    FileItem(name: 'artrooms_img_file_final_1', date: '2022.08.16 만료'),
-    FileItem(name: 'artrooms_img_file_final_2', date: '2022.08.16 만료'),
-    FileItem(name: 'artrooms_img_file_final_1', date: '2022.08.16 만료'),
-    FileItem(name: 'artrooms_img_file_final_2', date: '2022.08.16 만료'),
-    FileItem(name: 'artrooms_img_file_final_1', date: '2022.08.16 만료'),
-    FileItem(name: 'artrooms_img_file_final_2', date: '2022.08.16 만료'),
-    FileItem(name: 'artrooms_img_file_final_1', date: '2022.08.16 만료'),
-    FileItem(name: 'artrooms_img_file_final_2', date: '2022.08.16 만료'),
-    FileItem(name: 'artrooms_img_file_final_1', date: '2022.08.16 만료'),
-    FileItem(name: 'artrooms_img_file_final_2', date: '2022.08.16 만료'),
-    FileItem(name: 'artrooms_img_file_final_1', date: '2022.08.16 만료'),
-    FileItem(name: 'artrooms_img_file_final_2', date: '2022.08.16 만료'),
-    FileItem(name: 'artrooms_img_file_final_1', date: '2022.08.16 만료'),
-    FileItem(name: 'artrooms_img_file_final_2', date: '2022.08.16 만료'),
-  ];
+  List<FileItem> filesImages = [];
+  List<FileItem> filesMedia = [];
 
   Widget _attachmentPicker(BuildContext context, State<StatefulWidget> state) {
+
     return Container(
       height: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -1067,7 +1083,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
                   ),
                   itemCount: filesImages.length,
                   itemBuilder: (context, index) {
-                    var file = filesImages[index];
+                    var fileImage = filesImages[index];
                     return Container(
                       clipBehavior: Clip.antiAlias,
                       decoration: BoxDecoration(
@@ -1076,19 +1092,19 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
                       ),
                       child: InkWell(
                         onTap: () {
-                          viewPhoto(context, imagePath:file.path, fileName:file.name);
+                          viewPhoto(context, imagePath:fileImage.path, fileName:fileImage.name);
                         },
                         onLongPress: () {
                           state.setState(() {
-                            file.isSelected = !file.isSelected;
+                            fileImage.isSelected = !fileImage.isSelected;
                             closeKeyboard(context);
                           });
                           _checkIfFileShouldBeEnabled();
                         },
                         child: Stack(
                           children: [
-                            Image.asset(
-                              file.path,
+                            Image.file(
+                              fileImage.file,
                               width: double.infinity,
                               height: double.infinity,
                               fit: BoxFit.cover,
@@ -1101,7 +1117,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
                                 child: InkWell(
                                   onTap: () {
                                     state.setState(() {
-                                      file.isSelected = !file.isSelected;
+                                      fileImage.isSelected = !fileImage.isSelected;
                                       _checkIfFileShouldBeEnabled();
                                       closeKeyboard(context);
                                     });
@@ -1110,14 +1126,14 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
                                     width: 26,
                                     height: 26,
                                     decoration: BoxDecoration(
-                                      color: file.isSelected ? colorPrimaryBlue : colorMainGrey200.withAlpha(150),
+                                      color: fileImage.isSelected ? colorPrimaryBlue : colorMainGrey200.withAlpha(150),
                                       shape: BoxShape.circle,
                                       border: Border.all(
-                                        color: file.isSelected ? colorPrimaryBlue : const Color(0xFFE3E3E3),
+                                        color: fileImage.isSelected ? colorPrimaryBlue : const Color(0xFFE3E3E3),
                                         width: 1,
                                       ),
                                     ),
-                                    child: file.isSelected
+                                    child: fileImage.isSelected
                                         ? const Icon(Icons.check, size: 16, color: Colors.white)
                                         : Container(),
                                   ),
@@ -1153,8 +1169,8 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
                       child: InkWell(
                         onTap: () {
                           setState(() {
-                            // fileMedia.isSelected = !fileMedia.isSelected;
-                            _checkIfFileButtonShouldBeEnabled();
+                            fileMedia.isSelected = !fileMedia.isSelected;
+                            _checkIfFileShouldBeEnabled();
                             closeKeyboard(context);
                           });
                         },
@@ -1632,6 +1648,10 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
         listMessages.addAll(messages);
       });
 
+      for(MyMessage message in messages) {
+        showNotificationMessage(widget.chat, message);
+      }
+
       if(_isLoading) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (_scrollController.hasClients) {
@@ -1687,14 +1707,13 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
 
   }
 
-  void _sendMessage() {
+  Future<void> _sendMessage() async {
 
     if(!_isButtonDisabled) {
 
       if (_messageController.text.isNotEmpty) {
 
-        moduleMessages.sendMessage(_messageController.text).then((
-            MyMessage myMessage) {
+        moduleMessages.sendMessage(_messageController.text).then((MyMessage myMessage) {
           setState(() {
             listMessages.insert(0, myMessage);
             _messageController.clear();
@@ -1707,60 +1726,92 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
 
       }
 
-      int selectedImages = 0;
-      int selectedMedia = 0;
-
-      MyMessage myMessage1 = MyMessage.fromBaseMessageWithDetails(
-        index: 0,
-        senderId: "",
-        senderName: "",
-        content: "",
-        timestamp: 0,
-        isMe: true,
-      );
-      for(FileItem fileItem in filesImages) {
-        if(fileItem.isSelected) {
-          selectedImages++;
-          myMessage1.attachmentImages.add(fileItem.path);
-        }
-      }
-
-      MyMessage myMessage2 = MyMessage.fromBaseMessageWithDetails(
-        index: 0,
-        senderId: "",
-        senderName: "",
-        content: "",
-        timestamp: 0,
-        isMe: true,
-      );
-      for(FileItem fileItem in filesMedia) {
-        if(fileItem.isSelected) {
-          selectedMedia++;
-          myMessage2.attachmentUrl = fileItem.path;
-        }
-      }
-
-      setState(() {
-
-        if(selectedImages > 0) {
-          listMessages.insert(0, myMessage1);
-        }
-
-        if(selectedMedia > 0) {
-          listMessages.insert(0, myMessage2);
-        }
-
-      });
-
       setState(() {
         _showAttachment = false;
         _showAttachmentFull = false;
       });
 
-      _deselectAll(false);
       closeKeyboard(context);
 
+      if(_selectedImages > 0) {
+
+        MyMessage myMessage1 = moduleMessages.preSendMessageImage(filesImages);
+        int index = myMessage1.index;
+
+        setState(() {
+          listMessages.insert(0, myMessage1);
+        });
+
+        myMessage1 = await moduleMessages.sendMessageImages(filesImages);
+        myMessage1.isSending = false;
+
+        for (int i = 0; i <listMessages.length; i++) {
+          MyMessage myMessage = listMessages[i];
+          if(myMessage.index == index) {
+            setState(() {
+              listMessages[i] = myMessage1;
+            });
+            break;
+          }
+        }
+
+      }
+
+      if(_selectedMedia > 0) {
+
+        List<int> index = [0];
+
+        List<MyMessage> myMessages = await moduleMessages.preSendMessageMedia(filesMedia);
+
+        for(MyMessage myMessage1 in myMessages) {
+          setState(() {
+            listMessages.insert(0, myMessage1);
+          });
+          index.add(myMessage1.index);
+        }
+
+        myMessages = await moduleMessages.sendMessageMedia(filesMedia);
+
+        for (int i = 0; i < myMessages.length; i++) {
+          MyMessage myMessage1 = myMessages[i];
+          for (int j = 0; j < listMessages.length; j++) {
+            MyMessage myMessage = listMessages[j];
+            if (myMessage.index == index[i]) {
+              setState(() {
+                listMessages[j] = myMessage1;
+              });
+              break;
+            }
+          }
+        }
+
+      }
+
+      _deselectAll(false);
     }
+
+  }
+
+  void _loadMedia() {
+
+    filesImages.clear();
+    filesMedia.clear();
+
+    moduleMedia.loadFileImages().then((List<FileItem> listImages) {
+
+      setState(() {
+        filesImages.addAll(listImages);
+      });
+
+    });
+
+    moduleMedia.loadFilesMedia().then((List<FileItem> listMedia) {
+
+      setState(() {
+        filesMedia.addAll(listMedia);
+      });
+
+    });
 
   }
 
@@ -1773,23 +1824,25 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
 
   void _checkIfFileShouldBeEnabled() {
 
-    _selected = 0;
+    _selectedImages = 0;
+    _selectedMedia = 0;
+
     for(FileItem fileImage in filesImages) {
       if(fileImage.isSelected) {
         setState(() {
-          _selected++;
+          _selectedImages++;
         });
       }
     }
     for(FileItem fileMedia in filesMedia) {
       if(fileMedia.isSelected) {
         setState(() {
-          _selected++;
+          _selectedMedia++;
         });
       }
     }
 
-    if (_selected > 0) {
+    if (_selectedImages + _selectedMedia > 0) {
       setState(() {
         _selectMode = true;
         _isButtonDisabled = false;
@@ -1805,7 +1858,8 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
   void _deselectAll(isClose) {
 
     setState(() {
-      _selected = 0;
+      _selectedImages = 0;
+      _selectedMedia = 0;
     });
 
     for(FileItem fileImage in filesImages) {

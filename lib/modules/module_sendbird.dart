@@ -1,14 +1,19 @@
 
 import 'dart:async';
+import 'dart:io';
+import 'package:path/path.dart' as path;
 
+import 'package:artrooms/beans/bean_message.dart';
 import 'package:flutter/foundation.dart';
 import 'package:sendbird_sdk/constant/enums.dart';
 import 'package:sendbird_sdk/core/channel/base/base_channel.dart';
 import 'package:sendbird_sdk/core/channel/group/group_channel.dart';
 import 'package:sendbird_sdk/core/channel/open/open_channel.dart';
 import 'package:sendbird_sdk/core/message/base_message.dart';
+import 'package:sendbird_sdk/core/message/file_message.dart';
 import 'package:sendbird_sdk/core/message/user_message.dart';
 import 'package:sendbird_sdk/core/models/user.dart';
+import 'package:sendbird_sdk/params/file_message_params.dart';
 import 'package:sendbird_sdk/params/message_list_params.dart';
 import 'package:sendbird_sdk/params/user_message_params.dart';
 import 'package:sendbird_sdk/query/channel_list/group_channel_list_query.dart';
@@ -183,10 +188,11 @@ class ModuleSendBird {
     }
   }
 
-  Future<UserMessage> sendMessage(GroupChannel groupChannel, String text) async {
+  Future<UserMessage> sendMessage(GroupChannel groupChannel, String text, {String data=""}) async {
     Completer<UserMessage> completer = Completer();
 
     final params = UserMessageParams(message: text);
+    params.data = data;
 
     groupChannel.sendUserMessage(params, onCompleted: (UserMessage userMessage, error) {
       if (error != null) {
@@ -199,6 +205,57 @@ class ModuleSendBird {
 
       completer.complete(userMessage);
     });
+
+    return completer.future;
+  }
+
+  Future<FileMessage> sendMessageFile(GroupChannel groupChannel, File file) async {
+    Completer<FileMessage> completer = Completer();
+
+    String fileName = path.basename(Uri.parse(file.path).path);
+
+    final params = FileMessageParams.withFile(file, name: fileName);
+
+    print('Sending message file: ${file.path}');
+
+    groupChannel.sendFileMessage(params, onCompleted: (FileMessage userMessage, error) {
+      if (error != null) {
+        if (kDebugMode) {
+          print('Send message file error: $error');
+        }
+        completer.completeError(error);
+        return;
+      }
+
+      print('Sent message file: ${file.path}');
+
+      completer.complete(userMessage);
+    });
+
+    return completer.future;
+  }
+
+  Future<MyMessage> sendMessageFiles(GroupChannel groupChannel, List<File> files) async {
+    Completer<MyMessage> completer = Completer();
+
+    MyMessage myMessage = MyMessage.empty();
+
+    List<String> attachmentImages = [];
+
+    for(int i = 0; i < files.length; i++) {
+
+      File file = files[i];
+
+      FileMessage fileMessage = await sendMessageFile(groupChannel, file);
+
+      myMessage = MyMessage.fromBaseMessage(fileMessage);
+
+      attachmentImages.add(fileMessage.url);
+    }
+
+    myMessage.attachmentImages = attachmentImages;
+
+    completer.complete(myMessage);
 
     return completer.future;
   }

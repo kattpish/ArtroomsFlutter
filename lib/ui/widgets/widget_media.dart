@@ -7,9 +7,9 @@ import '../../utils/utils_media.dart';
 import '../theme/theme_colors.dart';
 
 
-void viewPhoto(BuildContext context, {String imagePath="", String imageUrl="", String fileName=""}) {
+void viewPhoto(BuildContext buildContext, {String imagePath="", String imageUrl="", String fileName=""}) {
   showDialog(
-    context: context,
+    context: buildContext,
     builder: (BuildContext context) {
 
       ImageProvider imageProvider;
@@ -90,9 +90,9 @@ void viewPhoto(BuildContext context, {String imagePath="", String imageUrl="", S
                         constraints: const BoxConstraints(),
                         onPressed: () async {
 
-                          await downloadFile(imageUrl, fileName);
+                          await downloadFile(buildContext, imageUrl, fileName);
 
-                          showSnackBar(context, "이미지가 다운로드됨");
+                          showSnackBar(buildContext, "이미지가 다운로드됨");
 
                         },
                       ),

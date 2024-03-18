@@ -7,14 +7,14 @@ import '../main.dart';
 
 class ChatModule {
 
-  Future<List<MyChat>> getUserChats() async {
+  Future<List<DataChat>> getUserChats() async {
 
-    final List<MyChat> chats = [];
+    final List<DataChat> chats = [];
 
     await moduleSendBird.getListOfGroupChannels().then((List<GroupChannel> groupChannels) {
 
       for (GroupChannel groupChannel in groupChannels) {
-        final MyChat myChat = MyChat.fromGroupChannel(groupChannel);
+        final DataChat myChat = DataChat.fromGroupChannel(groupChannel);
         chats.add(myChat);
       }
 

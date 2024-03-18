@@ -11,7 +11,7 @@ import '../../utils/utils_screen.dart';
 
 class MyScreenNotices extends StatefulWidget {
 
-  final MyChat myChat;
+  final DataChat myChat;
 
   const MyScreenNotices({super.key, required this.myChat});
 

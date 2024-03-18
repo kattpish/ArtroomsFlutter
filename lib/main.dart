@@ -6,6 +6,7 @@ import 'package:artrooms/ui/screens/screen_chats.dart';
 import 'package:artrooms/ui/screens/screen_login.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:intl/date_symbol_data_custom.dart';
 import 'package:intl/date_symbols.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -39,11 +40,11 @@ Future<void> main() async {
   moduleSendBird = ModuleSendBird();
   await moduleSendBird.initSendbird();
 
-  // final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-  // var initializationSettingsAndroid = const AndroidInitializationSettings('@mipmap/ic_launcher');
-  // var initializationSettingsIOS = const DarwinInitializationSettings();
-  // var initSettings = InitializationSettings(android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
-  // await flutterLocalNotificationsPlugin.initialize(initSettings);
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  var initializationSettingsAndroid = const AndroidInitializationSettings('@drawable/icon_notification');
+  var initializationSettingsIOS = const DarwinInitializationSettings();
+  var initSettings = InitializationSettings(android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
+  await flutterLocalNotificationsPlugin.initialize(initSettings);
 
   runApp(
     MaterialApp(
