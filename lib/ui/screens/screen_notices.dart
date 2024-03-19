@@ -186,7 +186,7 @@ class _MyScreenNoticesState extends State<MyScreenNotices> {
                                   children: [
                                     const SizedBox(height: 16,),
                                     Visibility(
-                                      visible: notice.noticeable,
+                                      visible: notice.notice.length > 200,
                                       child: const Text(
                                         "상세보기",
                                         style: TextStyle(
