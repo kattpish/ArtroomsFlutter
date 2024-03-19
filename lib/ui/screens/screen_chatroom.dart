@@ -404,14 +404,22 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
             child: InkWell(
               onTap: () {
                 setState(() {
-                  _boxHeight = 320;
-                  _showAttachment = !_showAttachment;
-                  closeKeyboard(context);
-                  if(_showAttachment) {
-                    _loadMedia();
-                  }else {
+                  if(_showAttachmentFull) {
+                    _boxHeight = 320;
+                    _showAttachment = true;
+                    _showAttachmentFull = false;
+                  }else if(_showAttachment) {
+                    _boxHeight = 320;
+                    _showAttachment = false;
+                    _showAttachmentFull = false;
                     _deselectAll(false);
+                  }else {
+                    _boxHeight = 320;
+                    _showAttachment = true;
+                    _showAttachmentFull = false;
+                    _loadMedia();
                   }
+                  closeKeyboard(context);
                 });
               },
               child: Padding(
@@ -1092,7 +1100,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
                       ),
                       child: InkWell(
                         onTap: () {
-                          viewPhoto(context, imagePath:fileImage.path, fileName:fileImage.name);
+                          viewPhoto(context, fileImage:fileImage.file, fileName:fileImage.name);
                         },
                         onLongPress: () {
                           state.setState(() {
@@ -1278,7 +1286,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
                 margin: const EdgeInsets.only(right: 4, top: 4, bottom: 4),
                 child: InkWell(
                   onTap: () {
-                    viewPhoto(context, imagePath:fileItem.path, fileName:fileItem.name);
+                    viewPhoto(context, fileImage:fileItem.file, fileName:fileItem.name);
                   },
                   child: Stack(
                     children: [
@@ -1513,19 +1521,23 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
       _boxHeight = newHeight.clamp(100.0, screenHeight);
       _dragStartY = details.globalPosition.dy;
 
-      if(_boxHeight < screenHeight - 200 && _boxHeight > screenHeight - 300) {
-        _showAttachment = false;
+      if(_boxHeight < screenHeight - 100 && _boxHeight > screenHeight - 200) {
+        print("_onVerticalDragUpdate-1");
+        _showAttachment = true;
         _showAttachmentFull = false;
-      }else if(_boxHeight > 320 + 160) {
+        _boxHeight = _boxHeightMin;
+      }else if(_boxHeight > _boxHeightMin + 160) {
+        print("_onVerticalDragUpdate-2");
         _showAttachment = false;
         if(!_showAttachmentFull) {
           _showAttachmentFull = true;
           _boxHeight = screenHeight;
         }
-      }else if(_boxHeight < 320 - 160) {
+      }else if(_boxHeight < _boxHeightMin - 160) {
+        print("_onVerticalDragUpdate-3");
         _showAttachment = false;
         _showAttachmentFull = false;
-        _boxHeight = 320;
+        _boxHeight = _boxHeightMin;
       }
 
     });
@@ -1539,6 +1551,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
     print("_scrollController-userScrollDirection: ${_scrollControllerAttachment1.position.userScrollDirection}");
 
     if (_scrollControllerAttachment1.offset == 0 && _scrollControllerAttachment1.position.minScrollExtent == 0 && _scrollControllerAttachment1.position.userScrollDirection == ScrollDirection.forward) {
+      print("_scrollController-1");
       setState(() {
         _listReachedTop = true;
         _showAttachment = true;
@@ -1546,29 +1559,35 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
         _boxHeight = _boxHeightMin;
       });
     }else if (_scrollControllerAttachment1.offset <= _scrollControllerAttachment1.position.minScrollExtent && _scrollControllerAttachment1.position.userScrollDirection == ScrollDirection.forward) {
+      print("_scrollController-2");
       if (!_listReachedTop) {
         setState(() {
           _listReachedTop = true;
         });
       }
     }else if (_scrollControllerAttachment1.offset <= _scrollControllerAttachment1.position.minScrollExtent && _scrollControllerAttachment1.position.userScrollDirection == ScrollDirection.reverse) {
+      print("_scrollController-3");
       if (_listReachedTop) {
         setState(() {
           _listReachedTop = false;
         });
       }
     }else if (_scrollControllerAttachment1.offset >= _scrollControllerAttachment1.position.maxScrollExtent && !_scrollControllerAttachment1.position.outOfRange) {
+      print("_scrollController-4");
       if (!_listReachedBottom) {
         setState(() {
           _listReachedBottom = true;
         });
       }
     } else {
+      print("_scrollController-5");
       if (_listReachedBottom) {
+        print("_scrollController-5_1");
         setState(() {
           _listReachedBottom = false;
         });
       }else {
+        print("_scrollController-5_2");
         setState(() {
           _showAttachment = false;
           _showAttachmentFull = true;
@@ -1580,7 +1599,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
   }
 
   void animateHeight() {
-    if (_animationController.isAnimating) {
+    if (_animationController.isAnimating && _boxHeight > screenHeight) {
       _animationController.stop();
     } else {
       _animationController.forward(from: 0.0);

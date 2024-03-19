@@ -1,4 +1,6 @@
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 
@@ -7,14 +9,14 @@ import '../../utils/utils_media.dart';
 import '../theme/theme_colors.dart';
 
 
-void viewPhoto(BuildContext buildContext, {String imagePath="", String imageUrl="", String fileName=""}) {
+void viewPhoto(BuildContext buildContext, {File? fileImage, String imageUrl="", String fileName=""}) {
   showDialog(
     context: buildContext,
     builder: (BuildContext context) {
 
       ImageProvider imageProvider;
-      if (imagePath.isNotEmpty) {
-        imageProvider = AssetImage(imagePath);
+      if (fileImage != null) {
+        imageProvider = FileImage(fileImage);
       } else {
         imageProvider = NetworkImage(imageUrl);
       }
