@@ -100,8 +100,6 @@ class ModuleMedia {
 
   Future<List<FileItem>> loadFileImages2() async {
 
-    List<FileItem> imageFiles = [];
-
     var status = await Permission.storage.status;
     if (!status.isGranted) {
       await Permission.storage.request();
@@ -206,15 +204,19 @@ class ModuleMedia {
 
   Future<List<FileItem>> loadFilesMedia1() async {
 
-    List<FileItem> mediaFiles = [];
-
     List<AssetEntity> assetFiles = [];
 
     PermissionState result = await PhotoManager.requestPermissionExtend();
 
     if(result.isAuth) {
 
-      List<AssetPathEntity> albums = await PhotoManager.getAssetPathList(type: RequestType.all);
+      List<AssetPathEntity> albums = [];
+
+      List<AssetPathEntity> albums1 = await PhotoManager.getAssetPathList(type: RequestType.video);
+      List<AssetPathEntity> albums2 = await PhotoManager.getAssetPathList(type: RequestType.audio);
+
+      albums.addAll(albums1);
+      albums.addAll(albums2);
 
       for(AssetPathEntity album in albums) {
 
@@ -264,8 +266,6 @@ class ModuleMedia {
   }
 
   Future<List<FileItem>> loadFilesMedia2() async {
-
-    List<FileItem> mediaFiles = [];
 
     var status = await Permission.storage.status;
     if (!status.isGranted) {
