@@ -8,11 +8,13 @@ class DataChat {
 
   final String id;
   final String name;
+  String nameKr = " ";
   final int unreadMessages;
   final String date;
-  String role = "윰윰";
+  String role = "";
   String profilePictureUrl = "";
   MyMessage lastMessage = MyMessage.empty();
+  bool isArtrooms = false;
 
   DataChat({
     required this.id,
@@ -34,20 +36,24 @@ class DataChat {
       messageDate = formatDateTime(lastBaseMessage.createdAt);
     }
 
-    final DataChat myChat = DataChat(
+    final DataChat dataChat = DataChat(
       id: channel.channelUrl,
       name: channel.name ?? "",
       lastMessage: lastMessage,
       unreadMessages: channel.unreadMessageCount,
-      profilePictureUrl: channel.coverUrl ?? '',
+      profilePictureUrl: channel.coverUrl ?? channel.coverUrl ??'',
       date: messageDate,
     );
 
-    if(myChat.name == "artrooms") {
-      myChat.profilePictureUrl = "https://d2ous6lm13gwvv.cloudfront.net/image/2310190543464346_bc8443ee-ac3a-4306-adab-fd925492a358.jpg";
+    if(dataChat.name == "artrooms" || dataChat.name == "artroom") {
+      dataChat.isArtrooms = true;
+      dataChat.nameKr = "아트룸즈";
+      if(dataChat.profilePictureUrl.isEmpty) {
+        dataChat.profilePictureUrl = "https://d2ous6lm13gwvv.cloudfront.net/image/2310190543464346_bc8443ee-ac3a-4306-adab-fd925492a358.jpg";
+      }
     }
 
-    return myChat;
+    return dataChat;
   }
 
 }

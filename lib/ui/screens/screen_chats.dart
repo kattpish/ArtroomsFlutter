@@ -271,14 +271,14 @@ class _MyScreenChatsState extends State<MyScreenChats> with WidgetsBindingObserv
               radius: 30,
               backgroundColor: Colors.transparent,
               child: FadeInImage.assetNetwork(
-                placeholder: 'assets/images/profile/placeholder.png',
+                placeholder: myChat.isArtrooms ? 'assets/images/chats/chat_artrooms.png' : 'assets/images/chats/placeholder_chat.png',
                 image: myChat.profilePictureUrl,
                 fit: BoxFit.cover,
                 fadeInDuration: const Duration(milliseconds: 100),
                 fadeOutDuration: const Duration(milliseconds: 100),
                 imageErrorBuilder: (context, error, stackTrace) {
                   return Image.asset(
-                    'assets/images/profile/placeholder.png',
+                    myChat.isArtrooms ? 'assets/images/chats/chat_artrooms.png' : 'assets/images/chats/placeholder_chat.png',
                     fit: BoxFit.cover,
                   );
                 },

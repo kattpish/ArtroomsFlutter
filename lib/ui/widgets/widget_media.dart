@@ -10,6 +10,9 @@ import '../theme/theme_colors.dart';
 
 
 void viewPhoto(BuildContext buildContext, {File? fileImage, String imageUrl="", String fileName=""}) {
+
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+
   showDialog(
     context: buildContext,
     builder: (BuildContext context) {
@@ -22,6 +25,7 @@ void viewPhoto(BuildContext buildContext, {File? fileImage, String imageUrl="", 
       }
 
       return Scaffold(
+        key: scaffoldKey,
         backgroundColor: Colors.black.withOpacity(0.40),
         body: Container(
           color: Colors.black.withOpacity(0.5),
@@ -95,7 +99,11 @@ void viewPhoto(BuildContext buildContext, {File? fileImage, String imageUrl="", 
 
                           await downloadFile(buildContext, imageUrl, fileName);
 
-                          showSnackBar(buildContext, "이미지가 다운로드됨");
+                          try {
+                            showSnackBar(context, "이미지가 다운로드됨");
+                          }catch(error) {
+                            showSnackBar(buildContext, "이미지가 다운로드됨");
+                          }
 
                         },
                       ),

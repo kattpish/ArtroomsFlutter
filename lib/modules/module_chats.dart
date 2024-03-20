@@ -14,6 +14,9 @@ class ChatModule {
     await moduleSendBird.getListOfGroupChannels().then((List<GroupChannel> groupChannels) {
 
       for (GroupChannel groupChannel in groupChannels) {
+
+        print('My GroupChannel:` ${groupChannel.toJson()}');
+
         final DataChat myChat = DataChat.fromGroupChannel(groupChannel);
         chats.add(myChat);
       }

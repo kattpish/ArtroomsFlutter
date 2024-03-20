@@ -121,7 +121,7 @@ class _MyScreenProfileState extends State<MyScreenProfile> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      dbStore.getName(),
+                      profile.name,
                       style: const TextStyle(
                         color: Color(0xFF111111),
                         fontSize: 20,
@@ -133,7 +133,7 @@ class _MyScreenProfileState extends State<MyScreenProfile> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      dbStore.getNickName(),
+                      profile.nickName,
                       style: const TextStyle(
                         color: Color(0xFF565656),
                         fontSize: 14,

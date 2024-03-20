@@ -10,6 +10,7 @@ import '../utils/utils.dart';
 
 
 class MyMessage {
+
   int index;
   String senderId;
   String senderName;
@@ -21,11 +22,13 @@ class MyMessage {
   int attachmentSize = 0;
   List<String> attachmentImages = [];
   bool isMe;
+  bool isArtrooms = false;
 
   bool isImage = false;
   bool isFile = false;
   bool isSelected = false;
   bool isSending = false;
+  bool isDownloading = false;
 
   MyMessage.empty({
     this.index = 0,
@@ -92,6 +95,13 @@ class MyMessage {
 
     }else {
       content = baseMessage.message.trim();
+    }
+
+    if(senderName == "artrooms" || senderName == "artroom") {
+      isArtrooms = true;
+      if(profilePictureUrl.isEmpty) {
+        profilePictureUrl = "https://d2ous6lm13gwvv.cloudfront.net/image/2310190543464346_bc8443ee-ac3a-4306-adab-fd925492a358.jpg";
+      }
     }
 
   }

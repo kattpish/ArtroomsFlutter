@@ -24,7 +24,21 @@ Future<void> downloadFile(BuildContext context, String url, String fileName, {sh
 
   await requestPermissions(context);
 
-  final Directory dir = await getDownloadsDirectory() ?? await getExternalStorageDirectory() ?? await getApplicationDocumentsDirectory();
+  var directory;
+  if (Platform.isIOS) {
+    directory = await getDownloadsDirectory();
+  } else {
+    directory = "/storage/emulated/0/Download/";
+    bool dirDownloadExists = await Directory(directory).exists();
+    if(dirDownloadExists){
+      directory = Directory("/storage/emulated/0/Download/");
+    }else{
+      directory = Directory("/storage/emulated/0/Downloads/");
+    }
+  }
+
+  final Directory dir = await getDownloadsDirectory() ?? directory;
+
 
   fileName = fileName.isEmpty ? path.basename(Uri.parse(url).path) : fileName;
 
@@ -43,4 +57,5 @@ Future<void> downloadFile(BuildContext context, String url, String fileName, {sh
   if(showNotification) {
     showNotificationDownload(filePath, fileName);
   }
+
 }

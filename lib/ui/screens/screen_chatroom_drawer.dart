@@ -125,14 +125,14 @@ class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> {
                             child: CircleAvatar(
                               radius: 32,
                               child: FadeInImage.assetNetwork(
-                                placeholder: 'assets/images/profile/profile_2.png',
+                                placeholder: widget.myChat.isArtrooms ? 'assets/images/chats/chat_artrooms.png' : 'assets/images/chats/placeholder_chat.png',
                                 image: widget.myChat.profilePictureUrl,
                                 fit: BoxFit.cover,
                                 fadeInDuration: const Duration(milliseconds: 100),
                                 fadeOutDuration: const Duration(milliseconds: 100),
                                 imageErrorBuilder: (context, error, stackTrace) {
                                   return Image.asset(
-                                    'assets/images/profile/profile_2.png',
+                                    widget.myChat.isArtrooms ? 'assets/images/chats/chat_artrooms.png' : 'assets/images/chats/placeholder_chat.png',
                                     fit: BoxFit.cover,
                                   );
                                 },
@@ -156,7 +156,7 @@ class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> {
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                widget.myChat.role,
+                                widget.myChat.nameKr,
                                 style: const TextStyle(
                                   color: Color(0xFF565656),
                                   fontSize: 14,
@@ -170,32 +170,60 @@ class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> {
                           )
                         ],
                       ),
-                      const SizedBox(height: 12),
-                      Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 16.0),
-                          padding: const EdgeInsets.all(20.0),
-                          decoration: BoxDecoration(
-                            color: colorMainGrey100,
-                            borderRadius: BorderRadius.circular(16.0),
-                          ),
-                          child: const Column(
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    '주중피드백',
-                                    style: TextStyle(
-                                      color: colorMainGrey400,
-                                      fontSize: 14,
-                                      fontFamily: 'SUIT',
-                                      fontWeight: FontWeight.w400,
-                                      height: 0,
-                                      letterSpacing: -0.28,
+                      Visibility(
+                        visible: !widget.myChat.isArtrooms,
+                        child: Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
+                            padding: const EdgeInsets.all(20.0),
+                            decoration: BoxDecoration(
+                              color: colorMainGrey100,
+                              borderRadius: BorderRadius.circular(16.0),
+                            ),
+                            child: const Column(
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      '주중피드백',
+                                      style: TextStyle(
+                                        color: colorMainGrey400,
+                                        fontSize: 14,
+                                        fontFamily: 'SUIT',
+                                        fontWeight: FontWeight.w400,
+                                        height: 0,
+                                        letterSpacing: -0.28,
+                                      ),
                                     ),
-                                  ),
-                                  Text(
-                                      '간단히 가능',
+                                    Text(
+                                        '간단히 가능',
+                                        style: TextStyle(
+                                          color: colorMainGrey800,
+                                          fontSize: 14,
+                                          fontFamily: 'SUIT',
+                                          fontWeight: FontWeight.w400,
+                                          height: 0,
+                                          letterSpacing: -0.28,
+                                        )
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: 8),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text('수업상담',
+                                      style: TextStyle(
+                                        color: colorMainGrey400,
+                                        fontSize: 14,
+                                        fontFamily: 'SUIT',
+                                        fontWeight: FontWeight.w400,
+                                        height: 0,
+                                        letterSpacing: -0.28,
+                                      ),
+                                    ),
+                                    Text(
+                                      '불가능',
                                       style: TextStyle(
                                         color: colorMainGrey800,
                                         fontSize: 14,
@@ -203,119 +231,93 @@ class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> {
                                         fontWeight: FontWeight.w400,
                                         height: 0,
                                         letterSpacing: -0.28,
-                                      )
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: 8),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text('수업상담',
-                                    style: TextStyle(
-                                      color: colorMainGrey400,
-                                      fontSize: 14,
-                                      fontFamily: 'SUIT',
-                                      fontWeight: FontWeight.w400,
-                                      height: 0,
-                                      letterSpacing: -0.28,
+                                      ),
                                     ),
-                                  ),
-                                  Text(
-                                    '불가능',
-                                    style: TextStyle(
-                                      color: colorMainGrey800,
-                                      fontSize: 14,
-                                      fontFamily: 'SUIT',
-                                      fontWeight: FontWeight.w400,
-                                      height: 0,
-                                      letterSpacing: -0.28,
+                                  ],
+                                ),
+                                SizedBox(height: 8),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text('채팅가능시간',
+                                      style: TextStyle(
+                                        color: colorMainGrey400,
+                                        fontSize: 14,
+                                        fontFamily: 'SUIT',
+                                        fontWeight: FontWeight.w400,
+                                        height: 0,
+                                        letterSpacing: -0.28,
+                                      ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: 8),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text('채팅가능시간',
-                                    style: TextStyle(
-                                      color: colorMainGrey400,
-                                      fontSize: 14,
-                                      fontFamily: 'SUIT',
-                                      fontWeight: FontWeight.w400,
-                                      height: 0,
-                                      letterSpacing: -0.28,
+                                    Text('월 화 수',
+                                      style: TextStyle(
+                                        color: colorMainGrey800,
+                                        fontSize: 14,
+                                        fontFamily: 'SUIT',
+                                        fontWeight: FontWeight.w400,
+                                        height: 0,
+                                        letterSpacing: -0.28,
+                                      ),
                                     ),
-                                  ),
-                                  Text('월 화 수',
-                                    style: TextStyle(
-                                      color: colorMainGrey800,
-                                      fontSize: 14,
-                                      fontFamily: 'SUIT',
-                                      fontWeight: FontWeight.w400,
-                                      height: 0,
-                                      letterSpacing: -0.28,
+                                  ],
+                                ),
+                                SizedBox(height: 8),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text('평균응답시간',
+                                      style: TextStyle(
+                                        color: colorMainGrey400,
+                                        fontSize: 14,
+                                        fontFamily: 'SUIT',
+                                        fontWeight: FontWeight.w400,
+                                        height: 0,
+                                        letterSpacing: -0.28,
+                                      ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: 8),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text('평균응답시간',
-                                    style: TextStyle(
-                                      color: colorMainGrey400,
-                                      fontSize: 14,
-                                      fontFamily: 'SUIT',
-                                      fontWeight: FontWeight.w400,
-                                      height: 0,
-                                      letterSpacing: -0.28,
+                                    Text(' 11시~20시',
+                                      style: TextStyle(
+                                        color: colorMainGrey800,
+                                        fontSize: 14,
+                                        fontFamily: 'SUIT',
+                                        fontWeight: FontWeight.w400,
+                                        height: 0,
+                                        letterSpacing: -0.28,
+                                      ),
                                     ),
-                                  ),
-                                  Text(' 11시~20시',
-                                    style: TextStyle(
-                                      color: colorMainGrey800,
-                                      fontSize: 14,
-                                      fontFamily: 'SUIT',
-                                      fontWeight: FontWeight.w400,
-                                      height: 0,
-                                      letterSpacing: -0.28,
+                                  ],
+                                ),
+                                SizedBox(height: 8),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text('평균응답시간',
+                                      style: TextStyle(
+                                        color: colorMainGrey400,
+                                        fontSize: 14,
+                                        fontFamily: 'SUIT',
+                                        fontWeight: FontWeight.w400,
+                                        height: 0,
+                                        letterSpacing: -0.28,
+                                      ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: 8),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text('평균응답시간',
-                                    style: TextStyle(
-                                      color: colorMainGrey400,
-                                      fontSize: 14,
-                                      fontFamily: 'SUIT',
-                                      fontWeight: FontWeight.w400,
-                                      height: 0,
-                                      letterSpacing: -0.28,
+                                    Text('하루 이내',
+                                      style: TextStyle(
+                                        color: colorMainGrey800,
+                                        fontSize: 14,
+                                        fontFamily: 'SUIT',
+                                        fontWeight: FontWeight.w400,
+                                        height: 0,
+                                        letterSpacing: -0.28,
+                                      ),
                                     ),
-                                  ),
-                                  Text('하루 이내',
-                                    style: TextStyle(
-                                      color: colorMainGrey800,
-                                      fontSize: 14,
-                                      fontFamily: 'SUIT',
-                                      fontWeight: FontWeight.w400,
-                                      height: 0,
-                                      letterSpacing: -0.28,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          )
+                                  ],
+                                ),
+                              ],
+                            )
+                        ),
                       ),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 8),
                       Column(
                         children:[
                           ListTile(
@@ -670,14 +672,14 @@ class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> {
                       ),
                     ),
                     child: FadeInImage.assetNetwork(
-                      placeholder: 'assets/images/profile/placeholder.png',
+                      placeholder: (member.nickname == "artrooms" || member.nickname == "artroom") ? 'assets/images/chats/chat_artrooms.png' : 'assets/images/chats/placeholder_chat.png',
                       image: member.profileUrl != null ? member.profileUrl.toString() : "",
                       fit: BoxFit.cover,
                       fadeInDuration: const Duration(milliseconds: 100),
                       fadeOutDuration: const Duration(milliseconds: 100),
                       imageErrorBuilder: (context, error, stackTrace) {
                         return Image.asset(
-                          'assets/images/profile/placeholder.png',
+                          (member.nickname == "artrooms" || member.nickname == "artroom") ? 'assets/images/chats/chat_artrooms.png' : 'assets/images/chats/placeholder_chat.png',
                           fit: BoxFit.cover,
                         );
                       },

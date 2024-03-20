@@ -80,7 +80,7 @@ class DBStore {
     Map<String, dynamic> student = profile["student"];
     Map<String, dynamic> profileImg = profile["profileImg"];
 
-    await sharedPreferences.setString('userId', profile["id"] ?? "");
+    await sharedPreferences.setInt('userId', profile["id"] ?? 0);
     await sharedPreferences.setString('email', profile["email"] ?? "");
     await sharedPreferences.setString('userType', profile["type"] ?? "");
     await sharedPreferences.setString('name', student["name"] ?? "");
@@ -115,7 +115,7 @@ class DBStore {
   }
 
   bool isNoticeHide(DataNotice dataNotice) {
-    return false && getBool("NOTICE-${dataNotice.id}", false);
+    return getBool("NOTICE-${dataNotice.id}", false);
   }
 
   Future<void> logout() async {
