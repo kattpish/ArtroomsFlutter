@@ -42,6 +42,7 @@ class _MyScreenChatsState extends State<MyScreenChats> with WidgetsBindingObserv
   late Timer _timer;
 
   final ChatModule chatModule = ChatModule();
+  DBStore dbStore = DBStore();
 
   String selectChatId = "";
   bool isLoadingChatroom = false;
@@ -188,10 +189,10 @@ class _MyScreenChatsState extends State<MyScreenChats> with WidgetsBindingObserv
                         ? ListView.builder(
                       itemCount: listChats.length,
                       itemBuilder: (context, index) {
-                        DataChat myChat = listChats[index];
+                        DataChat dataChat = listChats[index];
                         return Container(
                           key: Key(listChats[index].id),
-                          child: buildListTile(context, index, myChat),
+                          child: buildListTile(context, index, dataChat),
                         );
                       },
                     )
@@ -235,7 +236,7 @@ class _MyScreenChatsState extends State<MyScreenChats> with WidgetsBindingObserv
     );
   }
 
-  Slidable buildListTile(BuildContext context, int index, DataChat myChat) {
+  Slidable buildListTile(BuildContext context, int index, DataChat dataChat) {
     return Slidable(
       key: const ValueKey(0),
       endActionPane: ActionPane(
@@ -243,15 +244,17 @@ class _MyScreenChatsState extends State<MyScreenChats> with WidgetsBindingObserv
         children: [
           CustomSlidableAction(
             flex: 1,
-            onPressed: _onClickOption1,
-            backgroundColor: colorMainGrey300,
+            onPressed: (context) {
+              _onClickOption1(context, dataChat);
+            },
+            backgroundColor: dataChat.isNotification ? colorMainGrey300 : colorMainGrey200,
             foregroundColor: Colors.white,
-            child: Image.asset('assets/images/icons/icon_bell.png', width: 24, height: 24),
+            child: Image.asset('assets/images/icons/icon_bell.png', width: 24, height: 24)
           ),
           CustomSlidableAction(
             flex: 1,
             onPressed: (context) {
-              _onClickOption2(context, myChat);
+              _onClickOption2(context, dataChat);
             },
             backgroundColor: colorPrimaryBlue,
             foregroundColor: Colors.white,
@@ -259,120 +262,118 @@ class _MyScreenChatsState extends State<MyScreenChats> with WidgetsBindingObserv
           ),
         ],
       ),
-      child: Container(
-        child: ListTile(
-          leading: Stack(
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4),
-                child: Container(
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                  ),
-                  clipBehavior: Clip.antiAlias,
-                  child: CircleAvatar(
-                    radius: 30,
-                    backgroundColor: Colors.transparent,
-                    child: FadeInImage.assetNetwork(
-                      placeholder: myChat.isArtrooms ? 'assets/images/chats/chat_artrooms.png' : 'assets/images/chats/placeholder_chat.png',
-                      image: myChat.profilePictureUrl,
-                      fit: BoxFit.cover,
-                      fadeInDuration: const Duration(milliseconds: 100),
-                      fadeOutDuration: const Duration(milliseconds: 100),
-                      imageErrorBuilder: (context, error, stackTrace) {
-                        return Image.asset(
-                          myChat.isArtrooms ? 'assets/images/chats/chat_artrooms.png' : 'assets/images/chats/placeholder_chat.png',
-                          fit: BoxFit.cover,
-                        );
-                      },
-                    ),
+      child: ListTile(
+        leading: Stack(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4),
+              child: Container(
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                ),
+                clipBehavior: Clip.antiAlias,
+                child: CircleAvatar(
+                  radius: 30,
+                  backgroundColor: Colors.transparent,
+                  child: FadeInImage.assetNetwork(
+                    placeholder: dataChat.isArtrooms ? 'assets/images/chats/chat_artrooms.png' : 'assets/images/chats/placeholder_chat.png',
+                    image: dataChat.profilePictureUrl,
+                    fit: BoxFit.cover,
+                    fadeInDuration: const Duration(milliseconds: 100),
+                    fadeOutDuration: const Duration(milliseconds: 100),
+                    imageErrorBuilder: (context, error, stackTrace) {
+                      return Image.asset(
+                        dataChat.isArtrooms ? 'assets/images/chats/chat_artrooms.png' : 'assets/images/chats/placeholder_chat.png',
+                        fit: BoxFit.cover,
+                      );
+                    },
                   ),
                 ),
               ),
-              Positioned(
-                top: 0,
-                right: 0,
-                  child:
-                  Visibility(
-                      visible: !myChat.isArtrooms,
-                      child: Container(
-                        padding: const EdgeInsets.all(2.0),
-                        margin: const EdgeInsets.all(6.0),
-                        decoration: const BoxDecoration(
-                          color: colorPrimaryBlue,
-                          shape:  BoxShape.circle,
-                        ),
-                        child:const Icon(Icons.star, size:10, color: Colors.white,),)
-                  ),
-              ),
-            ],
-          ),
-          title: Text(
-            myChat.name,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-              color: Color(0xFF1F1F1F),
-              fontSize: 15,
-              fontFamily: 'SUIT',
-              fontWeight: FontWeight.w700,
-              height: 0,
-              letterSpacing: -0.30,
             ),
-          ),
-          subtitle: Text(
-            myChat.lastMessage.getSummary(),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-              color: Color(0xFF6B6B6B),
-              fontSize: 13,
-              fontFamily: 'SUIT',
-              fontWeight: FontWeight.w400,
-              height: 0,
-              letterSpacing: -0.26,
+            Positioned(
+              top: 0,
+              right: 0,
+                child:
+                Visibility(
+                    visible: !dataChat.isArtrooms,
+                    child: Container(
+                      padding: const EdgeInsets.all(2.0),
+                      margin: const EdgeInsets.all(6.0),
+                      decoration: const BoxDecoration(
+                        color: colorPrimaryBlue,
+                        shape:  BoxShape.circle,
+                      ),
+                      child:const Icon(Icons.star, size:10, color: Colors.white,),)
+                ),
             ),
-          ),
-          trailing: Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                formatChatDateString(myChat.date),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  color: Color(0xFF979797),
-                  fontSize: 10,
-                  fontFamily: 'SUIT',
-                  fontWeight: FontWeight.w400,
-                  height: 0,
-                  letterSpacing: -0.20,
-                ),
-              ),
-              Visibility(
-                visible: myChat.unreadMessages > 0,
-                child: Container(
-                  margin: const EdgeInsets.only(right: 4),
-                  padding: const EdgeInsets.all(8),
-                  decoration: const BoxDecoration(
-                    color: colorPrimaryBlue,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Text(
-                    myChat.unreadMessages.toString(),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(color: Colors.white),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          onTap: () {
-            onSelectChat(context, myChat);
-          },
+          ],
         ),
+        title: Text(
+          dataChat.name,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: const TextStyle(
+            color: Color(0xFF1F1F1F),
+            fontSize: 15,
+            fontFamily: 'SUIT',
+            fontWeight: FontWeight.w700,
+            height: 0,
+            letterSpacing: -0.30,
+          ),
+        ),
+        subtitle: Text(
+          dataChat.lastMessage.getSummary(),
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+          style: const TextStyle(
+            color: Color(0xFF6B6B6B),
+            fontSize: 13,
+            fontFamily: 'SUIT',
+            fontWeight: FontWeight.w400,
+            height: 0,
+            letterSpacing: -0.26,
+          ),
+        ),
+        trailing: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              formatChatDateString(dataChat.date),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                color: Color(0xFF979797),
+                fontSize: 10,
+                fontFamily: 'SUIT',
+                fontWeight: FontWeight.w400,
+                height: 0,
+                letterSpacing: -0.20,
+              ),
+            ),
+            Visibility(
+              visible: dataChat.unreadMessages > 0,
+              child: Container(
+                margin: const EdgeInsets.only(right: 4),
+                padding: const EdgeInsets.all(8),
+                decoration: const BoxDecoration(
+                  color: colorPrimaryBlue,
+                  shape: BoxShape.circle,
+                ),
+                child: Text(
+                  dataChat.unreadMessages.toString(),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(color: Colors.white),
+                ),
+              ),
+            ),
+          ],
+        ),
+        onTap: () {
+          onSelectChat(context, dataChat);
+        },
       ),
     );
   }
@@ -417,11 +418,14 @@ class _MyScreenChatsState extends State<MyScreenChats> with WidgetsBindingObserv
     );
   }
 
-  void _onClickOption1(BuildContext context) {
-
+  void _onClickOption1(BuildContext context, DataChat dataChat) {
+    dbStore.toggleNotificationChat(dataChat);
+    setState(() {
+      dataChat.isNotification = dbStore.isNotificationChat(dataChat);
+    });
   }
 
-  void _onClickOption2(BuildContext context, DataChat myChat) {
+  void _onClickOption2(BuildContext context, DataChat dataChat) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -489,8 +493,8 @@ class _MyScreenChatsState extends State<MyScreenChats> with WidgetsBindingObserv
                   child: ElevatedButton(
                     onPressed: () {
                       setState(() {
-                        moduleSendBird.leaveChannel(myChat.id);
-                        listChats.remove(myChat);
+                        moduleSendBird.leaveChannel(dataChat.id);
+                        listChats.remove(dataChat);
                       });
                       Navigator.of(context).pop();
                     },
@@ -524,8 +528,8 @@ class _MyScreenChatsState extends State<MyScreenChats> with WidgetsBindingObserv
     );
   }
 
-  void onSelectChat(BuildContext context, DataChat myChat) {
-    if(myChat.id == selectChatId) return;
+  void onSelectChat(BuildContext context, DataChat dataChat) {
+    if(dataChat.id == selectChatId) return;
 
     if(isTablet(context)) {
 
@@ -533,16 +537,16 @@ class _MyScreenChatsState extends State<MyScreenChats> with WidgetsBindingObserv
         isLoadingChatroom = true;
       });
 
-      if(listScreenChatrooms.containsKey(myChat.id)) {
-        listScreenChatrooms.remove(myChat.id);
+      if(listScreenChatrooms.containsKey(dataChat.id)) {
+        listScreenChatrooms.remove(dataChat.id);
       }
 
       Future.delayed(const Duration(milliseconds: 100), () {
 
-        if(!listScreenChatrooms.containsKey(myChat.id)) {
+        if(!listScreenChatrooms.containsKey(dataChat.id)) {
 
           MyScreenChatroom myScreenChatroom = MyScreenChatroom(
-            chat: myChat,
+            chat: dataChat,
             widthRatio: 0.62,
             onBackPressed: () {
               setState(() {
@@ -551,11 +555,11 @@ class _MyScreenChatsState extends State<MyScreenChats> with WidgetsBindingObserv
             },
           );
 
-          listScreenChatrooms[myChat.id] = myScreenChatroom;
+          listScreenChatrooms[dataChat.id] = myScreenChatroom;
         }
 
         setState(() {
-          selectChatId = myChat.id;
+          selectChatId = dataChat.id;
           isLoadingChatroom = false;
         });
 
@@ -563,7 +567,7 @@ class _MyScreenChatsState extends State<MyScreenChats> with WidgetsBindingObserv
 
     }else {
       Navigator.push(context, MaterialPageRoute(builder: (context) {
-        return MyScreenChatroom(chat: myChat);
+        return MyScreenChatroom(chat: dataChat);
       }));
     }
   }
@@ -586,8 +590,10 @@ class _MyScreenChatsState extends State<MyScreenChats> with WidgetsBindingObserv
         listChatsAll.addAll(chats);
       });
 
-      for(DataChat chat in chats) {
-        showNotificationChat(chat);
+      for(DataChat dataChat in chats) {
+        if(dbStore.isNotificationChat(dataChat)) {
+          showNotificationChat(dataChat);
+        }
       }
 
     }).catchError((e) {

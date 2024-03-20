@@ -22,9 +22,6 @@ late final ModuleSendBird moduleSendBird;
 final MyRouteObserver routeObserver = MyRouteObserver();
 ModuleMedia moduleMedia = ModuleMedia();
 
-double screenWidth = 0;
-double screenHeight = 0;
-
 Future<void> main() async {
 
   WidgetsFlutterBinding.ensureInitialized();

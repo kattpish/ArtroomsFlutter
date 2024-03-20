@@ -1,6 +1,7 @@
 
 import 'dart:io';
 
+import 'package:artrooms/ui/screens/screen_photo_view.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 
@@ -10,6 +11,13 @@ import '../theme/theme_colors.dart';
 
 
 void viewPhoto(BuildContext buildContext, {File? fileImage, String imageUrl="", String fileName=""}) {
+
+  if(true) {
+    Navigator.push(buildContext, MaterialPageRoute(builder: (context) {
+      return ScreenPhotoView(fileImage: fileImage, imageUrl: imageUrl, fileName: fileName,);
+    }));
+    return;
+  }
 
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 

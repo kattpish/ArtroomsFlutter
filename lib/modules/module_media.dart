@@ -26,6 +26,16 @@ class ModuleMedia {
 
         isLoadingImages = false;
       });
+
+    }else {
+      Iterator<FileItem> iterator = imageFiles.iterator;
+      while (iterator.moveNext()) {
+        FileItem currentFileItem = iterator.current;
+        if (!await currentFileItem.file.exists()) {
+          imageFiles.remove(currentFileItem);
+          iterator = imageFiles.iterator;
+        }
+      }
     }
 
     if(!isLoadingMedia) {
@@ -36,6 +46,16 @@ class ModuleMedia {
 
         isLoadingMedia = false;
       });
+
+    }else {
+      Iterator<FileItem> iterator = mediaFiles.iterator;
+      while (iterator.moveNext()) {
+        FileItem currentFileItem = iterator.current;
+        if (!await currentFileItem.file.exists()) {
+          mediaFiles.remove(currentFileItem);
+          iterator = mediaFiles.iterator;
+        }
+      }
     }
 
   }

@@ -39,7 +39,6 @@ Future<void> downloadFile(BuildContext context, String url, String fileName, {sh
 
   final Directory dir = await getDownloadsDirectory() ?? directory;
 
-
   fileName = fileName.isEmpty ? path.basename(Uri.parse(url).path) : fileName;
 
   final String filePath = path.join(dir.path, "Artrooms-$fileName")

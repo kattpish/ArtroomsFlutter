@@ -1,7 +1,5 @@
 
-import 'package:artrooms/utils/utils.dart';
 import 'package:flutter/material.dart';
-import 'package:photo_view/photo_view.dart';
 
 import '../../beans/bean_chat.dart';
 import '../../beans/bean_message.dart';

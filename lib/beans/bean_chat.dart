@@ -1,4 +1,5 @@
 
+import 'package:artrooms/data/module_datastore.dart';
 import 'package:sendbird_sdk/sendbird_sdk.dart';
 import '../utils/utils.dart';
 import 'bean_message.dart';
@@ -15,6 +16,7 @@ class DataChat {
   String profilePictureUrl = "";
   MyMessage lastMessage = MyMessage.empty();
   bool isArtrooms = false;
+  bool isNotification = true;
 
   DataChat({
     required this.id,
@@ -52,6 +54,8 @@ class DataChat {
         dataChat.profilePictureUrl = "https://d2ous6lm13gwvv.cloudfront.net/image/2310190543464346_bc8443ee-ac3a-4306-adab-fd925492a358.jpg";
       }
     }
+
+    dataChat.isNotification = DBStore().isNotificationChat(dataChat);
 
     return dataChat;
   }

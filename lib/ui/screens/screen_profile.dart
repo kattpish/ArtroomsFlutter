@@ -2,6 +2,7 @@
 import 'package:artrooms/ui/screens/screen_login.dart';
 import 'package:artrooms/ui/screens/screen_notifications_sounds.dart';
 import 'package:artrooms/ui/screens/screen_profile_edit.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../beans/bean_profile.dart';
@@ -28,10 +29,15 @@ class _MyScreenProfileState extends State<MyScreenProfile> {
   DBStore dbStore = DBStore();
 
   MyProfile profile = MyProfile();
+  String name = "";
+  String nickName = "";
 
   @override
   void initState() {
     super.initState();
+
+    name = profile.name;
+    nickName = profile.nickName;
     fetchUserProfile();
   }
 
@@ -121,7 +127,7 @@ class _MyScreenProfileState extends State<MyScreenProfile> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      profile.name,
+                      name,
                       style: const TextStyle(
                         color: Color(0xFF111111),
                         fontSize: 20,
@@ -133,7 +139,7 @@ class _MyScreenProfileState extends State<MyScreenProfile> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      profile.nickName,
+                      nickName,
                       style: const TextStyle(
                         color: Color(0xFF565656),
                         fontSize: 14,
@@ -335,17 +341,29 @@ class _MyScreenProfileState extends State<MyScreenProfile> {
 
   void fetchUserProfile() async {
 
+    setState(() {
+      profile = MyProfile();
+      name = profile.name;
+      nickName = profile.nickName;
+    });
+
     Map<String, dynamic>? profileMap = await userModule.getMyProfile();
     if (profileMap != null) {
       dbStore.saveProfile(profileMap);
 
       setState(() {
         profile = MyProfile.fromProfileMap(profileMap);
+        name = profile.name;
+        nickName = profile.nickName;
       });
 
-      print("User Profile: $profileMap");
+      if (kDebugMode) {
+        print("User Profile: $profileMap");
+      }
     } else {
-      print("Failed to fetch user profile.");
+      if (kDebugMode) {
+        print("Failed to fetch user profile.");
+      }
     }
 
   }

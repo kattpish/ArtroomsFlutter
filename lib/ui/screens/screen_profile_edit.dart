@@ -187,7 +187,7 @@ class _MyScreenProfileEditState extends State<MyScreenProfileEdit> {
                       label: '이름',
                       controller: _nameController,
                       focus: _nameFocus,
-                      readOnly: true,
+                      readOnly: false,
                       onSubmitted: (_) {
                         FocusScope.of(context).requestFocus(_nicknameFocus);
                       }
@@ -511,6 +511,9 @@ class _MyScreenProfileEditState extends State<MyScreenProfileEdit> {
       _isSubmitting = true;
     });
 
+    profile.name = _nameController.text;
+    profile.nickName = _nicknameController.text;
+
     Map<String, dynamic>? resUpdateProfile = await userModule.updateProfile(
       userId: dbStore.getUserId(),
       name: _nameController.text,
@@ -524,6 +527,8 @@ class _MyScreenProfileEditState extends State<MyScreenProfileEdit> {
       setState(() {
         _isSubmitting = false;
       });
+
+      dbStore.saveProfile(resUpdateProfile);
 
       showSnackBar(context, "귀하의 계정 업데이트가 완료되었습니다.");
 

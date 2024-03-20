@@ -9,9 +9,9 @@ class MyProfile {
   String profileImg = DBStore().getProfileImg();
 
   MyProfile({
-    name = "",
-    nickName = "",
-    profileImg = "",
+    name,
+    nickName,
+    profileImg,
   });
 
   static MyProfile fromProfileMap(Map<String, dynamic> profileMap) {

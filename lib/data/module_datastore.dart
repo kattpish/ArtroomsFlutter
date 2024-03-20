@@ -110,6 +110,15 @@ class DBStore {
     return notification;
   }
 
+  void toggleNotificationChat(DataChat dataChat) {
+    bool isNotification = isNotificationChat(dataChat);
+    setBool("NOTIFICATION_CHAT-${dataChat.id}", !isNotification);
+  }
+
+  bool isNotificationChat(DataChat dataChat) {
+    return getBool("NOTIFICATION_CHAT-${dataChat.id}", true);
+  }
+
   void setNoticeHide(DataNotice dataNotice, bool hide) {
     setBool("NOTICE-${dataNotice.id}", hide);
   }

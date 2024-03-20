@@ -14,7 +14,6 @@ import '../../beans/bean_file.dart';
 import '../../beans/bean_message.dart';
 import '../../data/module_datastore.dart';
 import '../../main.dart';
-import '../../modules/module_media.dart';
 import '../../modules/module_messages.dart';
 import '../../utils/utils.dart';
 import '../../utils/utils_screen.dart';
