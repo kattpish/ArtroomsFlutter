@@ -13,6 +13,7 @@ import '../../beans/bean_chat.dart';
 import '../../beans/bean_file.dart';
 import '../../beans/bean_message.dart';
 import '../../data/module_datastore.dart';
+import '../../main.dart';
 import '../../modules/module_media.dart';
 import '../../modules/module_messages.dart';
 import '../../utils/utils.dart';
@@ -57,7 +58,6 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
 
   late final ModuleMessages moduleMessages;
   ModuleNotice moduleNotice = ModuleNotice();
-  ModuleMedia moduleMedia = ModuleMedia();
   DBStore dbStore = DBStore();
   DataNotice dataNotice = DataNotice();
 
@@ -155,7 +155,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
           return false;
         }else if(_showAttachmentFull) {
           setState(() {
-            _showAttachmentFull = false;
+            _attachmentPickerMin();
           });
           return false;
         }
@@ -394,7 +394,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
                                 child: InkWell(
                                   onTap: () {
                                     setState(() {
-                                      _showAttachmentFull = false;
+                                      _attachmentPickerMin();
                                     });
                                   },
                                 )
@@ -433,18 +433,12 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
               onTap: () {
                 setState(() {
                   if(_showAttachmentFull) {
-                    _boxHeight = 320;
-                    _showAttachment = true;
-                    _showAttachmentFull = false;
+                    _attachmentPickerMin();
                   }else if(_showAttachment) {
-                    _boxHeight = 320;
-                    _showAttachment = false;
-                    _showAttachmentFull = false;
+                    _attachmentPickerClose();
                     _deselectAll(false);
                   }else {
-                    _boxHeight = 320;
-                    _showAttachment = true;
-                    _showAttachmentFull = false;
+                    _attachmentPickerMin();
                     _loadMedia();
                   }
                   closeKeyboard(context);
@@ -1135,7 +1129,18 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
             Visibility(
               visible: type == 1,
               child: Expanded(
-                child: GridView.builder(
+                child: filesImages.isEmpty
+                    ? const Center(
+                  child: SizedBox(
+                    width: 30,
+                    height: 30,
+                    child: CircularProgressIndicator(
+                      color: Color(0xFF6A79FF),
+                      strokeWidth: 3,
+                    ),
+                  ),
+                )
+                    : GridView.builder(
                   controller: _scrollControllerAttachment1,
                   padding: const EdgeInsets.only(bottom: 24),
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -1214,7 +1219,18 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
             Visibility(
               visible: type == 2,
               child: Expanded(
-                child: GridView.builder(
+                child: filesMedia.isEmpty
+                    ? const Center(
+                  child: SizedBox(
+                    width: 40,
+                    height: 40,
+                    child: CircularProgressIndicator(
+                      color: Color(0xFF6A79FF),
+                      strokeWidth: 3,
+                    ),
+                  ),
+                )
+                    : GridView.builder(
                   controller: _scrollControllerAttachment2,
                   padding: const EdgeInsets.only(left: 8, top: 8, right: 8, bottom: 24),
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -1565,6 +1581,30 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
     );
   }
 
+  void _attachmentPickerFull() {
+    setState(() {
+      _boxHeight = _boxHeightMin;
+      _showAttachmentFull = true;
+      _showAttachment = false;
+    });
+  }
+
+  void _attachmentPickerMin() {
+    setState(() {
+      _boxHeight = _boxHeightMin;
+      _showAttachment = true;
+      _showAttachmentFull = false;
+    });
+  }
+
+  void _attachmentPickerClose() {
+    setState(() {
+      _boxHeight = _boxHeightMin;
+      _showAttachment = false;
+      _showAttachmentFull = false;
+    });
+  }
+
   void _onVerticalDragStart(DragStartDetails details) {
     _dragStartY = details.globalPosition.dy;
   }
@@ -1578,9 +1618,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
 
       if(_boxHeight < screenHeight - 100 && _boxHeight > screenHeight - 200) {
         print("_onVerticalDragUpdate-1");
-        _showAttachment = true;
-        _showAttachmentFull = false;
-        _boxHeight = _boxHeightMin;
+        _attachmentPickerMin();
       }else if(_boxHeight > _boxHeightMin + 160) {
         print("_onVerticalDragUpdate-2");
         _showAttachment = false;
@@ -1590,9 +1628,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
         }
       }else if(_boxHeight < _boxHeightMin - 160) {
         print("_onVerticalDragUpdate-3");
-        _showAttachment = false;
-        _showAttachmentFull = false;
-        _boxHeight = _boxHeightMin;
+        _attachmentPickerClose();
       }
 
     });
@@ -1609,9 +1645,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
       print("_scrollController-1");
       setState(() {
         _listReachedTop = true;
-        _showAttachment = true;
-        _showAttachmentFull = false;
-        _boxHeight = _boxHeightMin;
+        _attachmentPickerMin();
         _animationController.stop();
 
       });
@@ -1665,9 +1699,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
       print("_scrollController-1");
       setState(() {
         _listReachedTop = true;
-        _showAttachment = true;
-        _showAttachmentFull = false;
-        _boxHeight = _boxHeightMin;
+        _attachmentPickerMin();
         _animationController.stop();
       });
     }else if (_scrollControllerAttachment2.offset <= _scrollControllerAttachment2.position.minScrollExtent && _scrollControllerAttachment2.position.userScrollDirection == ScrollDirection.forward) {
@@ -1937,6 +1969,8 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
 
     filesImages.clear();
     filesMedia.clear();
+
+    moduleMedia.init();
 
     moduleMedia.loadFileImages().then((List<FileItem> listImages) {
 

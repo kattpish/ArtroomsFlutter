@@ -260,30 +260,52 @@ class _MyScreenChatsState extends State<MyScreenChats> with WidgetsBindingObserv
         ],
       ),
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 4),
         child: ListTile(
-          leading: Container(
-            decoration: const BoxDecoration(
-              shape: BoxShape.circle,
-            ),
-            clipBehavior: Clip.antiAlias,
-            child: CircleAvatar(
-              radius: 30,
-              backgroundColor: Colors.transparent,
-              child: FadeInImage.assetNetwork(
-                placeholder: myChat.isArtrooms ? 'assets/images/chats/chat_artrooms.png' : 'assets/images/chats/placeholder_chat.png',
-                image: myChat.profilePictureUrl,
-                fit: BoxFit.cover,
-                fadeInDuration: const Duration(milliseconds: 100),
-                fadeOutDuration: const Duration(milliseconds: 100),
-                imageErrorBuilder: (context, error, stackTrace) {
-                  return Image.asset(
-                    myChat.isArtrooms ? 'assets/images/chats/chat_artrooms.png' : 'assets/images/chats/placeholder_chat.png',
-                    fit: BoxFit.cover,
-                  );
-                },
+          leading: Stack(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                child: Container(
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                  ),
+                  clipBehavior: Clip.antiAlias,
+                  child: CircleAvatar(
+                    radius: 30,
+                    backgroundColor: Colors.transparent,
+                    child: FadeInImage.assetNetwork(
+                      placeholder: myChat.isArtrooms ? 'assets/images/chats/chat_artrooms.png' : 'assets/images/chats/placeholder_chat.png',
+                      image: myChat.profilePictureUrl,
+                      fit: BoxFit.cover,
+                      fadeInDuration: const Duration(milliseconds: 100),
+                      fadeOutDuration: const Duration(milliseconds: 100),
+                      imageErrorBuilder: (context, error, stackTrace) {
+                        return Image.asset(
+                          myChat.isArtrooms ? 'assets/images/chats/chat_artrooms.png' : 'assets/images/chats/placeholder_chat.png',
+                          fit: BoxFit.cover,
+                        );
+                      },
+                    ),
+                  ),
+                ),
               ),
-            ),
+              Positioned(
+                top: 0,
+                right: 0,
+                  child:
+                  Visibility(
+                      visible: !myChat.isArtrooms,
+                      child: Container(
+                        padding: const EdgeInsets.all(2.0),
+                        margin: const EdgeInsets.all(6.0),
+                        decoration: const BoxDecoration(
+                          color: colorPrimaryBlue,
+                          shape:  BoxShape.circle,
+                        ),
+                        child:const Icon(Icons.star, size:10, color: Colors.white,),)
+                  ),
+              ),
+            ],
           ),
           title: Text(
             myChat.name,

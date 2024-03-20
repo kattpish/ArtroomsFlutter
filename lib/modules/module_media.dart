@@ -11,9 +11,38 @@ import 'package:path/path.dart' as path;
 
 class ModuleMedia {
 
+  bool isLoadingImages = false;
+  bool isLoadingMedia = false;
+  List<FileItem> imageFiles = [];
+  List<FileItem> mediaFiles = [];
+
+  Future<void> init() async {
+
+    if(!isLoadingImages) {
+      isLoadingImages = true;
+
+      loadFileImages().then((List<FileItem> listImages) {
+        imageFiles.addAll(listImages);
+
+        isLoadingImages = false;
+      });
+    }
+
+    if(!isLoadingMedia) {
+      isLoadingMedia = true;
+
+      loadFilesMedia().then((List<FileItem> listMedia) {
+        mediaFiles.addAll(listMedia);
+
+        isLoadingMedia = false;
+      });
+    }
+
+  }
+
   Future<List<FileItem>> loadFileImages() async {
 
-    List<FileItem> imageFiles = [];
+    if(imageFiles.isNotEmpty) return imageFiles;
 
     List<FileItem> imageFiles1 = await loadFileImages1();
     List<FileItem> imageFiles2 = await loadFileImages2();
@@ -29,8 +58,6 @@ class ModuleMedia {
   }
 
   Future<List<FileItem>> loadFileImages1() async {
-
-    List<FileItem> imageFiles = [];
 
     List<AssetEntity> assetFiles = [];
 
@@ -72,7 +99,8 @@ class ModuleMedia {
   }
 
   Future<List<FileItem>> loadFileImages2() async {
-    List<FileItem> mediaFiles = [];
+
+    List<FileItem> imageFiles = [];
 
     var status = await Permission.storage.status;
     if (!status.isGranted) {
@@ -124,8 +152,6 @@ class ModuleMedia {
 
         if (await directory.exists()) {
 
-          print(directory.path);
-
           await for (var entity in directory.list(recursive: true, followLinks: false)) {
 
             if (entity is File) {
@@ -145,8 +171,8 @@ class ModuleMedia {
                   date: dateString,
                 );
 
-                if (!mediaFiles.contains(fileItem)) {
-                  mediaFiles.add(fileItem);
+                if (!imageFiles.contains(fileItem)) {
+                  imageFiles.add(fileItem);
                 }
               }
             }
@@ -158,12 +184,12 @@ class ModuleMedia {
       }
     }
 
-    return mediaFiles;
+    return imageFiles;
   }
 
   Future<List<FileItem>> loadFilesMedia() async {
 
-    List<FileItem> mediaFiles = [];
+    if(mediaFiles.isNotEmpty) return mediaFiles;
 
     List<FileItem> mediaFiles1 = await loadFilesMedia1();
     List<FileItem> mediaFiles2 = await loadFilesMedia2();
@@ -180,7 +206,7 @@ class ModuleMedia {
 
   Future<List<FileItem>> loadFilesMedia1() async {
 
-    List<FileItem> imageFiles = [];
+    List<FileItem> mediaFiles = [];
 
     List<AssetEntity> assetFiles = [];
 
@@ -214,8 +240,8 @@ class ModuleMedia {
                   date: dateString,
                 );
 
-                if (!imageFiles.contains(fileItem)) {
-                  imageFiles.add(fileItem);
+                if (!mediaFiles.contains(fileItem)) {
+                  mediaFiles.add(fileItem);
                 }
               }
 
@@ -234,10 +260,11 @@ class ModuleMedia {
       PhotoManager.openSetting();
     }
 
-    return imageFiles;
+    return mediaFiles;
   }
 
   Future<List<FileItem>> loadFilesMedia2() async {
+
     List<FileItem> mediaFiles = [];
 
     var status = await Permission.storage.status;

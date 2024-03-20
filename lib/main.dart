@@ -12,6 +12,7 @@ import 'package:intl/date_symbols.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'listners/listner_route_observer.dart';
+import 'modules/module_media.dart';
 import 'modules/module_sendbird.dart';
 
 
@@ -19,6 +20,7 @@ late final SharedPreferences sharedPreferences;
 late final DBStore dbStore;
 late final ModuleSendBird moduleSendBird;
 final MyRouteObserver routeObserver = MyRouteObserver();
+ModuleMedia moduleMedia = ModuleMedia();
 
 double screenWidth = 0;
 double screenHeight = 0;
@@ -39,6 +41,7 @@ Future<void> main() async {
   dbStore = DBStore();
   moduleSendBird = ModuleSendBird();
   await moduleSendBird.initSendbird();
+  moduleMedia.init();
 
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
   var initializationSettingsAndroid = const AndroidInitializationSettings('@drawable/icon_notification');
