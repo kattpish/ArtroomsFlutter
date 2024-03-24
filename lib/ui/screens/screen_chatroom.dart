@@ -546,6 +546,11 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
                       message.content,
                       style: const TextStyle(
                         color: Colors.white,
+                        fontSize: 16,
+                        fontFamily: 'SUIT',
+                        fontWeight: FontWeight.w400,
+                        height: 0.09,
+                        letterSpacing: -0.32,
                       ),
                     ),
                   ),
