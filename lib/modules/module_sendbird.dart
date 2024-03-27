@@ -1,5 +1,6 @@
 
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'package:path/path.dart' as path;
 
@@ -188,11 +189,26 @@ class ModuleSendBird {
     }
   }
 
-  Future<UserMessage> sendMessage(GroupChannel groupChannel, String text, {String data=""}) async {
-    Completer<UserMessage> completer = Completer();
-
+  // Future<UserMessage> sendMessage(GroupChannel groupChannel, String text, {String data=""}) async {
+  //   final params = UserMessageParams(message: text);
+  //   params.data = data;
+  //   return performSendMessage(groupChannel, text,params);
+  // }
+  Future<UserMessage> sendMessage(GroupChannel groupChannel, String text, {String data="",MyMessage? message}) async {
     final params = UserMessageParams(message: text);
-    params.data = data;
+     ParentMessage parentMessage = ParentMessage(message?.index ?? 0, message?.senderName ?? "", message?.content ?? "");
+     params.data =  const JsonEncoder().convert(parentMessage);
+    // params.parentMessageId = parentId;
+    return performSendMessage(groupChannel, text,params);
+  }
+  // Future<UserMessage> sendThreadedMessage(GroupChannel groupChannel, String text,String parentId, {String data=""}) async {
+  //   final params = UserMessageCreateParams(message: text)
+  //   ...parenMessageId(parentId);
+  //   params.data = data;
+  //   return performSendMessage(groupChannel, text,params);
+  // }
+  Future<UserMessage> performSendMessage(GroupChannel groupChannel, String text,UserMessageParams params) async {
+    Completer<UserMessage> completer = Completer();
 
     groupChannel.sendUserMessage(params, onCompleted: (UserMessage userMessage, error) {
       if (error != null) {
@@ -208,6 +224,7 @@ class ModuleSendBird {
 
     return completer.future;
   }
+
 
   Future<FileMessage> sendMessageFile(GroupChannel groupChannel, File file) async {
     Completer<FileMessage> completer = Completer();
