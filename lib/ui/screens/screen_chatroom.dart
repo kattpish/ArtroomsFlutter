@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:artrooms/beans/bean_notice.dart';
 import 'package:artrooms/modules/module_notices.dart';
@@ -578,12 +579,11 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
                         print("is mention $isMentioning" );
                       });
                     }
-                    if(text.endsWith(" ")){
+                    if(text.endsWith(" ")) {
                       setState(() {
                         isMentioning = false;
                       });
                     }
-                      print("alt pressed ${getAllMembers()}" );
                   },
                   decoration: InputDecoration(
                     hintText: '',
@@ -684,11 +684,8 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
                           crossAxisAlignment: CrossAxisAlignment.start,
 
                           children: [
-                            if(message.data != "") buildReply(message),
-                            const Divider(
-                                color: Colors.white
-                            ),
-                            const SizedBox(height: 20,),
+                            if(parseReplyMessage(message.data)) buildReply(message),
+                            const SizedBox(height: 10,),
                             Container(
                               padding: const EdgeInsets.only(left: 10),
                               child: Text(
@@ -2104,12 +2101,8 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
     return moduleMessages.getGroupChannel().members.length>2;
   }
 
-  List<String> getAllMembers(){
-    List<String> members = [];
-    moduleMessages.getGroupChannel().members.forEach((element) {
-      members.add(element.nickname);
-    });
-    return members;
+  List<Member> getAllMembers(){
+    return moduleMessages.getGroupChannel().members;
   }
   Future<void> _sendMessage() async {
     if (!_isButtonDisabled) {
@@ -2336,6 +2329,19 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
     });
   }
 
+  void onMentionSelected(Member member) {
+    print('member -> ${member.nickname}');
+    _messageController.text = "${_messageController.text}${member.nickname} ";
+    setState(() {
+      isMentioning = false;
+    });
+
+
+    // setState(() {
+    //   replyMessage = null;
+    // });
+  }
+
 
   Widget buildReplyForTextField() {
     return Container(
@@ -2348,19 +2354,26 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
   }
 
   Widget buildReply(MyMessage? message) {
-    return Container(
-        padding: const EdgeInsets.all(0),
-        decoration: const BoxDecoration(
-          // color: Colors.grey.withOpacity(0.2),
-          borderRadius: BorderRadius.only(
-            topLeft: inputTopRadius,
-            topRight: inputTopRadius,
-          ),
+    return Column(
+      children: [
+        Container(
+            padding: const EdgeInsets.all(0),
+            decoration: const BoxDecoration(
+              // color: Colors.grey.withOpacity(0.2),
+              borderRadius: BorderRadius.only(
+                topLeft: inputTopRadius,
+                topRight: inputTopRadius,
+              ),
+            ),
+            child: ReplyMessageFlowWidget(
+              message: message!,
+              key: null,
+            )),
+        const Divider(
+            color: Colors.white
         ),
-        child: ReplyMessageFlowWidget(
-          message: message!,
-          key: null,
-        ));
+      ],
+    );
   }
 
   Widget buildMentions() {
@@ -2375,10 +2388,21 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
         ),
         child: MentionedUser(
           member: getAllMembers(),
-          key: null, onCancelReply: cancelMention,
+          key: null, onCancelReply: onMentionSelected,
         ));
     // child: Text("data"));
   }
 
+  bool parseReplyMessage(String json){
+    try{
+      ParentMessage parentMessage = ParentMessage.fromJson(const JsonDecoder().convert(json));
+      if (parentMessage.messageId != 0 && parentMessage.senderName != "") {
+        return true;
+      }
+      return false;
+    }catch(_){
+      return false;
+    }
+  }
 
 }

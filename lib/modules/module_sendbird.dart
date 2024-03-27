@@ -196,7 +196,8 @@ class ModuleSendBird {
   // }
   Future<UserMessage> sendMessage(GroupChannel groupChannel, String text, {String data="",MyMessage? message}) async {
     final params = UserMessageParams(message: text);
-     ParentMessage parentMessage = ParentMessage(message?.index ?? 0, message?.senderName ?? "", message?.content ?? "");
+     ParentMessage parentMessage = ParentMessage(message?.index ?? 0, message?.content ?? "", message?.senderId ?? "",message?.senderName ?? "");
+     params.mentionedUserIds = [];
      params.data =  const JsonEncoder().convert(parentMessage);
     // params.parentMessageId = parentId;
     return performSendMessage(groupChannel, text,params);

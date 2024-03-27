@@ -1,9 +1,12 @@
 
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:sendbird_sdk/core/models/member.dart';
 
 class MentionedUser extends StatelessWidget {
-  final List<String> member;
-  final VoidCallback onCancelReply;
+  final List<Member> member;
+  final void Function(Member) onCancelReply;
 
   const MentionedUser({super.key,
     required this.member,
@@ -12,49 +15,43 @@ class MentionedUser extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) =>
-      IntrinsicHeight(
-          child: Row(
+      SizedBox(
+        height: min(200.0, 50.0 * member.length),
+        child: Row(
+            children: [
+              Container(
+                color: Colors.green,
+                width: 4,
+              ),
+              const SizedBox(width: 8),
+              Expanded(child: buildReplyMessage(member))
+            ]),
+      );
+
+  Widget buildReplyMessage(List<Member> memberList) {
+    return ListView.builder(itemCount: memberList.length,shrinkWrap: true,itemBuilder: (context,index){
+      return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            InkWell(
+              onTap: (){
+                onCancelReply(memberList[index]);
+              },
+              child: Row(
               children: [
-                Container(
-                  color: Colors.green,
-                  width: 4,
+                Expanded(
+                  child: Text(
+                    memberList[index].nickname,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
                 ),
-                const SizedBox(width: 8),
-                Expanded(child: buildReplyMessage(member))
-              ]));
-
-  Widget buildReplyMessage(List<String> memberList) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Column(children: [
-          Row(
-            children: [
-               Expanded(
-                child: Text(
-                  memberList[0],
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-              ),
-            ],
+              ],
           ),
-          const SizedBox(height: 8),
-          const Text('', style: TextStyle(color: Colors.black54)),
-          Row(
-            children: [
-               Expanded(
-                child: Text(
-                  memberList[1],
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          const Text('', style: TextStyle(color: Colors.black54)),
-        ],),
-
-      ],
-    );
+            ),
+            const SizedBox(height: 8),
+            const Text('', style: TextStyle(color: Colors.black54)),
+          ]
+      );}
+      );
   }
 }

@@ -27,7 +27,7 @@ class ReplyMessageFlowWidget extends StatelessWidget {
 
   Widget buildReplyMessageForText() {
     // Map<String, dynamic> jsonInput
-    late ParentMessage parentMessage = ParentMessage(0, "", "");
+    late ParentMessage parentMessage = ParentMessage(0, "", "","");
     try{
        parentMessage = ParentMessage.fromJson(const JsonDecoder().convert(message.data));
     }catch(_){

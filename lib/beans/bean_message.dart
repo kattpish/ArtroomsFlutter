@@ -168,13 +168,15 @@ class MyMessage {
 class ParentMessage {
   int messageId;
   String content;
+  String senderId;
   String senderName;
-  ParentMessage(this.messageId, this.content, this.senderName);
+  ParentMessage(this.messageId, this.content,this.senderId, this.senderName);
 
   // named constructor
   ParentMessage.fromJson(Map<String, dynamic> json)
       : messageId = json['messageId'],
         content = json['content'],
+        senderId = json['senderId'],
         senderName = json['senderName'];
 
   // method
@@ -182,6 +184,7 @@ class ParentMessage {
     return {
       'messageId': messageId,
       'content': content,
+      'senderId': senderId,
       'senderName': senderName,
     };
   }
