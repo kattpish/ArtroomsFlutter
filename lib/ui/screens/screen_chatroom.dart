@@ -50,6 +50,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
 
   final List<MyMessage> listMessages = [];
   final ScrollController _scrollController = ScrollController();
+  final ScrollController _scrollControllerList = ScrollController();
   final ScrollController _scrollControllerAttachment1 = ScrollController();
   final ScrollController _scrollControllerAttachment2 = ScrollController();
   final TextEditingController _messageController = TextEditingController();
@@ -83,13 +84,23 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
   void initState() {
     super.initState();
     _messageController.addListener(_checkIfButtonShouldBeEnabled);
-    _scrollController.addListener(_onScroll);
+    _scrollControllerList.addListener(_onScroll);
     _scrollControllerAttachment1.addListener(_scrollListener1);
     _scrollControllerAttachment2.addListener(_scrollListener2);
     moduleMessages = ModuleMessages(widget.chat.id);
     _loadMessages();
     _loadNotice();
     _loadMedia();
+
+    messageFocusNode.addListener(() {
+      if (messageFocusNode.hasFocus) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+    });
 
     messageFocusNode.addListener(() {
       if (messageFocusNode.hasFocus) {
@@ -129,6 +140,8 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
   void dispose() {
     _messageController.dispose();
     _scrollController.dispose();
+    messageFocusNode.dispose();
+    _scrollControllerList.dispose();
     _scrollControllerAttachment1.dispose();
     _scrollControllerAttachment2.dispose();
     _scrollTimer?.cancel();
@@ -198,7 +211,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
                         ),
                       ),
                       centerTitle: true,
-                      elevation: 0.5,
+                      elevation: 0.1,
                       toolbarHeight: 60,
                       backgroundColor: Colors.white,
                       actions: [
@@ -221,6 +234,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
                                 )
                             ),
                             onTap: () {
+                              closeKeyboard(context);
                               Navigator.push(context, MaterialPageRoute(builder: (context) {
                                 return MyScreenChatroomDrawer(myChat: widget.chat,);
                               }));
@@ -240,69 +254,75 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
                             children: [
                               Container(
                                 padding: const EdgeInsets.symmetric(vertical: 0),
-                                child: listMessages.isNotEmpty ? ListView.builder(
-                                  controller: _scrollController,
-                                  itemCount: listMessages.length,
-                                  reverse: true,
-                                  itemBuilder: (context, index) {
-                                    itemKeys[index] = GlobalKey();
-                                    final message = listMessages[index];
-                                    final isLast = index == 0;
-                                    final messageNext = index > 0 ? listMessages[index - 1] : MyMessage.empty();
-                                    final messagePrevious = index < listMessages.length - 1 ? listMessages[index + 1] : MyMessage.empty();
-                                    final isPreviousSame = messagePrevious.senderId == message.senderId;
-                                    final isNextSame = messageNext.senderId == message.senderId;
-                                    final isPreviousDate = messagePrevious.getDate() == message.getDate();
-                                    final isPreviousSameDateTime = isPreviousSame && messagePrevious.getDateTime() == message.getDateTime();
-                                    final isNextSameTime = isNextSame && messageNext.getDateTime() == message.getDateTime();
-                                    return Column(
-                                      key: itemKeys[index],
-                                      children: [
-                                        Visibility(
-                                          visible: !isPreviousDate,
-                                          child: Container(
-                                            width: 145,
-                                            height: 31,
-                                            margin: EdgeInsets.only(left: 16, right: 16, top: index == 0 ? 4 : 16, bottom: index == 0 ? 4 : 8),
-                                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                                            alignment: Alignment.center,
-                                            decoration: ShapeDecoration(
-                                              color: const Color(0xFFF9F9F9),
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(20),
+                                child: listMessages.isNotEmpty ? GestureDetector(
+                                  onTap: () {
+                                    closeKeyboard(context);
+                                  },
+                                  child: ListView.builder(
+                                    controller: _scrollControllerList,
+                                    itemCount: listMessages.length,
+                                    physics: const BouncingScrollPhysics(),
+                                    reverse: true,
+                                    itemBuilder: (context, index) {
+                                      itemKeys[index] = GlobalKey();
+                                      final message = listMessages[index];
+                                      final isLast = index == 0;
+                                      final messageNext = index > 0 ? listMessages[index - 1] : MyMessage.empty();
+                                      final messagePrevious = index < listMessages.length - 1 ? listMessages[index + 1] : MyMessage.empty();
+                                      final isPreviousSame = messagePrevious.senderId == message.senderId;
+                                      final isNextSame = messageNext.senderId == message.senderId;
+                                      final isPreviousDate = messagePrevious.getDate() == message.getDate();
+                                      final isPreviousSameDateTime = isPreviousSame && messagePrevious.getDateTime() == message.getDateTime();
+                                      final isNextSameTime = isNextSame && messageNext.getDateTime() == message.getDateTime();
+                                      return Column(
+                                        key: itemKeys[index],
+                                        children: [
+                                          Visibility(
+                                            visible: !isPreviousDate,
+                                            child: Container(
+                                              width: 145,
+                                              height: 31,
+                                              margin: EdgeInsets.only(left: 16, right: 16, top: index == 0 ? 4 : 16, bottom: index == 0 ? 4 : 8),
+                                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                                              alignment: Alignment.center,
+                                              decoration: ShapeDecoration(
+                                                color: const Color(0xFFF9F9F9),
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius: BorderRadius.circular(20),
+                                                ),
+                                              ),
+                                              child: Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                mainAxisAlignment: MainAxisAlignment.start,
+                                                crossAxisAlignment: CrossAxisAlignment.center,
+                                                children: [
+                                                  Text(
+                                                    formatDateLastMessage(message.timestamp),
+                                                    style: const TextStyle(
+                                                      color: Color(0xFF7D7D7D),
+                                                      fontSize: 12,
+                                                      fontFamily: 'SUIT',
+                                                      fontWeight: FontWeight.w400,
+                                                      height: 0,
+                                                      letterSpacing: -0.24,
+                                                    ),
+                                                    maxLines: 1,
+                                                    overflow: TextOverflow.ellipsis,
+                                                    textAlign: TextAlign.center,
+                                                  ),
+                                                ],
                                               ),
                                             ),
-                                            child: Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              mainAxisAlignment: MainAxisAlignment.start,
-                                              crossAxisAlignment: CrossAxisAlignment.center,
-                                              children: [
-                                                Text(
-                                                  formatDateLastMessage(message.timestamp),
-                                                  style: const TextStyle(
-                                                    color: Color(0xFF7D7D7D),
-                                                    fontSize: 12,
-                                                    fontFamily: 'SUIT',
-                                                    fontWeight: FontWeight.w400,
-                                                    height: 0,
-                                                    letterSpacing: -0.24,
-                                                  ),
-                                                  maxLines: 1,
-                                                  overflow: TextOverflow.ellipsis,
-                                                  textAlign: TextAlign.center,
-                                                ),
-                                              ],
-                                            ),
                                           ),
-                                        ),
-                                        Container(
-                                          child: message.isMe
-                                              ? _buildMyMessageBubble(message, isLast, isPreviousSameDateTime, isNextSameTime)
-                                              : _buildOtherMessageBubble(message, isLast, isPreviousSame, isNextSame, isPreviousSameDateTime, isNextSameTime),
-                                        ),
-                                      ],
-                                    );
-                                  },
+                                          Container(
+                                            child: message.isMe
+                                                ? _buildMyMessageBubble(message, isLast, isPreviousSameDateTime, isNextSameTime)
+                                                : _buildOtherMessageBubble(message, isLast, isPreviousSame, isNextSame, isPreviousSameDateTime, isNextSameTime),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  ),
                                 )
                                     : buildNoChats(context),
                               ),
@@ -324,16 +344,16 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
                                 child: buildNoticePin(context),
                               ),
                               AnimatedOpacity(
-                                opacity: _showDateContainer ? 0.0 : 0.0,
+                                opacity: _showDateContainer ? 1.0 : 0.0,
                                 duration: const Duration(milliseconds: 500),
                                 child: Container(
                                   width: 145,
                                   height: 31,
-                                  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+                                  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                                   alignment: Alignment.center,
                                   decoration: ShapeDecoration(
-                                    color: const Color(0xFFF9F9F9),
+                                    color: const Color(0xCDF9F9F9),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(20),
                                     ),
@@ -460,10 +480,11 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
               focusNode: messageFocusNode,
               decoration: InputDecoration(
                 hintText: '',
-                border: UnderlineInputBorder(
+                border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(25),
                   borderSide: BorderSide.none,
                 ),
+                contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 12.0),
                 filled: true,
                 fillColor: const Color(0xFFF3F3F3),
               ),
@@ -510,7 +531,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
           Visibility(
             visible: message.content.isNotEmpty,
             child: Container(
-              margin: const EdgeInsets.symmetric(vertical: 2),
+              margin: const EdgeInsets.symmetric(vertical: 1),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 crossAxisAlignment: CrossAxisAlignment.end,
@@ -532,7 +553,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
                   const SizedBox(width: 8),
                   Container(
                     constraints: BoxConstraints(maxWidth: screenWidth * 0.55),
-                    padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+                    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                     decoration: BoxDecoration(
                       color: colorPrimaryBlue,
                       borderRadius: BorderRadius.only(
@@ -544,12 +565,12 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
                     ),
                     child: Text(
                       message.content,
+                      textAlign: TextAlign.center,
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 16,
                         fontFamily: 'SUIT',
                         fontWeight: FontWeight.w400,
-                        height: 0.09,
                         letterSpacing: -0.32,
                       ),
                     ),
@@ -648,7 +669,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
                             ),
                           ),
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 6),
                         Visibility(
                           visible: message.content.isNotEmpty,
                           child: Container(
@@ -672,6 +693,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
                                   constraints: BoxConstraints(maxWidth: screenWidth * 0.55,),
                                   child: Text(
                                     message.content,
+                                    textAlign: TextAlign.center,
                                     style: const TextStyle(
                                       color: Color(0xFF1F1F1F),
                                       fontSize: 16,
@@ -755,7 +777,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
     if (message.attachmentUrl.isNotEmpty) {
       return Container(
         width: 216,
-        margin: const EdgeInsets.symmetric(vertical: 4),
+        margin: const EdgeInsets.symmetric(vertical: 1),
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
         constraints: BoxConstraints(maxWidth: screenWidth * 0.55),
         decoration: BoxDecoration(
@@ -1146,6 +1168,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
                 )
                     : GridView.builder(
                   controller: _scrollControllerAttachment1,
+                  physics: const BouncingScrollPhysics(),
                   padding: const EdgeInsets.only(bottom: 24),
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: isTablet(context) ? 6 : 3,
@@ -1236,6 +1259,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
                 )
                     : GridView.builder(
                   controller: _scrollControllerAttachment2,
+                  physics: const BouncingScrollPhysics(),
                   padding: const EdgeInsets.only(left: 8, top: 8, right: 8, bottom: 24),
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: crossAxisCount,
@@ -1352,6 +1376,8 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 4),
       child: SingleChildScrollView(
+        controller: _scrollController,
+        physics: const BouncingScrollPhysics(),
         scrollDirection: Axis.horizontal,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -1781,8 +1807,8 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
 
   int _findFirstVisibleItem() {
 
-    final scrollPosition = _scrollController.position.pixels;
-    final viewportHeight = _scrollController.position.viewportDimension;
+    final scrollPosition = _scrollControllerList.position.pixels;
+    final viewportHeight = _scrollControllerList.position.viewportDimension;
 
     for (int i = 0; i < itemKeys.length; i++) {
       final key = itemKeys[i];
@@ -1821,8 +1847,8 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
 
       if(_isLoading) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (_scrollController.hasClients) {
-            _scrollController.jumpTo(0);
+          if (_scrollControllerList.hasClients) {
+            _scrollControllerList.jumpTo(0);
           }
         });
       }
@@ -1899,8 +1925,6 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
         _showAttachment = false;
         _showAttachmentFull = false;
       });
-
-      closeKeyboard(context);
 
       if(_selectedImages > 0) {
 
@@ -2000,7 +2024,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
   }
 
   void _scrollToBottom() {
-    _scrollController.animateTo(0,
+    _scrollControllerList.animateTo(0,
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeOut,
     );

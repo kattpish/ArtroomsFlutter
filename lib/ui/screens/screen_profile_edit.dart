@@ -96,6 +96,7 @@ class _MyScreenProfileEditState extends State<MyScreenProfileEdit> {
         child: Stack(
           children: [
             SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,

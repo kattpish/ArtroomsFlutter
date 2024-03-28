@@ -80,6 +80,7 @@ class _MyScreeLoginState extends State<MyScreenLogin> {
                     Expanded(
                       child: Center(
                         child: SingleChildScrollView(
+                          physics: const BouncingScrollPhysics(),
                           child: Container(
                             constraints: const BoxConstraints(maxWidth: 375),
                             child: Column(

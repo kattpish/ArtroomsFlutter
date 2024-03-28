@@ -91,6 +91,7 @@ class _MyScreenProfileState extends State<MyScreenProfile> {
       ),
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
         child: Column(
           children: [
             const SizedBox(height: 20),

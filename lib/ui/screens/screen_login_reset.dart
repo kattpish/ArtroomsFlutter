@@ -83,7 +83,7 @@ class _MyScreenLoginResetState extends State<MyScreenLoginReset> with SingleTick
             ),
           ),
           centerTitle: true,
-          elevation: 0.5,
+          elevation: 0.2,
           toolbarHeight: 60,
           backgroundColor: Colors.white,
           bottom: TabBar(
@@ -177,6 +177,7 @@ class _MyScreenLoginResetState extends State<MyScreenLoginReset> with SingleTick
 
   Widget _buildIdTab() {
     return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
       child: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
@@ -304,6 +305,7 @@ class _MyScreenLoginResetState extends State<MyScreenLoginReset> with SingleTick
 
   Widget _buildPasswordTab() {
     return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
       child: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(

@@ -64,7 +64,7 @@ class _MyScreenNoticesState extends State<MyScreenNotices> {
               letterSpacing: -0.36,
             ),
           ),
-          elevation: 0.5,
+          elevation: 0.2,
         ),
         bottomNavigationBar: BottomAppBar(
           height: isTablet(context) ? 0 : 0,
@@ -104,6 +104,7 @@ class _MyScreenNoticesState extends State<MyScreenNotices> {
           child: Stack(
             children: [
               ListView(
+                physics: const BouncingScrollPhysics(),
                 children: notifications.map((notice) {
                   return Card(
                     margin: const EdgeInsets.only(bottom: 8.0),

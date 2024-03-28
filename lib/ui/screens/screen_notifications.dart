@@ -73,6 +73,7 @@ class _MyScreenNotificationsState extends State<MyScreenNotifications> {
         ),
         backgroundColor: colorMainScreen,
         body: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
           child: Column(
             children: [
               const SizedBox(height: 16),

@@ -32,6 +32,27 @@ String formatDateLastMessage(int timestamp) {
 }
 
 String formatChatDateString(String dateString) {
+  if (dateString.isNotEmpty) {
+    final DateTime date = DateTime.parse(dateString);
+    final DateTime now = DateTime.now();
+    final DateTime today = DateTime(now.year, now.month, now.day);
+    final DateTime yesterday = today.subtract(const Duration(days: 1));
+    final DateFormat timeFormat = DateFormat("a h:mm", "ko_KR");
+
+    if (date.isAfter(today.subtract(const Duration(seconds: 1)))) {
+      return timeFormat.format(date).replaceAll("AM", "오전").replaceAll("PM", "오후");
+    } else if (date.isAfter(yesterday.subtract(const Duration(seconds: 1)))) {
+      return "어제";
+    } else if (date.year == now.year) {
+      return "${date.month}월 ${date.day.toString().padLeft(2, '0')}일";
+    } else {
+      return "${date.year}.${date.month.toString().padLeft(2, '0')}.${date.day.toString().padLeft(2, '0')}";
+    }
+  }
+  return "";
+}
+
+String formatChatDateString1(String dateString) {
 
   if(dateString.isNotEmpty) {
 

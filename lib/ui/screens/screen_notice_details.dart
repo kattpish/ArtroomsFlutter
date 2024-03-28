@@ -47,7 +47,7 @@ class _MyScreenNoticeDetailsState extends State<MyScreenNoticeDetails> {
             ),
           ),
           leadingWidth: 32,
-          elevation: 0.5,
+          elevation: 0.2,
         ),
         backgroundColor: colorMainScreen,
         bottomNavigationBar: BottomAppBar(
@@ -83,6 +83,7 @@ class _MyScreenNoticeDetailsState extends State<MyScreenNoticeDetails> {
           ),
         ),
         body: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
           child: Container(
             margin: const EdgeInsets.only(bottom: 8.0),
             child: Column(

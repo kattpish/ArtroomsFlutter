@@ -100,103 +100,132 @@ class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> {
             ),
           )
         ],
-        elevation: 0.5,
+        elevation: 0.2,
         backgroundColor: Colors.white,
       ),
-      body: Stack(
-        children: [
-          Column(
-            children: [
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      const SizedBox(height: 16),
-                      Row(
-                        children: [
-                          Container(
-                            width: 64,
-                            height: 64,
-                            margin: const EdgeInsets.only(left: 16.0),
-                            clipBehavior: Clip.antiAlias,
-                            decoration: const BoxDecoration(
-                              shape: BoxShape.circle,
-                            ),
-                            child: CircleAvatar(
-                              radius: 32,
-                              child: FadeInImage.assetNetwork(
-                                placeholder: widget.myChat.isArtrooms ? 'assets/images/chats/chat_artrooms.png' : 'assets/images/chats/placeholder_chat.png',
-                                image: widget.myChat.profilePictureUrl,
-                                fit: BoxFit.cover,
-                                fadeInDuration: const Duration(milliseconds: 100),
-                                fadeOutDuration: const Duration(milliseconds: 100),
-                                imageErrorBuilder: (context, error, stackTrace) {
-                                  return Image.asset(
-                                    widget.myChat.isArtrooms ? 'assets/images/chats/chat_artrooms.png' : 'assets/images/chats/placeholder_chat.png',
-                                    fit: BoxFit.cover,
-                                  );
-                                },
+      body: SafeArea(
+        child: Stack(
+          children: [
+            Column(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    physics: const BouncingScrollPhysics(),
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 16),
+                        Row(
+                          children: [
+                            Container(
+                              width: 64,
+                              height: 64,
+                              margin: const EdgeInsets.only(left: 16.0),
+                              clipBehavior: Clip.antiAlias,
+                              decoration: const BoxDecoration(
+                                shape: BoxShape.circle,
                               ),
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                widget.myChat.name,
-                                style: const TextStyle(
-                                  fontSize: 18,
-                                  color: colorMainGrey900,
-                                  fontWeight: FontWeight.w800,
-                                  fontFamily: 'SUIT',
-                                  height: 0,
-                                  letterSpacing: -0.36,
+                              child: CircleAvatar(
+                                radius: 32,
+                                child: FadeInImage.assetNetwork(
+                                  placeholder: widget.myChat.isArtrooms ? 'assets/images/chats/chat_artrooms.png' : 'assets/images/chats/placeholder_chat.png',
+                                  image: widget.myChat.profilePictureUrl,
+                                  fit: BoxFit.cover,
+                                  fadeInDuration: const Duration(milliseconds: 100),
+                                  fadeOutDuration: const Duration(milliseconds: 100),
+                                  imageErrorBuilder: (context, error, stackTrace) {
+                                    return Image.asset(
+                                      widget.myChat.isArtrooms ? 'assets/images/chats/chat_artrooms.png' : 'assets/images/chats/placeholder_chat.png',
+                                      fit: BoxFit.cover,
+                                    );
+                                  },
                                 ),
                               ),
-                              const SizedBox(height: 4),
-                              Text(
-                                widget.myChat.nameKr,
-                                style: const TextStyle(
-                                  color: Color(0xFF565656),
-                                  fontSize: 14,
-                                  fontFamily: 'SUIT',
-                                  fontWeight: FontWeight.w600,
-                                  height: 0,
-                                  letterSpacing: -0.28,
-                                ),
-                              )
-                            ],
-                          )
-                        ],
-                      ),
-                      Visibility(
-                        visible: !widget.myChat.isArtrooms,
-                        child: Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
-                            padding: const EdgeInsets.all(20.0),
-                            decoration: BoxDecoration(
-                              color: colorMainGrey100,
-                              borderRadius: BorderRadius.circular(16.0),
                             ),
-                            child: const Column(
+                            const SizedBox(width: 12),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      '주중피드백',
-                                      style: TextStyle(
-                                        color: colorMainGrey400,
-                                        fontSize: 14,
-                                        fontFamily: 'SUIT',
-                                        fontWeight: FontWeight.w400,
-                                        height: 0,
-                                        letterSpacing: -0.28,
+                                Text(
+                                  widget.myChat.name,
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                    color: colorMainGrey900,
+                                    fontWeight: FontWeight.w800,
+                                    fontFamily: 'SUIT',
+                                    height: 0,
+                                    letterSpacing: -0.36,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  widget.myChat.nameKr,
+                                  style: const TextStyle(
+                                    color: Color(0xFF565656),
+                                    fontSize: 14,
+                                    fontFamily: 'SUIT',
+                                    fontWeight: FontWeight.w600,
+                                    height: 0,
+                                    letterSpacing: -0.28,
+                                  ),
+                                )
+                              ],
+                            )
+                          ],
+                        ),
+                        Visibility(
+                          visible: !widget.myChat.isArtrooms,
+                          child: Container(
+                              margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
+                              padding: const EdgeInsets.all(20.0),
+                              decoration: BoxDecoration(
+                                color: colorMainGrey100,
+                                borderRadius: BorderRadius.circular(16.0),
+                              ),
+                              child: const Column(
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        '주중피드백',
+                                        style: TextStyle(
+                                          color: colorMainGrey400,
+                                          fontSize: 14,
+                                          fontFamily: 'SUIT',
+                                          fontWeight: FontWeight.w400,
+                                          height: 0,
+                                          letterSpacing: -0.28,
+                                        ),
                                       ),
-                                    ),
-                                    Text(
-                                        '간단히 가능',
+                                      Text(
+                                          '간단히 가능',
+                                          style: TextStyle(
+                                            color: colorMainGrey800,
+                                            fontSize: 14,
+                                            fontFamily: 'SUIT',
+                                            fontWeight: FontWeight.w400,
+                                            height: 0,
+                                            letterSpacing: -0.28,
+                                          )
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(height: 8),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text('수업상담',
+                                        style: TextStyle(
+                                          color: colorMainGrey400,
+                                          fontSize: 14,
+                                          fontFamily: 'SUIT',
+                                          fontWeight: FontWeight.w400,
+                                          height: 0,
+                                          letterSpacing: -0.28,
+                                        ),
+                                      ),
+                                      Text(
+                                        '불가능',
                                         style: TextStyle(
                                           color: colorMainGrey800,
                                           fontSize: 14,
@@ -204,373 +233,347 @@ class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> {
                                           fontWeight: FontWeight.w400,
                                           height: 0,
                                           letterSpacing: -0.28,
-                                        )
-                                    ),
-                                  ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(height: 8),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text('채팅가능시간',
+                                        style: TextStyle(
+                                          color: colorMainGrey400,
+                                          fontSize: 14,
+                                          fontFamily: 'SUIT',
+                                          fontWeight: FontWeight.w400,
+                                          height: 0,
+                                          letterSpacing: -0.28,
+                                        ),
+                                      ),
+                                      Text('월 화 수',
+                                        style: TextStyle(
+                                          color: colorMainGrey800,
+                                          fontSize: 14,
+                                          fontFamily: 'SUIT',
+                                          fontWeight: FontWeight.w400,
+                                          height: 0,
+                                          letterSpacing: -0.28,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(height: 8),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text('평균응답시간',
+                                        style: TextStyle(
+                                          color: colorMainGrey400,
+                                          fontSize: 14,
+                                          fontFamily: 'SUIT',
+                                          fontWeight: FontWeight.w400,
+                                          height: 0,
+                                          letterSpacing: -0.28,
+                                        ),
+                                      ),
+                                      Text(' 11시~20시',
+                                        style: TextStyle(
+                                          color: colorMainGrey800,
+                                          fontSize: 14,
+                                          fontFamily: 'SUIT',
+                                          fontWeight: FontWeight.w400,
+                                          height: 0,
+                                          letterSpacing: -0.28,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(height: 8),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text('평균응답시간',
+                                        style: TextStyle(
+                                          color: colorMainGrey400,
+                                          fontSize: 14,
+                                          fontFamily: 'SUIT',
+                                          fontWeight: FontWeight.w400,
+                                          height: 0,
+                                          letterSpacing: -0.28,
+                                        ),
+                                      ),
+                                      Text('하루 이내',
+                                        style: TextStyle(
+                                          color: colorMainGrey800,
+                                          fontSize: 14,
+                                          fontFamily: 'SUIT',
+                                          fontWeight: FontWeight.w400,
+                                          height: 0,
+                                          letterSpacing: -0.28,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              )
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Column(
+                          children:[
+                            ListTile(
+                              title: const Text(
+                                '메모',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: colorMainGrey900,
+                                  fontFamily: 'SUIT',
+                                  fontWeight: FontWeight.w600,
+                                  height: 0,
+                                  letterSpacing: -0.32,
                                 ),
-                                SizedBox(height: 8),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text('수업상담',
-                                      style: TextStyle(
-                                        color: colorMainGrey400,
-                                        fontSize: 14,
-                                        fontFamily: 'SUIT',
-                                        fontWeight: FontWeight.w400,
-                                        height: 0,
-                                        letterSpacing: -0.28,
-                                      ),
-                                    ),
-                                    Text(
-                                      '불가능',
-                                      style: TextStyle(
-                                        color: colorMainGrey800,
-                                        fontSize: 14,
-                                        fontFamily: 'SUIT',
-                                        fontWeight: FontWeight.w400,
-                                        height: 0,
-                                        letterSpacing: -0.28,
-                                      ),
-                                    ),
-                                  ],
+                              ),
+                              trailing: const Icon(
+                                Icons.chevron_right,
+                                color: Colors.black,
+                                size: 20,
+                              ),
+                              onTap: () async {
+                                await Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                  return MyScreenMemo(myChat: widget.myChat,);
+                                }));
+                                _loadMemo();
+                              },
+                            ),
+                            Container(
+                              height: 82,
+                              margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 0.0),
+                              padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 0.0),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(10.0),
+                                border: Border.all(color: const Color(0xFFF3F3F3), width: 1.0,),
+                              ),
+                              child: TextFormField(
+                                controller: _memoController,
+                                decoration: InputDecoration(
+                                  hintText: '메모가 없습니다.',
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                    borderSide: BorderSide.none,
+                                  ),
+                                  filled: true,
+                                  fillColor: Colors.white,
                                 ),
-                                SizedBox(height: 8),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text('채팅가능시간',
-                                      style: TextStyle(
-                                        color: colorMainGrey400,
-                                        fontSize: 14,
-                                        fontFamily: 'SUIT',
-                                        fontWeight: FontWeight.w400,
-                                        height: 0,
-                                        letterSpacing: -0.28,
-                                      ),
-                                    ),
-                                    Text('월 화 수',
-                                      style: TextStyle(
-                                        color: colorMainGrey800,
-                                        fontSize: 14,
-                                        fontFamily: 'SUIT',
-                                        fontWeight: FontWeight.w400,
-                                        height: 0,
-                                        letterSpacing: -0.28,
-                                      ),
-                                    ),
-                                  ],
+                                minLines: 2,
+                                maxLines: 2,
+                                readOnly: true,
+                                keyboardType: TextInputType.multiline,
+                                style: const TextStyle(
+                                  color: colorMainGrey900,
+                                  fontSize: 16,
+                                  fontFamily: 'SUIT',
+                                  fontWeight: FontWeight.w300,
+                                  letterSpacing: -0.32,
                                 ),
-                                SizedBox(height: 8),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text('평균응답시간',
-                                      style: TextStyle(
-                                        color: colorMainGrey400,
-                                        fontSize: 14,
-                                        fontFamily: 'SUIT',
-                                        fontWeight: FontWeight.w400,
-                                        height: 0,
-                                        letterSpacing: -0.28,
-                                      ),
-                                    ),
-                                    Text(' 11시~20시',
-                                      style: TextStyle(
-                                        color: colorMainGrey800,
-                                        fontSize: 14,
-                                        fontFamily: 'SUIT',
-                                        fontWeight: FontWeight.w400,
-                                        height: 0,
-                                        letterSpacing: -0.28,
-                                      ),
-                                    ),
-                                  ],
+                              ),
+                            )
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+                        Column(
+                          children:[
+                            ListTile(
+                              title: const Text(
+                                '공지',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: colorMainGrey900,
+                                  fontFamily: 'SUIT',
+                                  fontWeight: FontWeight.w600,
+                                  height: 0,
+                                  letterSpacing: -0.32,
                                 ),
-                                SizedBox(height: 8),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text('평균응답시간',
-                                      style: TextStyle(
-                                        color: colorMainGrey400,
-                                        fontSize: 14,
-                                        fontFamily: 'SUIT',
-                                        fontWeight: FontWeight.w400,
-                                        height: 0,
-                                        letterSpacing: -0.28,
-                                      ),
+                              ),
+                              trailing: const Icon(
+                                Icons.chevron_right,
+                                color: Colors.black,
+                                size: 20,
+                              ),
+                              onTap: () {
+                                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                  return MyScreenNotices(myChat: widget.myChat,);
+                                }));
+                              },
+                            ),
+                            Container(
+                              height: 82,
+                              margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 0.0),
+                              padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 0.0),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(10.0),
+                                border: Border.all(color: const Color(0xFFF3F3F3), width: 1.0,),
+                              ),
+                              child: TextFormField(
+                                controller: _noticeController,
+                                decoration: InputDecoration(
+                                  hintText: '공지가 없습니다.',
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                    borderSide: BorderSide.none,
+                                  ),
+                                  filled: true,
+                                  fillColor: Colors.white,
+                                ),
+                                minLines: 2,
+                                maxLines: 2,
+                                readOnly: true,
+                                keyboardType: TextInputType.multiline,
+                                style: const TextStyle(
+                                  color: Color(0xFF979797),
+                                  fontSize: 16,
+                                  fontFamily: 'SUIT',
+                                  fontWeight: FontWeight.w300,
+                                  letterSpacing: -0.32,
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+                        Column(
+                          children:[
+                            Column(
+                              children: [
+                                ListTile(
+                                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0.0),
+                                  title: const Text(
+                                    '이미지',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: colorMainGrey900,
+                                      fontFamily: 'SUIT',
+                                      fontWeight: FontWeight.w600,
+                                      height: 0,
+                                      letterSpacing: -0.32,
                                     ),
-                                    Text('하루 이내',
-                                      style: TextStyle(
-                                        color: colorMainGrey800,
-                                        fontSize: 14,
-                                        fontFamily: 'SUIT',
-                                        fontWeight: FontWeight.w400,
-                                        height: 0,
-                                        letterSpacing: -0.28,
-                                      ),
-                                    ),
-                                  ],
+                                  ),
+                                  trailing: const Icon(
+                                    Icons.chevron_right,
+                                    color: Colors.black,
+                                    size: 20,
+                                  ),
+                                  onTap: () {
+                                    Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                      return MyScreenChatroomPhoto(myChat: widget.myChat,);
+                                    }));
+                                  },
+                                ),
+                                Container(
+                                    alignment: Alignment.topLeft,
+                                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                                    child: buildAttachmentsImages(context, listAttachmentsImages)
                                 ),
                               ],
-                            )
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Column(
-                        children:[
-                          ListTile(
-                            title: const Text(
-                              '메모',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: colorMainGrey900,
-                                fontFamily: 'SUIT',
-                                fontWeight: FontWeight.w600,
-                                height: 0,
-                                letterSpacing: -0.32,
-                              ),
                             ),
-                            trailing: const Icon(
-                              Icons.chevron_right,
-                              color: Colors.black,
-                              size: 20,
-                            ),
-                            onTap: () async {
-                              await Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                return MyScreenMemo(myChat: widget.myChat,);
-                              }));
-                              _loadMemo();
-                            },
-                          ),
-                          Container(
-                            height: 82,
-                            margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 0.0),
-                            padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 0.0),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(10.0),
-                              border: Border.all(color: const Color(0xFFF3F3F3), width: 1.0,),
-                            ),
-                            child: TextFormField(
-                              controller: _memoController,
-                              decoration: InputDecoration(
-                                hintText: '메모가 없습니다.',
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8.0),
-                                  borderSide: BorderSide.none,
+                            ListTile(
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0.0),
+                              title: const Text(
+                                '파일',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: colorMainGrey900,
+                                  fontFamily: 'SUIT',
+                                  fontWeight: FontWeight.w600,
+                                  height: 0,
+                                  letterSpacing: -0.32,
                                 ),
-                                filled: true,
-                                fillColor: Colors.white,
                               ),
-                              minLines: 2,
-                              maxLines: 2,
-                              readOnly: true,
-                              keyboardType: TextInputType.multiline,
-                              style: const TextStyle(
-                                color: colorMainGrey900,
-                                fontSize: 16,
-                                fontFamily: 'SUIT',
-                                fontWeight: FontWeight.w300,
-                                letterSpacing: -0.32,
+                              trailing: const Icon(
+                                Icons.chevron_right,
+                                color: Colors.black,
+                                size: 20,
                               ),
+                              onTap: () {
+                                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                  return MyScreenChatroomFile(myChat: widget.myChat,);
+                                }));
+                              },
                             ),
-                          )
-                        ],
-                      ),
-                      const SizedBox(height: 16),
-                      Column(
-                        children:[
-                          ListTile(
-                            title: const Text(
-                              '공지',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: colorMainGrey900,
-                                fontFamily: 'SUIT',
-                                fontWeight: FontWeight.w600,
-                                height: 0,
-                                letterSpacing: -0.32,
-                              ),
+                            const Divider(
+                              thickness: 2,
+                              color: colorMainGrey150,
                             ),
-                            trailing: const Icon(
-                              Icons.chevron_right,
-                              color: Colors.black,
-                              size: 20,
-                            ),
-                            onTap: () {
-                              Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                return MyScreenNotices(myChat: widget.myChat,);
-                              }));
-                            },
-                          ),
-                          Container(
-                            height: 82,
-                            margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 0.0),
-                            padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 0.0),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(10.0),
-                              border: Border.all(color: const Color(0xFFF3F3F3), width: 1.0,),
-                            ),
-                            child: TextFormField(
-                              controller: _noticeController,
-                              decoration: InputDecoration(
-                                hintText: '공지가 없습니다.',
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10.0),
-                                  borderSide: BorderSide.none,
-                                ),
-                                filled: true,
-                                fillColor: Colors.white,
-                              ),
-                              minLines: 2,
-                              maxLines: 2,
-                              readOnly: true,
-                              keyboardType: TextInputType.multiline,
-                              style: const TextStyle(
-                                color: Color(0xFF979797),
-                                fontSize: 16,
-                                fontFamily: 'SUIT',
-                                fontWeight: FontWeight.w300,
-                                letterSpacing: -0.32,
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
-                      const SizedBox(height: 16),
-                      Column(
-                        children:[
-                          Column(
-                            children: [
-                              ListTile(
-                                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0.0),
-                                title: const Text(
-                                  '이미지',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: colorMainGrey900,
-                                    fontFamily: 'SUIT',
-                                    fontWeight: FontWeight.w600,
-                                    height: 0,
-                                    letterSpacing: -0.32,
+                            Column(
+                              children: [
+                                ListTile(
+                                  title: const Text(
+                                    '대화상대',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: colorMainGrey900,
+                                      fontFamily: 'SUIT',
+                                      fontWeight: FontWeight.w600,
+                                      height: 0,
+                                      letterSpacing: -0.32,
+                                    ),
                                   ),
-                                ),
-                                trailing: const Icon(
-                                  Icons.chevron_right,
-                                  color: Colors.black,
-                                  size: 20,
-                                ),
-                                onTap: () {
-                                  Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                    return MyScreenChatroomPhoto(myChat: widget.myChat,);
-                                  }));
-                                },
-                              ),
-                              Container(
-                                  alignment: Alignment.topLeft,
-                                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                                  child: buildAttachmentsImages(context, listAttachmentsImages)
-                              ),
-                            ],
-                          ),
-                          ListTile(
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0.0),
-                            title: const Text(
-                              '파일',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: colorMainGrey900,
-                                fontFamily: 'SUIT',
-                                fontWeight: FontWeight.w600,
-                                height: 0,
-                                letterSpacing: -0.32,
-                              ),
-                            ),
-                            trailing: const Icon(
-                              Icons.chevron_right,
-                              color: Colors.black,
-                              size: 20,
-                            ),
-                            onTap: () {
-                              Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                return MyScreenChatroomFile(myChat: widget.myChat,);
-                              }));
-                            },
-                          ),
-                          const Divider(
-                            thickness: 2,
-                            color: colorMainGrey150,
-                          ),
-                          Column(
-                            children: [
-                              ListTile(
-                                title: const Text(
-                                  '대화상대',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: colorMainGrey900,
-                                    fontFamily: 'SUIT',
-                                    fontWeight: FontWeight.w600,
-                                    height: 0,
-                                    letterSpacing: -0.32,
-                                  ),
-                                ),
-                                onTap: () {
+                                  onTap: () {
 
-                                },
-                              ),
-                              Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                                  child: buildMembers(context, listMembers)
-                              ),
-                            ],
-                          ),
-                        ],
-                      )
-                    ],
-                  ),
-                ),
-              ),
-              Container(
-                margin: const EdgeInsets.only(bottom: 32),
-                child: Column(
-                  children: [
-                    const Divider(
-                      thickness: 2,
-                      color: colorMainGrey150,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        IconButton(
-                            icon: Image.asset('assets/images/icons/icon_forward.png', width: 24, height: 24, color: const Color(0xFFD9D9D9),),
-                            onPressed: () {
-                              _onClickOption1(context);
-                            }
-                        ),
-                        IconButton(
-                            icon: Image.asset('assets/images/icons/icon_bell.png', width: 24, height: 24, color: const Color(0xFFD9D9D9),),
-                            onPressed: () {
-                              Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                return const MyScreenNotificationsSounds();
-                              }));
-                            }
-                        ),
+                                  },
+                                ),
+                                Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                                    child: buildMembers(context, listMembers)
+                                ),
+                              ],
+                            ),
+                          ],
+                        )
                       ],
                     ),
-                  ],
+                  ),
                 ),
-              )
-            ],
-          ),
-          Visibility(
-              visible: _isLoading,
-              child: const MyLoaderPage()
-          ),
-        ],
+                Container(
+                  margin: const EdgeInsets.only(bottom: 16),
+                  child: Column(
+                    children: [
+                      const Divider(
+                        thickness: 2,
+                        color: colorMainGrey150,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          IconButton(
+                              icon: Image.asset('assets/images/icons/icon_forward.png', width: 24, height: 24, color: const Color(0xFFD9D9D9),),
+                              onPressed: () {
+                                _onClickOption1(context);
+                              }
+                          ),
+                          IconButton(
+                              icon: Image.asset('assets/images/icons/icon_bell.png', width: 24, height: 24, color: const Color(0xFFD9D9D9),),
+                              onPressed: () {
+                                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                  return const MyScreenNotificationsSounds();
+                                }));
+                              }
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            ),
+            Visibility(
+                visible: _isLoading,
+                child: const MyLoaderPage()
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -705,6 +708,7 @@ class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> {
 
   Widget buildAttachmentsImages(BuildContext context, List<MyMessage> listAttachmentsImages) {
     return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
       scrollDirection: Axis.horizontal,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,

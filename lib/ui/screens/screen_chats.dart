@@ -113,34 +113,16 @@ class _MyScreenChatsState extends State<MyScreenChats> with WidgetsBindingObserv
                 toolbarHeight: 60,
                 elevation: 0,
                 actions: [
-                  PopupMenuButton<String>(
-                    itemBuilder: (BuildContext context) {
-                      return {'설정', '알림 및 소리'}
-                          .map((String choice) {
-                        return PopupMenuItem<String>(
-                          value: choice,
-                          child: Text(choice),
-                        );
-                      }).toList();
-                    },
-                    icon: const Icon(
-                        Icons.more_vert,
-                        color: colorMainGrey250
-                    ),
-                    onSelected: (value) {
-                      switch (value) {
-                        case '설정':
-                          Navigator.push(context, MaterialPageRoute(builder: (context) {
-                            return const MyScreenProfile();
-                          }));
-                          break;
-                        case '알림 및 소리':
-                          Navigator.push(context, MaterialPageRoute(builder: (context) {
-                            return const MyScreenNotificationsSounds();
-                          }));
-                          break;
+                  IconButton(
+                      icon: const Icon(
+                          Icons.more_vert,
+                          color: colorMainGrey250
+                      ),
+                      onPressed: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) {
+                          return const MyScreenProfile();
+                        }));
                       }
-                    },
                   ),
                 ],
               ),
@@ -187,6 +169,7 @@ class _MyScreenChatsState extends State<MyScreenChats> with WidgetsBindingObserv
                   Expanded(
                     child: (listChats.isNotEmpty || isSearching)
                         ? ListView.builder(
+                      physics: const BouncingScrollPhysics(),
                       itemCount: listChats.length,
                       itemBuilder: (context, index) {
                         DataChat dataChat = listChats[index];
@@ -355,17 +338,27 @@ class _MyScreenChatsState extends State<MyScreenChats> with WidgetsBindingObserv
             Visibility(
               visible: dataChat.unreadMessages > 0,
               child: Container(
-                margin: const EdgeInsets.only(right: 4),
-                padding: const EdgeInsets.all(8),
+                margin: const EdgeInsets.only(right: 0),
+                height: 20,
+                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+                constraints: const BoxConstraints(minWidth: 20),
                 decoration: const BoxDecoration(
-                  color: colorPrimaryBlue,
-                  shape: BoxShape.circle,
+                  color: Color(0xFFe85e3d),
+                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
                 ),
                 child: Text(
                   dataChat.unreadMessages.toString(),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(color: Colors.white),
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 10,
+                    fontFamily: 'SUIT',
+                    fontWeight: FontWeight.w700,
+                    height: 0,
+                    letterSpacing: -0.24,
+                  ),
                 ),
               ),
             ),

@@ -74,13 +74,14 @@ class _MyScreenChatroomFileState extends State<MyScreenChatroomFile> {
             },
           ),
           leadingWidth: 32,
-          elevation: 0.5,
+          elevation: 0.2,
         ),
         backgroundColor: colorMainScreen,
         body: SafeArea(
           child: _isLoading
               ? const MyLoader()
               : GridView.builder(
+            physics: const BouncingScrollPhysics(),
             padding: const EdgeInsets.only(left: 16, top: 12, right: 16, bottom: 32),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: crossAxisCount,
@@ -180,26 +181,28 @@ class _MyScreenChatroomFileState extends State<MyScreenChatroomFile> {
             },
           ),
         ),
-        bottomNavigationBar: Container(
-          height: 44,
-          margin: const EdgeInsets.only(left: 16.0, right: 16.0, top: 16, bottom: 40),
-          decoration: BoxDecoration(color: _isButtonFileDisabled ? colorPrimaryBlue400.withAlpha(100) : colorPrimaryBlue,
-            borderRadius: BorderRadius.circular(30),
-          ),
-          child: TextButton(
-            onPressed: () {
-              selectFiles();
-            },
-            child:const Text(
-                '저장',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontFamily: 'SUIT',
-                  fontWeight: FontWeight.w700,
-                  height: 0,
-                  letterSpacing: -0.32,
-                )
+        bottomNavigationBar: SafeArea(
+          child: Container(
+            height: 44,
+            margin: const EdgeInsets.only(left: 16.0, right: 16.0, top: 16, bottom: 16),
+            decoration: BoxDecoration(color: _isButtonFileDisabled ? colorPrimaryBlue400.withAlpha(100) : colorPrimaryBlue,
+              borderRadius: BorderRadius.circular(30),
+            ),
+            child: TextButton(
+              onPressed: () {
+                selectFiles();
+              },
+              child:const Text(
+                  '저장',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontFamily: 'SUIT',
+                    fontWeight: FontWeight.w700,
+                    height: 0,
+                    letterSpacing: -0.32,
+                  )
+              ),
             ),
           ),
         ),
