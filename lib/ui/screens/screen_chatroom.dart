@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:artrooms/beans/bean_notice.dart';
 import 'package:artrooms/modules/module_notices.dart';
@@ -25,6 +26,7 @@ import '../../modules/module_messages.dart';
 import '../../utils/utils.dart';
 import '../../utils/utils_screen.dart';
 import '../theme/theme_colors.dart';
+import '../widgets/dispal_message_text.dart';
 import '../widgets/widget_media.dart';
 
 class MyScreenChatroom extends StatefulWidget {
@@ -685,19 +687,12 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
 
                           children: [
                             if(parseReplyMessage(message.data)) buildReply(message),
-                            const SizedBox(height: 10,),
+
                             Container(
+                              // height: min(100, message.content.length * 2),
                               padding: const EdgeInsets.only(left: 10),
-                              child: Text(
-                                message.content,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                  fontFamily: 'SUIT',
-                                  fontWeight: FontWeight.w400,
-                                  height: 0.09,
-                                  letterSpacing: -0.32,
-                                ),
+                              child: DisplayMessageText(
+                                message: message.content,
                               ),
                             ),
                           ],
@@ -2372,6 +2367,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
         const Divider(
             color: Colors.white
         ),
+        // const SizedBox(height: 2,),
       ],
     );
   }

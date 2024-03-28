@@ -13,6 +13,7 @@ dependencies:
   flutter_slidable: ^3.0.1
   url_launcher: ^6.1.14
   sendbird_sdk: ^3.0.11
+#  sendbird_chat_sdk: ^4.2.7
   intl: ^0.17.0
   http: ^0.13.3
   shared_preferences: ^2.0.15
@@ -22,6 +23,7 @@ dependencies:
   path_provider: ^2.0.2
   photo_manager: ^3.0.0
   flutter_local_notifications: ^16.3.2
+  focused_menu: ^1.0.5
   # background_fetch: ^1.2.2
 
 dev_dependencies:
