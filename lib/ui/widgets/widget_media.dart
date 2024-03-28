@@ -1,7 +1,7 @@
 
 import 'dart:io';
 
-import 'package:artrooms/ui/screens/screen_photo_view.dart';
+import 'package:artrooms/ui/widgets/screen_photo_view.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 

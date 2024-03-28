@@ -58,7 +58,6 @@ class _MyScreenChatsState extends State<MyScreenChats> with WidgetsBindingObserv
       }));
       return;
     }
-
     requestPermissions(context);
 
     loadChats();

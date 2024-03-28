@@ -780,7 +780,6 @@ class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> {
 
   Future<void> _loadMembers() async {
     List<User> members = await moduleSendBird.getGroupChannelMembers(widget.myChat.id);
-
     setState(() {
       listMembers = members;
     });

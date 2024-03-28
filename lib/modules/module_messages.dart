@@ -69,13 +69,13 @@ class ModuleMessages {
     return messages;
   }
 
-  Future<MyMessage> sendMessage(String text) async {
+  Future<MyMessage> sendMessage(String text,MyMessage? message) async {
 
     if(!_isInitialized) {
       await initChannel();
     }
 
-    final UserMessage userMessage = await moduleSendBird.sendMessage(_groupChannel, text.trim());
+    final UserMessage userMessage = await moduleSendBird.sendMessage(_groupChannel, text.trim(),message: message);
 
     final myMessage = MyMessage.fromBaseMessage(userMessage);
 
@@ -333,5 +333,7 @@ class ModuleMessages {
       return null;
     }
   }
-
+  GroupChannel getGroupChannel(){
+    return _groupChannel;
+  }
 }

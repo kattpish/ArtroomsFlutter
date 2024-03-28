@@ -29,6 +29,8 @@ class MyMessage {
   bool isSelected = false;
   bool isSending = false;
   bool isDownloading = false;
+  int? parentMessageId;
+  String data = "";
 
   MyMessage.empty({
     this.index = 0,
@@ -54,6 +56,8 @@ class MyMessage {
         senderName = baseMessage.sender?.nickname ?? "",
         timestamp = baseMessage.createdAt,
         isMe = baseMessage.sender?.userId.toString() == dbStore.getUid(),
+        parentMessageId = baseMessage.parentMessageId,
+        data = baseMessage.data != null ? baseMessage.data! : "",
         profilePictureUrl = baseMessage.sender?.profileUrl ?? ""
   {
 
@@ -157,6 +161,32 @@ class MyMessage {
       sizeStr = sizeStr.substring(0, sizeStr.length - 3);
     }
     return "$sizeStr$unit";
+  }
+
+}
+
+class ParentMessage {
+  int messageId;
+  String content;
+  String senderId;
+  String senderName;
+  ParentMessage(this.messageId, this.content,this.senderId, this.senderName);
+
+  // named constructor
+  ParentMessage.fromJson(Map<String, dynamic> json)
+      : messageId = json['messageId'],
+        content = json['content'],
+        senderId = json['senderId'],
+        senderName = json['senderName'];
+
+  // method
+  Map<String, dynamic> toJson() {
+    return {
+      'messageId': messageId,
+      'content': content,
+      'senderId': senderId,
+      'senderName': senderName,
+    };
   }
 
 }
