@@ -62,7 +62,7 @@ class _MyScreenChatsState extends State<MyScreenChats> with WidgetsBindingObserv
     requestPermissions(context);
 
     loadChats();
-    _timer = Timer.periodic(const Duration(seconds: 30), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 15), (timer) {
       loadChats();
     });
 
@@ -522,6 +522,9 @@ class _MyScreenChatsState extends State<MyScreenChats> with WidgetsBindingObserv
   }
 
   void onSelectChat(BuildContext context, DataChat dataChat) {
+
+    chatModule.markMessageAsRead(dataChat);
+
     if(dataChat.id == selectChatId) return;
 
     if(isTablet(context)) {

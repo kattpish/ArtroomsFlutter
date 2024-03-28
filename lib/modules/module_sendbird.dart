@@ -260,4 +260,13 @@ class ModuleSendBird {
     return completer.future;
   }
 
+  Future<void> markMessageAsRead(GroupChannel groupChannel) async {
+    try {
+      groupChannel.markAsRead();
+      print("Messages marked as read.");
+    } catch (e) {
+      print("Failed to mark message as read: $e");
+    }
+  }
+
 }

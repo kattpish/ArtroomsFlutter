@@ -12,18 +12,17 @@ class ChatModule {
     final List<DataChat> chats = [];
 
     await moduleSendBird.getListOfGroupChannels().then((List<GroupChannel> groupChannels) {
-
       for (GroupChannel groupChannel in groupChannels) {
-
-        print('My GroupChannel:` ${groupChannel.toJson()}');
-
         final DataChat myChat = DataChat.fromGroupChannel(groupChannel);
         chats.add(myChat);
       }
-
     });
 
     return chats;
+  }
+
+  Future<void> markMessageAsRead(DataChat dataChat) async {
+    moduleSendBird.markMessageAsRead(dataChat.groupChannel);
   }
 
 }

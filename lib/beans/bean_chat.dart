@@ -7,6 +7,7 @@ import 'bean_message.dart';
 
 class DataChat {
 
+  GroupChannel groupChannel;
   final String id;
   final String name;
   String nameKr = " ";
@@ -19,6 +20,7 @@ class DataChat {
   bool isNotification = true;
 
   DataChat({
+    required this.groupChannel,
     required this.id,
     required this.name,
     required this.lastMessage,
@@ -27,9 +29,9 @@ class DataChat {
     required this.date,
   });
 
-  factory DataChat.fromGroupChannel(GroupChannel channel) {
+  factory DataChat.fromGroupChannel(GroupChannel groupChannel) {
 
-    final BaseMessage? lastBaseMessage = channel.lastMessage;
+    final BaseMessage? lastBaseMessage = groupChannel.lastMessage;
     String messageDate = '';
 
     MyMessage lastMessage = MyMessage.empty();
@@ -39,11 +41,12 @@ class DataChat {
     }
 
     final DataChat dataChat = DataChat(
-      id: channel.channelUrl,
-      name: channel.name ?? "",
+      groupChannel: groupChannel,
+      id: groupChannel.channelUrl,
+      name: groupChannel.name ?? "",
       lastMessage: lastMessage,
-      unreadMessages: channel.unreadMessageCount,
-      profilePictureUrl: channel.coverUrl ?? channel.coverUrl ??'',
+      unreadMessages: groupChannel.unreadMessageCount,
+      profilePictureUrl: groupChannel.coverUrl ?? groupChannel.coverUrl ??'',
       date: messageDate,
     );
 
