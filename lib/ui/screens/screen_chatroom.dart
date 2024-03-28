@@ -1783,19 +1783,27 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
     }
   }
 
-  int _firstVisibleItemIndex = 0;
+  int _firstVisibleItemIndex = -1;
   void _onItemPositionsChanged() {
 
     final visiblePositions = itemPositionsListener.itemPositions.value
-        .where((ItemPosition position) => position.itemTrailingEdge > 0);
+        .where((ItemPosition position) {
+      return position.itemTrailingEdge > 0;
+    });
     if (visiblePositions.isEmpty) return;
 
     final firstVisibleItemIndex = visiblePositions
-        .reduce((ItemPosition max, ItemPosition position) =>
-    position.itemTrailingEdge > max.itemTrailingEdge ? position : max)
-        .index;
+        .reduce((ItemPosition max, ItemPosition position) {
+      return position.itemTrailingEdge > max.itemTrailingEdge ? position : max;
+    }).index;
 
-    if(_firstVisibleItemIndex == firstVisibleItemIndex) return;
+    if(_firstVisibleItemIndex == -1) {
+      _firstVisibleItemIndex = firstVisibleItemIndex;
+      return;
+    }else if(_firstVisibleItemIndex == firstVisibleItemIndex) {
+      return;
+    }
+
     _firstVisibleItemIndex = firstVisibleItemIndex;
 
     if (_scrollTimer?.isActive ?? false) _scrollTimer?.cancel();
@@ -1809,7 +1817,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
         _currentDate = formatDateLastMessage(firstVisibleMessage.timestamp);
       });
 
-      _scrollTimer = Timer(const Duration(seconds: 3), () {
+      _scrollTimer = Timer(const Duration(milliseconds: 500), () {
         setState(() {
           _showDateContainer = false;
         });
@@ -1818,6 +1826,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
     }
 
     _loadMessages();
+
   }
 
   Future<void> _loadMessages() async {
