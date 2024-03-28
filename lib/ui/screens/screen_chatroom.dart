@@ -9,6 +9,7 @@ import 'package:artrooms/utils/utils_media.dart';
 import 'package:artrooms/utils/utils_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import '../../beans/bean_chat.dart';
 import '../../beans/bean_file.dart';
 import '../../beans/bean_message.dart';
@@ -50,10 +51,11 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
 
   final List<MyMessage> listMessages = [];
   final ScrollController _scrollController = ScrollController();
-  final ScrollController _scrollControllerList = ScrollController();
   final ScrollController _scrollControllerAttachment1 = ScrollController();
   final ScrollController _scrollControllerAttachment2 = ScrollController();
   final TextEditingController _messageController = TextEditingController();
+  final ItemScrollController itemScrollController = ItemScrollController();
+  final ItemPositionsListener itemPositionsListener = ItemPositionsListener.create();
   FocusNode messageFocusNode = FocusNode();
 
   late final ModuleMessages moduleMessages;
@@ -84,9 +86,9 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
   void initState() {
     super.initState();
     _messageController.addListener(_checkIfButtonShouldBeEnabled);
-    _scrollControllerList.addListener(_onScroll);
     _scrollControllerAttachment1.addListener(_scrollListener1);
     _scrollControllerAttachment2.addListener(_scrollListener2);
+    itemPositionsListener.itemPositions.addListener(_onItemPositionsChanged);
     moduleMessages = ModuleMessages(widget.chat.id);
     _loadMessages();
     _loadNotice();
@@ -141,7 +143,6 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
     _messageController.dispose();
     _scrollController.dispose();
     messageFocusNode.dispose();
-    _scrollControllerList.dispose();
     _scrollControllerAttachment1.dispose();
     _scrollControllerAttachment2.dispose();
     _scrollTimer?.cancel();
@@ -258,8 +259,10 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
                                   onTap: () {
                                     closeKeyboard(context);
                                   },
-                                  child: ListView.builder(
-                                    controller: _scrollControllerList,
+                                  child: ScrollablePositionedList.builder(
+                                    // controller: itemScrollController,
+                                    itemScrollController: itemScrollController,
+                                    itemPositionsListener: itemPositionsListener,
                                     itemCount: listMessages.length,
                                     physics: const BouncingScrollPhysics(),
                                     reverse: true,
@@ -1780,13 +1783,25 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
     }
   }
 
-  void _onScroll() {
+  int _firstVisibleItemIndex = 0;
+  void _onItemPositionsChanged() {
+
+    final visiblePositions = itemPositionsListener.itemPositions.value
+        .where((ItemPosition position) => position.itemTrailingEdge > 0);
+    if (visiblePositions.isEmpty) return;
+
+    final firstVisibleItemIndex = visiblePositions
+        .reduce((ItemPosition max, ItemPosition position) =>
+    position.itemTrailingEdge > max.itemTrailingEdge ? position : max)
+        .index;
+
+    if(_firstVisibleItemIndex == firstVisibleItemIndex) return;
+    _firstVisibleItemIndex = firstVisibleItemIndex;
 
     if (_scrollTimer?.isActive ?? false) _scrollTimer?.cancel();
 
-    var firstVisibleItemIndex = _findFirstVisibleItem();
-
     if(listMessages.isNotEmpty) {
+
       var firstVisibleMessage = listMessages[firstVisibleItemIndex];
 
       setState(() {
@@ -1799,30 +1814,10 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
           _showDateContainer = false;
         });
       });
+
     }
 
     _loadMessages();
-
-  }
-
-  int _findFirstVisibleItem() {
-
-    final scrollPosition = _scrollControllerList.position.pixels;
-    final viewportHeight = _scrollControllerList.position.viewportDimension;
-
-    for (int i = 0; i < itemKeys.length; i++) {
-      final key = itemKeys[i];
-      final RenderBox? box = key?.currentContext?.findRenderObject() as RenderBox?;
-
-      if (box != null) {
-        final position = box.localToGlobal(Offset.zero);
-        if (position.dy < (scrollPosition + viewportHeight) && position.dy > scrollPosition) {
-          return i;
-        }
-      }
-    }
-
-    return 0;
   }
 
   Future<void> _loadMessages() async {
@@ -1847,9 +1842,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
 
       if(_isLoading) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (_scrollControllerList.hasClients) {
-            _scrollControllerList.jumpTo(0);
-          }
+          itemScrollController.jumpTo(index: 0);
         });
       }
 
@@ -2024,7 +2017,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom> with SingleTickerPr
   }
 
   void _scrollToBottom() {
-    _scrollControllerList.animateTo(0,
+    itemScrollController.scrollTo(index: 0,
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeOut,
     );
