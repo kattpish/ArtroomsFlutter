@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:math';
 
 import 'package:artrooms/beans/bean_notice.dart';
 import 'package:artrooms/modules/module_notices.dart';
@@ -91,7 +90,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
 
   late AnimationController _animationController;
   late MyMessage? replyMessage;
-  late  bool isMentioning;
+  late bool isMentioning;
   @override
   void initState() {
     super.initState();
@@ -375,7 +374,6 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
                                                                 .requestFocus();
                                                           }),
                                                       FocusedMenuItem(
-
                                                           trailingIcon:
                                                               const Icon(
                                                                   Icons.copy),
@@ -390,7 +388,12 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
                                                     ],
                                                     menuOffset: 10.0,
                                                     bottomOffsetHeight: 80.0,
-                                                    menuBoxDecoration: const BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(15.0))),
+                                                    menuBoxDecoration:
+                                                        const BoxDecoration(
+                                                            borderRadius:
+                                                                BorderRadius.all(
+                                                                    Radius.circular(
+                                                                        15.0))),
                                                     child: Container(
                                                       child: message.isMe
                                                           ? _buildMyMessageBubble(
@@ -535,7 +538,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
       child: Column(
         children: [
           if (isReplying) buildReplyForTextField(),
-           if(isMentioning) buildMentions(),
+          if (isMentioning) buildMentions(),
           Row(
             children: [
               Container(
@@ -570,47 +573,11 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
               const SizedBox(width: 4),
               Expanded(
                   child: Column(children: [
-                TextFormField(
-                  controller: _messageController,
-                  focusNode: messageFocusNode,
-                  onChanged: (text){
-                    print('text typed ${text}');
-                    if(text.endsWith("@")){
-                      setState(() {
-                        isMentioning = !isMentioning;
-                        print("is mention $isMentioning" );
-                      });
-                    }
-                    if(text.endsWith(" ")) {
-                      setState(() {
-                        isMentioning = false;
-                      });
-                    }
-                  },
-                  decoration: InputDecoration(
-                    hintText: '',
-                    border: UnderlineInputBorder(
-                      borderRadius: BorderRadius.circular(25),
-                      borderSide: BorderSide.none,
-                    ),
-                    filled: true,
-                    fillColor: const Color(0xFFF3F3F3),
-                  ),
-                  minLines: 1,
-                  maxLines: 4,
-                  style: const TextStyle(
-                    color: Color(0xFF111111),
-                    fontSize: 16,
-                    fontFamily: 'SUIT',
-                    fontWeight: FontWeight.w400,
-                    letterSpacing: -0.32,
-                  ),
-                ),
+                customTextField(),
               ])),
               const SizedBox(width: 4),
               Container(
                 padding: const EdgeInsets.all(0.0),
-
                 child: InkWell(
                   onTap: () {
                     _sendMessage();
@@ -621,8 +588,9 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
                       'assets/images/icons/icon_send.png',
                       width: 24,
                       height: 24,
-                      color:
-                          _isButtonDisabled ? colorMainGrey250 : colorPrimaryBlue,
+                      color: _isButtonDisabled
+                          ? colorMainGrey250
+                          : colorPrimaryBlue,
                     ),
                   ),
                 ),
@@ -670,24 +638,24 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
                       ),
                       const SizedBox(width: 8),
                       Container(
-                        constraints: BoxConstraints(maxWidth: screenWidth * 0.55),
+                        constraints:
+                            BoxConstraints(maxWidth: screenWidth * 0.55),
                         padding: const EdgeInsets.symmetric(
                             vertical: 16, horizontal: 16),
                         decoration: BoxDecoration(
                           color: colorPrimaryBlue,
                           borderRadius: BorderRadius.only(
                               topLeft: const Radius.circular(24),
-                              topRight:
-                                  Radius.circular(isPreviousSameDateTime ? 24 : 0),
+                              topRight: Radius.circular(
+                                  isPreviousSameDateTime ? 24 : 0),
                               bottomLeft: const Radius.circular(24),
                               bottomRight: const Radius.circular(24)),
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-
                           children: [
-                            if(parseReplyMessage(message.data)) buildReply(message),
-
+                            if (parseReplyMessage(message.data))
+                              buildReply(message),
                             Container(
                               // height: min(100, message.content.length * 2),
                               padding: const EdgeInsets.only(left: 10),
@@ -832,16 +800,8 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
                                   constraints: BoxConstraints(
                                     maxWidth: screenWidth * 0.55,
                                   ),
-                                  child: Text(
-                                    message.content,
-                                    style: const TextStyle(
-                                      color: Color(0xFF1F1F1F),
-                                      fontSize: 16,
-                                      fontFamily: 'SUIT',
-                                      fontWeight: FontWeight.w400,
-                                      height: 0,
-                                      letterSpacing: -0.32,
-                                    ),
+                                  child: DisplayMessageText(
+                                    message: message.content,
                                   ),
                                 ),
                               ],
@@ -2092,13 +2052,14 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
     }
   }
 
-  bool isGroup(){
-    return moduleMessages.getGroupChannel().members.length>2;
+  bool isGroup() {
+    return moduleMessages.getGroupChannel().members.length > 2;
   }
 
-  List<Member> getAllMembers(){
+  List<Member> getAllMembers() {
     return moduleMessages.getGroupChannel().members;
   }
+
   Future<void> _sendMessage() async {
     if (!_isButtonDisabled) {
       if (_messageController.text.isNotEmpty) {
@@ -2318,6 +2279,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
       replyMessage = null;
     });
   }
+
   void cancelMention() {
     setState(() {
       replyMessage = null;
@@ -2331,12 +2293,10 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
       isMentioning = false;
     });
 
-
     // setState(() {
     //   replyMessage = null;
     // });
   }
-
 
   Widget buildReplyForTextField() {
     return Container(
@@ -2364,9 +2324,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
               message: message!,
               key: null,
             )),
-        const Divider(
-            color: Colors.white
-        ),
+        const Divider(color: Colors.white),
         // const SizedBox(height: 2,),
       ],
     );
@@ -2384,21 +2342,79 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
         ),
         child: MentionedUser(
           member: getAllMembers(),
-          key: null, onCancelReply: onMentionSelected,
+          key: null,
+          onCancelReply: onMentionSelected,
         ));
     // child: Text("data"));
   }
 
-  bool parseReplyMessage(String json){
-    try{
-      ParentMessage parentMessage = ParentMessage.fromJson(const JsonDecoder().convert(json));
+  Widget customTextField() {
+    return Stack(
+      alignment: Alignment.topLeft,
+      children: <Widget>[
+        TextFormField(
+          controller: _messageController,
+          focusNode: messageFocusNode,
+          onChanged: (text) {
+            print('text typed ${text}');
+            if (text.endsWith("@")) {
+              setState(() {
+                isMentioning = !isMentioning;
+                print("is mention $isMentioning");
+              });
+            }
+            if (text.endsWith(" ")) {
+              setState(() {
+                isMentioning = false;
+              });
+            }
+          }, // TextEditingController
+          decoration: InputDecoration(
+            hintText: 'Enter your message',
+            border: UnderlineInputBorder(
+              borderRadius: BorderRadius.circular(25),
+              borderSide: BorderSide.none,
+            ),
+            filled: true,
+            fillColor: const Color(0xFFF3F3F3),
+          ),
+          // cursorColor: Colors.transparent, // Hide cursor
+          style: const TextStyle(color: Colors.transparent), // Hide text
+        ),
+        Positioned(
+          top: 15,
+          left: 15,
+          child: IgnorePointer(
+            // Ignore touches on the RichText
+            child: RichText(
+              text: TextSpan(
+                style: const TextStyle(fontSize: 15.8),
+                children: _buildTextSpans(_messageController.text),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  List<TextSpan> _buildTextSpans(String text) {
+    print(text);
+    // Example logic to split text and apply different styles
+    // This should be replaced with your actual logic
+    return replacePattern(text,true);
+  }
+
+  bool parseReplyMessage(String json) {
+    try {
+      ParentMessage parentMessage =
+          ParentMessage.fromJson(const JsonDecoder().convert(json));
       if (parentMessage.messageId != 0 && parentMessage.senderName != "") {
         return true;
       }
       return false;
-    }catch(_){
+    } catch (_) {
       return false;
     }
   }
-
 }

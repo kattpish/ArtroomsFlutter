@@ -85,3 +85,21 @@ void showSnackBar(BuildContext context, String message) {
 void closeKeyboard(BuildContext context) {
   FocusScope.of(context).requestFocus(FocusNode());
 }
+List<TextSpan> replacePattern(String original, bool isTyping) {
+  Color textColor = Colors.black;
+  if(!isTyping) {
+    textColor = Colors.white;
+  }
+  List<TextSpan> spans=[];
+  int lastMatchIndex=0;
+  RegExp regex = RegExp(r'@.*?(?=\s)');
+  Iterable<RegExpMatch> matches= regex.allMatches(original);
+
+  for (var match in matches) {
+    spans.add(TextSpan(text: original.substring(lastMatchIndex,match.start), style: TextStyle(color: textColor)));
+    spans.add(TextSpan(text: original.substring(match.start,match.end), style: const TextStyle(color: Colors.lightBlue)));
+    lastMatchIndex=match.end;
+  }
+  spans.add(TextSpan(text: original.substring(lastMatchIndex,original.length), style: TextStyle(color: textColor)));
+  return spans;
+}
