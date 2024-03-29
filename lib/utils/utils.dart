@@ -92,12 +92,14 @@ List<TextSpan> replacePattern(String original, bool isTyping) {
   }
   List<TextSpan> spans=[];
   int lastMatchIndex=0;
-  RegExp regex = RegExp(r'@.*?(?=\s)');
+  // RegExp regex = RegExp(r'@.*?(?=\s)');
+  RegExp regex = RegExp(r"<%.*?%>");
   Iterable<RegExpMatch> matches= regex.allMatches(original);
 
   for (var match in matches) {
+    String coloredMessage = original.substring(match.start,match.end).replaceAll("<%", "").replaceAll("%>", "");
     spans.add(TextSpan(text: original.substring(lastMatchIndex,match.start), style: TextStyle(color: textColor)));
-    spans.add(TextSpan(text: original.substring(match.start,match.end), style: const TextStyle(color: Colors.lightBlue)));
+    spans.add(TextSpan(text: coloredMessage, style: const TextStyle(color: Colors.lightBlue)));
     lastMatchIndex=match.end;
   }
   spans.add(TextSpan(text: original.substring(lastMatchIndex,original.length), style: TextStyle(color: textColor)));

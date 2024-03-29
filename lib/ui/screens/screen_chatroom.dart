@@ -1,20 +1,25 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:artrooms/beans/bean_notice.dart';
 import 'package:artrooms/modules/module_notices.dart';
 import 'package:artrooms/ui/screens/screen_chatroom_drawer.dart';
 import 'package:artrooms/ui/widgets/Reply_message.dart';
 import 'package:artrooms/ui/widgets/Reply_message_flow.dart';
+import 'package:artrooms/ui/widgets/camera_button.dart';
 import 'package:artrooms/ui/widgets/display_mentioned_user.dart';
 import 'package:artrooms/ui/widgets/widget_loader.dart';
 import 'package:artrooms/utils/utils_media.dart';
 import 'package:artrooms/utils/utils_notifications.dart';
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:focused_menu/focused_menu.dart';
 import 'package:focused_menu/modals.dart';
+import 'package:image_picker/image_picker.dart';
+// import 'package:image_picker/image_picker.dart';
 import 'package:sendbird_sdk/core/models/member.dart';
 import '../../beans/bean_chat.dart';
 import '../../beans/bean_file.dart';
@@ -47,6 +52,7 @@ class MyScreenChatroom extends StatefulWidget {
 
 class _MyScreenChatroomState extends State<MyScreenChatroom>
     with SingleTickerProviderStateMixin {
+  File? _selectedFileObject;
   bool _isLoading = true;
   bool _isLoadMore = false;
   bool _isButtonDisabled = true;
@@ -70,7 +76,6 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
   ModuleNotice moduleNotice = ModuleNotice();
   DBStore dbStore = DBStore();
   DataNotice dataNotice = DataNotice();
-
   double _boxHeight = 320.0;
   final double _boxHeightMin = 320.0;
   double _dragStartY = 0.0;
@@ -151,8 +156,14 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
 
   @override
   Widget build(BuildContext context) {
-    screenWidth = MediaQuery.of(context).size.width * widget.widthRatio;
-    screenHeight = MediaQuery.of(context).size.height;
+    screenWidth = MediaQuery
+        .of(context)
+        .size
+        .width * widget.widthRatio;
+    screenHeight = MediaQuery
+        .of(context)
+        .size
+        .height;
     crossAxisCount = isTablet(context) ? 4 : 2;
 
     attachmentPicker = _attachmentPicker(context, this);
@@ -178,7 +189,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
         }
       },
       child: Builder(builder: (context) {
-        return SafeArea(
+         return SafeArea(
           child: Stack(
             children: [
               Scaffold(
@@ -233,10 +244,10 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
                         onTap: () {
                           Navigator.push(context,
                               MaterialPageRoute(builder: (context) {
-                            return MyScreenChatroomDrawer(
-                              myChat: widget.chat,
-                            );
-                          }));
+                                return MyScreenChatroomDrawer(
+                                  myChat: widget.chat,
+                                );
+                              }));
                         },
                       ),
                     ),
@@ -249,236 +260,237 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
                       child: _isLoading
                           ? const MyLoader()
                           : Stack(
-                              alignment: AlignmentDirectional.topCenter,
-                              children: [
-                                Container(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 0),
-                                  child: listMessages.isNotEmpty
-                                      ? ListView.builder(
-                                          controller: _scrollController,
-                                          itemCount: listMessages.length,
-                                          reverse: true,
-                                          itemBuilder: (context, index) {
-                                            itemKeys[index] = GlobalKey();
-                                            final message = listMessages[index];
-                                            final isLast = index == 0;
-                                            final messageNext = index > 0
-                                                ? listMessages[index - 1]
-                                                : MyMessage.empty();
-                                            final messagePrevious =
-                                                index < listMessages.length - 1
-                                                    ? listMessages[index + 1]
-                                                    : MyMessage.empty();
-                                            final isPreviousSame =
-                                                messagePrevious.senderId ==
-                                                    message.senderId;
-                                            final isNextSame =
-                                                messageNext.senderId ==
-                                                    message.senderId;
-                                            final isPreviousDate =
-                                                messagePrevious.getDate() ==
-                                                    message.getDate();
-                                            final isPreviousSameDateTime =
-                                                isPreviousSame &&
-                                                    messagePrevious
-                                                            .getDateTime() ==
-                                                        message.getDateTime();
-                                            final isNextSameTime = isNextSame &&
-                                                messageNext.getDateTime() ==
-                                                    message.getDateTime();
-                                            return Column(
-                                              key: itemKeys[index],
-                                              children: [
-                                                Visibility(
-                                                  visible: !isPreviousDate,
-                                                  child: Container(
-                                                    width: 145,
-                                                    height: 31,
-                                                    margin: EdgeInsets.only(
-                                                        left: 16,
-                                                        right: 16,
-                                                        top:
-                                                            index == 0 ? 4 : 16,
-                                                        bottom:
-                                                            index == 0 ? 4 : 8),
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        horizontal: 12,
-                                                        vertical: 4),
-                                                    alignment: Alignment.center,
-                                                    decoration: ShapeDecoration(
-                                                      color: const Color(
-                                                          0xFFF9F9F9),
-                                                      shape:
-                                                          RoundedRectangleBorder(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(20),
-                                                      ),
-                                                    ),
-                                                    child: Row(
-                                                      mainAxisSize:
-                                                          MainAxisSize.min,
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .start,
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .center,
-                                                      children: [
-                                                        Text(
-                                                          formatDateLastMessage(
-                                                              message
-                                                                  .timestamp),
-                                                          style:
-                                                              const TextStyle(
-                                                            color: Color(
-                                                                0xFF7D7D7D),
-                                                            fontSize: 12,
-                                                            fontFamily: 'SUIT',
-                                                            fontWeight:
-                                                                FontWeight.w400,
-                                                            height: 0,
-                                                            letterSpacing:
-                                                                -0.24,
-                                                          ),
-                                                          maxLines: 1,
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                          textAlign:
-                                                              TextAlign.center,
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ),
-                                                FocusedMenuHolder(
-                                                    onPressed: () {},
-                                                    menuWidth:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width /
-                                                            3,
-                                                    menuItems: [
-                                                      FocusedMenuItem(
-                                                          trailingIcon:
-                                                              const Icon(
-                                                                  Icons.reply),
-                                                          title: const Text(
-                                                              "reply"),
-                                                          onPressed: () {
-                                                            replyMessage =
-                                                                message;
-                                                            messageFocusNode
-                                                                .requestFocus();
-                                                          }),
-                                                      FocusedMenuItem(
-                                                          trailingIcon:
-                                                              const Icon(
-                                                                  Icons.copy),
-                                                          title: const Text(
-                                                              "Copy"),
-                                                          onPressed: () async {
-                                                            await Clipboard.setData(
-                                                                ClipboardData(
-                                                                    text: message
-                                                                        .content));
-                                                          })
-                                                    ],
-                                                    menuOffset: 10.0,
-                                                    bottomOffsetHeight: 80.0,
-                                                    menuBoxDecoration:
-                                                        const BoxDecoration(
-                                                            borderRadius:
-                                                                BorderRadius.all(
-                                                                    Radius.circular(
-                                                                        15.0))),
-                                                    child: Container(
-                                                      child: message.isMe
-                                                          ? _buildMyMessageBubble(
-                                                              message,
-                                                              isLast,
-                                                              isPreviousSameDateTime,
-                                                              isNextSameTime)
-                                                          : _buildOtherMessageBubble(
-                                                              message,
-                                                              isLast,
-                                                              isPreviousSame,
-                                                              isNextSame,
-                                                              isPreviousSameDateTime,
-                                                              isNextSameTime),
-                                                    ))
-                                              ],
-                                            );
-                                          },
-                                        )
-                                      : buildNoChats(context),
-                                ),
-                                Visibility(
-                                  visible: _isLoadMore,
-                                  child: Container(
-                                    width: 12,
-                                    height: 12,
-                                    margin: const EdgeInsets.only(top: 2),
-                                    child: const CircularProgressIndicator(
-                                      color: Color(0xFF6A79FF),
-                                      strokeWidth: 2,
-                                    ),
-                                  ),
-                                ),
-                                AnimatedOpacity(
-                                  opacity: !_isHideNotice &&
-                                          dataNotice.notice.isNotEmpty
-                                      ? 1.0
-                                      : 0.0,
-                                  duration: const Duration(milliseconds: 500),
-                                  child: buildNoticePin(context),
-                                ),
-                                AnimatedOpacity(
-                                  opacity: _showDateContainer ? 0.0 : 0.0,
-                                  duration: const Duration(milliseconds: 500),
-                                  child: Container(
-                                    width: 145,
-                                    height: 31,
-                                    margin: const EdgeInsets.symmetric(
-                                        horizontal: 16, vertical: 2),
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 12, vertical: 4),
-                                    alignment: Alignment.center,
-                                    decoration: ShapeDecoration(
-                                      color: const Color(0xFFF9F9F9),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(20),
+                        alignment: AlignmentDirectional.topCenter,
+                        children: [
+                          Container(
+                            padding:
+                            const EdgeInsets.symmetric(vertical: 0),
+                            child: listMessages.isNotEmpty
+                                ? ListView.builder(
+                              controller: _scrollController,
+                              itemCount: listMessages.length,
+                              reverse: true,
+                              itemBuilder: (context, index) {
+                                itemKeys[index] = GlobalKey();
+                                final message = listMessages[index];
+                                final isLast = index == 0;
+                                final messageNext = index > 0
+                                    ? listMessages[index - 1]
+                                    : MyMessage.empty();
+                                final messagePrevious =
+                                index < listMessages.length - 1
+                                    ? listMessages[index + 1]
+                                    : MyMessage.empty();
+                                final isPreviousSame =
+                                    messagePrevious.senderId ==
+                                        message.senderId;
+                                final isNextSame =
+                                    messageNext.senderId ==
+                                        message.senderId;
+                                final isPreviousDate =
+                                    messagePrevious.getDate() ==
+                                        message.getDate();
+                                final isPreviousSameDateTime =
+                                    isPreviousSame &&
+                                        messagePrevious
+                                            .getDateTime() ==
+                                            message.getDateTime();
+                                final isNextSameTime = isNextSame &&
+                                    messageNext.getDateTime() ==
+                                        message.getDateTime();
+                                return Column(
+                                  key: itemKeys[index],
+                                  children: [
+                                    Visibility(
+                                      visible: !isPreviousDate,
+                                      child: Container(
+                                        width: 145,
+                                        height: 31,
+                                        margin: EdgeInsets.only(
+                                            left: 16,
+                                            right: 16,
+                                            top:
+                                            index == 0 ? 4 : 16,
+                                            bottom:
+                                            index == 0 ? 4 : 8),
+                                        padding: const EdgeInsets
+                                            .symmetric(
+                                            horizontal: 12,
+                                            vertical: 4),
+                                        alignment: Alignment.center,
+                                        decoration: ShapeDecoration(
+                                          color: const Color(
+                                              0xFFF9F9F9),
+                                          shape:
+                                          RoundedRectangleBorder(
+                                            borderRadius:
+                                            BorderRadius
+                                                .circular(20),
+                                          ),
+                                        ),
+                                        child: Row(
+                                          mainAxisSize:
+                                          MainAxisSize.min,
+                                          mainAxisAlignment:
+                                          MainAxisAlignment
+                                              .start,
+                                          crossAxisAlignment:
+                                          CrossAxisAlignment
+                                              .center,
+                                          children: [
+                                            Text(
+                                              formatDateLastMessage(
+                                                  message
+                                                      .timestamp),
+                                              style:
+                                              const TextStyle(
+                                                color: Color(
+                                                    0xFF7D7D7D),
+                                                fontSize: 12,
+                                                fontFamily: 'SUIT',
+                                                fontWeight:
+                                                FontWeight.w400,
+                                                height: 0,
+                                                letterSpacing:
+                                                -0.24,
+                                              ),
+                                              maxLines: 1,
+                                              overflow: TextOverflow
+                                                  .ellipsis,
+                                              textAlign:
+                                              TextAlign.center,
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          _currentDate,
-                                          style: const TextStyle(
-                                            color: Color(0xFF7D7D7D),
-                                            fontSize: 12,
-                                            fontFamily: 'SUIT',
-                                            fontWeight: FontWeight.w400,
-                                            height: 0,
-                                            letterSpacing: -0.24,
-                                          ),
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          textAlign: TextAlign.center,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
+                                    FocusedMenuHolder(
+                                        onPressed: () {},
+                                        menuWidth:
+                                        MediaQuery
+                                            .of(context)
+                                            .size
+                                            .width /
+                                            3,
+                                        menuItems: [
+                                          FocusedMenuItem(
+                                              trailingIcon:
+                                              const Icon(
+                                                  Icons.reply),
+                                              title: const Text(
+                                                  "reply"),
+                                              onPressed: () {
+                                                replyMessage =
+                                                    message;
+                                                messageFocusNode
+                                                    .requestFocus();
+                                              }),
+                                          FocusedMenuItem(
+                                              trailingIcon:
+                                              const Icon(
+                                                  Icons.copy),
+                                              title: const Text(
+                                                  "Copy"),
+                                              onPressed: () async {
+                                                await Clipboard.setData(
+                                                    ClipboardData(
+                                                        text: message
+                                                            .content));
+                                              })
+                                        ],
+                                        menuOffset: 10.0,
+                                        bottomOffsetHeight: 80.0,
+                                        menuBoxDecoration:
+                                        const BoxDecoration(
+                                            borderRadius:
+                                            BorderRadius.all(
+                                                Radius.circular(
+                                                    15.0))),
+                                        child: Container(
+                                          child: message.isMe
+                                              ? _buildMyMessageBubble(
+                                              message,
+                                              isLast,
+                                              isPreviousSameDateTime,
+                                              isNextSameTime)
+                                              : _buildOtherMessageBubble(
+                                              message,
+                                              isLast,
+                                              isPreviousSame,
+                                              isNextSame,
+                                              isPreviousSameDateTime,
+                                              isNextSameTime),
+                                        ))
+                                  ],
+                                );
+                              },
+                            )
+                                : buildNoChats(context),
+                          ),
+                          Visibility(
+                            visible: _isLoadMore,
+                            child: Container(
+                              width: 12,
+                              height: 12,
+                              margin: const EdgeInsets.only(top: 2),
+                              child: const CircularProgressIndicator(
+                                color: Color(0xFF6A79FF),
+                                strokeWidth: 2,
+                              ),
                             ),
+                          ),
+                          AnimatedOpacity(
+                            opacity: !_isHideNotice &&
+                                dataNotice.notice.isNotEmpty
+                                ? 1.0
+                                : 0.0,
+                            duration: const Duration(milliseconds: 500),
+                            child: buildNoticePin(context),
+                          ),
+                          AnimatedOpacity(
+                            opacity: _showDateContainer ? 0.0 : 0.0,
+                            duration: const Duration(milliseconds: 500),
+                            child: Container(
+                              width: 145,
+                              height: 31,
+                              margin: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 2),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 4),
+                              alignment: Alignment.center,
+                              decoration: ShapeDecoration(
+                                color: const Color(0xFFF9F9F9),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment:
+                                MainAxisAlignment.start,
+                                crossAxisAlignment:
+                                CrossAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    _currentDate,
+                                    style: const TextStyle(
+                                      color: Color(0xFF7D7D7D),
+                                      fontSize: 12,
+                                      fontFamily: 'SUIT',
+                                      fontWeight: FontWeight.w400,
+                                      height: 0,
+                                      letterSpacing: -0.24,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                     Visibility(
                         visible: _showAttachment,
@@ -488,7 +500,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
                     Visibility(
                       visible: _showAttachment,
                       child:
-                          SizedBox(height: _boxHeight, child: attachmentPicker),
+                      SizedBox(height: _boxHeight, child: attachmentPicker),
                     ),
                   ],
                 ),
@@ -573,27 +585,53 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
               const SizedBox(width: 4),
               Expanded(
                   child: Column(children: [
-                customTextField(),
-              ])),
+                    customTextField(),
+                  ])),
               const SizedBox(width: 4),
-              Container(
-                padding: const EdgeInsets.all(0.0),
-                child: InkWell(
-                  onTap: () {
-                    _sendMessage();
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Image.asset(
-                      'assets/images/icons/icon_send.png',
-                      width: 24,
-                      height: 24,
-                      color: _isButtonDisabled
-                          ? colorMainGrey250
-                          : colorPrimaryBlue,
+              Row(
+                children: [
+                  Visibility(
+                    visible: _messageController.text.isEmpty,
+                    child: Container(
+                      padding: const EdgeInsets.all(0.0),
+                      child: InkWell(
+                        onTap: () {
+                          _openCamera();
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(2.0),
+                          child: Image.asset(
+                            'assets/images/icons/icon_camera.png',
+                            width: 24,
+                            height: 24,
+                            color: _isButtonDisabled
+                                ? colorMainGrey250
+                                : colorPrimaryBlue,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
-                ),
+                  Container(
+                    padding: const EdgeInsets.all(0.0),
+                    child: InkWell(
+                      onTap: () {
+                        _sendMessage();
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Image.asset(
+                          'assets/images/icons/icon_send.png',
+                          width: 24,
+                          height: 24,
+                          color: _isButtonDisabled
+                              ? colorMainGrey250
+                              : colorPrimaryBlue,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               )
             ],
           ),
@@ -606,7 +644,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
       bool isPreviousSameDateTime, bool isNextSameTime) {
     return Container(
       margin:
-          EdgeInsets.only(left: 16, right: 16, top: 0, bottom: isLast ? 9 : 0),
+      EdgeInsets.only(left: 16, right: 16, top: 0, bottom: isLast ? 9 : 0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
@@ -622,7 +660,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
                     children: [
                       Visibility(
                         visible: ((isPreviousSameDateTime && !isNextSameTime) ||
-                                (!isPreviousSameDateTime && !isNextSameTime)) &&
+                            (!isPreviousSameDateTime && !isNextSameTime)) &&
                             message.content.isNotEmpty,
                         child: Text(
                           message.getTime(),
@@ -639,7 +677,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
                       const SizedBox(width: 8),
                       Container(
                         constraints:
-                            BoxConstraints(maxWidth: screenWidth * 0.55),
+                        BoxConstraints(maxWidth: screenWidth * 0.55),
                         padding: const EdgeInsets.symmetric(
                             vertical: 16, horizontal: 16),
                         decoration: BoxDecoration(
@@ -688,8 +726,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
     );
   }
 
-  Widget _buildOtherMessageBubble(
-      MyMessage message,
+  Widget _buildOtherMessageBubble(MyMessage message,
       bool isLast,
       bool isPreviousSame,
       bool isNextSame,
@@ -813,7 +850,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
                   ),
                   Visibility(
                     visible: ((isPreviousSameDateTime && !isNextSameTime) ||
-                            (!isPreviousSameDateTime && !isNextSameTime)) &&
+                        (!isPreviousSameDateTime && !isNextSameTime)) &&
                         message.content.isNotEmpty,
                     child: Text(
                       message.getTime(),
@@ -928,27 +965,28 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
                     setState(() {
                       message.isDownloading = false;
                     });
+                    _loadMedia();
                   },
                   child: message.isDownloading
                       ? const SizedBox(
-                          width: 16,
-                          height: 16,
-                          child: CircularProgressIndicator(
-                            color: Color(0xFF6A79FF),
-                            strokeWidth: 2,
-                          ),
-                        )
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(
+                      color: Color(0xFF6A79FF),
+                      strokeWidth: 2,
+                    ),
+                  )
                       : const Text(
-                          '저장',
-                          style: TextStyle(
-                            color: colorMainGrey400,
-                            fontSize: 14,
-                            fontFamily: 'Pretendard',
-                            fontWeight: FontWeight.w400,
-                            height: 0,
-                            letterSpacing: -0.28,
-                          ),
-                        ),
+                    '저장',
+                    style: TextStyle(
+                      color: colorMainGrey400,
+                      fontSize: 14,
+                      fontFamily: 'Pretendard',
+                      fontWeight: FontWeight.w400,
+                      height: 0,
+                      letterSpacing: -0.28,
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -1040,7 +1078,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
                       },
                       child: FadeInImage.assetNetwork(
                         placeholder:
-                            'assets/images/chats/placeholder_photo.png',
+                        'assets/images/chats/placeholder_photo.png',
                         image: attachment,
                         fit: BoxFit.cover,
                         fadeInDuration: const Duration(milliseconds: 100),
@@ -1064,7 +1102,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
       return Row(
         textDirection: message.isMe ? TextDirection.rtl : TextDirection.ltr,
         mainAxisAlignment:
-            message.isMe ? MainAxisAlignment.start : MainAxisAlignment.start,
+        message.isMe ? MainAxisAlignment.start : MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           Container(
@@ -1074,7 +1112,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
               child: Container(
                 constraints: BoxConstraints(maxWidth: screenWidth * 0.55),
                 alignment:
-                    message.isMe ? Alignment.topRight : Alignment.topLeft,
+                message.isMe ? Alignment.topRight : Alignment.topLeft,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(24),
                   color: Colors.white,
@@ -1087,7 +1125,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
                         child: Container(
                           height: heights,
                           constraints:
-                              BoxConstraints(maxWidth: screenWidth * 0.55),
+                          BoxConstraints(maxWidth: screenWidth * 0.55),
                           child: Center(
                             child: Container(
                               width: 30,
@@ -1174,6 +1212,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
             const SizedBox(
               height: 10,
             ),
+            // file and camera drawer
             Row(
               children: [
                 Expanded(
@@ -1267,98 +1306,98 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
               child: Expanded(
                 child: filesImages.isEmpty
                     ? const Center(
-                        child: SizedBox(
-                          width: 30,
-                          height: 30,
-                          child: CircularProgressIndicator(
-                            color: Color(0xFF6A79FF),
-                            strokeWidth: 3,
-                          ),
-                        ),
-                      )
+                  child: SizedBox(
+                    width: 30,
+                    height: 30,
+                    child: CircularProgressIndicator(
+                      color: Color(0xFF6A79FF),
+                      strokeWidth: 3,
+                    ),
+                  ),
+                )
                     : GridView.builder(
-                        controller: _scrollControllerAttachment1,
-                        padding: const EdgeInsets.only(bottom: 24),
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: isTablet(context) ? 6 : 3,
-                          crossAxisSpacing: 5,
-                          mainAxisSpacing: 5,
-                          childAspectRatio: 1,
-                        ),
-                        itemCount: filesImages.length,
-                        itemBuilder: (context, index) {
-                          var fileImage = filesImages[index];
-                          return Container(
-                            clipBehavior: Clip.antiAlias,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(10),
+                  controller: _scrollControllerAttachment1,
+                  padding: const EdgeInsets.only(bottom: 24),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: isTablet(context) ? 6 : 3,
+                    crossAxisSpacing: 5,
+                    mainAxisSpacing: 5,
+                    childAspectRatio: 1,
+                  ),
+                  itemCount: filesImages.length,
+                  itemBuilder: (context, index) {
+                    var fileImage = filesImages[index];
+                    return Container(
+                      clipBehavior: Clip.antiAlias,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: InkWell(
+                        onTap: () {
+                          viewPhoto(context,
+                              fileImage: fileImage.file,
+                              fileName: fileImage.name);
+                        },
+                        onLongPress: () {
+                          state.setState(() {
+                            fileImage.isSelected = !fileImage.isSelected;
+                            closeKeyboard(context);
+                          });
+                          _checkIfFileShouldBeEnabled();
+                        },
+                        child: Stack(
+                          children: [
+                            Image.file(
+                              fileImage.file,
+                              width: double.infinity,
+                              height: double.infinity,
+                              fit: BoxFit.cover,
                             ),
-                            child: InkWell(
-                              onTap: () {
-                                viewPhoto(context,
-                                    fileImage: fileImage.file,
-                                    fileName: fileImage.name);
-                              },
-                              onLongPress: () {
-                                state.setState(() {
-                                  fileImage.isSelected = !fileImage.isSelected;
-                                  closeKeyboard(context);
-                                });
-                                _checkIfFileShouldBeEnabled();
-                              },
-                              child: Stack(
-                                children: [
-                                  Image.file(
-                                    fileImage.file,
-                                    width: double.infinity,
-                                    height: double.infinity,
-                                    fit: BoxFit.cover,
-                                  ),
-                                  Positioned(
-                                    top: 3,
-                                    right: 4,
-                                    child: Visibility(
-                                      visible: _selectMode,
-                                      child: InkWell(
-                                        onTap: () {
-                                          state.setState(() {
-                                            fileImage.isSelected =
-                                                !fileImage.isSelected;
-                                            _checkIfFileShouldBeEnabled();
-                                            closeKeyboard(context);
-                                          });
-                                        },
-                                        child: Container(
-                                          width: 26,
-                                          height: 26,
-                                          decoration: BoxDecoration(
-                                            color: fileImage.isSelected
-                                                ? colorPrimaryBlue
-                                                : colorMainGrey200
-                                                    .withAlpha(150),
-                                            shape: BoxShape.circle,
-                                            border: Border.all(
-                                              color: fileImage.isSelected
-                                                  ? colorPrimaryBlue
-                                                  : const Color(0xFFE3E3E3),
-                                              width: 1,
-                                            ),
-                                          ),
-                                          child: fileImage.isSelected
-                                              ? const Icon(Icons.check,
-                                                  size: 16, color: Colors.white)
-                                              : Container(),
-                                        ),
+                            Positioned(
+                              top: 3,
+                              right: 4,
+                              child: Visibility(
+                                visible: _selectMode,
+                                child: InkWell(
+                                  onTap: () {
+                                    state.setState(() {
+                                      fileImage.isSelected =
+                                      !fileImage.isSelected;
+                                      _checkIfFileShouldBeEnabled();
+                                      closeKeyboard(context);
+                                    });
+                                  },
+                                  child: Container(
+                                    width: 26,
+                                    height: 26,
+                                    decoration: BoxDecoration(
+                                      color: fileImage.isSelected
+                                          ? colorPrimaryBlue
+                                          : colorMainGrey200
+                                          .withAlpha(150),
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                        color: fileImage.isSelected
+                                            ? colorPrimaryBlue
+                                            : const Color(0xFFE3E3E3),
+                                        width: 1,
                                       ),
                                     ),
+                                    child: fileImage.isSelected
+                                        ? const Icon(Icons.check,
+                                        size: 16, color: Colors.white)
+                                        : Container(),
                                   ),
-                                ],
+                                ),
                               ),
                             ),
-                          );
-                        },
+                          ],
+                        ),
                       ),
+                    );
+                  },
+                ),
               ),
             ),
             Visibility(
@@ -1366,128 +1405,128 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
               child: Expanded(
                 child: filesMedia.isEmpty
                     ? const Center(
-                        child: SizedBox(
-                          width: 40,
-                          height: 40,
-                          child: CircularProgressIndicator(
-                            color: Color(0xFF6A79FF),
-                            strokeWidth: 3,
-                          ),
-                        ),
-                      )
+                  child: SizedBox(
+                    width: 40,
+                    height: 40,
+                    child: CircularProgressIndicator(
+                      color: Color(0xFF6A79FF),
+                      strokeWidth: 3,
+                    ),
+                  ),
+                )
                     : GridView.builder(
-                        controller: _scrollControllerAttachment2,
-                        padding: const EdgeInsets.only(
-                            left: 8, top: 8, right: 8, bottom: 24),
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: crossAxisCount,
-                          crossAxisSpacing: crossAxisSpacing,
-                          mainAxisSpacing: mainAxisSpacing,
-                          childAspectRatio: (screenWidth / crossAxisCount -
-                                  crossAxisSpacing) /
-                              197,
-                        ),
-                        itemCount: filesMedia.length,
-                        itemBuilder: (context, index) {
-                          var fileMedia = filesMedia[index];
-                          return Card(
-                            elevation: 0,
+                  controller: _scrollControllerAttachment2,
+                  padding: const EdgeInsets.only(
+                      left: 8, top: 8, right: 8, bottom: 24),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: crossAxisCount,
+                    crossAxisSpacing: crossAxisSpacing,
+                    mainAxisSpacing: mainAxisSpacing,
+                    childAspectRatio: (screenWidth / crossAxisCount -
+                        crossAxisSpacing) /
+                        197,
+                  ),
+                  itemCount: filesMedia.length,
+                  itemBuilder: (context, index) {
+                    var fileMedia = filesMedia[index];
+                    return Card(
+                      elevation: 0,
+                      color: Colors.white,
+                      child: InkWell(
+                        onTap: () {
+                          setState(() {
+                            fileMedia.isSelected = !fileMedia.isSelected;
+                            _checkIfFileShouldBeEnabled();
+                            closeKeyboard(context);
+                          });
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
                             color: Colors.white,
-                            child: InkWell(
-                              onTap: () {
-                                setState(() {
-                                  fileMedia.isSelected = !fileMedia.isSelected;
-                                  _checkIfFileShouldBeEnabled();
-                                  closeKeyboard(context);
-                                });
-                              },
-                              child: Container(
-                                padding: const EdgeInsets.all(16),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(16.0),
-                                  border: Border.all(
-                                    color: colorMainGrey200,
-                                    width: 1.0,
+                            borderRadius: BorderRadius.circular(16.0),
+                            border: Border.all(
+                              color: colorMainGrey200,
+                              width: 1.0,
+                            ),
+                          ),
+                          child: Stack(
+                            children: [
+                              Column(
+                                crossAxisAlignment:
+                                CrossAxisAlignment.start,
+                                children: [
+                                  const SizedBox(height: 24),
+                                  Image.asset(
+                                    fileMedia.isSelected
+                                        ? 'assets/images/icons/icon_file_selected.png'
+                                        : 'assets/images/icons/icon_file.png',
+                                    width: 30,
+                                    height: 30,
                                   ),
-                                ),
-                                child: Stack(
-                                  children: [
-                                    Column(
+                                  const SizedBox(height: 4),
+                                  Expanded(
+                                    child: Column(
                                       crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      CrossAxisAlignment.start,
+                                      mainAxisAlignment:
+                                      MainAxisAlignment.center,
                                       children: [
-                                        const SizedBox(height: 24),
-                                        Image.asset(
-                                          fileMedia.isSelected
-                                              ? 'assets/images/icons/icon_file_selected.png'
-                                              : 'assets/images/icons/icon_file.png',
-                                          width: 30,
-                                          height: 30,
-                                        ),
-                                        const SizedBox(height: 4),
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              Text(
-                                                fileMedia.name,
-                                                style: const TextStyle(
-                                                  fontSize: 16,
-                                                  color: colorMainGrey700,
-                                                  fontWeight: FontWeight.w400,
-                                                ),
-                                                maxLines: 2,
-                                              ),
-                                              const SizedBox(height: 8),
-                                              Text(
-                                                fileMedia.date,
-                                                style: const TextStyle(
-                                                  fontSize: 16,
-                                                  color: Color(0xFF8F8F8F),
-                                                  fontWeight: FontWeight.w300,
-                                                ),
-                                                maxLines: 1,
-                                              ),
-                                            ],
+                                        Text(
+                                          fileMedia.name,
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            color: colorMainGrey700,
+                                            fontWeight: FontWeight.w400,
                                           ),
+                                          maxLines: 2,
+                                        ),
+                                        const SizedBox(height: 8),
+                                        Text(
+                                          fileMedia.date,
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            color: Color(0xFF8F8F8F),
+                                            fontWeight: FontWeight.w300,
+                                          ),
+                                          maxLines: 1,
                                         ),
                                       ],
                                     ),
-                                    Positioned(
-                                      top: 3,
-                                      right: 2,
-                                      child: Container(
-                                        width: 26,
-                                        height: 26,
-                                        decoration: BoxDecoration(
-                                          color: fileMedia.isSelected
-                                              ? colorPrimaryBlue
-                                              : Colors.transparent,
-                                          shape: BoxShape.circle,
-                                          border: Border.all(
-                                            color: fileMedia.isSelected
-                                                ? colorPrimaryBlue
-                                                : const Color(0xFFE3E3E3),
-                                            width: 1,
-                                          ),
-                                        ),
-                                        child: fileMedia.isSelected
-                                            ? const Icon(Icons.check,
-                                                size: 16, color: Colors.white)
-                                            : Container(),
-                                      ),
+                                  ),
+                                ],
+                              ),
+                              Positioned(
+                                top: 3,
+                                right: 2,
+                                child: Container(
+                                  width: 26,
+                                  height: 26,
+                                  decoration: BoxDecoration(
+                                    color: fileMedia.isSelected
+                                        ? colorPrimaryBlue
+                                        : Colors.transparent,
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                      color: fileMedia.isSelected
+                                          ? colorPrimaryBlue
+                                          : const Color(0xFFE3E3E3),
+                                      width: 1,
                                     ),
-                                  ],
+                                  ),
+                                  child: fileMedia.isSelected
+                                      ? const Icon(Icons.check,
+                                      size: 16, color: Colors.white)
+                                      : Container(),
                                 ),
                               ),
-                            ),
-                          );
-                        },
+                            ],
+                          ),
+                        ),
                       ),
+                    );
+                  },
+                ),
               ),
             ),
           ],
@@ -1687,12 +1726,12 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
                                     style: ElevatedButton.styleFrom(
                                       elevation: 0,
                                       minimumSize:
-                                          const Size(double.infinity, 48),
+                                      const Size(double.infinity, 48),
                                       foregroundColor: colorPrimaryBlue,
                                       backgroundColor: colorMainGrey200,
                                       shape: RoundedRectangleBorder(
                                         borderRadius:
-                                            BorderRadius.circular(5.0),
+                                        BorderRadius.circular(5.0),
                                       ),
                                     ),
                                     child: const Text(
@@ -1806,9 +1845,11 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
   void _scrollListener1() {
     print("_scrollController-offset: ${_scrollControllerAttachment1.offset}");
     print(
-        "_scrollController-minScrollExtent: ${_scrollControllerAttachment1.position.minScrollExtent}");
+        "_scrollController-minScrollExtent: ${_scrollControllerAttachment1
+            .position.minScrollExtent}");
     print(
-        "_scrollController-userScrollDirection: ${_scrollControllerAttachment1.position.userScrollDirection}");
+        "_scrollController-userScrollDirection: ${_scrollControllerAttachment1
+            .position.userScrollDirection}");
 
     if (_scrollControllerAttachment1.offset == 0 &&
         _scrollControllerAttachment1.position.minScrollExtent == 0 &&
@@ -1821,7 +1862,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
         _animationController.stop();
       });
     } else if (_scrollControllerAttachment1.offset <=
-            _scrollControllerAttachment1.position.minScrollExtent &&
+        _scrollControllerAttachment1.position.minScrollExtent &&
         _scrollControllerAttachment1.position.userScrollDirection ==
             ScrollDirection.forward) {
       print("_scrollController-2");
@@ -1831,7 +1872,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
         });
       }
     } else if (_scrollControllerAttachment1.offset <=
-            _scrollControllerAttachment1.position.minScrollExtent &&
+        _scrollControllerAttachment1.position.minScrollExtent &&
         _scrollControllerAttachment1.position.userScrollDirection ==
             ScrollDirection.reverse) {
       print("_scrollController-3");
@@ -1841,7 +1882,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
         });
       }
     } else if (_scrollControllerAttachment1.offset >=
-            _scrollControllerAttachment1.position.maxScrollExtent &&
+        _scrollControllerAttachment1.position.maxScrollExtent &&
         !_scrollControllerAttachment1.position.outOfRange) {
       print("_scrollController-4");
       if (!_listReachedBottom) {
@@ -1871,9 +1912,11 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
   void _scrollListener2() {
     print("_scrollController-offset: ${_scrollControllerAttachment2.offset}");
     print(
-        "_scrollController-minScrollExtent: ${_scrollControllerAttachment2.position.minScrollExtent}");
+        "_scrollController-minScrollExtent: ${_scrollControllerAttachment2
+            .position.minScrollExtent}");
     print(
-        "_scrollController-userScrollDirection: ${_scrollControllerAttachment2.position.userScrollDirection}");
+        "_scrollController-userScrollDirection: ${_scrollControllerAttachment2
+            .position.userScrollDirection}");
 
     if (_scrollControllerAttachment2.offset == 0 &&
         _scrollControllerAttachment2.position.minScrollExtent == 0 &&
@@ -1886,7 +1929,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
         _animationController.stop();
       });
     } else if (_scrollControllerAttachment2.offset <=
-            _scrollControllerAttachment2.position.minScrollExtent &&
+        _scrollControllerAttachment2.position.minScrollExtent &&
         _scrollControllerAttachment2.position.userScrollDirection ==
             ScrollDirection.forward) {
       print("_scrollController-2");
@@ -1896,7 +1939,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
         });
       }
     } else if (_scrollControllerAttachment2.offset <=
-            _scrollControllerAttachment2.position.minScrollExtent &&
+        _scrollControllerAttachment2.position.minScrollExtent &&
         _scrollControllerAttachment2.position.userScrollDirection ==
             ScrollDirection.reverse) {
       print("_scrollController-3");
@@ -1906,7 +1949,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
         });
       }
     } else if (_scrollControllerAttachment2.offset >=
-            _scrollControllerAttachment2.position.maxScrollExtent &&
+        _scrollControllerAttachment2.position.maxScrollExtent &&
         !_scrollControllerAttachment2.position.outOfRange) {
       print("_scrollController-4");
       if (!_listReachedBottom) {
@@ -1971,7 +2014,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
     for (int i = 0; i < itemKeys.length; i++) {
       final key = itemKeys[i];
       final RenderBox? box =
-          key?.currentContext?.findRenderObject() as RenderBox?;
+      key?.currentContext?.findRenderObject() as RenderBox?;
 
       if (box != null) {
         final position = box.localToGlobal(Offset.zero);
@@ -1997,51 +2040,53 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
     moduleMessages
         .getMessages()
         .then((List<MyMessage> messages) {
-          setState(() {
-            listMessages.addAll(messages);
-          });
+      setState(() {
+        listMessages.addAll(messages);
+      });
 
-          for (MyMessage message in messages) {
-            showNotificationMessage(widget.chat, message);
-          }
+      for (MyMessage message in messages) {
+        showNotificationMessage(widget.chat, message);
+      }
 
-          if (_isLoading) {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              if (_scrollController.hasClients) {
-                _scrollController.jumpTo(0);
-              }
-            });
+      if (_isLoading) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (_scrollController.hasClients) {
+            _scrollController.jumpTo(0);
           }
-        })
+        });
+      }
+    })
         .catchError((e) {})
         .whenComplete(() {
-          setState(() {
-            _isLoading = false;
-            _isLoadMore = false;
-          });
-        });
+      setState(() {
+        _isLoading = false;
+        _isLoadMore = false;
+      });
+    });
   }
 
   void _loadNotice() {
     moduleNotice
         .getNotices(widget.chat.id)
         .then((List<DataNotice> listNotices) {
-          setState(() {
-            for (DataNotice notice in listNotices) {
-              if (notice.noticeable) {
-                dataNotice = notice;
-                _isHideNotice = dbStore.isNoticeHide(dataNotice);
-                break;
-              }
-            }
-          });
-        })
+      setState(() {
+        for (DataNotice notice in listNotices) {
+          if (notice.noticeable) {
+            dataNotice = notice;
+            _isHideNotice = dbStore.isNoticeHide(dataNotice);
+            break;
+          }
+        }
+      });
+    })
         .catchError((e) {})
         .whenComplete(() {});
   }
 
   void _checkIfButtonShouldBeEnabled() {
-    if (_messageController.text.trim().isNotEmpty) {
+    if (_messageController.text
+        .trim()
+        .isNotEmpty) {
       setState(() {
         _isButtonDisabled = false;
       });
@@ -2053,11 +2098,16 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
   }
 
   bool isGroup() {
-    return moduleMessages.getGroupChannel().members.length > 2;
+    return moduleMessages
+        .getGroupChannel()
+        .members
+        .length > 2;
   }
 
   List<Member> getAllMembers() {
-    return moduleMessages.getGroupChannel().members;
+    return moduleMessages
+        .getGroupChannel()
+        .members;
   }
 
   Future<void> _sendMessage() async {
@@ -2114,7 +2164,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
         List<int> index = [0];
 
         List<MyMessage> myMessages =
-            await moduleMessages.preSendMessageMedia(filesMedia);
+        await moduleMessages.preSendMessageMedia(filesMedia);
 
         for (MyMessage myMessage1 in myMessages) {
           setState(() {
@@ -2288,7 +2338,8 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
 
   void onMentionSelected(Member member) {
     print('member -> ${member.nickname}');
-    _messageController.text = "${_messageController.text}${member.nickname} ";
+    _messageController.text =
+    "<%${_messageController.text}${member.nickname}%>";
     setState(() {
       isMentioning = false;
     });
@@ -2368,7 +2419,8 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
                 isMentioning = false;
               });
             }
-          }, // TextEditingController
+          },
+          // TextEditingController
           decoration: InputDecoration(
             hintText: 'Enter your message',
             border: UnderlineInputBorder(
@@ -2402,13 +2454,13 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
     print(text);
     // Example logic to split text and apply different styles
     // This should be replaced with your actual logic
-    return replacePattern(text,true);
+    return replacePattern(text, true);
   }
 
   bool parseReplyMessage(String json) {
     try {
       ParentMessage parentMessage =
-          ParentMessage.fromJson(const JsonDecoder().convert(json));
+      ParentMessage.fromJson(const JsonDecoder().convert(json));
       if (parentMessage.messageId != 0 && parentMessage.senderName != "") {
         return true;
       }
@@ -2416,5 +2468,20 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
     } catch (_) {
       return false;
     }
+  }
+
+  void _openCamera() async {
+    final image = await ImagePicker().pickImage(source: ImageSource.camera);
+    if (image == null) return;
+    setState(() {
+      _selectedFileObject = File(image!.path);
+    });
+  }
+
+  Future _getGalleryimage() async {
+    final image = await ImagePicker().pickImage(source: ImageSource.gallery);
+    setState(() {
+      _selectedFileObject = File(image!.path);
+    });
   }
 }
