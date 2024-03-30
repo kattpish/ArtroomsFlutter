@@ -43,6 +43,7 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver  
 
   String _selectChatId = "";
   bool _isLoadingChatroom = false;
+  int timeSecRefreshChat = 10;
   final Map<String, ScreenChatroom> _listScreenChatrooms = {};
   final ModuleChat _chatModule = ModuleChat();
 
@@ -59,7 +60,7 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver  
     requestPermissions(context);
 
     _doLoadChats();
-    _timer = Timer.periodic(const Duration(seconds: 15), (timer) {
+    _timer = Timer.periodic(Duration(seconds: timeSecRefreshChat), (timer) {
       _doLoadChats();
     });
 
@@ -71,11 +72,9 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver  
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-
     if (state == AppLifecycleState.resumed) {
       _doLoadChats();
     }
-
   }
 
   @override
