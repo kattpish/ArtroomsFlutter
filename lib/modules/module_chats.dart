@@ -22,7 +22,9 @@ class ModuleChat {
   }
 
   Future<void> markMessageAsRead(DataChat dataChat) async {
-    moduleSendBird.markMessageAsRead(dataChat.groupChannel);
+    if(dataChat.groupChannel != null) {
+      moduleSendBird.markMessageAsRead(dataChat.groupChannel!);
+    }
   }
 
 }

@@ -68,7 +68,7 @@ Future<void> downloadFile(BuildContext context, String url, String fileName, {sh
   }
 
   if(showNotification) {
-    showNotificationDownload(filePath, fileName);
+    showNotificationDownload(context, filePath, fileName);
   }
 
 }

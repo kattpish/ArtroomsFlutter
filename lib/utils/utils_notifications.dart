@@ -1,29 +1,42 @@
 
 import 'package:artrooms/beans/bean_chat.dart';
 import 'package:artrooms/beans/bean_message.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import '../main.dart';
+import '../ui/theme/theme_colors.dart';
+import '../ui/widgets/widget_chatroom_message_pin.dart';
 
 
-Future<void> showNotificationChat(DataChat dataChat) async {
-  if(dataChat.unreadMessages > 0) return;
-  return showNotificationMessage(dataChat, dataChat.lastMessage);
+int timeSecRefreshChat = 10;
+
+Future<void> showNotificationChat(BuildContext context, State state, DataChat dataChat) async {
+  if(dataChat.unreadMessages == 0) return;
+  (statePin != null && statePin!.mounted ? statePin : state)?.setState(() {
+    dataChatPin = dataChat;
+  });
+  return showNotificationMessage(context, dataChat, dataChat.lastMessage);
 }
 
-Future<void> showNotificationMessage(DataChat dataChat, DataMessage message) async {
-  if(message.isMe) return;
-  if(!dataChat.isNotification) return;
-  if(!dbStore.isNotificationMessage()) return;
-  if(DateTime.now().millisecondsSinceEpoch - message.timestamp > 30*1000) return;
-  return showNotification(dataChat.id.hashCode, dataChat.name, message.getSummary());
+Future<void> showNotificationMessage(BuildContext context, DataChat dataChat, DataMessage message) async {
+  // if(message.isMe) return;
+  // if(!dataChat.isNotification) return;
+  // if(!dbStore.isNotificationMessage()) return;
+  // if(DateTime.now().millisecondsSinceEpoch - message.timestamp > timeSecRefreshChat*1000) return;
+
+  showToastWhenUserNotIdle(context, dataChat.id.hashCode, dataChat.name, message.getSummary());
+
+  return showNotification(context, dataChat.id.hashCode, dataChat.name, message.getSummary());
 }
 
-Future<void> showNotificationDownload(String filePath, String fileName) async {
-  return showNotification(filePath.hashCode, fileName, '미디어 파일이 다운로드되었습니다: $filePath');
+Future<void> showNotificationDownload(BuildContext context, String filePath, String fileName) async {
+  return showNotification(context, filePath.hashCode, fileName, '미디어 파일이 다운로드되었습니다: $filePath');
 }
 
-Future<void> showNotification(int id, String title, String message) async {
+Future<void> showNotification(BuildContext context, int id, String title, String message) async {
 
   var androidDetails = const AndroidNotificationDetails(
       'Artrooms', 'Artrooms',
@@ -40,5 +53,17 @@ Future<void> showNotification(int id, String title, String message) async {
     message,
     platformDetails,
     payload: 'item x',
+  );
+}
+
+Future<void> showToastWhenUserNotIdle(BuildContext context, int id, String title, String message) async {
+  Fluttertoast.showToast(
+    msg: "$title\n$message" ,
+    toastLength: Toast.LENGTH_LONG,
+    gravity: ToastGravity.TOP,
+    timeInSecForIosWeb: 1,
+    backgroundColor: colorPrimaryPurple,
+    textColor: Colors.white,
+    fontSize: 16.0,
   );
 }

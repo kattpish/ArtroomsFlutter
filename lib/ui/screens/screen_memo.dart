@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../../beans/bean_chat.dart';
 import '../../main.dart';
+import '../widgets/widget_ui_notifiy.dart';
 
 
 class ScreenMemo extends StatefulWidget {
@@ -75,23 +76,25 @@ class _ScreenMemoState extends State<ScreenMemo> {
         ),
       ),
       backgroundColor: colorMainScreen,
-      body: SafeArea(
-        child: Container(
-          padding: const EdgeInsets.only(left: 20.0, top: 10.0, right: 20.0, bottom: 20),
-          child: TextFormField(
-            controller: _memoController,
-            maxLines: null,
-            keyboardType: TextInputType.multiline,
-            style: const TextStyle(
-              color: colorMainGrey900,
-              fontSize: 16,
-              fontFamily: 'SUIT',
-              fontWeight: FontWeight.w400,
-              letterSpacing: -0.32,
-            ),
-            decoration: const InputDecoration(
-              hintText: '메모를 입력하세요',
-              border: InputBorder.none,
+      body: WidgetUiNotify(
+        child: SafeArea(
+          child: Container(
+            padding: const EdgeInsets.only(left: 20.0, top: 10.0, right: 20.0, bottom: 20),
+            child: TextFormField(
+              controller: _memoController,
+              maxLines: null,
+              keyboardType: TextInputType.multiline,
+              style: const TextStyle(
+                color: colorMainGrey900,
+                fontSize: 16,
+                fontFamily: 'SUIT',
+                fontWeight: FontWeight.w400,
+                letterSpacing: -0.32,
+              ),
+              decoration: const InputDecoration(
+                hintText: '메모를 입력하세요',
+                border: InputBorder.none,
+              ),
             ),
           ),
         ),

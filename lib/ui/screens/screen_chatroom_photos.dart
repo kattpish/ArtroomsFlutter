@@ -12,6 +12,7 @@ import '../theme/theme_colors.dart';
 import '../widgets/widget_chatroom_photos_card.dart';
 import '../widgets/widget_loader.dart';
 import '../widgets/widget_media.dart';
+import '../widgets/widget_ui_notifiy.dart';
 
 
 class ScreenChatroomPhotos extends StatefulWidget {
@@ -181,52 +182,54 @@ class _ScreenChatroomPhotosState extends State<ScreenChatroomPhotos> {
           elevation: 0.2,
         ),
         backgroundColor: colorMainScreen,
-        body: SafeArea(
-          child: _isLoading
-              ? const WidgetLoader()
-              : _attachmentsImages.isEmpty
-              ? widgetChatroomPhotosEmpty(context)
-              : GridView.builder(
-            controller: _scrollController,
-            physics: const ScrollPhysicsBouncing(),
-            padding: const EdgeInsets.only(bottom: 32),
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: isTablet(context) ? 6 : 3,
-              crossAxisSpacing: 1,
-              mainAxisSpacing: 1,
-              childAspectRatio: 1,
-            ),
-            itemCount: _attachmentsImages.length + (_isLoadingMore ? 1 : 0),
-            itemBuilder: (context, index) {
+        body: WidgetUiNotify(
+          child: SafeArea(
+            child: _isLoading
+                ? const WidgetLoader()
+                : _attachmentsImages.isEmpty
+                ? widgetChatroomPhotosEmpty(context)
+                : GridView.builder(
+              controller: _scrollController,
+              physics: const ScrollPhysicsBouncing(),
+              padding: const EdgeInsets.only(bottom: 32),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: isTablet(context) ? 6 : 3,
+                crossAxisSpacing: 1,
+                mainAxisSpacing: 1,
+                childAspectRatio: 1,
+              ),
+              itemCount: _attachmentsImages.length + (_isLoadingMore ? 1 : 0),
+              itemBuilder: (context, index) {
 
-              if (index == _attachmentsImages.length) {
-                return const Center(
-                    child: SizedBox(
-                        width: 36,
-                        height: 36,
-                        child: CircularProgressIndicator(
-                          color: Color(0xFF6A79FF),
-                          strokeWidth: 4,
-                        )
-                    ),
+                if (index == _attachmentsImages.length) {
+                  return const Center(
+                      child: SizedBox(
+                          width: 36,
+                          height: 36,
+                          child: CircularProgressIndicator(
+                            color: Color(0xFF6A79FF),
+                            strokeWidth: 4,
+                          )
+                      ),
+                  );
+                }
+
+                DataMessage attachmentImage = _attachmentsImages[index];
+                return widgetChatroomPhotosCard(context, attachmentImage, _selectMode,
+                    onView: () {
+                      doOpenPhotoView(context, imageUrl:attachmentImage.getImageUrl(), fileName:attachmentImage.attachmentName);
+                    },
+                    onSelect: () {
+                      setState(() {
+                        if(!attachmentImage.isDownloading) {
+                          attachmentImage.isSelected = !attachmentImage.isSelected;
+                          _checkEnableButton();
+                        }
+                      });
+                    }
                 );
-              }
-
-              DataMessage attachmentImage = _attachmentsImages[index];
-              return widgetChatroomPhotosCard(context, attachmentImage, _selectMode,
-                  onView: () {
-                    doOpenPhotoView(context, imageUrl:attachmentImage.getImageUrl(), fileName:attachmentImage.attachmentName);
-                  },
-                  onSelect: () {
-                    setState(() {
-                      if(!attachmentImage.isDownloading) {
-                        attachmentImage.isSelected = !attachmentImage.isSelected;
-                        _checkEnableButton();
-                      }
-                    });
-                  }
-              );
-            },
+              },
+            ),
           ),
         ),
         bottomNavigationBar: SafeArea(

@@ -10,7 +10,7 @@ Widget widgetChatroomEmpty(BuildContext context) {
       mainAxisSize: MainAxisSize.min,
       children: [
         Image.asset(
-          'assets/images/icons/chat_gray.png',
+          'assets/images/icons/icon_chat.png',
           width: 54.0,
           height: 54.0,
         ),

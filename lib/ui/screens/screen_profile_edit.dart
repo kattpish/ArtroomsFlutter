@@ -13,6 +13,7 @@ import '../../modules/module_profile.dart';
 import '../theme/theme_colors.dart';
 import '../widgets/widget_loader.dart';
 import '../widgets/widget_profile_inputs.dart';
+import '../widgets/widget_ui_notifiy.dart';
 
 
 class ScreenProfileEdit extends StatefulWidget {
@@ -94,204 +95,206 @@ class _ScreenProfileEditState extends State<ScreenProfileEdit> {
         elevation: 0,
       ),
       backgroundColor: colorMainScreen,
-      body: SafeArea(
-        child: Stack(
-          children: [
-            SingleChildScrollView(
-              physics: const ScrollPhysicsBouncing(),
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Container(
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                    ),
-                    clipBehavior: Clip.antiAlias,
-                    child: CircleAvatar(
-                      radius: 60,
-                      backgroundColor: Colors.transparent,
-                      child: _fileImage == null
-                          ? FadeInImage.assetNetwork(
-                        placeholder: 'assets/images/profile/placeholder.png',
-                        image: _profile.profileImg,
-                        fit: BoxFit.cover,
-                        width: 120,
-                        height: 120,
-                        fadeInDuration: const Duration(milliseconds: 100),
-                        fadeOutDuration: const Duration(milliseconds: 100),
-                        imageErrorBuilder: (context, error, stackTrace) {
-                          return Image.asset(
-                            'assets/images/profile/placeholder.png',
-                            fit: BoxFit.cover,
-                          );
-                        },
-                      )
-                          : Image.file(
-                        File(_fileImage!.path),
-                        height: 120,
-                        width: 120,
-                        fit: BoxFit.cover,
+      body: WidgetUiNotify(
+        child: SafeArea(
+          child: Stack(
+            children: [
+              SingleChildScrollView(
+                physics: const ScrollPhysicsBouncing(),
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Container(
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                      ),
+                      clipBehavior: Clip.antiAlias,
+                      child: CircleAvatar(
+                        radius: 60,
+                        backgroundColor: Colors.transparent,
+                        child: _fileImage == null
+                            ? FadeInImage.assetNetwork(
+                          placeholder: 'assets/images/profile/placeholder.png',
+                          image: _profile.profileImg,
+                          fit: BoxFit.cover,
+                          width: 120,
+                          height: 120,
+                          fadeInDuration: const Duration(milliseconds: 100),
+                          fadeOutDuration: const Duration(milliseconds: 100),
+                          imageErrorBuilder: (context, error, stackTrace) {
+                            return Image.asset(
+                              'assets/images/profile/placeholder.png',
+                              fit: BoxFit.cover,
+                            );
+                          },
+                        )
+                            : Image.file(
+                          File(_fileImage!.path),
+                          height: 120,
+                          width: 120,
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 20),
-                  Align(
-                    alignment: Alignment.center,
-                    child: TextButton(
-                      onPressed: () async {
+                    const SizedBox(height: 20),
+                    Align(
+                      alignment: Alignment.center,
+                      child: TextButton(
+                        onPressed: () async {
 
-                        requestPermissions(context);
+                          requestPermissions(context);
 
-                        final ImagePicker picker = ImagePicker();
-                        XFile? xFileImage = await picker.pickImage(source: ImageSource.gallery);
+                          final ImagePicker picker = ImagePicker();
+                          XFile? xFileImage = await picker.pickImage(source: ImageSource.gallery);
 
-                        setState(() {
-                          _fileImage = xFileImage;
-                        });
+                          setState(() {
+                            _fileImage = xFileImage;
+                          });
 
-                        if (_fileImage != null) {
-                          _doUploadProfile(context);
-                          if (kDebugMode) {
-                            print("Picked image path: ${_fileImage?.path}");
+                          if (_fileImage != null) {
+                            _doUploadProfile(context);
+                            if (kDebugMode) {
+                              print("Picked image path: ${_fileImage?.path}");
+                            }
                           }
-                        }
 
-                      },
-                      style: TextButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                        shape: RoundedRectangleBorder(
-                          side: const BorderSide(color: Color(0xFFD7D7D7), width: 1),
-                          borderRadius: BorderRadius.circular(5),
+                        },
+                        style: TextButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            side: const BorderSide(color: Color(0xFFD7D7D7), width: 1),
+                            borderRadius: BorderRadius.circular(5),
+                          ),
                         ),
-                      ),
-                      child: _isUploading
-                          ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                            child: CircularProgressIndicator(
-                        color: colorPrimaryPurple,
-                        strokeWidth: 3,
-                      ),
-                          )
-                          : const Text(
-                        '프로필 바꾸기',
-                        style: TextStyle(
-                          color: Color(0xFF5F5F5F),
-                          fontSize: 14,
-                          fontFamily: 'Pretendard',
-                          fontWeight: FontWeight.w400,
+                        child: _isUploading
+                            ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                              child: CircularProgressIndicator(
+                          color: colorPrimaryPurple,
+                          strokeWidth: 3,
+                        ),
+                            )
+                            : const Text(
+                          '프로필 바꾸기',
+                          style: TextStyle(
+                            color: Color(0xFF5F5F5F),
+                            fontSize: 14,
+                            fontFamily: 'Pretendard',
+                            fontWeight: FontWeight.w400,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 24),
-                  widgetProfileInput1(
-                      label: '이름',
-                      controller: _nameController,
-                      focus: _nameFocus,
-                      readOnly: false,
-                      onSubmitted: (_) {
-                        FocusScope.of(context).requestFocus(_nicknameFocus);
-                      }
-                  ),
-                  const SizedBox(height: 16),
-                  widgetProfileInput1(
-                      label: '닉네임',
-                      controller: _nicknameController,
-                      focus: _nicknameFocus,
-                      onSubmitted: (_) {
-                        FocusScope.of(context).requestFocus(_phoneFocus);
-                      }
-                  ),
-                  const SizedBox(height: 16),
-                  widgetProfileInput1(
-                      label: '이메일',
-                      controller: _emailController,
-                      focus: _emailFocus,
+                    const SizedBox(height: 24),
+                    widgetProfileInput1(
+                        label: '이름',
+                        controller: _nameController,
+                        focus: _nameFocus,
+                        readOnly: false,
+                        onSubmitted: (_) {
+                          FocusScope.of(context).requestFocus(_nicknameFocus);
+                        }
+                    ),
+                    const SizedBox(height: 16),
+                    widgetProfileInput1(
+                        label: '닉네임',
+                        controller: _nicknameController,
+                        focus: _nicknameFocus,
+                        onSubmitted: (_) {
+                          FocusScope.of(context).requestFocus(_phoneFocus);
+                        }
+                    ),
+                    const SizedBox(height: 16),
+                    widgetProfileInput1(
+                        label: '이메일',
+                        controller: _emailController,
+                        focus: _emailFocus,
+                        readOnly: true,
+                        onSubmitted: (_) {
+                          FocusScope.of(context).requestFocus(_passwordFocus);
+                        }
+                    ),
+                    const SizedBox(height: 16),
+                    widgetProfileInput2(
+                      label: '휴대전화',
+                      controller: _phoneController,
+                      focus: _phoneFocus,
                       readOnly: true,
                       onSubmitted: (_) {
                         FocusScope.of(context).requestFocus(_passwordFocus);
-                      }
-                  ),
-                  const SizedBox(height: 16),
-                  widgetProfileInput2(
-                    label: '휴대전화',
-                    controller: _phoneController,
-                    focus: _phoneFocus,
-                    readOnly: true,
-                    onSubmitted: (_) {
-                      FocusScope.of(context).requestFocus(_passwordFocus);
-                    },
-                    onTap: () {
+                      },
+                      onTap: () {
 
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                  widgetProfileInput2(
-                    label: '비밀번호',
-                    controller: _passwordController,
-                    focus: _passwordFocus,
-                    readOnly: true,
-                    isObscure: !_isPasswordVisible,
-                    textInputAction: TextInputAction.done,
-                    onSubmitted: (_) {
-                      _doUpdateProfile(context);
-                    },
-                    onTap: () {
-                      setState(() {
-                        _isPasswordVisible = !_isPasswordVisible;
-                      });
-                    },
-                  ),
-                  const SizedBox(height: 56),
-                  ElevatedButton(
-                    onPressed: () {
-                      _doUpdateProfile(context);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: colorPrimaryBlue,
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
+                      },
                     ),
-                    child: Container(
-                      height: 44,
-                      alignment: Alignment.center,
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 0.0),
-                      child:
-                      _isSubmitting
-                          ? const SizedBox(
-                        width: 24,
-                        height: 24,
-                        child: CircularProgressIndicator(
-                          color: Color(0xFFFFFFFF),
-                          strokeWidth: 3,
+                    const SizedBox(height: 16),
+                    widgetProfileInput2(
+                      label: '비밀번호',
+                      controller: _passwordController,
+                      focus: _passwordFocus,
+                      readOnly: true,
+                      isObscure: !_isPasswordVisible,
+                      textInputAction: TextInputAction.done,
+                      onSubmitted: (_) {
+                        _doUpdateProfile(context);
+                      },
+                      onTap: () {
+                        setState(() {
+                          _isPasswordVisible = !_isPasswordVisible;
+                        });
+                      },
+                    ),
+                    const SizedBox(height: 56),
+                    ElevatedButton(
+                      onPressed: () {
+                        _doUpdateProfile(context);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: colorPrimaryBlue,
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
                         ),
-                      )
-                          : const Text(
-                          '저장',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.white,
-                            fontFamily: 'SUIT',
-                            fontWeight: FontWeight.w700,
-                            height: 0,
-                            letterSpacing: -0.32,
-                          )
+                      ),
+                      child: Container(
+                        height: 44,
+                        alignment: Alignment.center,
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 0.0),
+                        child:
+                        _isSubmitting
+                            ? const SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(
+                            color: Color(0xFFFFFFFF),
+                            strokeWidth: 3,
+                          ),
+                        )
+                            : const Text(
+                            '저장',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.white,
+                              fontFamily: 'SUIT',
+                              fontWeight: FontWeight.w700,
+                              height: 0,
+                              letterSpacing: -0.32,
+                            )
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 16),
-                ],
+                    const SizedBox(height: 16),
+                  ],
+                ),
               ),
-            ),
-            Visibility(
-                visible: _isLoading,
-                child: const WidgetLoaderPage()
-            ),
-          ],
+              Visibility(
+                  visible: _isLoading,
+                  child: const WidgetLoaderPage()
+              ),
+            ],
+          ),
         ),
       ),
     );

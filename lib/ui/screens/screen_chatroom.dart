@@ -1,13 +1,10 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:artrooms/beans/bean_notice.dart';
 import 'package:artrooms/modules/module_notices.dart';
 import 'package:artrooms/ui/screens/screen_chatroom_drawer.dart';
-import 'package:artrooms/ui/widgets/widget_chatroom_message_reply_flow.dart';
 import 'package:artrooms/ui/widgets/widget_loader.dart';
-import 'package:artrooms/utils/utils_media.dart';
 import 'package:artrooms/utils/utils_notifications.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +17,6 @@ import 'package:sendbird_sdk/core/models/member.dart';
 import '../../beans/bean_chat.dart';
 import '../../beans/bean_file.dart';
 import '../../beans/bean_message.dart';
-import '../../data/module_datastore.dart';
 import '../../listeners/scroll_bouncing_physics.dart';
 import '../../main.dart';
 import '../../modules/module_messages.dart';
@@ -29,16 +25,15 @@ import '../../utils/utils_screen.dart';
 import '../theme/theme_colors.dart';
 import '../widgets/widget_chatroom_attachment_selected.dart';
 import '../widgets/widget_chatroom_empty.dart';
-import '../widgets/widget_chatroom_message_attachment_file.dart';
 import '../widgets/widget_chatroom_message_input.dart';
 import '../widgets/widget_chatroom_message_me.dart';
 import '../widgets/widget_chatroom_message_mention.dart';
 import '../widgets/widget_chatroom_message_other.dart';
-import '../widgets/widget_chatroom_message_reply.dart';
-import '../widgets/widget_chatroom_message_reply_texfield.dart';
-import '../widgets/widget_chatroom_message_text.dart';
-import '../widgets/widget_chatroom_notice.dart';
+import '../widgets/widget_chatroom_message_pin.dart';
+import '../widgets/widget_chatroom_message_reply_textfield.dart';
+import '../widgets/widget_chatroom_notice_pin.dart';
 import '../widgets/widget_media.dart';
+import '../widgets/widget_ui_notifiy.dart';
 
 class ScreenChatroom extends StatefulWidget {
 
@@ -100,6 +95,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
   final Map<int, GlobalKey> _itemKeys = {};
 
   late Widget attachmentPicker;
+  late Timer _timer;
 
   late AnimationController _animationController;
   DataMessage? _replyMessage;
@@ -124,6 +120,10 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
     _doLoadMessages();
     _doLoadNotice();
     _doLoadMedia();
+
+    _timer = Timer.periodic(Duration(seconds: timeSecRefreshChat), (timer) {
+      _doLoadMessagesNew();
+    });
 
     _messageFocusNode.addListener(() {
       if (_messageFocusNode.hasFocus) {
@@ -177,6 +177,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
     _scrollControllerAttachment2.dispose();
     _scrollTimer?.cancel();
     _animationController.dispose();
+    _timer.cancel();
     super.dispose();
   }
 
@@ -275,274 +276,276 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                   ],
                 ),
                 backgroundColor: Colors.white,
-                body: Column(
-                  children: [
-                    Expanded(
-                      child: _isLoading
-                          ? const WidgetLoader()
-                          : Stack(
-                        alignment: AlignmentDirectional.topCenter,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(vertical: 0),
-                            child: _listMessages.isNotEmpty ? GestureDetector(
-                                onTap: () {
-                                  closeKeyboard(context);
-                                },
-                                child: ScrollablePositionedList.builder(
-                                  itemScrollController: _itemScrollController,
-                                  itemPositionsListener: _itemPositionsListener,
-                                  itemCount: _listMessages.length,
-                                  physics: const ScrollPhysicsBouncing(),
-                                  reverse: true,
-                                  itemBuilder: (context, index) {
-                                    _itemKeys[index] = GlobalKey();
-                                    final message = _listMessages[index];
-                                    final isLast = index == 0;
-                                    final messageNext = index > 0
-                                        ? _listMessages[index - 1]
-                                        : DataMessage.empty();
-                                    final messagePrevious =
-                                    index < _listMessages.length - 1
-                                        ? _listMessages[index + 1]
-                                        : DataMessage.empty();
-                                    final isPreviousSame =
-                                        messagePrevious.senderId ==
-                                            message.senderId;
-                                    final isNextSame =
-                                        messageNext.senderId ==
-                                            message.senderId;
-                                    final isPreviousDate =
-                                        messagePrevious.getDate() ==
-                                            message.getDate();
-                                    final isPreviousSameDateTime =
-                                        isPreviousSame &&
-                                            messagePrevious
-                                                .getDateTime() ==
-                                                message.getDateTime();
-                                    final isNextSameTime = isNextSame &&
-                                        messageNext.getDateTime() ==
-                                            message.getDateTime();
-                                    return Column(
-                                      key: _itemKeys[index],
-                                      children: [
-                                        Visibility(
-                                          visible: !isPreviousDate,
-                                          child: Container(
-                                            width: 145,
-                                            height: 31,
-                                            margin: EdgeInsets.only(
-                                                left: 16,
-                                                right: 16,
-                                                top:
-                                                index == 0 ? 4 : 16,
-                                                bottom:
-                                                index == 0 ? 4 : 8),
-                                            padding: const EdgeInsets
-                                                .symmetric(
-                                                horizontal: 12,
-                                                vertical: 4),
-                                            alignment: Alignment.center,
-                                            decoration: ShapeDecoration(
-                                              color: const Color(
-                                                  0xFFF9F9F9),
-                                              shape:
-                                              RoundedRectangleBorder(
-                                                borderRadius:
-                                                BorderRadius
-                                                    .circular(20),
+                body: WidgetUiNotify(
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: _isLoading
+                            ? const WidgetLoader()
+                            : Stack(
+                          alignment: AlignmentDirectional.topCenter,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(vertical: 0),
+                              child: _listMessages.isNotEmpty ? GestureDetector(
+                                  onTap: () {
+                                    closeKeyboard(context);
+                                  },
+                                  child: ScrollablePositionedList.builder(
+                                    itemScrollController: _itemScrollController,
+                                    itemPositionsListener: _itemPositionsListener,
+                                    itemCount: _listMessages.length,
+                                    physics: const ScrollPhysicsBouncing(),
+                                    reverse: true,
+                                    itemBuilder: (context, index) {
+                                      _itemKeys[index] = GlobalKey();
+                                      final message = _listMessages[index];
+                                      final isLast = index == 0;
+                                      final messageNext = index > 0
+                                          ? _listMessages[index - 1]
+                                          : DataMessage.empty();
+                                      final messagePrevious =
+                                      index < _listMessages.length - 1
+                                          ? _listMessages[index + 1]
+                                          : DataMessage.empty();
+                                      final isPreviousSame =
+                                          messagePrevious.senderId ==
+                                              message.senderId;
+                                      final isNextSame =
+                                          messageNext.senderId ==
+                                              message.senderId;
+                                      final isPreviousDate =
+                                          messagePrevious.getDate() ==
+                                              message.getDate();
+                                      final isPreviousSameDateTime =
+                                          isPreviousSame &&
+                                              messagePrevious
+                                                  .getDateTime() ==
+                                                  message.getDateTime();
+                                      final isNextSameTime = isNextSame &&
+                                          messageNext.getDateTime() ==
+                                              message.getDateTime();
+                                      return Column(
+                                        key: _itemKeys[index],
+                                        children: [
+                                          Visibility(
+                                            visible: !isPreviousDate,
+                                            child: Container(
+                                              width: 145,
+                                              height: 31,
+                                              margin: EdgeInsets.only(
+                                                  left: 16,
+                                                  right: 16,
+                                                  top:
+                                                  index == 0 ? 4 : 16,
+                                                  bottom:
+                                                  index == 0 ? 4 : 8),
+                                              padding: const EdgeInsets
+                                                  .symmetric(
+                                                  horizontal: 12,
+                                                  vertical: 4),
+                                              alignment: Alignment.center,
+                                              decoration: ShapeDecoration(
+                                                color: const Color(
+                                                    0xFFF9F9F9),
+                                                shape:
+                                                RoundedRectangleBorder(
+                                                  borderRadius:
+                                                  BorderRadius
+                                                      .circular(20),
+                                                ),
+                                              ),
+                                              child: Row(
+                                                mainAxisSize:
+                                                MainAxisSize.min,
+                                                mainAxisAlignment:
+                                                MainAxisAlignment
+                                                    .start,
+                                                crossAxisAlignment:
+                                                CrossAxisAlignment
+                                                    .center,
+                                                children: [
+                                                  Text(
+                                                    formatDateLastMessage(
+                                                        message
+                                                            .timestamp),
+                                                    style:
+                                                    const TextStyle(
+                                                      color: Color(
+                                                          0xFF7D7D7D),
+                                                      fontSize: 12,
+                                                      fontFamily: 'SUIT',
+                                                      fontWeight:
+                                                      FontWeight.w400,
+                                                      height: 0,
+                                                      letterSpacing:
+                                                      -0.24,
+                                                    ),
+                                                    maxLines: 1,
+                                                    overflow: TextOverflow
+                                                        .ellipsis,
+                                                    textAlign:
+                                                    TextAlign.center,
+                                                  ),
+                                                ],
                                               ),
                                             ),
-                                            child: Row(
-                                              mainAxisSize:
-                                              MainAxisSize.min,
-                                              mainAxisAlignment:
-                                              MainAxisAlignment
-                                                  .start,
-                                              crossAxisAlignment:
-                                              CrossAxisAlignment
-                                                  .center,
-                                              children: [
-                                                Text(
-                                                  formatDateLastMessage(
-                                                      message
-                                                          .timestamp),
-                                                  style:
-                                                  const TextStyle(
-                                                    color: Color(
-                                                        0xFF7D7D7D),
-                                                    fontSize: 12,
-                                                    fontFamily: 'SUIT',
-                                                    fontWeight:
-                                                    FontWeight.w400,
-                                                    height: 0,
-                                                    letterSpacing:
-                                                    -0.24,
-                                                  ),
-                                                  maxLines: 1,
-                                                  overflow: TextOverflow
-                                                      .ellipsis,
-                                                  textAlign:
-                                                  TextAlign.center,
-                                                ),
-                                              ],
-                                            ),
                                           ),
-                                        ),
-                                        FocusedMenuHolder(
-                                            onPressed: () {},
-                                            menuWidth:
-                                            MediaQuery.of(context)
-                                                .size
-                                                .width /
-                                                3,
-                                            menuItems: [
-                                              FocusedMenuItem(
-                                                  trailingIcon:
-                                                  const Icon(
-                                                      Icons.reply,
-                                                    color: colorMainGrey500,
-                                                  ),
-                                                  title: const Text(
-                                                      "답장"),
-                                                  onPressed: () {
-                                                    _replyMessage =
-                                                        message;
-                                                    _messageFocusNode
-                                                        .requestFocus();
-                                                  }),
-                                              FocusedMenuItem(
-                                                  trailingIcon:
-                                                  const Icon(Icons.copy,
-                                                    color: colorMainGrey500,
-                                                  ),
-                                                  title: const Text(
-                                                      "복사"),
-                                                  onPressed: () async {
-                                                    await Clipboard.setData(
-                                                        ClipboardData(
-                                                            text: message
-                                                                .content));
-                                                  })
-                                            ],
-                                            blurSize: 0.0,
-                                            menuOffset: 10.0,
-                                            bottomOffsetHeight: 80.0,
-                                            menuBoxDecoration:
-                                            const BoxDecoration(
-                                                borderRadius:
-                                                BorderRadius.all(
-                                                    Radius.circular(
-                                                        15.0))),
-                                            child: Container(
-                                              child: message.isMe
-                                                  ? buildMyMessageBubble(context, this, message, isLast, isPreviousSameDateTime, isNextSameTime, _screenWidth)
-                                                  : buildOtherMessageBubble(context, this, message, isLast, isPreviousSame, isNextSame, isPreviousSameDateTime, isNextSameTime, _screenWidth),
-                                            ))
-                                      ],
-                                    );
-                                  },
-                                )
-                            )
-                                : widgetChatroomEmpty(context),
-                          ),
-                          Visibility(
-                            visible: _isLoadMore,
-                            child: Container(
-                              width: 12,
-                              height: 12,
-                              margin: const EdgeInsets.only(top: 2),
-                              child: const CircularProgressIndicator(
-                                color: Color(0xFF6A79FF),
-                                strokeWidth: 2,
-                              ),
+                                          FocusedMenuHolder(
+                                              onPressed: () {},
+                                              menuWidth:
+                                              MediaQuery.of(context)
+                                                  .size
+                                                  .width /
+                                                  3,
+                                              menuItems: [
+                                                FocusedMenuItem(
+                                                    trailingIcon:
+                                                    const Icon(
+                                                        Icons.reply,
+                                                      color: colorMainGrey500,
+                                                    ),
+                                                    title: const Text(
+                                                        "답장"),
+                                                    onPressed: () {
+                                                      _replyMessage =
+                                                          message;
+                                                      _messageFocusNode
+                                                          .requestFocus();
+                                                    }),
+                                                FocusedMenuItem(
+                                                    trailingIcon:
+                                                    const Icon(Icons.copy,
+                                                      color: colorMainGrey500,
+                                                    ),
+                                                    title: const Text(
+                                                        "복사"),
+                                                    onPressed: () async {
+                                                      await Clipboard.setData(
+                                                          ClipboardData(
+                                                              text: message
+                                                                  .content));
+                                                    })
+                                              ],
+                                              blurSize: 0.0,
+                                              menuOffset: 10.0,
+                                              bottomOffsetHeight: 80.0,
+                                              menuBoxDecoration:
+                                              const BoxDecoration(
+                                                  borderRadius:
+                                                  BorderRadius.all(
+                                                      Radius.circular(
+                                                          15.0))),
+                                              child: Container(
+                                                child: message.isMe
+                                                    ? buildMyMessageBubble(context, this, message, isLast, isPreviousSameDateTime, isNextSameTime, _screenWidth)
+                                                    : buildOtherMessageBubble(context, this, message, isLast, isPreviousSame, isNextSame, isPreviousSameDateTime, isNextSameTime, _screenWidth),
+                                              ))
+                                        ],
+                                      );
+                                    },
+                                  )
+                              )
+                                  : widgetChatroomEmpty(context),
                             ),
-                          ),
-                          AnimatedOpacity(
-                            opacity: !_isHideNotice &&
-                                _dataNotice.notice.isNotEmpty
-                                ? 1.0
-                                : 0.0,
-                            duration: const Duration(milliseconds: 500),
-                            child: buildNoticePin(context, _dataNotice, _isExpandNotice, _isHideNotice,
-                                onToggle:() {
-                                  setState(() {
-                                    _isExpandNotice = !_isExpandNotice;
-                                    closeKeyboard(context);
-                                  });
-                                },
-                                onHide:() {
-                                  setState(() {
-                                    _isHideNotice = true;
-                                    dbStore.setNoticeHide(_dataNotice, _isHideNotice);
-                                  });
-                                }
-                            ),
-                          ),
-                          AnimatedOpacity(
-                            opacity: _showDateContainer ? 1.0 : 0.0,
-                            duration: const Duration(milliseconds: 500),
-                            child: Container(
-                              width: 145,
-                              height: 31,
-                              margin: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 2),
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 12, vertical: 4),
-                              alignment: Alignment.center,
-                              decoration: ShapeDecoration(
-                                color: const Color(0xFFF9F9F9),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20),
+                            Visibility(
+                              visible: _isLoadMore,
+                              child: Container(
+                                width: 12,
+                                height: 12,
+                                margin: const EdgeInsets.only(top: 2),
+                                child: const CircularProgressIndicator(
+                                  color: Color(0xFF6A79FF),
+                                  strokeWidth: 2,
                                 ),
                               ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                mainAxisAlignment:
-                                MainAxisAlignment.start,
-                                crossAxisAlignment:
-                                CrossAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    _currentDate,
-                                    style: const TextStyle(
-                                      color: Color(0xFF7D7D7D),
-                                      fontSize: 12,
-                                      fontFamily: 'SUIT',
-                                      fontWeight: FontWeight.w400,
-                                      height: 0,
-                                      letterSpacing: -0.24,
-                                    ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ],
+                            ),
+                            AnimatedOpacity(
+                              opacity: !_isHideNotice &&
+                                  _dataNotice.notice.isNotEmpty
+                                  ? 1.0
+                                  : 0.0,
+                              duration: const Duration(milliseconds: 500),
+                              child: buildNoticePin(context, _dataNotice, _isExpandNotice, _isHideNotice,
+                                  onToggle:() {
+                                    setState(() {
+                                      _isExpandNotice = !_isExpandNotice;
+                                      closeKeyboard(context);
+                                    });
+                                  },
+                                  onHide:() {
+                                    setState(() {
+                                      _isHideNotice = true;
+                                      dbStore.setNoticeHide(_dataNotice, _isHideNotice);
+                                    });
+                                  }
                               ),
                             ),
-                          ),
-                        ],
+                            AnimatedOpacity(
+                              opacity: _showDateContainer ? 1.0 : 0.0,
+                              duration: const Duration(milliseconds: 500),
+                              child: Container(
+                                width: 145,
+                                height: 31,
+                                margin: const EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 2),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 4),
+                                alignment: Alignment.center,
+                                decoration: ShapeDecoration(
+                                  color: const Color(0xFFF9F9F9),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.start,
+                                  crossAxisAlignment:
+                                  CrossAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      _currentDate,
+                                      style: const TextStyle(
+                                        color: Color(0xFF7D7D7D),
+                                        fontSize: 12,
+                                        fontFamily: 'SUIT',
+                                        fontWeight: FontWeight.w400,
+                                        height: 0,
+                                        letterSpacing: -0.24,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    Visibility(
-                      visible: _showAttachment,
-                      child: attachmentSelected(context, _filesImages,
-                          onRemove:(FileItem fileItem) {
-                            setState(() {
-                              fileItem.isSelected = false;
-                            });
-                            closeKeyboard(context);
-                          }
+                      Visibility(
+                        visible: _showAttachment,
+                        child: attachmentSelected(context, _filesImages,
+                            onRemove:(FileItem fileItem) {
+                              setState(() {
+                                fileItem.isSelected = false;
+                              });
+                              closeKeyboard(context);
+                            }
+                        ),
                       ),
-                    ),
-                    _buildMessageInput(),
-                    const SizedBox(height: 8),
-                    Visibility(
-                      visible: _showAttachment,
-                      child:
-                      SizedBox(height: _boxHeight, child: attachmentPicker),
-                    ),
-                  ],
+                      _buildMessageInput(),
+                      const SizedBox(height: 8),
+                      Visibility(
+                        visible: _showAttachment,
+                        child:
+                        SizedBox(height: _boxHeight, child: attachmentPicker),
+                      ),
+                    ],
+                  ),
                 ),
               ),
               Visibility(
@@ -1309,24 +1312,15 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
       });
     }
 
-    _moduleMessages
-        .getMessages()
-        .then((List<DataMessage> messages) {
+    _moduleMessages.getMessagesMore().then((List<DataMessage> messages) {
       setState(() {
         _listMessages.addAll(messages);
       });
 
       for (DataMessage message in messages) {
-        showNotificationMessage(widget.chat, message);
+        showNotificationMessage(context, widget.chat, message);
       }
 
-      if (_isLoading) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (_scrollController.hasClients) {
-            _scrollController.jumpTo(0);
-          }
-        });
-      }
     }).catchError((e) {
 
     }
@@ -1340,10 +1334,23 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
     });
   }
 
+  Future<void> _doLoadMessagesNew() async {
+    if (_moduleMessages.isLoading()) return;
+
+    _moduleMessages.getMessagesNew().then((List<DataMessage> messages) {
+
+      for (DataMessage message in messages) {
+        if(!_listMessages.contains(message)) {
+          _listMessages.insert(0, message);
+          showNotificationMessage(context, widget.chat, message);
+        }
+      }
+
+    });
+  }
+
   void _doLoadNotice() {
-    _moduleNotice
-        .getNotices(widget.chat.id)
-        .then((List<DataNotice> listNotices) {
+    _moduleNotice.getNotices(widget.chat.id).then((List<DataNotice> listNotices) {
       setState(() {
         for (DataNotice notice in listNotices) {
           if (notice.noticeable) {

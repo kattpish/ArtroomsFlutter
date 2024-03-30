@@ -7,7 +7,7 @@ import 'bean_message.dart';
 
 class DataChat {
 
-  GroupChannel groupChannel;
+  GroupChannel? groupChannel;
   final String id;
   final String name;
   String nameKr = " ";
@@ -24,10 +24,20 @@ class DataChat {
     required this.id,
     required this.name,
     required this.lastMessage,
-    required this.unreadMessages,
-    required this.profilePictureUrl,
-    required this.date,
+    this.unreadMessages = 0,
+    this.profilePictureUrl = "",
+    this.date = "",
   });
+
+  factory DataChat.empty() {
+    final DataChat dataChat = DataChat(
+        id: "",
+        name: "",
+        groupChannel: null,
+        lastMessage: DataMessage.empty(),
+    );
+    return dataChat;
+  }
 
   factory DataChat.fromGroupChannel(GroupChannel groupChannel) {
 

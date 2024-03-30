@@ -6,6 +6,7 @@ import '../../listeners/scroll_bouncing_physics.dart';
 import '../../main.dart';
 import '../theme/theme_colors.dart';
 import '../widgets/widget_notifications.dart';
+import '../widgets/widget_ui_notifiy.dart';
 
 
 class ScreenNotifications extends StatefulWidget {
@@ -72,38 +73,40 @@ class _ScreenNotificationsState extends State<ScreenNotifications> {
           elevation: 0,
         ),
         backgroundColor: colorMainScreen,
-        body: SingleChildScrollView(
-          physics: const ScrollPhysicsBouncing(),
-          child: Column(
-            children: [
-              const SizedBox(height: 16),
-              Column(
-                children: _notifications.map((notification) {
-                  int index = _notifications.indexOf(notification);
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: ListTile(
-                      title: Text(
-                        notification['title'],
-                        style: const TextStyle(
-                          color: Color(0xFF111111),
-                          fontSize: 16,
-                          fontFamily: 'SUIT',
-                          fontWeight: FontWeight.w400,
-                          height: 0,
-                          letterSpacing: -0.32,
+        body: WidgetUiNotify(
+          child: SingleChildScrollView(
+            physics: const ScrollPhysicsBouncing(),
+            child: Column(
+              children: [
+                const SizedBox(height: 16),
+                Column(
+                  children: _notifications.map((notification) {
+                    int index = _notifications.indexOf(notification);
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: ListTile(
+                        title: Text(
+                          notification['title'],
+                          style: const TextStyle(
+                            color: Color(0xFF111111),
+                            fontSize: 16,
+                            fontFamily: 'SUIT',
+                            fontWeight: FontWeight.w400,
+                            height: 0,
+                            letterSpacing: -0.32,
+                          ),
+                        ),
+                        trailing: widgetNotificationItemTick(notification, index, _notificationEnabled,
+                            onTap: (index, isEnabled) {
+                              _doToggleNotification(index, isEnabled);
+                            }
                         ),
                       ),
-                      trailing: widgetNotificationItemTick(notification, index, _notificationEnabled,
-                          onTap: (index, isEnabled) {
-                            _doToggleNotification(index, isEnabled);
-                          }
-                      ),
-                    ),
-                  );
-                }).toList(),
-              ),
-            ],
+                    );
+                  }).toList(),
+                ),
+              ],
+            ),
           ),
         ),
       ),

@@ -15,6 +15,7 @@ import '../../data/module_datastore.dart';
 import '../../utils/utils_permissions.dart';
 import '../../utils/utils_screen.dart';
 import '../theme/theme_colors.dart';
+import '../widgets/widget_chatroom_message_pin.dart';
 import '../widgets/widget_chats_empty.dart';
 import '../widgets/widget_chats_exit.dart';
 import '../widgets/widget_chats_row.dart';
@@ -43,7 +44,6 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver  
 
   String _selectChatId = "";
   bool _isLoadingChatroom = false;
-  int timeSecRefreshChat = 10;
   final Map<String, ScreenChatroom> _listScreenChatrooms = {};
   final ModuleChat _chatModule = ModuleChat();
 
@@ -122,77 +122,86 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver  
                   ),
                 ],
               ),
-              body: _isLoading && _listChats.isEmpty
-                  ? const WidgetLoader()
-                  : Column(
+              body: Stack(
                 children: [
-                  Visibility(
-                    visible: _isSearching || _listChats.isNotEmpty || _searchController.text.isNotEmpty,
-                    child: Container(
-                      height: 44,
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child: TextField(
-                        controller: _searchController,
-                        decoration: InputDecoration(
-                          hintText: '',
-                          suffixIcon: !_isSearching
-                              ? Icon(
-                              Icons.search,
-                              size: 30,
-                              color: _searchController.text.isNotEmpty ? colorPrimaryBlue : colorMainGrey300
-                          ) : Container(
-                            width: 20,
-                            height: 20,
-                            padding: const EdgeInsets.all(15),
-                            child: const CircularProgressIndicator(
-                              color: colorPrimaryBlue,
-                              strokeWidth: 2,
+                  _isLoading && _listChats.isEmpty
+                      ? const WidgetLoader()
+                      : Column(
+                    children: [
+                      Visibility(
+                        visible: _isSearching || _listChats.isNotEmpty || _searchController.text.isNotEmpty,
+                        child: Container(
+                          height: 44,
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          child: TextField(
+                            controller: _searchController,
+                            decoration: InputDecoration(
+                              hintText: '',
+                              suffixIcon: !_isSearching
+                                  ? Icon(
+                                  Icons.search,
+                                  size: 30,
+                                  color: _searchController.text.isNotEmpty ? colorPrimaryBlue : colorMainGrey300
+                              ) : Container(
+                                width: 20,
+                                height: 20,
+                                padding: const EdgeInsets.all(15),
+                                child: const CircularProgressIndicator(
+                                  color: colorPrimaryBlue,
+                                  strokeWidth: 2,
+                                ),
+                              ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(30),
+                                borderSide: BorderSide.none,
+                              ),
+                              filled: true,
+                              fillColor: Colors.grey[200],
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
                             ),
+                            onChanged: (value) {},
                           ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30),
-                            borderSide: BorderSide.none,
-                          ),
-                          filled: true,
-                          fillColor: Colors.grey[200],
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
                         ),
-                        onChanged: (value) {},
                       ),
-                    ),
+                      const SizedBox(height: 10),
+                      Expanded(
+                        child: (_listChats.isNotEmpty || _isSearching)
+                            ? ListView.builder(
+                          physics: const ScrollPhysicsBouncing(),
+                          itemCount: _listChats.length,
+                          itemBuilder: (context, index) {
+                            DataChat dataChat = _listChats[index];
+                            return Container(
+                              key: Key(_listChats[index].id),
+                              child: widgetChatRow(context, index, dataChat,
+                                onClickOption1: () {
+                                  _doToggleNotification(context, dataChat);
+                                },
+                                onClickOption2: () {
+                                  widgetChatsExit(context, moduleSendBird, dataChat,
+                                      onExit: () {
+                                        setState(() {
+                                          moduleSendBird.leaveChannel(dataChat.id);
+                                          _listChats.remove(dataChat);
+                                          Navigator.of(context).pop();
+                                        });
+                                      });
+                                },
+                                onSelectChat: () {
+                                  _doSelectChat(context, dataChat);
+                                },
+                              ),
+                            );
+                          },
+                        )
+                            : widgetChatsEmpty(context),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 10),
-                  Expanded(
-                    child: (_listChats.isNotEmpty || _isSearching)
-                        ? ListView.builder(
-                      physics: const ScrollPhysicsBouncing(),
-                      itemCount: _listChats.length,
-                      itemBuilder: (context, index) {
-                        DataChat dataChat = _listChats[index];
-                        return Container(
-                          key: Key(_listChats[index].id),
-                          child: widgetChatRow(context, index, dataChat,
-                            onClickOption1: () {
-                              _doToggleNotification(context, dataChat);
-                            },
-                            onClickOption2: () {
-                              widgetChatsExit(context, moduleSendBird, dataChat,
-                              onExit: () {
-                                setState(() {
-                                  moduleSendBird.leaveChannel(dataChat.id);
-                                  _listChats.remove(dataChat);
-                                  Navigator.of(context).pop();
-                                });
-                              });
-                            },
-                            onSelectChat: () {
-                              _doSelectChat(context, dataChat);
-                            },
-                          ),
-                        );
-                      },
-                    )
-                        : widgetChatsEmpty(context),
+                  buildMessagePin(context, this,
+                      onSelectChat: () {
+                        _doSelectChat(context, dataChatPin);
+                      }
                   ),
                 ],
               ),
@@ -306,7 +315,7 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver  
 
       for(DataChat dataChat in chats) {
         if(dbStore.isNotificationChat(dataChat)) {
-          showNotificationChat(dataChat);
+          showNotificationChat(context, this, dataChat);
         }
       }
 

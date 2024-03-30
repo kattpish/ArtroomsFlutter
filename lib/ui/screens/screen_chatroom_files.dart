@@ -11,6 +11,7 @@ import '../../utils/utils_media.dart';
 import '../theme/theme_colors.dart';
 import '../widgets/widget_chatroom_files_card.dart';
 import '../widgets/widget_loader.dart';
+import '../widgets/widget_ui_notifiy.dart';
 
 
 class ScreenChatroomFiles extends StatefulWidget {
@@ -90,49 +91,51 @@ class _ScreenChatroomFilesState extends State<ScreenChatroomFiles> {
           elevation: 0.2,
         ),
         backgroundColor: colorMainScreen,
-        body: SafeArea(
-          child: _isLoading
-              ? const WidgetLoader()
-              : _attachmentsMedia.isEmpty
-              ? widgetChatroomFilesEmpty(context)
-              : GridView.builder(
-            controller: _scrollController,
-            physics: const ScrollPhysicsBouncing(),
-            padding: const EdgeInsets.only(left: 16, top: 12, right: 16, bottom: 32),
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: _crossAxisCount,
-              crossAxisSpacing: _crossAxisSpacing,
-              mainAxisSpacing: _mainAxisSpacing,
-              childAspectRatio: (_screenWidth / _crossAxisCount - _crossAxisSpacing) / (200),
-            ),
-            itemCount: _attachmentsMedia.length + (_isLoadingMore ? 1 : 0),
-            itemBuilder: (context, index) {
+        body: WidgetUiNotify(
+          child: SafeArea(
+            child: _isLoading
+                ? const WidgetLoader()
+                : _attachmentsMedia.isEmpty
+                ? widgetChatroomFilesEmpty(context)
+                : GridView.builder(
+              controller: _scrollController,
+              physics: const ScrollPhysicsBouncing(),
+              padding: const EdgeInsets.only(left: 16, top: 12, right: 16, bottom: 32),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: _crossAxisCount,
+                crossAxisSpacing: _crossAxisSpacing,
+                mainAxisSpacing: _mainAxisSpacing,
+                childAspectRatio: (_screenWidth / _crossAxisCount - _crossAxisSpacing) / (200),
+              ),
+              itemCount: _attachmentsMedia.length + (_isLoadingMore ? 1 : 0),
+              itemBuilder: (context, index) {
 
-              if (index == _attachmentsMedia.length) {
-                return const Center(
-                  child: SizedBox(
-                      width: 36,
-                      height: 36,
-                      child: CircularProgressIndicator(
-                        color: Color(0xFF6A79FF),
-                        strokeWidth: 4,
-                      )
-                  ),
+                if (index == _attachmentsMedia.length) {
+                  return const Center(
+                    child: SizedBox(
+                        width: 36,
+                        height: 36,
+                        child: CircularProgressIndicator(
+                          color: Color(0xFF6A79FF),
+                          strokeWidth: 4,
+                        )
+                    ),
+                  );
+                }
+
+                DataMessage attachmentFile = _attachmentsMedia[index];
+                return widgetChatroomFilesCard(context, attachmentFile,
+                    onSelect: () {
+                      setState(() {
+                        if(!attachmentFile.isDownloading) {
+                          attachmentFile.isSelected = !attachmentFile.isSelected;
+                          _checkEnableButton();
+                        }
+                      });
+                    }
                 );
-              }
-
-              DataMessage attachmentFile = _attachmentsMedia[index];
-              return widgetChatroomFilesCard(context, attachmentFile,
-                  onSelect: () {
-                    setState(() {
-                      if(!attachmentFile.isDownloading) {
-                        attachmentFile.isSelected = !attachmentFile.isSelected;
-                        _checkEnableButton();
-                      }
-                    });
-                  }
-              );
-            },
+              },
+            ),
           ),
         ),
         bottomNavigationBar: SafeArea(

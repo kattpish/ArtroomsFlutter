@@ -5,6 +5,7 @@ import '../../beans/bean_notice.dart';
 import '../../listeners/scroll_bouncing_physics.dart';
 import '../../utils/utils_screen.dart';
 import '../theme/theme_colors.dart';
+import '../widgets/widget_ui_notifiy.dart';
 
 
 class ScreenNoticeDetails extends StatefulWidget {
@@ -83,84 +84,86 @@ class _ScreenNoticeDetailsState extends State<ScreenNoticeDetails> {
             ],
           ),
         ),
-        body: SingleChildScrollView(
-          physics: const ScrollPhysicsBouncing(),
-          child: Container(
-            margin: const EdgeInsets.only(bottom: 8.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children:  [
-                const Divider(
-                  thickness: 0.0,
-                  color: Colors.transparent,
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
-                  child: Row(
-                    children: [
-                      Text(
-                        widget.dataNotice.getDate(),
-                        style: const TextStyle(
-                          color: colorPrimaryBlue,
-                          fontSize: 15,
-                          fontFamily: 'SUIT',
-                          fontWeight: FontWeight.w600,
-                          height: 0,
-                          letterSpacing: -0.30,
-                        ),
-                      ),
-                      Visibility(
-                          visible: widget.dataNotice.noticeable,
-                          child: Container(
-                            padding: const EdgeInsets.all(2.0),
-                            margin: const EdgeInsets.all(6.0),
-                            decoration: const BoxDecoration(
-                              color: colorPrimaryBlue,
-                              shape:  BoxShape.circle,
-                            ),
-                            child:const Icon(Icons.star, size:10, color: Colors.white,),)
-                      ),
-                      Text(
-                        widget.dataNotice.title,
-                        style: const TextStyle(
-                          color: Color(0xFF7D7D7D),
-                          fontSize: 13,
-                          fontFamily: 'SUIT',
-                          fontWeight: FontWeight.w400,
-                          height: 0,
-                          letterSpacing: -0.26,
-                        ),
-                      )
-                    ],
+        body: WidgetUiNotify(
+          child: SingleChildScrollView(
+            physics: const ScrollPhysicsBouncing(),
+            child: Container(
+              margin: const EdgeInsets.only(bottom: 8.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children:  [
+                  const Divider(
+                    thickness: 0.0,
+                    color: Colors.transparent,
                   ),
-                ),
-                const SizedBox(height: 4,),
-                const Divider(
-                  thickness: 1.0,
-                  color: colorMainGrey200,
-                ),
-                Container(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        widget.dataNotice.notice,
-                        style: const TextStyle(
-                          color: colorMainGrey900,
-                          fontSize: 19,
-                          fontFamily: 'SUIT',
-                          fontWeight: FontWeight.w700,
-                          height: 0,
-                          letterSpacing: -0.38,
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
+                    child: Row(
+                      children: [
+                        Text(
+                          widget.dataNotice.getDate(),
+                          style: const TextStyle(
+                            color: colorPrimaryBlue,
+                            fontSize: 15,
+                            fontFamily: 'SUIT',
+                            fontWeight: FontWeight.w600,
+                            height: 0,
+                            letterSpacing: -0.30,
+                          ),
                         ),
-                      ),
-                    ],
+                        Visibility(
+                            visible: widget.dataNotice.noticeable,
+                            child: Container(
+                              padding: const EdgeInsets.all(2.0),
+                              margin: const EdgeInsets.all(6.0),
+                              decoration: const BoxDecoration(
+                                color: colorPrimaryBlue,
+                                shape:  BoxShape.circle,
+                              ),
+                              child:const Icon(Icons.star, size:10, color: Colors.white,),)
+                        ),
+                        Text(
+                          widget.dataNotice.title,
+                          style: const TextStyle(
+                            color: Color(0xFF7D7D7D),
+                            fontSize: 13,
+                            fontFamily: 'SUIT',
+                            fontWeight: FontWeight.w400,
+                            height: 0,
+                            letterSpacing: -0.26,
+                          ),
+                        )
+                      ],
+                    ),
                   ),
-                ),
-                const SizedBox(height: 8,),
-              ],
+                  const SizedBox(height: 4,),
+                  const Divider(
+                    thickness: 1.0,
+                    color: colorMainGrey200,
+                  ),
+                  Container(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          widget.dataNotice.notice,
+                          style: const TextStyle(
+                            color: colorMainGrey900,
+                            fontSize: 19,
+                            fontFamily: 'SUIT',
+                            fontWeight: FontWeight.w700,
+                            height: 0,
+                            letterSpacing: -0.38,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 8,),
+                ],
+              ),
             ),
           ),
         ),

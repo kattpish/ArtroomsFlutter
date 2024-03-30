@@ -39,7 +39,15 @@ class ModuleMessages {
     return _groupChannel;
   }
 
-  Future<List<DataMessage>> getMessages() async {
+  Future<List<DataMessage>> getMessagesNew() async {
+    return getMessages(false);
+  }
+
+  Future<List<DataMessage>> getMessagesMore() async {
+    return getMessages(true);
+  }
+
+  Future<List<DataMessage>> getMessages(bool isMore) async {
 
     final List<DataMessage> messages = [];
 
@@ -51,14 +59,14 @@ class ModuleMessages {
       await initChannel();
     }
 
-    await moduleSendBird.loadMessages(_groupChannel, _earliestMessageTimestamp).then((List<BaseMessage> baseMessages) {
+    await moduleSendBird.loadMessages(_groupChannel, isMore ? _earliestMessageTimestamp : null).then((List<BaseMessage> baseMessages) {
 
       for(BaseMessage baseMessage in baseMessages) {
         final DataMessage myMessage = DataMessage.fromBaseMessage(baseMessage);
         messages.add(myMessage);
       }
 
-      if (messages.isNotEmpty) {
+      if (isMore && messages.isNotEmpty) {
         _earliestMessageTimestamp = baseMessages.last.createdAt;
       }
 
