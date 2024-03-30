@@ -9,46 +9,46 @@ import 'package:artrooms/ui/screens/screen_chats.dart';
 import 'package:artrooms/ui/screens/screen_memo.dart';
 import 'package:artrooms/ui/screens/screen_notices.dart';
 import 'package:artrooms/ui/screens/screen_notifications_sounds.dart';
-import 'package:artrooms/ui/widgets/widget_media.dart';
 import 'package:flutter/material.dart';
 import 'package:sendbird_sdk/core/models/user.dart';
 
 import '../../beans/bean_chat.dart';
 import '../../main.dart';
 import '../theme/theme_colors.dart';
+import '../widgets/widget_chat_drawer_attachments.dart';
+import '../widgets/widget_chat_drawer_members.dart';
 import '../widgets/widget_loader.dart';
 
 
-class MyScreenChatroomDrawer extends StatefulWidget {
+class ScreenChatroomDrawer extends StatefulWidget {
 
-  final DataChat myChat;
+  final DataChat dataChat;
 
-  const MyScreenChatroomDrawer({super.key, required this.myChat});
+  const ScreenChatroomDrawer({super.key, required this.dataChat});
 
   @override
   State<StatefulWidget> createState() {
-    return _MyScreenChatroomDrawerState();
+    return _ScreenChatroomDrawerState();
   }
 
 }
 
-class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> {
+class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
 
   bool _isLoading = true;
-  DataNotice dataNotice = DataNotice();
+  DataNotice _dataNotice = DataNotice();
   final ModuleNotice moduleNotice = ModuleNotice();
   final TextEditingController _memoController = TextEditingController();
   final TextEditingController _noticeController = TextEditingController();
 
-  late final ModuleMessages moduleMessages;
-
-  List<User> listMembers = [];
-  List<MyMessage> listAttachmentsImages = [];
+  List<User> _listMembers = [];
+  List<DataMessage> _listAttachmentsImages = [];
+  late final ModuleMessages _moduleMessages;
 
   @override
   void initState() {
     super.initState();
-    moduleMessages = ModuleMessages(widget.myChat.id);
+    _moduleMessages = ModuleMessages(widget.dataChat.id);
     _loadMemo();
     _loadNotice();
     _loadMembers();
@@ -127,14 +127,14 @@ class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> {
                               child: CircleAvatar(
                                 radius: 32,
                                 child: FadeInImage.assetNetwork(
-                                  placeholder: widget.myChat.isArtrooms ? 'assets/images/chats/chat_artrooms.png' : 'assets/images/chats/placeholder_chat.png',
-                                  image: widget.myChat.profilePictureUrl,
+                                  placeholder: widget.dataChat.isArtrooms ? 'assets/images/chats/chat_artrooms.png' : 'assets/images/chats/placeholder_chat.png',
+                                  image: widget.dataChat.profilePictureUrl,
                                   fit: BoxFit.cover,
                                   fadeInDuration: const Duration(milliseconds: 100),
                                   fadeOutDuration: const Duration(milliseconds: 100),
                                   imageErrorBuilder: (context, error, stackTrace) {
                                     return Image.asset(
-                                      widget.myChat.isArtrooms ? 'assets/images/chats/chat_artrooms.png' : 'assets/images/chats/placeholder_chat.png',
+                                      widget.dataChat.isArtrooms ? 'assets/images/chats/chat_artrooms.png' : 'assets/images/chats/placeholder_chat.png',
                                       fit: BoxFit.cover,
                                     );
                                   },
@@ -146,7 +146,7 @@ class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  widget.myChat.name,
+                                  widget.dataChat.name,
                                   style: const TextStyle(
                                     fontSize: 18,
                                     color: colorMainGrey900,
@@ -158,7 +158,7 @@ class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> {
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
-                                  widget.myChat.nameKr,
+                                  widget.dataChat.nameKr,
                                   style: const TextStyle(
                                     color: Color(0xFF565656),
                                     fontSize: 14,
@@ -173,7 +173,7 @@ class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> {
                           ],
                         ),
                         Visibility(
-                          visible: !widget.myChat.isArtrooms,
+                          visible: !widget.dataChat.isArtrooms,
                           child: Container(
                               margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
                               padding: const EdgeInsets.all(20.0),
@@ -341,7 +341,7 @@ class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> {
                               ),
                               onTap: () async {
                                 await Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                  return MyScreenMemo(myChat: widget.myChat,);
+                                  return ScreenMemo(dataChat: widget.dataChat,);
                                 }));
                                 _loadMemo();
                               },
@@ -403,7 +403,7 @@ class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> {
                               ),
                               onTap: () {
                                 Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                  return MyScreenNotices(myChat: widget.myChat,);
+                                  return ScreenNotices(dataChat: widget.dataChat,);
                                 }));
                               },
                             ),
@@ -467,14 +467,14 @@ class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> {
                                   ),
                                   onTap: () {
                                     Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                      return MyScreenChatroomPhoto(myChat: widget.myChat,);
+                                      return ScreenChatroomPhoto(dataChat: widget.dataChat,);
                                     }));
                                   },
                                 ),
                                 Container(
                                     alignment: Alignment.topLeft,
                                     padding: const EdgeInsets.symmetric(horizontal: 16),
-                                    child: buildAttachmentsImages(context, listAttachmentsImages)
+                                    child: widgetChatDrawerAttachments(context, _listAttachmentsImages)
                                 ),
                               ],
                             ),
@@ -498,7 +498,7 @@ class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> {
                               ),
                               onTap: () {
                                 Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                  return MyScreenChatroomFile(myChat: widget.myChat,);
+                                  return ScreenChatroomFile(dataChat: widget.dataChat,);
                                 }));
                               },
                             ),
@@ -526,7 +526,7 @@ class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> {
                                 ),
                                 Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 16),
-                                    child: buildMembers(context, listMembers)
+                                    child: widgetChatDrawerMembers(context, _listMembers)
                                 ),
                               ],
                             ),
@@ -557,7 +557,7 @@ class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> {
                               icon: Image.asset('assets/images/icons/icon_bell.png', width: 24, height: 24, color: const Color(0xFFD9D9D9),),
                               onPressed: () {
                                 Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                  return const MyScreenNotificationsSounds();
+                                  return const ScreenNotificationsSounds();
                                 }));
                               }
                           ),
@@ -570,7 +570,7 @@ class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> {
             ),
             Visibility(
                 visible: _isLoading,
-                child: const MyLoaderPage()
+                child: const WidgetLoaderPage()
             ),
           ],
         ),
@@ -628,9 +628,9 @@ class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> {
                 const SizedBox(height: 50),
                 ElevatedButton(
                   onPressed: () {
-                    moduleSendBird.leaveChannel(widget.myChat.id);
+                    moduleSendBird.leaveChannel(widget.dataChat.id);
                     Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) {
-                      return const MyScreenChats();
+                      return const ScreenChats();
                     }));
                   },
                   style: ElevatedButton.styleFrom(
@@ -657,113 +657,19 @@ class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> {
     );
   }
 
-  Widget buildMembers(BuildContext context, List<User> listMembers) {
-    return Column(
-      children: [
-        for(User member in listMembers)
-          Container(
-            margin: const EdgeInsets.only(bottom: 16),
-            child: Row(
-                children: [
-                  Container(
-                    width: 36,
-                    height: 36,
-                    clipBehavior: Clip.antiAlias,
-                    decoration: ShapeDecoration(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(13.76),
-                      ),
-                    ),
-                    child: FadeInImage.assetNetwork(
-                      placeholder: (member.nickname == "artrooms" || member.nickname == "artroom") ? 'assets/images/chats/chat_artrooms.png' : 'assets/images/chats/placeholder_chat.png',
-                      image: member.profileUrl != null ? member.profileUrl.toString() : "",
-                      fit: BoxFit.cover,
-                      fadeInDuration: const Duration(milliseconds: 100),
-                      fadeOutDuration: const Duration(milliseconds: 100),
-                      imageErrorBuilder: (context, error, stackTrace) {
-                        return Image.asset(
-                          (member.nickname == "artrooms" || member.nickname == "artroom") ? 'assets/images/chats/chat_artrooms.png' : 'assets/images/chats/placeholder_chat.png',
-                          fit: BoxFit.cover,
-                        );
-                      },
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Text(
-                    member.nickname,
-                    style: const TextStyle(
-                      color: Color(0xFF393939),
-                      fontSize: 16,
-                      fontFamily: 'SUIT',
-                      fontWeight: FontWeight.w500,
-                      letterSpacing: -0.32,
-                    ),
-                  ),
-                ]
-            ),
-          ),
-      ],
-    );
-  }
-
-  Widget buildAttachmentsImages(BuildContext context, List<MyMessage> listAttachmentsImages) {
-    return SingleChildScrollView(
-      physics: const BouncingScrollPhysics(),
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          for(MyMessage message in listAttachmentsImages)
-              Container(
-                margin: const EdgeInsets.only(right: 4),
-                child: InkWell(
-                  onTap: () {
-                    viewPhoto(context, imageUrl:message.getImageUrl(), fileName:message.attachmentName);
-                  },
-                  child: Container(
-                    width: 80,
-                    height: 80,
-                    clipBehavior: Clip.antiAlias,
-                    decoration: ShapeDecoration(
-                      shape: RoundedRectangleBorder(
-                        side: const BorderSide(width: 1, color: Color(0xFFF3F3F3)),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                    child: FadeInImage.assetNetwork(
-                      placeholder: 'assets/images/chats/placeholder_photo.png',
-                      image: message.getImageUrl(),
-                      fit: BoxFit.cover,
-                      fadeInDuration: const Duration(milliseconds: 100),
-                      fadeOutDuration: const Duration(milliseconds: 100),
-                      imageErrorBuilder: (context, error, stackTrace) {
-                        return Image.asset(
-                          'assets/images/chats/placeholder_photo.png',
-                          fit: BoxFit.cover,
-                        );
-                      },
-                    ),
-                  ),
-                ),
-              ),
-        ],
-      ),
-    );
-  }
-
   void _loadMemo() {
     setState(() {
-      _memoController.text = dbStore.getMemo(widget.myChat).replaceAll("\n\n", "");
+      _memoController.text = dbStore.getMemo(widget.dataChat).replaceAll("\n\n", "");
     });
   }
 
   void _loadNotice() {
 
-    moduleNotice.getNotice(widget.myChat.id).then((DataNotice notice) {
+    moduleNotice.getNotice(widget.dataChat.id).then((DataNotice notice) {
 
       setState(() {
-        dataNotice = notice;
-        _noticeController.text = dataNotice.notice.replaceAll("\n\n", "");
+        _dataNotice = notice;
+        _noticeController.text = _dataNotice.notice.replaceAll("\n\n", "");
       });
 
     }).catchError((e) {
@@ -779,17 +685,17 @@ class _MyScreenChatroomDrawerState extends State<MyScreenChatroomDrawer> {
   }
 
   Future<void> _loadMembers() async {
-    List<User> members = await moduleSendBird.getGroupChannelMembers(widget.myChat.id);
+    List<User> members = await moduleSendBird.getGroupChannelMembers(widget.dataChat.id);
     setState(() {
-      listMembers = members;
+      _listMembers = members;
     });
   }
 
   void _loadAttachments() async {
-    List<MyMessage> attachmentsImages = await moduleMessages.fetchAttachmentsImages();
+    List<DataMessage> attachmentsImages = await _moduleMessages.fetchAttachmentsImages();
 
     setState(() {
-      listAttachmentsImages = attachmentsImages;
+      _listAttachmentsImages = attachmentsImages;
     });
   }
 

@@ -1,12 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:artrooms/beans/bean_notice.dart';
 import 'package:artrooms/modules/module_notices.dart';
 import 'package:artrooms/ui/screens/screen_chatroom_drawer.dart';
-import 'package:artrooms/ui/widgets/Reply_message.dart';
-import 'package:artrooms/ui/widgets/Reply_message_flow.dart';
-import 'package:artrooms/ui/widgets/display_mentioned_user.dart';
+import 'package:artrooms/ui/widgets/widget_chatroom_message_reply.dart';
+import 'package:artrooms/ui/widgets/widget_chatroom_message_reply_flow.dart';
+import 'package:artrooms/ui/widgets/widget_chatroom_mentioned_user.dart';
 import 'package:artrooms/ui/widgets/widget_loader.dart';
 import 'package:artrooms/utils/utils_media.dart';
 import 'package:artrooms/utils/utils_notifications.dart';
@@ -15,6 +16,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:focused_menu/focused_menu.dart';
 import 'package:focused_menu/modals.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:sendbird_sdk/core/models/member.dart';
 import '../../beans/bean_chat.dart';
 import '../../beans/bean_file.dart';
@@ -25,15 +27,15 @@ import '../../modules/module_messages.dart';
 import '../../utils/utils.dart';
 import '../../utils/utils_screen.dart';
 import '../theme/theme_colors.dart';
-import '../widgets/dispal_message_text.dart';
+import '../widgets/widget_chatroom_message_text.dart';
 import '../widgets/widget_media.dart';
 
-class MyScreenChatroom extends StatefulWidget {
+class ScreenChatroom extends StatefulWidget {
   final DataChat chat;
   final double widthRatio;
   final VoidCallback? onBackPressed;
 
-  const MyScreenChatroom(
+  const ScreenChatroom(
       {super.key,
         required this.chat,
         this.widthRatio = 1.0,
@@ -41,11 +43,11 @@ class MyScreenChatroom extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    return _MyScreenChatroomState();
+    return _ScreenChatroomState();
   }
 }
 
-class _MyScreenChatroomState extends State<MyScreenChatroom>
+class _ScreenChatroomState extends State<ScreenChatroom>
     with SingleTickerProviderStateMixin {
   bool _isLoading = true;
   bool _isLoadMore = false;
@@ -57,13 +59,14 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
   bool _listReachedTop = false;
   bool _listReachedBottom = false;
   static const inputTopRadius = Radius.circular(12);
-  static const inputBottomRadius = Radius.circular(24);
 
-  final List<MyMessage> listMessages = [];
+  final List<DataMessage> listMessages = [];
   final ScrollController _scrollController = ScrollController();
   final ScrollController _scrollControllerAttachment1 = ScrollController();
   final ScrollController _scrollControllerAttachment2 = ScrollController();
   final TextEditingController _messageController = TextEditingController();
+  final ItemScrollController itemScrollController = ItemScrollController();
+  final ItemPositionsListener itemPositionsListener = ItemPositionsListener.create();
   FocusNode messageFocusNode = FocusNode();
 
   late final ModuleMessages moduleMessages;
@@ -89,21 +92,32 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
   late Widget attachmentPicker;
 
   late AnimationController _animationController;
-  late MyMessage? replyMessage;
+  late DataMessage? replyMessage;
   late bool isMentioning;
   @override
   void initState() {
     super.initState();
-    _messageController.addListener(_checkIfButtonShouldBeEnabled);
-    _scrollController.addListener(_onScroll);
+    _messageController.addListener(_checkEnableButton);
     _scrollControllerAttachment1.addListener(_scrollListener1);
     _scrollControllerAttachment2.addListener(_scrollListener2);
+    itemPositionsListener.itemPositions.addListener(_onItemPositionsChanged);
     moduleMessages = ModuleMessages(widget.chat.id);
     replyMessage = null;
     isMentioning = false;
     _loadMessages();
     _loadNotice();
     _loadMedia();
+
+    messageFocusNode.addListener(() {
+      if (messageFocusNode.hasFocus) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+    });
+
     messageFocusNode.addListener(() {
       if (messageFocusNode.hasFocus) {
         _hideAttachmentPicker();
@@ -233,8 +247,8 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
                         onTap: () {
                           Navigator.push(context,
                               MaterialPageRoute(builder: (context) {
-                                return MyScreenChatroomDrawer(
-                                  myChat: widget.chat,
+                                return ScreenChatroomDrawer(
+                                  dataChat: widget.chat,
                                 );
                               }));
                         },
@@ -247,29 +261,33 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
                   children: [
                     Expanded(
                       child: _isLoading
-                          ? const MyLoader()
+                          ? const WidgetLoader()
                           : Stack(
                         alignment: AlignmentDirectional.topCenter,
                         children: [
                           Container(
-                            padding:
-                            const EdgeInsets.symmetric(vertical: 0),
-                            child: listMessages.isNotEmpty
-                                ? ListView.builder(
-                              controller: _scrollController,
-                              itemCount: listMessages.length,
-                              reverse: true,
-                              itemBuilder: (context, index) {
+                            padding: const EdgeInsets.symmetric(vertical: 0),
+                            child: listMessages.isNotEmpty ? GestureDetector(
+                                onTap: () {
+                                  closeKeyboard(context);
+                                },
+                                child: ScrollablePositionedList.builder(
+                                  itemScrollController: itemScrollController,
+                                  itemPositionsListener: itemPositionsListener,
+                                  itemCount: listMessages.length,
+                                  physics: const BouncingScrollPhysics(),
+                                  reverse: true,
+                                  itemBuilder: (context, index) {
                                 itemKeys[index] = GlobalKey();
                                 final message = listMessages[index];
                                 final isLast = index == 0;
                                 final messageNext = index > 0
                                     ? listMessages[index - 1]
-                                    : MyMessage.empty();
+                                    : DataMessage.empty();
                                 final messagePrevious =
                                 index < listMessages.length - 1
                                     ? listMessages[index + 1]
-                                    : MyMessage.empty();
+                                    : DataMessage.empty();
                                 final isPreviousSame =
                                     messagePrevious.senderId ==
                                         message.senderId;
@@ -413,6 +431,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
                                 );
                               },
                             )
+                            )
                                 : buildNoChats(context),
                           ),
                           Visibility(
@@ -436,7 +455,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
                             child: buildNoticePin(context),
                           ),
                           AnimatedOpacity(
-                            opacity: _showDateContainer ? 0.0 : 0.0,
+                            opacity: _showDateContainer ? 1.0 : 0.0,
                             duration: const Duration(milliseconds: 500),
                             child: Container(
                               width: 145,
@@ -550,7 +569,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
                         _attachmentPickerMin();
                       } else if (_showAttachment) {
                         _attachmentPickerClose();
-                        _deselectAll(false);
+                        _deselectPickedFiles(false);
                       } else {
                         _attachmentPickerMin();
                         _loadMedia();
@@ -602,7 +621,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
     );
   }
 
-  Widget _buildMyMessageBubble(MyMessage message, bool isLast,
+  Widget _buildMyMessageBubble(DataMessage message, bool isLast,
       bool isPreviousSameDateTime, bool isNextSameTime) {
     return Container(
       margin:
@@ -615,7 +634,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
             child: Column(
               children: [
                 Container(
-                  margin: const EdgeInsets.symmetric(vertical: 2),
+                  margin: const EdgeInsets.symmetric(vertical: 1.2),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     crossAxisAlignment: CrossAxisAlignment.end,
@@ -661,6 +680,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
                               padding: const EdgeInsets.only(left: 10),
                               child: DisplayMessageText(
                                 message: message.content,
+                                color: Colors.white,
                               ),
                             ),
                           ],
@@ -689,7 +709,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
   }
 
   Widget _buildOtherMessageBubble(
-      MyMessage message,
+      DataMessage message,
       bool isLast,
       bool isPreviousSame,
       bool isNextSame,
@@ -802,6 +822,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
                                   ),
                                   child: DisplayMessageText(
                                     message: message.content,
+                                    color: const Color(0xFF1F1F1F),
                                   ),
                                 ),
                               ],
@@ -875,11 +896,11 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
     );
   }
 
-  Widget _buildAttachment(MyMessage message) {
+  Widget _buildAttachment(DataMessage message) {
     if (message.attachmentUrl.isNotEmpty) {
       return Container(
         width: 216,
-        margin: const EdgeInsets.symmetric(vertical: 4),
+        margin: const EdgeInsets.symmetric(vertical: 2),
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
         constraints: BoxConstraints(maxWidth: screenWidth * 0.55),
         decoration: BoxDecoration(
@@ -976,7 +997,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
     }
   }
 
-  Widget _buildImageAttachments(MyMessage message) {
+  Widget _buildImageAttachments(DataMessage message) {
     if (message.attachmentImages.isNotEmpty) {
       List<Widget> rows = [];
       int itemsPlaced = 0;
@@ -1033,7 +1054,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
                     child: InkWell(
                       onTap: () {
                         if (!message.isSending) {
-                          viewPhoto(context,
+                          doOpenPhotoView(context,
                               imageUrl: attachment,
                               fileName: message.attachmentName);
                         }
@@ -1187,9 +1208,10 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
                     ),
                     child: TextButton(
                       onPressed: () {
-                        state.setState(() {
+                        state.setState(() async {
                           type = 1;
                           closeKeyboard(context);
+                          await onCameraResult();
                         });
                       },
                       child: const Row(
@@ -1229,9 +1251,10 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
                     ),
                     child: TextButton(
                       onPressed: () {
-                        state.setState(() {
-                          type = 2;
+                        state.setState(() async {
+                          // type = 2;
                           closeKeyboard(context);
+                          await onPickFiles();
                         });
                       },
                       child: const Row(
@@ -1296,7 +1319,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
                       ),
                       child: InkWell(
                         onTap: () {
-                          viewPhoto(context,
+                          doOpenPhotoView(context,
                               fileImage: fileImage.file,
                               fileName: fileImage.name);
                         },
@@ -1517,7 +1540,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
                 margin: const EdgeInsets.only(right: 4, top: 4, bottom: 4),
                 child: InkWell(
                   onTap: () {
-                    viewPhoto(context,
+                    doOpenPhotoView(context,
                         fileImage: fileItem.file, fileName: fileItem.name);
                   },
                   child: Stack(
@@ -1533,8 +1556,8 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
                             borderRadius: BorderRadius.circular(10),
                           ),
                         ),
-                        child: Image.asset(
-                          fileItem.path,
+                        child: Image.file(
+                          fileItem.file,
                           width: double.infinity,
                           height: double.infinity,
                           fit: BoxFit.cover,
@@ -1941,12 +1964,34 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
     }
   }
 
-  void _onScroll() {
+
+  int _firstVisibleItemIndex = -1;
+  void _onItemPositionsChanged() {
+
+    final visiblePositions = itemPositionsListener.itemPositions.value
+        .where((ItemPosition position) {
+      return position.itemTrailingEdge > 0;
+    });
+    if (visiblePositions.isEmpty) return;
+
+    final firstVisibleItemIndex = visiblePositions
+        .reduce((ItemPosition max, ItemPosition position) {
+      return position.itemTrailingEdge > max.itemTrailingEdge ? position : max;
+    }).index;
+
+    if(_firstVisibleItemIndex == -1) {
+      _firstVisibleItemIndex = firstVisibleItemIndex;
+      return;
+    }else if(_firstVisibleItemIndex == firstVisibleItemIndex) {
+      return;
+    }
+
+    _firstVisibleItemIndex = firstVisibleItemIndex;
+
     if (_scrollTimer?.isActive ?? false) _scrollTimer?.cancel();
 
-    var firstVisibleItemIndex = _findFirstVisibleItem();
+    if(listMessages.isNotEmpty) {
 
-    if (listMessages.isNotEmpty) {
       var firstVisibleMessage = listMessages[firstVisibleItemIndex];
 
       setState(() {
@@ -1954,35 +1999,16 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
         _currentDate = formatDateLastMessage(firstVisibleMessage.timestamp);
       });
 
-      _scrollTimer = Timer(const Duration(seconds: 3), () {
+      _scrollTimer = Timer(const Duration(milliseconds: 500), () {
         setState(() {
           _showDateContainer = false;
         });
       });
+
     }
 
     _loadMessages();
-  }
 
-  int _findFirstVisibleItem() {
-    final scrollPosition = _scrollController.position.pixels;
-    final viewportHeight = _scrollController.position.viewportDimension;
-
-    for (int i = 0; i < itemKeys.length; i++) {
-      final key = itemKeys[i];
-      final RenderBox? box =
-      key?.currentContext?.findRenderObject() as RenderBox?;
-
-      if (box != null) {
-        final position = box.localToGlobal(Offset.zero);
-        if (position.dy < (scrollPosition + viewportHeight) &&
-            position.dy > scrollPosition) {
-          return i;
-        }
-      }
-    }
-
-    return 0;
   }
 
   Future<void> _loadMessages() async {
@@ -1996,12 +2022,12 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
 
     moduleMessages
         .getMessages()
-        .then((List<MyMessage> messages) {
+        .then((List<DataMessage> messages) {
       setState(() {
         listMessages.addAll(messages);
       });
 
-      for (MyMessage message in messages) {
+      for (DataMessage message in messages) {
         showNotificationMessage(widget.chat, message);
       }
 
@@ -2015,10 +2041,12 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
     })
         .catchError((e) {})
         .whenComplete(() {
-      setState(() {
-        _isLoading = false;
-        _isLoadMore = false;
-      });
+          if(mounted) {
+            setState(() {
+              _isLoading = false;
+              _isLoadMore = false;
+            });
+          }
     });
   }
 
@@ -2040,7 +2068,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
         .whenComplete(() {});
   }
 
-  void _checkIfButtonShouldBeEnabled() {
+  void _checkEnableButton() {
     if (_messageController.text.trim().isNotEmpty) {
       setState(() {
         _isButtonDisabled = false;
@@ -2062,90 +2090,131 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
 
   Future<void> _sendMessage() async {
     if (!_isButtonDisabled) {
-      if (_messageController.text.isNotEmpty) {
-        moduleMessages
-            .sendMessage(_messageController.text, replyMessage)
-            .then((MyMessage myMessage) {
-          setState(() {
-            listMessages.insert(0, myMessage);
-            _messageController.clear();
-          });
 
-          Future.delayed(const Duration(milliseconds: 100), () {
-            _scrollToBottom();
-          });
-        });
-      }
+      sendMessageText();
 
       setState(() {
         _showAttachment = false;
         _showAttachmentFull = false;
       });
 
-      closeKeyboard(context);
+      await sendMessageImages();
 
-      if (_selectedImages > 0) {
-        MyMessage myMessage1 = moduleMessages.preSendMessageImage(filesImages);
-        int index = myMessage1.index;
+      await sendMessageMedia();
 
+      _deselectPickedFiles(false);
+      cancelReply();
+    }
+  }
+
+  void sendMessageText() {
+
+    if (_messageController.text.isNotEmpty) {
+      moduleMessages
+          .sendMessage(_messageController.text, replyMessage)
+          .then((DataMessage myMessage) {
         setState(() {
-          listMessages.insert(0, myMessage1);
+          listMessages.insert(0, myMessage);
+          _messageController.clear();
         });
 
         Future.delayed(const Duration(milliseconds: 100), () {
           _scrollToBottom();
         });
+      });
+    }
 
-        myMessage1 = await moduleMessages.sendMessageImages(filesImages);
-        myMessage1.isSending = false;
+  }
 
-        for (int i = 0; i < listMessages.length; i++) {
-          MyMessage myMessage = listMessages[i];
-          if (myMessage.index == index) {
+  Future<void> sendMessageImages() async {
+
+    if (_selectedImages > 0) {
+      DataMessage myMessage1 = moduleMessages.preSendMessageImage(filesImages);
+      int index = myMessage1.index;
+
+      setState(() {
+        listMessages.insert(0, myMessage1);
+      });
+
+      Future.delayed(const Duration(milliseconds: 100), () {
+        _scrollToBottom();
+      });
+
+      myMessage1 = await moduleMessages.sendMessageImages(filesImages);
+      myMessage1.isSending = false;
+
+      for (int i = 0; i < listMessages.length; i++) {
+        DataMessage myMessage = listMessages[i];
+        if (myMessage.index == index) {
+          setState(() {
+            listMessages[i] = myMessage1;
+          });
+          break;
+        }
+      }
+    }
+
+  }
+
+  Future<void> sendMessageMedia() async {
+
+    if (_selectedMedia > 0) {
+      List<int> index = [0];
+
+      List<DataMessage> myMessages =
+          await moduleMessages.preSendMessageMedia(filesMedia);
+
+      for (DataMessage myMessage1 in myMessages) {
+        setState(() {
+          listMessages.insert(0, myMessage1);
+        });
+        index.add(myMessage1.index);
+      }
+
+      Future.delayed(const Duration(milliseconds: 100), () {
+        _scrollToBottom();
+      });
+
+      myMessages = await moduleMessages.sendMessageMedia(filesMedia);
+
+      for (int i = 0; i < myMessages.length; i++) {
+        DataMessage myMessage1 = myMessages[i];
+        for (int j = 0; j < listMessages.length; j++) {
+          DataMessage myMessage = listMessages[j];
+          if (myMessage.index == index[i]) {
             setState(() {
-              listMessages[i] = myMessage1;
+              listMessages[j] = myMessage1;
             });
             break;
           }
         }
       }
-
-      if (_selectedMedia > 0) {
-        List<int> index = [0];
-
-        List<MyMessage> myMessages =
-        await moduleMessages.preSendMessageMedia(filesMedia);
-
-        for (MyMessage myMessage1 in myMessages) {
-          setState(() {
-            listMessages.insert(0, myMessage1);
-          });
-          index.add(myMessage1.index);
-        }
-
-        Future.delayed(const Duration(milliseconds: 100), () {
-          _scrollToBottom();
-        });
-
-        myMessages = await moduleMessages.sendMessageMedia(filesMedia);
-
-        for (int i = 0; i < myMessages.length; i++) {
-          MyMessage myMessage1 = myMessages[i];
-          for (int j = 0; j < listMessages.length; j++) {
-            MyMessage myMessage = listMessages[j];
-            if (myMessage.index == index[i]) {
-              setState(() {
-                listMessages[j] = myMessage1;
-              });
-              break;
-            }
-          }
-        }
-      }
-
-      _deselectAll(false);
-      cancelReply();
     }
+
+  }
+
+  Future<void> onCameraResult() async {
+    File? file = await doPickImageWithCamera();
+
+    if(file != null) {
+      FileItem fileItem = FileItem(file: file, path: file.path);
+      fileItem.isSelected = true;
+      filesImages.insert(0, fileItem);
+    }
+  }
+
+  Future<void> onPickFiles() async {
+    _deselectPickedMedia();
+
+    List<FileItem> fileItems = await doPickFiles();
+
+    for(FileItem fileItem in fileItems) {
+      _selectedMedia++;
+      fileItem.isSelected = true;
+      filesMedia.add(fileItem);
+    }
+
+    await sendMessageMedia();
   }
 
   void _loadMedia() {
@@ -2211,10 +2280,14 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
     }
   }
 
-  void _deselectAll(isClose) {
+  void _deselectPickedFiles(isClose) {
+    _deselectPickedImages();
+    _deselectPickedMedia();
+  }
+
+  void _deselectPickedImages() {
     setState(() {
       _selectedImages = 0;
-      _selectedMedia = 0;
     });
 
     for (FileItem fileImage in filesImages) {
@@ -2222,49 +2295,23 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
         fileImage.isSelected = false;
       });
     }
+  }
+
+  void _deselectPickedMedia() {
+    setState(() {
+      _selectedMedia = 0;
+    });
 
     for (FileItem fileMedia in filesMedia) {
       setState(() {
         fileMedia.isSelected = false;
       });
     }
-
-    if (isClose) {
-      setState(() {
-        _selectMode = false;
-      });
-
-      _checkIfFileShouldBeEnabled();
-    }
   }
 
   void select() {
     if (!_isButtonDisabled) {
       Navigator.pop(context);
-    }
-  }
-
-  void _checkIfFileButtonShouldBeEnabled() {
-    int n = 0;
-    for (FileItem fileImage in filesImages) {
-      if (fileImage.isSelected) {
-        n++;
-      }
-    }
-    for (FileItem fileMedia in filesMedia) {
-      if (fileMedia.isSelected) {
-        n++;
-      }
-    }
-
-    if (n > 0) {
-      setState(() {
-        _isButtonFileDisabled = false;
-      });
-    } else {
-      setState(() {
-        _isButtonFileDisabled = true;
-      });
     }
   }
 
@@ -2287,15 +2334,10 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
   }
 
   void onMentionSelected(Member member) {
-    print('member -> ${member.nickname}');
     _messageController.text = "${_messageController.text}${member.nickname} ";
     setState(() {
       isMentioning = false;
     });
-
-    // setState(() {
-    //   replyMessage = null;
-    // });
   }
 
   Widget buildReplyForTextField() {
@@ -2308,13 +2350,12 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
         ));
   }
 
-  Widget buildReply(MyMessage? message) {
+  Widget buildReply(DataMessage? message) {
     return Column(
       children: [
         Container(
             padding: const EdgeInsets.all(0),
             decoration: const BoxDecoration(
-              // color: Colors.grey.withOpacity(0.2),
               borderRadius: BorderRadius.only(
                 topLeft: inputTopRadius,
                 topRight: inputTopRadius,
@@ -2356,11 +2397,9 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
           controller: _messageController,
           focusNode: messageFocusNode,
           onChanged: (text) {
-            print('text typed ${text}');
             if (text.endsWith("@")) {
               setState(() {
                 isMentioning = !isMentioning;
-                print("is mention $isMentioning");
               });
             }
             if (text.endsWith(" ")) {
@@ -2385,7 +2424,6 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
           top: 15,
           left: 15,
           child: IgnorePointer(
-            // Ignore touches on the RichText
             child: RichText(
               text: TextSpan(
                 style: const TextStyle(fontSize: 15.8),
@@ -2399,10 +2437,7 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
   }
 
   List<TextSpan> _buildTextSpans(String text) {
-    print(text);
-    // Example logic to split text and apply different styles
-    // This should be replaced with your actual logic
-    return replacePattern(text,true);
+    return replacePattern(text, colorMainGrey800, true);
   }
 
   bool parseReplyMessage(String json) {
@@ -2417,4 +2452,5 @@ class _MyScreenChatroomState extends State<MyScreenChatroom>
       return false;
     }
   }
+
 }

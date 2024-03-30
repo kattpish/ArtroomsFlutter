@@ -7,38 +7,38 @@ import 'package:flutter/material.dart';
 
 import '../../beans/bean_profile.dart';
 import '../../data/module_datastore.dart';
+import '../../main.dart';
 import '../../modules/module_profile.dart';
 import '../../utils/utils.dart';
 import '../theme/theme_colors.dart';
 
 
-class MyScreenProfile extends StatefulWidget {
+class ScreenProfile extends StatefulWidget {
 
-  const MyScreenProfile({super.key});
+  const ScreenProfile({super.key});
 
   @override
   State<StatefulWidget> createState() {
-    return _MyScreenProfileState();
+    return _ScreenProfileState();
   }
 
 }
 
-class _MyScreenProfileState extends State<MyScreenProfile> {
+class _ScreenProfileState extends State<ScreenProfile> {
 
-  UserModule userModule = UserModule();
-  DBStore dbStore = DBStore();
+  final UserModule _userModule = UserModule();
 
-  MyProfile profile = MyProfile();
-  String name = "";
-  String nickName = "";
+  String _name = "";
+  String _nickName = "";
+  MyProfile _profile = MyProfile();
 
   @override
   void initState() {
     super.initState();
 
-    name = profile.name;
-    nickName = profile.nickName;
-    fetchUserProfile();
+    _name = _profile.name;
+    _nickName = _profile.nickName;
+    _doFetchUserProfile();
   }
 
   @override
@@ -108,7 +108,7 @@ class _MyScreenProfileState extends State<MyScreenProfile> {
                     backgroundColor: Colors.transparent,
                     child: FadeInImage.assetNetwork(
                       placeholder: 'assets/images/profile/placeholder.png',
-                      image: profile.profileImg,
+                      image: _profile.profileImg,
                       fit: BoxFit.cover,
                       height: 64,
                       width: 64,
@@ -128,7 +128,7 @@ class _MyScreenProfileState extends State<MyScreenProfile> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      name,
+                      _name,
                       style: const TextStyle(
                         color: Color(0xFF111111),
                         fontSize: 20,
@@ -140,7 +140,7 @@ class _MyScreenProfileState extends State<MyScreenProfile> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      nickName,
+                      _nickName,
                       style: const TextStyle(
                         color: Color(0xFF565656),
                         fontSize: 14,
@@ -181,9 +181,9 @@ class _MyScreenProfileState extends State<MyScreenProfile> {
                 ),
                 onPressed: () async {
                   await Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return const MyScreenProfileEdit();
+                    return const ScreenProfileEdit();
                   }));
-                  fetchUserProfile();
+                  _doFetchUserProfile();
                 },
               ),
             ),
@@ -204,7 +204,7 @@ class _MyScreenProfileState extends State<MyScreenProfile> {
                 ),
                 onTap: () {
                   Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return const MyScreenNotificationsSounds();
+                    return const ScreenNotificationsSounds();
                   }));
                 },
               ),
@@ -324,7 +324,7 @@ class _MyScreenProfileState extends State<MyScreenProfile> {
                   onTap: () {
                     DBStore().logout();
                     Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) {
-                      return const MyScreenLogin();
+                      return const ScreenLogin();
                     }));
                   }
               ),
@@ -340,22 +340,22 @@ class _MyScreenProfileState extends State<MyScreenProfile> {
     );
   }
 
-  void fetchUserProfile() async {
+  void _doFetchUserProfile() async {
 
     setState(() {
-      profile = MyProfile();
-      name = profile.name;
-      nickName = profile.nickName;
+      _profile = MyProfile();
+      _name = _profile.name;
+      _nickName = _profile.nickName;
     });
 
-    Map<String, dynamic>? profileMap = await userModule.getMyProfile();
+    Map<String, dynamic>? profileMap = await _userModule.getMyProfile();
     if (profileMap != null) {
       dbStore.saveProfile(profileMap);
 
       setState(() {
-        profile = MyProfile.fromProfileMap(profileMap);
-        name = profile.name;
-        nickName = profile.nickName;
+        _profile = MyProfile.fromProfileMap(profileMap);
+        _name = _profile.name;
+        _nickName = _profile.nickName;
       });
 
       if (kDebugMode) {

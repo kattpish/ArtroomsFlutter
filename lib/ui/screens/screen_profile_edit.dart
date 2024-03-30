@@ -1,3 +1,4 @@
+
 import 'dart:io';
 
 import 'package:artrooms/utils/utils.dart';
@@ -10,20 +11,21 @@ import '../../main.dart';
 import '../../modules/module_profile.dart';
 import '../theme/theme_colors.dart';
 import '../widgets/widget_loader.dart';
+import '../widgets/widget_profile_inputs.dart';
 
 
-class MyScreenProfileEdit extends StatefulWidget {
+class ScreenProfileEdit extends StatefulWidget {
 
-  const MyScreenProfileEdit({Key? key}) : super(key: key);
+  const ScreenProfileEdit({Key? key}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
-    return _MyScreenProfileEditState();
+    return _ScreenProfileEditState();
   }
 
 }
 
-class _MyScreenProfileEditState extends State<MyScreenProfileEdit> {
+class _ScreenProfileEditState extends State<ScreenProfileEdit> {
 
   bool _isLoading = true;
   bool _isSubmitting = false;
@@ -40,15 +42,14 @@ class _MyScreenProfileEditState extends State<MyScreenProfileEdit> {
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  final UserModule userModule = UserModule();
-  MyProfile profile = MyProfile();
-
-  XFile? fileImage;
+  final UserModule _userModule = UserModule();
+  MyProfile _profile = MyProfile();
+  XFile? _fileImage;
 
   @override
   void initState() {
     super.initState();
-    _loadUserProfile();
+    _doLoadUserProfile();
   }
 
   @override
@@ -109,10 +110,10 @@ class _MyScreenProfileEditState extends State<MyScreenProfileEdit> {
                     child: CircleAvatar(
                       radius: 60,
                       backgroundColor: Colors.transparent,
-                      child: fileImage == null
+                      child: _fileImage == null
                           ? FadeInImage.assetNetwork(
                         placeholder: 'assets/images/profile/placeholder.png',
-                        image: profile.profileImg,
+                        image: _profile.profileImg,
                         fit: BoxFit.cover,
                         width: 120,
                         height: 120,
@@ -126,7 +127,7 @@ class _MyScreenProfileEditState extends State<MyScreenProfileEdit> {
                         },
                       )
                           : Image.file(
-                        File(fileImage!.path),
+                        File(_fileImage!.path),
                         height: 120,
                         width: 120,
                         fit: BoxFit.cover,
@@ -145,13 +146,13 @@ class _MyScreenProfileEditState extends State<MyScreenProfileEdit> {
                         XFile? xFileImage = await picker.pickImage(source: ImageSource.gallery);
 
                         setState(() {
-                          fileImage = xFileImage;
+                          _fileImage = xFileImage;
                         });
 
-                        if (fileImage != null) {
+                        if (_fileImage != null) {
                           _doUploadProfile(context);
                           if (kDebugMode) {
-                            print("Picked image path: ${fileImage?.path}");
+                            print("Picked image path: ${_fileImage?.path}");
                           }
                         }
 
@@ -184,7 +185,7 @@ class _MyScreenProfileEditState extends State<MyScreenProfileEdit> {
                     ),
                   ),
                   const SizedBox(height: 24),
-                  _buildInputField(
+                  buildInputField(
                       label: '이름',
                       controller: _nameController,
                       focus: _nameFocus,
@@ -194,7 +195,7 @@ class _MyScreenProfileEditState extends State<MyScreenProfileEdit> {
                       }
                   ),
                   const SizedBox(height: 16),
-                  _buildInputField(
+                  buildInputField(
                       label: '닉네임',
                       controller: _nicknameController,
                       focus: _nicknameFocus,
@@ -203,7 +204,7 @@ class _MyScreenProfileEditState extends State<MyScreenProfileEdit> {
                       }
                   ),
                   const SizedBox(height: 16),
-                  _buildInputField(
+                  buildInputField(
                       label: '이메일',
                       controller: _emailController,
                       focus: _emailFocus,
@@ -213,7 +214,7 @@ class _MyScreenProfileEditState extends State<MyScreenProfileEdit> {
                       }
                   ),
                   const SizedBox(height: 16),
-                  _buildPickerField(
+                  buildPickerField(
                     label: '휴대전화',
                     controller: _phoneController,
                     focus: _phoneFocus,
@@ -226,7 +227,7 @@ class _MyScreenProfileEditState extends State<MyScreenProfileEdit> {
                     },
                   ),
                   const SizedBox(height: 16),
-                  _buildPickerField(
+                  buildPickerField(
                     label: '비밀번호',
                     controller: _passwordController,
                     focus: _passwordFocus,
@@ -287,7 +288,7 @@ class _MyScreenProfileEditState extends State<MyScreenProfileEdit> {
             ),
             Visibility(
                 visible: _isLoading,
-                child: const MyLoaderPage()
+                child: const WidgetLoaderPage()
             ),
           ],
         ),
@@ -295,194 +296,15 @@ class _MyScreenProfileEditState extends State<MyScreenProfileEdit> {
     );
   }
 
-  Widget _buildInputField({
-    required String label,
-    required TextEditingController controller,
-    bool readOnly = false,
-    bool isPassword = false,
-    required FocusNode focus,
-    textInputAction = TextInputAction.next,
-    required void Function(String) onSubmitted,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 20.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: const TextStyle(
-              color: Color(0xFF8F8F8F),
-              fontSize: 14,
-              fontFamily: 'Pretendard',
-              fontWeight: FontWeight.w600,
-              height: 0,
-              letterSpacing: -0.28,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Container(
-            height: 48,
-            alignment: Alignment.centerLeft,
-            decoration: BoxDecoration(
-              color: readOnly ? const Color(0xFFF5F5F5) : const Color(0xFFF5F5F5),
-              borderRadius: BorderRadius.circular(5),
-              border: Border.all(color: const Color(0xFFE3E3E3), width: 1.0,),
-            ),
-            child: TextField(
-              controller: controller,
-              focusNode: focus,
-              textInputAction: textInputAction,
-              decoration: InputDecoration(
-                border: UnderlineInputBorder(
-                  borderRadius: BorderRadius.circular(5),
-                  borderSide: BorderSide.none,
-                ),
-                filled: true,
-                fillColor: readOnly ? const Color(0xFFF5F5F5) : const Color(0xFFFFFFFF),
-              ),
-              readOnly: readOnly,
-              obscureText: isPassword,
-              onSubmitted: onSubmitted,
-              textAlign: TextAlign.start,
-              style: const TextStyle(
-                color: Color(0xFF1F1F1F),
-                fontSize: 16,
-                fontFamily: 'Pretendard',
-                fontWeight: FontWeight.w400,
-                height: 1.0,
-                letterSpacing: -0.32,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  void _doLoadUserProfile() async {
 
-  Widget _buildPickerField({
-    required String label,
-    required VoidCallback onTap,
-    required TextEditingController controller,
-    bool readOnly = false,
-    bool isObscure = false,
-    textInputAction = TextInputAction.next,
-    required void Function(String) onSubmitted,
-    required FocusNode focus,
-  }) {
-    return Container(
-      padding: const EdgeInsets.only(bottom: 20.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: const TextStyle(
-              color: Color(0xFF8F8F8F),
-              fontSize: 14,
-              fontFamily: 'Pretendard',
-              fontWeight: FontWeight.w600,
-              height: 0,
-              letterSpacing: -0.28,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Container(
-            height: 48,
-            alignment: Alignment.centerLeft,
-            decoration: BoxDecoration(
-              color: readOnly ? const Color(0xFFE3E3E3) : const Color(0xFFE3E3E3),
-              borderRadius: BorderRadius.circular(5),
-              border: Border.all(color: const Color(0xFFE3E3E3), width: 1.0,),
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: controller,
-                    focusNode: focus,
-                    obscureText: isObscure,
-                    textInputAction: textInputAction,
-                    decoration: InputDecoration(
-                      hintText: '',
-                      filled: true,
-                      fillColor: readOnly ? const Color(0xFFF5F5F5) : const Color(0xFFFFFFFF),
-                      border: const UnderlineInputBorder(
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(5.0),
-                          bottomLeft: Radius.circular(5.0),
-                        ),
-                        borderSide: BorderSide.none,
-                      ),
-                    ),
-                    readOnly: readOnly,
-                    onSubmitted: onSubmitted,
-                    textAlign: TextAlign.start,
-                    style: const TextStyle(
-                      color: Color(0xFF1F1F1F),
-                      fontSize: 16,
-                      fontFamily: 'Pretendard',
-                      fontWeight: FontWeight.w400,
-                      height: 0.9,
-                      letterSpacing: -0.32,
-                    ),
-                  ),
-                ),
-                Visibility(
-                  visible: !readOnly,
-                  child: Container(
-                    width: 78,
-                    height: 48,
-                    decoration: const BoxDecoration(
-                      border: Border(
-                        left: BorderSide(color: Color(0xFFE3E3E3), width: 1.0),
-                      ),
-                    ),
-                    child: InkWell(
-                      onTap: onTap,
-                      child: Container(
-                        alignment: Alignment.center,
-                        padding: const EdgeInsets.all(8.0),
-                        decoration: const BoxDecoration(
-                          color: Color(0xFFF5F5F5),
-                          borderRadius: BorderRadius.only(
-                            topRight: Radius.circular(5.0),
-                            bottomRight: Radius.circular(5.0),
-                          ),
-                        ),
-                        child: Text(
-                          isObscure ? '변경' : '수정',
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            color: Color(0xFF8F8F8F),
-                            fontSize: 14,
-                            fontFamily: 'Pretendard',
-                            fontWeight: FontWeight.w700,
-                            height: 0,
-                            letterSpacing: -0.28,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _loadUserProfile() async {
-
-    Map<String, dynamic>? profileMap = await userModule.getMyProfile();
+    Map<String, dynamic>? profileMap = await _userModule.getMyProfile();
     if (profileMap != null) {
 
       dbStore.saveProfile(profileMap);
 
       setState(() {
-        profile = MyProfile.fromProfileMap(profileMap);
+        _profile = MyProfile.fromProfileMap(profileMap);
       });
 
       Map<String, dynamic> student = profileMap["student"];
@@ -512,10 +334,10 @@ class _MyScreenProfileEditState extends State<MyScreenProfileEdit> {
       _isSubmitting = true;
     });
 
-    profile.name = _nameController.text;
-    profile.nickName = _nicknameController.text;
+    _profile.name = _nameController.text;
+    _profile.nickName = _nicknameController.text;
 
-    Map<String, dynamic>? resUpdateProfile = await userModule.updateProfile(
+    Map<String, dynamic>? resUpdateProfile = await _userModule.updateProfile(
       userId: dbStore.getUserId(),
       name: _nameController.text,
       nickname: _nicknameController.text,
@@ -543,13 +365,13 @@ class _MyScreenProfileEditState extends State<MyScreenProfileEdit> {
 
     if(_isUploading) return;
 
-    if(fileImage != null) {
+    if(_fileImage != null) {
 
       setState(() {
         _isUploading = true;
       });
 
-      Map<String, dynamic>? resUploadProfile = await userModule.uploadProfileImage(fileImage!);
+      Map<String, dynamic>? resUploadProfile = await _userModule.uploadProfileImage(_fileImage!);
 
       if (resUploadProfile != null) {
 

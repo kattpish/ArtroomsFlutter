@@ -1,127 +1,69 @@
 
 import 'dart:io';
 
-import 'package:artrooms/ui/widgets/screen_photo_view.dart';
+import 'package:artrooms/ui/screens/screen_photo_view.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:photo_view/photo_view.dart';
+import 'package:image_picker/image_picker.dart';
 
-import '../../utils/utils.dart';
-import '../../utils/utils_media.dart';
-import '../theme/theme_colors.dart';
+import '../../beans/bean_file.dart';
 
 
-void viewPhoto(BuildContext buildContext, {File? fileImage, String imageUrl="", String fileName=""}) {
+void doOpenPhotoView(BuildContext buildContext, {File? fileImage, String imageUrl="", String fileName=""}) {
 
-  if(true) {
     Navigator.push(buildContext, MaterialPageRoute(builder: (context) {
       return ScreenPhotoView(fileImage: fileImage, imageUrl: imageUrl, fileName: fileName,);
     }));
     return;
+
+}
+
+Future<File?> doPickImageWithCamera() async {
+
+  final ImagePicker picker = ImagePicker();
+
+  final XFile? photo = await picker.pickImage(source: ImageSource.camera);
+
+  if (photo != null) {
+    return File(photo.path);
+  } else {
+    return null;
   }
 
-  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+}
 
-  showDialog(
-    context: buildContext,
-    builder: (BuildContext context) {
+Future<List<FileItem>> doPickFiles() async {
 
-      ImageProvider imageProvider;
-      if (fileImage != null) {
-        imageProvider = FileImage(fileImage);
-      } else {
-        imageProvider = NetworkImage(imageUrl);
-      }
+  List<FileItem> fileItems = [];
 
-      return Scaffold(
-        key: scaffoldKey,
-        backgroundColor: Colors.black.withOpacity(0.40),
-        body: Container(
-          color: Colors.black.withOpacity(0.5),
-          child: Stack(
-            children: [
-              Center(
-                child: Stack(
-                  children: [
-                    PhotoView(
-                      imageProvider: imageProvider,
-                      backgroundDecoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.5),
-                      ),
-                      loadingBuilder: (context, event) => Center(
-                        child: CircularProgressIndicator(
-                          value: event == null ? 0 : event.cumulativeBytesLoaded / event.expectedTotalBytes!,
-                        ),
-                      ),
-                      errorBuilder: (context, error, stackTrace) {
-                        return Image.asset(
-                          'assets/images/chats/placeholder_photo.png',
-                          width: 0,
-                          fit: BoxFit.cover,
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              ),
-              Positioned(
-                top: 18,
-                right: 18,
-                  child: Container(
-                    width: 30,
-                    height: 30,
-                    decoration: const BoxDecoration(
-                      color: colorMainGrey250,
-                      shape: BoxShape.circle,
-                    ),
-                    child: IconButton(
-                      icon: const Icon(
-                        Icons.close,
-                        size: 22,
-                        color: Colors.black,
-                      ),
-                      padding: const EdgeInsets.all(4),
-                      constraints: const BoxConstraints(),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                  )
-              ),
-              Visibility(
-                visible: imageUrl.isNotEmpty,
-                child: Positioned(
-                  bottom: 18,
-                  left: 29,
-                    child: SizedBox(
-                      width: 40,
-                      height: 40,
-                      child: IconButton(
-                        icon: const Icon(
-                          Icons.file_download_outlined,
-                          size: 32,
-                          color: colorMainGrey300,
-                        ),
-                        padding: const EdgeInsets.all(4),
-                        constraints: const BoxConstraints(),
-                        onPressed: () async {
-
-                          await downloadFile(buildContext, imageUrl, fileName);
-
-                          try {
-                            showSnackBar(context, "이미지가 다운로드됨");
-                          }catch(error) {
-                            showSnackBar(buildContext, "이미지가 다운로드됨");
-                          }
-
-                        },
-                      ),
-                    )
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-    },
+  FilePickerResult? result = await FilePicker.platform.pickFiles(
+    allowMultiple: true,
+    type: FileType.any,
+    allowedExtensions: [],
   );
+
+  if (result != null) {
+
+    List<File> files = result.paths.map((path) {
+      return File(path!);
+    }).toList();
+
+    for(File file in files) {
+
+      FileItem fileItem = FileItem(
+        file: file,
+        path: file.path
+      );
+
+      fileItems.add(fileItem);
+    }
+
+  } else {
+    if (kDebugMode) {
+      print("No file selected");
+    }
+  }
+
+  return fileItems;
 }

@@ -11,34 +11,33 @@ import '../widgets/widget_loader.dart';
 import '../widgets/widget_media.dart';
 
 
-class MyScreenChatroomPhoto extends StatefulWidget {
+class ScreenChatroomPhoto extends StatefulWidget {
 
-  final DataChat myChat;
+  final DataChat dataChat;
 
-  const MyScreenChatroomPhoto({super.key, required this.myChat});
+  const ScreenChatroomPhoto({super.key, required this.dataChat});
 
   @override
-  State<MyScreenChatroomPhoto> createState() {
-    return _MyScreenChatroomPhotoState();
+  State<ScreenChatroomPhoto> createState() {
+    return _ScreenChatroomPhotoState();
   }
 
 }
 
-class _MyScreenChatroomPhotoState extends State<MyScreenChatroomPhoto> {
+class _ScreenChatroomPhotoState extends State<ScreenChatroomPhoto> {
 
   bool _isLoading = true;
   int _selected = 0;
   bool _selectMode = false;
   bool _isButtonDisabled = true;
 
-  late final ModuleMessages moduleMessages;
-
-  List<MyMessage> _attachmentsImages = [];
+  late final ModuleMessages _moduleMessages;
+  List<DataMessage> _attachmentsImages = [];
 
   @override
   void initState() {
     super.initState();
-    moduleMessages = ModuleMessages(widget.myChat.id);
+    _moduleMessages = ModuleMessages(widget.dataChat.id);
     _loadAttachmentsImages();
   }
 
@@ -170,7 +169,7 @@ class _MyScreenChatroomPhotoState extends State<MyScreenChatroomPhoto> {
         backgroundColor: colorMainScreen,
         body: SafeArea(
           child: _isLoading
-              ? const MyLoader()
+              ? const WidgetLoader()
               : GridView.builder(
             physics: const BouncingScrollPhysics(),
             padding: const EdgeInsets.only(bottom: 32),
@@ -182,12 +181,12 @@ class _MyScreenChatroomPhotoState extends State<MyScreenChatroomPhoto> {
             ),
             itemCount: _attachmentsImages.length,
             itemBuilder: (context, index) {
-              MyMessage attachmentImage = _attachmentsImages[index];
+              DataMessage attachmentImage = _attachmentsImages[index];
               return Container(
                 color: Colors.white,
                 child: InkWell(
                   onTap: () {
-                    viewPhoto(context, imageUrl:attachmentImage.getImageUrl(), fileName:attachmentImage.attachmentName);
+                    doOpenPhotoView(context, imageUrl:attachmentImage.getImageUrl(), fileName:attachmentImage.attachmentName);
                   },
                   onLongPress: () {
                     setState(() {
@@ -258,7 +257,7 @@ class _MyScreenChatroomPhotoState extends State<MyScreenChatroomPhoto> {
             ),
             child: TextButton(
               onPressed: () {
-                selectPhotos();
+                _selectPhotos();
               },
               child:const Text(
                   '저장',
@@ -284,7 +283,7 @@ class _MyScreenChatroomPhotoState extends State<MyScreenChatroomPhoto> {
       _isLoading = true;
     });
 
-    List<MyMessage> attachmentsImages = await moduleMessages.fetchAttachmentsImages();
+    List<DataMessage> attachmentsImages = await _moduleMessages.fetchAttachmentsImages();
 
     setState(() {
       _attachmentsImages = attachmentsImages;
@@ -296,7 +295,7 @@ class _MyScreenChatroomPhotoState extends State<MyScreenChatroomPhoto> {
   void _checkIfPhotoShouldBeEnabled() {
 
     _selected = 0;
-    for(MyMessage attachmentImage in _attachmentsImages) {
+    for(DataMessage attachmentImage in _attachmentsImages) {
       if(attachmentImage.isSelected) {
         setState(() {
           _selected++;
@@ -323,7 +322,7 @@ class _MyScreenChatroomPhotoState extends State<MyScreenChatroomPhoto> {
       _selected = 0;
     });
 
-    for(MyMessage attachmentImage in _attachmentsImages) {
+    for(DataMessage attachmentImage in _attachmentsImages) {
       setState(() {
         attachmentImage.isSelected = false;
       });
@@ -339,11 +338,11 @@ class _MyScreenChatroomPhotoState extends State<MyScreenChatroomPhoto> {
 
   }
 
-  void selectPhotos() {
+  void _selectPhotos() {
 
     if(!_isButtonDisabled) {
 
-      for(MyMessage attachmentImage in _attachmentsImages) {
+      for(DataMessage attachmentImage in _attachmentsImages) {
         if(attachmentImage.isSelected) {
           downloadFile(context, attachmentImage.attachmentUrl, attachmentImage.attachmentName, showNotification: true);
         }

@@ -106,10 +106,11 @@ void showSnackBar(BuildContext context, String message) {
 void closeKeyboard(BuildContext context) {
   FocusScope.of(context).requestFocus(FocusNode());
 }
-List<TextSpan> replacePattern(String original, bool isTyping) {
+
+List<TextSpan> replacePattern(String original, Color color, bool isTyping) {
   Color textColor = Colors.black;
   if(!isTyping) {
-    textColor = Colors.white;
+    textColor = color;
   }
   List<TextSpan> spans=[];
   int lastMatchIndex=0;

@@ -1,9 +1,9 @@
 
 import 'package:flutter/cupertino.dart';
 
-final routeObserver = MyRouteObserver();
+final routeObserver = RouteObserver();
 
-class MyRouteObserver extends NavigatorObserver {
+class RouteObserver extends NavigatorObserver {
 
   final Set<RouteAware> _listeners = <RouteAware>{};
 

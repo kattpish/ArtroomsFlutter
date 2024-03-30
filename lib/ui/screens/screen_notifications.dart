@@ -2,27 +2,26 @@
 import 'package:flutter/material.dart';
 
 import '../../data/module_datastore.dart';
+import '../../main.dart';
 import '../theme/theme_colors.dart';
+import '../widgets/widget_notifications.dart';
 
 
-class MyScreenNotifications extends StatefulWidget {
+class ScreenNotifications extends StatefulWidget {
 
-  const MyScreenNotifications({super.key});
+  const ScreenNotifications({super.key});
 
   @override
   State<StatefulWidget> createState() {
-    return _MyScreenNotificationsState();
+    return _ScreenNotificationsState();
   }
 
 }
 
-class _MyScreenNotificationsState extends State<MyScreenNotifications> {
-
-  DBStore dbStore = DBStore();
-
-  late final List<Map<String, dynamic>> _notifications;
+class _ScreenNotificationsState extends State<ScreenNotifications> {
 
   late String _notificationEnabled;
+  late final List<Map<String, dynamic>> _notifications;
 
   @override
   void initState() {
@@ -94,7 +93,11 @@ class _MyScreenNotificationsState extends State<MyScreenNotifications> {
                           letterSpacing: -0.32,
                         ),
                       ),
-                      trailing: _buildTrailingWidget(notification, index),
+                      trailing: widgetNotificationItemTick(notification, index, _notificationEnabled,
+                          onTap: (index, isEnabled) {
+                            _doToggleNotification(index, isEnabled);
+                          }
+                      ),
                     ),
                   );
                 }).toList(),
@@ -106,43 +109,11 @@ class _MyScreenNotificationsState extends State<MyScreenNotifications> {
     );
   }
 
-  Widget _buildTrailingWidget1(bool isEnabled, int index) {
-    return IconButton(
-      icon: Icon(
-          Icons.check,
-          color: isEnabled ? colorPrimaryBlue : colorMainGrey100
-      ),
-      color: isEnabled ? Theme.of(context).primaryColor : null,
-      onPressed: () {
-        _toggleNotification(index, !isEnabled);
-      },
-    );
-  }
-
-  Widget _buildTrailingWidget(Map<String, dynamic> notification, int index) {
-
-    bool isEnabled = notification['title'] == _notificationEnabled;
-
-    return GestureDetector(
-      onTap: () {
-        _toggleNotification(index, !isEnabled);
-      },
-      child: Image.asset(
-        isEnabled ? 'assets/images/icons/icon_tick_on.png' : 'assets/images/icons/icon_tick_off.png',
-        width: 24,
-        height: 24,
-      ),
-    );
-  }
-
-  void _toggleNotification(int index, bool value) {
-
+  void _doToggleNotification(int index, bool value) {
     dbStore.setNotificationValue(_notifications[index]['title']);
-
     setState(() {
       _notificationEnabled = _notifications[index]["title"];
     });
-
   }
 
 }

@@ -6,20 +6,20 @@ import '../../beans/bean_chat.dart';
 import '../../main.dart';
 
 
-class MyScreenMemo extends StatefulWidget {
+class ScreenMemo extends StatefulWidget {
 
-  final DataChat myChat;
+  final DataChat dataChat;
 
-  const MyScreenMemo({super.key, required this.myChat});
+  const ScreenMemo({super.key, required this.dataChat});
 
   @override
   State<StatefulWidget> createState() {
-    return _MyScreenMemoState();
+    return _ScreenMemoState();
   }
 
 }
 
-class _MyScreenMemoState extends State<MyScreenMemo> {
+class _ScreenMemoState extends State<ScreenMemo> {
 
   bool _isButtonEnabled = true;
   final TextEditingController _memoController = TextEditingController();
@@ -27,9 +27,9 @@ class _MyScreenMemoState extends State<MyScreenMemo> {
   @override
   void initState() {
     super.initState();
-    _memoController.text = dbStore.getMemo(widget.myChat);
+    _memoController.text = dbStore.getMemo(widget.dataChat);
     _isButtonEnabled = _memoController.text.isNotEmpty;
-    _memoController.addListener(_checkIfButtonShouldBeEnabled);
+    _memoController.addListener(_doCheckEnableButton);
   }
 
   @override
@@ -105,7 +105,7 @@ class _MyScreenMemoState extends State<MyScreenMemo> {
           ),
           child: TextButton(
             onPressed: () {
-              save();
+              _doSaveMemo();
             },
             child:const Text(
                 '저장',
@@ -124,7 +124,7 @@ class _MyScreenMemoState extends State<MyScreenMemo> {
     );
   }
 
-  void _checkIfButtonShouldBeEnabled() {
+  void _doCheckEnableButton() {
     if (_memoController.text.isNotEmpty) {
       setState(() => _isButtonEnabled = true);
     } else {
@@ -132,13 +132,11 @@ class _MyScreenMemoState extends State<MyScreenMemo> {
     }
   }
 
-  void save() {
-
+  void _doSaveMemo() {
     if(_isButtonEnabled) {
-      dbStore.saveMemo(widget.myChat, _memoController.text);
+      dbStore.saveMemo(widget.dataChat, _memoController.text);
       Navigator.pop(context);
     }
-
   }
 
 }

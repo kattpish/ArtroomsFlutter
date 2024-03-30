@@ -6,20 +6,20 @@ import '../../utils/utils_screen.dart';
 import '../theme/theme_colors.dart';
 
 
-class MyScreenNoticeDetails extends StatefulWidget {
+class ScreenNoticeDetails extends StatefulWidget {
 
   final DataNotice dataNotice;
 
-  const MyScreenNoticeDetails({super.key, required this.dataNotice});
+  const ScreenNoticeDetails({super.key, required this.dataNotice});
 
   @override
   State<StatefulWidget> createState() {
-    return _MyScreenNoticeDetailsState();
+    return _ScreenNoticeDetailsState();
   }
 
 }
 
-class _MyScreenNoticeDetailsState extends State<MyScreenNoticeDetails> {
+class _ScreenNoticeDetailsState extends State<ScreenNoticeDetails> {
 
   @override
   Widget build(BuildContext context) {

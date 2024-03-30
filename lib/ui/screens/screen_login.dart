@@ -9,23 +9,22 @@ import 'package:flutter/services.dart';
 import '../../main.dart';
 import '../../modules/module_auth.dart';
 import '../../modules/module_profile.dart';
-import '../../modules/module_sendbird.dart';
 import '../../utils/utils.dart';
 import '../theme/theme_colors.dart';
 
 
-class MyScreenLogin extends StatefulWidget {
+class ScreenLogin extends StatefulWidget {
 
-  const MyScreenLogin({super.key});
+  const ScreenLogin({super.key});
 
   @override
   State<StatefulWidget> createState() {
-    return _MyScreeLoginState();
+    return _ScreenLoginState();
   }
 
 }
 
-class _MyScreeLoginState extends State<MyScreenLogin> {
+class _ScreenLoginState extends State<ScreenLogin> {
 
   bool _isLoading = false;
   final FocusNode _emailFocus = FocusNode();
@@ -33,8 +32,8 @@ class _MyScreeLoginState extends State<MyScreenLogin> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  final UserModule userModule = UserModule();
-  final AuthModule authModule = AuthModule();
+  final UserModule _userModule = UserModule();
+  final AuthModule _authModule = AuthModule();
 
   @override
   void initState() {
@@ -42,7 +41,7 @@ class _MyScreeLoginState extends State<MyScreenLogin> {
 
     if(DBStore().isLoggedIn()) {
       Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) {
-        return const MyScreenChats();
+        return const ScreenChats();
       }));
       return;
     }
@@ -151,7 +150,7 @@ class _MyScreeLoginState extends State<MyScreenLogin> {
                                         focusNode: _passwordFocus,
                                         textInputAction: TextInputAction.done,
                                         onSubmitted: (_) {
-                                          _attemptLogin(context);
+                                          _doLogin(context);
                                         },
                                         obscureText: true,
                                         style: const TextStyle(
@@ -211,7 +210,7 @@ class _MyScreeLoginState extends State<MyScreenLogin> {
                                           ),
                                         ),
                                         onPressed: () {
-                                          _attemptLogin(context);
+                                          _doLogin(context);
                                         },
                                       ),
                                     ),
@@ -235,7 +234,7 @@ class _MyScreeLoginState extends State<MyScreenLogin> {
                                             ),
                                             onPressed: () {
                                               Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                                return const MyScreenLoginReset(tab: 0);
+                                                return const ScreenLoginReset(tab: 0);
                                               }));
                                             },
                                           ),
@@ -259,7 +258,7 @@ class _MyScreeLoginState extends State<MyScreenLogin> {
                                             ),
                                             onPressed: () {
                                               Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                                return const MyScreenLoginReset(tab: 1);
+                                                return const ScreenLoginReset(tab: 1);
                                               }));
                                             },
                                           ),
@@ -322,8 +321,7 @@ class _MyScreeLoginState extends State<MyScreenLogin> {
     );
   }
 
-  void _attemptLogin(BuildContext context) {
-
+  void _doLogin(BuildContext context) {
     if(_isLoading) return;
 
     if (_emailController.text.isEmpty) {
@@ -347,7 +345,7 @@ class _MyScreeLoginState extends State<MyScreenLogin> {
 
     String email = _emailController.text;
 
-    authModule.login(
+    _authModule.login(
       email: email,
       password: _passwordController.text,
       loginRemember: true,
@@ -357,7 +355,7 @@ class _MyScreeLoginState extends State<MyScreenLogin> {
 
           await dbStore.saveTokens(email, accessToken, refreshToken);
 
-          Map<String, dynamic>? profile = await userModule.getMyProfile();
+          Map<String, dynamic>? profile = await _userModule.getMyProfile();
           if (profile != null) {
 
             await dbStore.saveProfile(profile);
@@ -375,7 +373,7 @@ class _MyScreeLoginState extends State<MyScreenLogin> {
           await moduleSendBird.initSendbird();
 
           Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) {
-            return const MyScreenChats();
+            return const ScreenChats();
           }));
 
         } else {

@@ -2,9 +2,9 @@
 import 'package:flutter/material.dart';
 
 
-class MyLoader extends StatelessWidget {
+class WidgetLoader extends StatelessWidget {
 
-  const MyLoader({super.key});
+  const WidgetLoader({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -22,9 +22,9 @@ class MyLoader extends StatelessWidget {
 
 }
 
-class MyLoaderPage extends StatelessWidget {
+class WidgetLoaderPage extends StatelessWidget {
 
-  const MyLoaderPage({super.key});
+  const WidgetLoaderPage({super.key});
 
   @override
   Widget build(BuildContext context) {

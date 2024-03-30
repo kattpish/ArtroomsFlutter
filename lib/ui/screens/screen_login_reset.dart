@@ -5,22 +5,24 @@ import 'package:flutter/material.dart';
 import '../../modules/module_auth.dart';
 import '../../utils/utils.dart';
 import '../theme/theme_colors.dart';
+import '../widgets/widget_login_reset_tab_id.dart';
+import '../widgets/widget_login_reset_tab_password.dart';
 
 
-class MyScreenLoginReset extends StatefulWidget {
+class ScreenLoginReset extends StatefulWidget {
 
   final int tab;
 
-  const MyScreenLoginReset({super.key, required this.tab});
+  const ScreenLoginReset({super.key, required this.tab});
 
   @override
   State<StatefulWidget> createState() {
-    return _MyScreenLoginResetState();
+    return _ScreenLoginResetState();
   }
 
 }
 
-class _MyScreenLoginResetState extends State<MyScreenLoginReset> with SingleTickerProviderStateMixin {
+class _ScreenLoginResetState extends State<ScreenLoginReset> with SingleTickerProviderStateMixin {
 
   bool _isLoading = false;
   late TabController _tabController;
@@ -31,14 +33,16 @@ class _MyScreenLoginResetState extends State<MyScreenLoginReset> with SingleTick
   final TextEditingController _phoneController = TextEditingController();
   bool _isButtonDisabled = true;
 
+  final AuthModule _authModule = AuthModule();
+
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
-    _tabController.addListener(_handleTabSelection);
-    _nameController.addListener(_checkIfButtonShouldBeEnabled);
-    _phoneController.addListener(_checkIfButtonShouldBeEnabled);
-    _emailController.addListener(_checkIfButtonShouldBeEnabled);
+    _tabController.addListener(_doHandleTabSelection);
+    _nameController.addListener(_doCheckEnableButton);
+    _phoneController.addListener(_doCheckEnableButton);
+    _emailController.addListener(_doCheckEnableButton);
 
     _tabController.index = widget.tab;
   }
@@ -119,8 +123,16 @@ class _MyScreenLoginResetState extends State<MyScreenLoginReset> with SingleTick
                     child: TabBarView(
                       controller: _tabController,
                       children: [
-                        _buildIdTab(),
-                        _buildPasswordTab(),
+                        widgetLoginRestTabId(context, _nameController, _phoneController, _nameFocus, _phoneFocus,
+                            onSubmitted:() {
+                              _doSubmit(context);
+                            }
+                        ),
+                        widgetLoginRestTabPassword(context, _emailController,
+                            onSubmitted:() {
+                              _doSubmit(context);
+                            }
+                        ),
                       ],
                     ),
                   ),
@@ -131,7 +143,7 @@ class _MyScreenLoginResetState extends State<MyScreenLoginReset> with SingleTick
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
                     child: ElevatedButton(
                       onPressed: () {
-                        _submit(context);
+                        _doSubmit(context);
                       },
                       style: ElevatedButton.styleFrom(
                         foregroundColor: Colors.white,
@@ -175,211 +187,13 @@ class _MyScreenLoginResetState extends State<MyScreenLoginReset> with SingleTick
     );
   }
 
-  Widget _buildIdTab() {
-    return SingleChildScrollView(
-      physics: const BouncingScrollPhysics(),
-      child: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 10),
-            const Text(
-                '아이디 찾기',
-                style: TextStyle(
-                  color: Color(0xFF1F1F1F),
-                  fontSize: 16,
-                  fontFamily: 'SUIT',
-                  fontWeight: FontWeight.w700,
-                  height: 0,
-                  letterSpacing: -0.32,
-                )
-            ),
-            const SizedBox(height: 10),
-            const Text(
-              '가입 시 등록했던 이메일 주소를 입력해 주세요.\n비밀번호를 재설정할 수 있는 링크를 보내드립니다.',
-              style: TextStyle(
-                color: Color(0xFF1F1F1F),
-                fontSize: 14,
-                fontFamily: 'SUIT',
-                fontWeight: FontWeight.w400,
-                height: 0,
-                letterSpacing: -0.28,
-              ),
-            ),
-            const SizedBox(height: 30),
-            const Text(
-                '이름',
-                style: TextStyle(
-                  color: Color(0xFF979797),
-                  fontSize: 16,
-                  fontFamily: 'SUIT',
-                  fontWeight: FontWeight.w600,
-                  height: 0,
-                  letterSpacing: -0.32,
-                )
-            ),
-            const SizedBox(height: 6),
-            Container(
-              decoration: BoxDecoration(
-                color: const Color(0xFFF5F5F5),
-                borderRadius: BorderRadius.circular(8.0),
-                border: Border.all(color: const Color(0xFFE7E7E7), width: 1.0,),
-              ),
-              child: TextField(
-                controller: _nameController,
-                focusNode: _nameFocus,
-                autofocus: false,
-                keyboardType: TextInputType.name,
-                textInputAction: TextInputAction.next,
-                onSubmitted: (_) {
-                  FocusScope.of(context).requestFocus(_phoneFocus);
-                },
-                decoration: InputDecoration(
-                  hintText: '실명을 입력해주세요',
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12.0),
-                    borderSide: BorderSide.none,
-                  ),
-                ),
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontFamily: 'SUIT',
-                  fontWeight: FontWeight.w400,
-                  height: 0,
-                  letterSpacing: -0.32,
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
-            const Text(
-                '핸드폰 번호',
-                style: TextStyle(
-                  color: Color(0xFF979797),
-                  fontSize: 16,
-                  fontFamily: 'SUIT',
-                  fontWeight: FontWeight.w600,
-                  height: 0,
-                  letterSpacing: -0.32,
-                )
-            ),
-            const SizedBox(height: 6),
-            Container(
-              decoration: BoxDecoration(
-                color: const Color(0xFFF5F5F5),
-                borderRadius: BorderRadius.circular(10.0),
-                border: Border.all(color: const Color(0xFFE7E7E7), width: 1.0,),
-              ),
-              child: TextField(
-                controller: _phoneController,
-                focusNode: _phoneFocus,
-                textInputAction: TextInputAction.done,
-                onSubmitted: (_) {
-                  _submit(context);
-                },
-                decoration: InputDecoration(
-                  hintText: '휴대폰 번호를 입력해주세요',
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                    borderSide: BorderSide.none,
-                  ),
-                ),
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontFamily: 'SUIT',
-                  fontWeight: FontWeight.w400,
-                  height: 0,
-                  letterSpacing: -0.32,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildPasswordTab() {
-    return SingleChildScrollView(
-      physics: const BouncingScrollPhysics(),
-      child: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 10),
-            const Text(
-                '비밀번호 찾기',
-                style: TextStyle(
-                  color: Color(0xFF1F1F1F),
-                  fontSize: 16,
-                  fontFamily: 'SUIT',
-                  fontWeight: FontWeight.w700,
-                  height: 0,
-                  letterSpacing: -0.32,
-                )
-            ),
-            const SizedBox(height: 10),
-            const Text(
-              '가입 시 등록했던 이메일 주소를 입력해 주세요.',
-              style: TextStyle(
-                color: Color(0xFF1F1F1F),
-                fontSize: 14,
-                fontFamily: 'SUIT',
-                fontWeight: FontWeight.w400,
-                height: 0,
-                letterSpacing: -0.28,
-              ),
-            ),
-            const SizedBox(height: 30),
-            Container(
-              decoration: BoxDecoration(
-                color: const Color(0xFFF5F5F5),
-                borderRadius: BorderRadius.circular(10.0),
-                border: Border.all(color: const Color(0xFFE7E7E7), width: 1.0,),
-              ),
-              child: TextField(
-                controller: _emailController,
-                keyboardType: TextInputType.emailAddress,
-                textInputAction: TextInputAction.done,
-                onSubmitted: (_) {
-                  _submit(context);
-                },
-                decoration: InputDecoration(
-                  hintText: '이메일 주소를 입력하세요',
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                    borderSide: BorderSide.none,
-                  ),
-                ),
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontFamily: 'SUIT',
-                  fontWeight: FontWeight.w400,
-                  height: 0,
-                  letterSpacing: -0.32,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void _handleTabSelection() {
+  void _doHandleTabSelection() {
     if (_tabController.indexIsChanging) {
-      _checkIfButtonShouldBeEnabled();
+      _doCheckEnableButton();
     }
   }
 
-  void _checkIfButtonShouldBeEnabled() {
+  void _doCheckEnableButton() {
     if(_tabController.index == 0) {
       if (_nameController.text.isEmpty || _phoneController.text.isEmpty) {
         setState(() {
@@ -408,18 +222,15 @@ class _MyScreenLoginResetState extends State<MyScreenLoginReset> with SingleTick
     }
   }
 
-  void _submit(BuildContext context) {
-
+  void _doSubmit(BuildContext context) {
     if(_tabController.index == 0) {
-      _attemptFindId(context);
+      _doFindId(context);
     }else {
-      _attemptResetPassword(context);
+      _doResetPassword(context);
     }
-
   }
 
-  void _attemptFindId(BuildContext context) {
-
+  void _doFindId(BuildContext context) {
     if(_isLoading) return;
 
     if (_nameController.text.isEmpty) {
@@ -437,8 +248,7 @@ class _MyScreenLoginResetState extends State<MyScreenLoginReset> with SingleTick
       _isLoading = true;
     });
 
-    AuthModule authModule = AuthModule();
-    authModule.resetPassword(
+    _authModule.resetPassword(
       email: _emailController.text,
       callback: (bool success, String message) async {
 
@@ -447,7 +257,7 @@ class _MyScreenLoginResetState extends State<MyScreenLoginReset> with SingleTick
           Navigator.of(context).pop();
 
           Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return const MyScreenLogin();
+            return const ScreenLogin();
           }));
 
         } else {
@@ -463,7 +273,7 @@ class _MyScreenLoginResetState extends State<MyScreenLoginReset> with SingleTick
 
   }
 
-  void _attemptResetPassword(BuildContext context) {
+  void _doResetPassword(BuildContext context) {
 
     if(_isLoading) return;
 
@@ -482,8 +292,7 @@ class _MyScreenLoginResetState extends State<MyScreenLoginReset> with SingleTick
       _isLoading = true;
     });
 
-    AuthModule authModule = AuthModule();
-    authModule.resetPassword(
+    _authModule.resetPassword(
       email: _emailController.text,
       callback: (bool success, String message) async {
 
@@ -492,7 +301,7 @@ class _MyScreenLoginResetState extends State<MyScreenLoginReset> with SingleTick
           Navigator.of(context).pop();
 
           Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return const MyScreenLogin();
+            return const ScreenLogin();
           }));
 
         } else {

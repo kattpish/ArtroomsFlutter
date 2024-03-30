@@ -10,45 +10,44 @@ import '../theme/theme_colors.dart';
 import '../widgets/widget_loader.dart';
 
 
-class MyScreenChatroomFile extends StatefulWidget {
+class ScreenChatroomFile extends StatefulWidget {
 
-  final DataChat myChat;
+  final DataChat dataChat;
 
-  const MyScreenChatroomFile({super.key, required this.myChat});
+  const ScreenChatroomFile({super.key, required this.dataChat});
 
   @override
-  State<MyScreenChatroomFile> createState() {
-    return _MyScreenChatroomFileState();
+  State<ScreenChatroomFile> createState() {
+    return _ScreenChatroomFileState();
   }
 
 }
 
-class _MyScreenChatroomFileState extends State<MyScreenChatroomFile> {
+class _ScreenChatroomFileState extends State<ScreenChatroomFile> {
 
   bool _isLoading = true;
   bool _isButtonFileDisabled = true;
 
-  int crossAxisCount = 2;
-  double crossAxisSpacing = 8;
-  double mainAxisSpacing = 8;
-  double screenWidth = 0;
+  int _crossAxisCount = 2;
+  double _screenWidth = 0;
+  final double _crossAxisSpacing = 8;
+  final double _mainAxisSpacing = 8;
 
-  late final ModuleMessages moduleMessages;
-
-  List<MyMessage> _attachmentsMedia = [];
+  late final ModuleMessages _moduleMessages;
+  List<DataMessage> _attachmentsMedia = [];
 
   @override
   void initState() {
     super.initState();
-    moduleMessages = ModuleMessages(widget.myChat.id);
-    _loadAttachmentsFiles();
+    _moduleMessages = ModuleMessages(widget.dataChat.id);
+    _doLoadAttachmentsFiles();
   }
 
   @override
   Widget build(BuildContext context) {
 
-    crossAxisCount = isTablet(context) ? 4 : 2;
-    screenWidth = MediaQuery.of(context).size.width;
+    _crossAxisCount = isTablet(context) ? 4 : 2;
+    _screenWidth = MediaQuery.of(context).size.width;
 
     return MaterialApp(
       title: 'File Manager',
@@ -79,15 +78,15 @@ class _MyScreenChatroomFileState extends State<MyScreenChatroomFile> {
         backgroundColor: colorMainScreen,
         body: SafeArea(
           child: _isLoading
-              ? const MyLoader()
+              ? const WidgetLoader()
               : GridView.builder(
             physics: const BouncingScrollPhysics(),
             padding: const EdgeInsets.only(left: 16, top: 12, right: 16, bottom: 32),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: crossAxisCount,
-              crossAxisSpacing: crossAxisSpacing,
-              mainAxisSpacing: mainAxisSpacing,
-              childAspectRatio: (screenWidth / crossAxisCount - crossAxisSpacing) / (200),
+              crossAxisCount: _crossAxisCount,
+              crossAxisSpacing: _crossAxisSpacing,
+              mainAxisSpacing: _mainAxisSpacing,
+              childAspectRatio: (_screenWidth / _crossAxisCount - _crossAxisSpacing) / (200),
             ),
             itemCount: _attachmentsMedia.length,
             itemBuilder: (context, index) {
@@ -99,7 +98,7 @@ class _MyScreenChatroomFileState extends State<MyScreenChatroomFile> {
                   onTap: () {
                     setState(() {
                       attachmentFile.isSelected = !attachmentFile.isSelected;
-                      _checkIfFileButtonShouldBeEnabled();
+                      _doCheckIfFileButtonShouldBeEnabled();
                     });
                   },
                   child: Container(
@@ -190,7 +189,7 @@ class _MyScreenChatroomFileState extends State<MyScreenChatroomFile> {
             ),
             child: TextButton(
               onPressed: () {
-                selectFiles();
+                _doSelectFiles();
               },
               child:const Text(
                   '저장',
@@ -210,13 +209,13 @@ class _MyScreenChatroomFileState extends State<MyScreenChatroomFile> {
     );
   }
 
-  void _loadAttachmentsFiles() async {
+  void _doLoadAttachmentsFiles() async {
 
     setState(() {
       _isLoading = true;
     });
 
-    List<MyMessage> attachmentsFiles = await moduleMessages.fetchAttachmentsFiles();
+    List<DataMessage> attachmentsFiles = await _moduleMessages.fetchAttachmentsFiles();
     setState(() {
       _attachmentsMedia = attachmentsFiles;
     });
@@ -227,10 +226,10 @@ class _MyScreenChatroomFileState extends State<MyScreenChatroomFile> {
 
   }
 
-  void _checkIfFileButtonShouldBeEnabled() {
+  void _doCheckIfFileButtonShouldBeEnabled() {
 
     int n = 0;
-    for(MyMessage attachmentFile in _attachmentsMedia) {
+    for(DataMessage attachmentFile in _attachmentsMedia) {
       if(attachmentFile.isSelected) {
         n++;
       }
@@ -244,9 +243,9 @@ class _MyScreenChatroomFileState extends State<MyScreenChatroomFile> {
 
   }
 
-  void _deselectAllFiles() {
+  void _doDeselectAllFiles() {
 
-    for(MyMessage attachmentImage in _attachmentsMedia) {
+    for(DataMessage attachmentImage in _attachmentsMedia) {
       setState(() {
         attachmentImage.isSelected = false;
       });
@@ -254,17 +253,17 @@ class _MyScreenChatroomFileState extends State<MyScreenChatroomFile> {
 
   }
 
-  void selectFiles() {
+  void _doSelectFiles() {
 
     if(!_isButtonFileDisabled) {
 
-      for(MyMessage attachmentMedia in _attachmentsMedia) {
+      for(DataMessage attachmentMedia in _attachmentsMedia) {
         if(attachmentMedia.isSelected) {
           downloadFile(context, attachmentMedia.attachmentUrl, attachmentMedia.attachmentName, showNotification: true);
         }
       }
 
-      _deselectAllFiles();
+      _doDeselectAllFiles();
     }
 
   }

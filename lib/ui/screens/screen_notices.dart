@@ -9,29 +9,29 @@ import '../../beans/bean_chat.dart';
 import '../../utils/utils_screen.dart';
 
 
-class MyScreenNotices extends StatefulWidget {
+class ScreenNotices extends StatefulWidget {
 
-  final DataChat myChat;
+  final DataChat dataChat;
 
-  const MyScreenNotices({super.key, required this.myChat});
+  const ScreenNotices({super.key, required this.dataChat});
 
   @override
   State<StatefulWidget> createState() {
-    return _MyScreenNoticesState();
+    return _ScreenNoticesState();
   }
 
 }
 
-class _MyScreenNoticesState extends State<MyScreenNotices> {
+class _ScreenNoticesState extends State<ScreenNotices> {
 
   bool _isLoading = true;
-  final List<DataNotice> notifications = [];
-  final ModuleNotice moduleNotice = ModuleNotice();
+  final List<DataNotice> _notifications = [];
+  final ModuleNotice _moduleNotice = ModuleNotice();
   
   @override
   void initState() {
     super.initState();
-    _loadNotices();
+    _doLoadNotices();
   }
 
   @override
@@ -105,7 +105,7 @@ class _MyScreenNoticesState extends State<MyScreenNotices> {
             children: [
               ListView(
                 physics: const BouncingScrollPhysics(),
-                children: notifications.map((notice) {
+                children: _notifications.map((notice) {
                   return Card(
                     margin: const EdgeInsets.only(bottom: 8.0),
                     elevation: 0,
@@ -180,7 +180,7 @@ class _MyScreenNoticesState extends State<MyScreenNotices> {
                               InkWell(
                                 onTap: () {
                                   Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                    return MyScreenNoticeDetails(dataNotice: notice);
+                                    return ScreenNoticeDetails(dataNotice: notice);
                                   }));
                                 },
                                 child: Column(
@@ -231,12 +231,12 @@ class _MyScreenNoticesState extends State<MyScreenNotices> {
     );
   }
 
-  void _loadNotices() {
+  void _doLoadNotices() {
 
-    moduleNotice.getNotices(widget.myChat.id).then((List<DataNotice> listNotices) {
+    _moduleNotice.getNotices(widget.dataChat.id).then((List<DataNotice> listNotices) {
 
       setState(() {
-        notifications.addAll(listNotices);
+        _notifications.addAll(listNotices);
       });
 
     }).catchError((e) {

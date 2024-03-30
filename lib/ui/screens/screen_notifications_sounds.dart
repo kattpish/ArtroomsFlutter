@@ -3,23 +3,22 @@ import 'package:artrooms/ui/screens/screen_notifications.dart';
 import 'package:artrooms/ui/theme/theme_colors.dart';
 import 'package:flutter/material.dart';
 
-import '../../data/module_datastore.dart';
+import '../../main.dart';
+import '../widgets/widget_notifications.dart';
 
 
-class MyScreenNotificationsSounds extends StatefulWidget {
+class ScreenNotificationsSounds extends StatefulWidget {
 
-  const MyScreenNotificationsSounds({super.key});
+  const ScreenNotificationsSounds({super.key});
 
   @override
   State<StatefulWidget> createState() {
-    return _MyScreenNotificationsSoundsState();
+    return _ScreenNotificationsSoundsState();
   }
 
 }
 
-class _MyScreenNotificationsSoundsState extends State<MyScreenNotificationsSounds> {
-
-  DBStore dbStore = DBStore();
+class _ScreenNotificationsSoundsState extends State<ScreenNotificationsSounds> {
 
   late final List<Map<String, dynamic>> _notifications;
 
@@ -90,7 +89,11 @@ class _MyScreenNotificationsSoundsState extends State<MyScreenNotificationsSound
                           letterSpacing: -0.32,
                         ),
                       ),
-                      trailing: _buildTrailingWidget(notification['enabled'], index),
+                      trailing: widgetNotificationItemSwitch(notification['enabled'], index,
+                          onTap: (index, isEnabled) {
+                            _doToggleNotification(index, isEnabled);
+                          }
+                      ),
                     ),
                   );
                 }).toList(),
@@ -111,7 +114,7 @@ class _MyScreenNotificationsSoundsState extends State<MyScreenNotificationsSound
                   ),
                   onTap: () {
                     Navigator.push(context, MaterialPageRoute(builder: (context) {
-                      return const MyScreenNotifications();
+                      return const ScreenNotifications();
                     }));
                   },
                   trailing: const Text(
@@ -134,20 +137,7 @@ class _MyScreenNotificationsSoundsState extends State<MyScreenNotificationsSound
     );
   }
 
-  Widget _buildTrailingWidget(bool isEnabled, int index) {
-    return GestureDetector(
-      onTap: () {
-        _toggleNotification(index, !isEnabled);
-      },
-      child: Image.asset(
-        isEnabled ? 'assets/images/icons/icon_switch_on.png' : 'assets/images/icons/icon_switch_off.png',
-        width: 36,
-        height: 20,
-      ),
-    );
-  }
-
-  void _toggleNotification(int index, bool value) {
+  void _doToggleNotification(int index, bool value) {
     setState(() {
       dbStore.setBool(_notifications[index]['title'], value);
       _notifications[index]['enabled'] = value;

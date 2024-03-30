@@ -19,7 +19,7 @@ import 'modules/module_sendbird.dart';
 late final SharedPreferences sharedPreferences;
 late final DBStore dbStore;
 late final ModuleSendBird moduleSendBird;
-final MyRouteObserver routeObserver = MyRouteObserver();
+final RouteObserver routeObserver = RouteObserver();
 ModuleMedia moduleMedia = ModuleMedia();
 
 Future<void> main() async {
@@ -48,7 +48,7 @@ Future<void> main() async {
 
   runApp(
     MaterialApp(
-      home: DBStore().isLoggedIn() ? const MyScreenChats() : const MyScreenLogin(),
+      home: DBStore().isLoggedIn() ? const ScreenChats() : const ScreenLogin(),
       debugShowCheckedModeBanner: false,
       navigatorObservers: [routeObserver],
     ),

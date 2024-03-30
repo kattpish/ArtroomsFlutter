@@ -1,11 +1,10 @@
 import 'dart:convert';
-// import 'dart:js_util';
 
 import 'package:artrooms/beans/bean_message.dart';
 import 'package:flutter/material.dart';
 
 class ReplyMessageFlowWidget extends StatelessWidget {
-  final MyMessage message;
+  final DataMessage message;
 
   const ReplyMessageFlowWidget({super.key,
     required this.message
@@ -51,4 +50,5 @@ class ReplyMessageFlowWidget extends StatelessWidget {
       ],
     );
   }
+
 }

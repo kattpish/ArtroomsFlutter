@@ -9,7 +9,7 @@ import '../main.dart';
 import '../utils/utils.dart';
 
 
-class MyMessage {
+class DataMessage {
 
   int index;
   String senderId;
@@ -32,7 +32,7 @@ class MyMessage {
   int? parentMessageId;
   String data = "";
 
-  MyMessage.empty({
+  DataMessage.empty({
     this.index = 0,
     this.senderId = "",
     this.senderName = "",
@@ -41,7 +41,7 @@ class MyMessage {
     this.isMe = false,
   });
 
-  MyMessage.fromBaseMessageWithDetails({
+  DataMessage.fromBaseMessageWithDetails({
     required this.index,
     required this.senderId,
     required this.senderName,
@@ -50,7 +50,7 @@ class MyMessage {
     required this.isMe,
   });
 
-  MyMessage.fromBaseMessage(BaseMessage baseMessage)
+  DataMessage.fromBaseMessage(BaseMessage baseMessage)
       : index = baseMessage.messageId,
         senderId = baseMessage.sender?.userId ?? "",
         senderName = baseMessage.sender?.nickname ?? "",

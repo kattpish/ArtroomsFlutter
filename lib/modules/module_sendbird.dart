@@ -194,7 +194,7 @@ class ModuleSendBird {
   //   params.data = data;
   //   return performSendMessage(groupChannel, text,params);
   // }
-  Future<UserMessage> sendMessage(GroupChannel groupChannel, String text, {String data="",MyMessage? message}) async {
+  Future<UserMessage> sendMessage(GroupChannel groupChannel, String text, {String data="",DataMessage? message}) async {
     final params = UserMessageParams(message: text);
      ParentMessage parentMessage = ParentMessage(message?.index ?? 0, message?.content ?? "", message?.senderId ?? "",message?.senderName ?? "");
      params.mentionedUserIds = [];
@@ -253,10 +253,10 @@ class ModuleSendBird {
     return completer.future;
   }
 
-  Future<MyMessage> sendMessageFiles(GroupChannel groupChannel, List<File> files) async {
-    Completer<MyMessage> completer = Completer();
+  Future<DataMessage> sendMessageFiles(GroupChannel groupChannel, List<File> files) async {
+    Completer<DataMessage> completer = Completer();
 
-    MyMessage myMessage = MyMessage.empty();
+    DataMessage myMessage = DataMessage.empty();
 
     List<String> attachmentImages = [];
 
@@ -266,7 +266,7 @@ class ModuleSendBird {
 
       FileMessage fileMessage = await sendMessageFile(groupChannel, file);
 
-      myMessage = MyMessage.fromBaseMessage(fileMessage);
+      myMessage = DataMessage.fromBaseMessage(fileMessage);
 
       attachmentImages.add(fileMessage.url);
     }

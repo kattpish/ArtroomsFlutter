@@ -2,7 +2,8 @@ import 'package:artrooms/beans/bean_message.dart';
 import 'package:flutter/material.dart';
 
 class ReplyMessageWidget extends StatelessWidget {
-  final MyMessage message;
+
+  final DataMessage message;
   final VoidCallback onCancelReply;
 
   const ReplyMessageWidget({super.key,
@@ -35,15 +36,15 @@ class ReplyMessageWidget extends StatelessWidget {
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
           ),
-          if (onCancelReply != null)
-            GestureDetector(
-              onTap: onCancelReply,
-              child: const Icon(Icons.close, size: 16),
-            )
+          GestureDetector(
+            onTap: onCancelReply,
+            child: const Icon(Icons.close, size: 16),
+          )
         ],
       ),
       const SizedBox(height: 8),
       Text(message.content, style: const TextStyle(color: Colors.black54)),
     ],
   );
+
 }

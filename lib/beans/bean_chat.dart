@@ -15,7 +15,7 @@ class DataChat {
   final String date;
   String role = "";
   String profilePictureUrl = "";
-  MyMessage lastMessage = MyMessage.empty();
+  DataMessage lastMessage = DataMessage.empty();
   bool isArtrooms = false;
   bool isNotification = true;
 
@@ -34,9 +34,9 @@ class DataChat {
     final BaseMessage? lastBaseMessage = groupChannel.lastMessage;
     String messageDate = '';
 
-    MyMessage lastMessage = MyMessage.empty();
+    DataMessage lastMessage = DataMessage.empty();
     if (lastBaseMessage != null) {
-      lastMessage = MyMessage.fromBaseMessage(lastBaseMessage);
+      lastMessage = DataMessage.fromBaseMessage(lastBaseMessage);
       messageDate = formatDateTime(lastBaseMessage.createdAt);
     }
 

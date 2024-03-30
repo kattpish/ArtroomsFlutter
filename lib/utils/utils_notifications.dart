@@ -9,7 +9,7 @@ Future<void> showNotificationChat(DataChat dataChat) async {
   return showNotificationMessage(dataChat, dataChat.lastMessage);
 }
 
-Future<void> showNotificationMessage(DataChat dataChat, MyMessage message) async {
+Future<void> showNotificationMessage(DataChat dataChat, DataMessage message) async {
   if(message.isMe) return;
   if(DateTime.now().millisecondsSinceEpoch - message.timestamp > 30*1000) return;
   return showNotification(dataChat.id.hashCode, dataChat.name, message.getSummary());

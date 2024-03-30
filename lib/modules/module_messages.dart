@@ -39,9 +39,9 @@ class ModuleMessages {
     return _groupChannel;
   }
 
-  Future<List<MyMessage>> getMessages() async {
+  Future<List<DataMessage>> getMessages() async {
 
-    final List<MyMessage> messages = [];
+    final List<DataMessage> messages = [];
 
     if(_isLoading) return messages;
 
@@ -54,7 +54,7 @@ class ModuleMessages {
     await moduleSendBird.loadMessages(_groupChannel, _earliestMessageTimestamp).then((List<BaseMessage> baseMessages) {
 
       for(BaseMessage baseMessage in baseMessages) {
-        final MyMessage myMessage = MyMessage.fromBaseMessage(baseMessage);
+        final DataMessage myMessage = DataMessage.fromBaseMessage(baseMessage);
         messages.add(myMessage);
       }
 
@@ -69,7 +69,7 @@ class ModuleMessages {
     return messages;
   }
 
-  Future<MyMessage> sendMessage(String text,MyMessage? message) async {
+  Future<DataMessage> sendMessage(String text,DataMessage? message) async {
 
     if(!_isInitialized) {
       await initChannel();
@@ -77,14 +77,14 @@ class ModuleMessages {
 
     final UserMessage userMessage = await moduleSendBird.sendMessage(_groupChannel, text.trim(),message: message);
 
-    final myMessage = MyMessage.fromBaseMessage(userMessage);
+    final myMessage = DataMessage.fromBaseMessage(userMessage);
 
     return myMessage;
   }
 
-  MyMessage preSendMessageImage(List<FileItem> fileItems) {
+  DataMessage preSendMessageImage(List<FileItem> fileItems) {
 
-    MyMessage myMessage = MyMessage.empty();
+    DataMessage myMessage = DataMessage.empty();
     myMessage.index = DateTime.now().millisecondsSinceEpoch;
     myMessage.isMe = true;
     myMessage.isImage = true;
@@ -101,14 +101,14 @@ class ModuleMessages {
     return myMessage;
   }
 
-  Future<List<MyMessage>> preSendMessageMedia(List<FileItem> fileItems) async {
+  Future<List<DataMessage>> preSendMessageMedia(List<FileItem> fileItems) async {
 
-    List<MyMessage> messages = [];
+    List<DataMessage> messages = [];
 
     for(FileItem fileItem in fileItems) {
       if(fileItem.isSelected) {
 
-        MyMessage myMessage = MyMessage.empty();
+        DataMessage myMessage = DataMessage.empty();
         myMessage.index = DateTime.now().millisecondsSinceEpoch + fileItem.file.path.length;
         myMessage.isMe = true;
         myMessage.isFile = true;
@@ -126,7 +126,7 @@ class ModuleMessages {
     return messages;
   }
 
-  Future<MyMessage> sendMessageImages(List<FileItem> fileItems) async {
+  Future<DataMessage> sendMessageImages(List<FileItem> fileItems) async {
 
     if(!_isInitialized) {
       await initChannel();
@@ -140,7 +140,7 @@ class ModuleMessages {
       }
     }
 
-    final MyMessage myMessage;
+    final DataMessage myMessage;
 
     if(files.length == 1) {
       myMessage = await moduleSendBird.sendMessageFiles(_groupChannel, files);
@@ -170,15 +170,15 @@ class ModuleMessages {
       }
 
       UserMessage userMessage = await moduleSendBird.sendMessage(_groupChannel, "multiple:image", data: jsonEncode(data));
-      myMessage = MyMessage.fromBaseMessage(userMessage);
+      myMessage = DataMessage.fromBaseMessage(userMessage);
     }
 
     return myMessage;
   }
 
-  Future<List<MyMessage>> sendMessageMedia(List<FileItem> fileItems) async {
+  Future<List<DataMessage>> sendMessageMedia(List<FileItem> fileItems) async {
 
-    List<MyMessage> messages = [];
+    List<DataMessage> messages = [];
 
     if(!_isInitialized) {
       await initChannel();
@@ -194,7 +194,7 @@ class ModuleMessages {
 
     for(File file in files) {
       FileMessage fileMessage = await moduleSendBird.sendMessageFile(_groupChannel, file);
-      MyMessage myMessage = MyMessage.fromBaseMessage(fileMessage);
+      DataMessage myMessage = DataMessage.fromBaseMessage(fileMessage);
       messages.add(myMessage);
     }
 
@@ -205,19 +205,19 @@ class ModuleMessages {
     return _isLoading;
   }
 
-  Future<List<MyMessage>> fetchAttachments() async {
+  Future<List<DataMessage>> fetchAttachments() async {
 
     if(!_isInitialized) {
       await initChannel();
     }
 
-    List<MyMessage> attachmentsImages = [];
+    List<DataMessage> attachmentsImages = [];
 
     List<BaseMessage> attachments = await moduleSendBird.fetchAttachments(_groupChannel, _earliestMessageTimestamp1);
 
     for (BaseMessage message in attachments) {
 
-      MyMessage myMessage = MyMessage.fromBaseMessage(message);
+      DataMessage myMessage = DataMessage.fromBaseMessage(message);
 
       if(myMessage.isImage || myMessage.isFile) {
         attachmentsImages.add(myMessage);
@@ -232,23 +232,23 @@ class ModuleMessages {
     return attachmentsImages;
   }
 
-  Future<List<MyMessage>> fetchAttachmentsImages() async {
+  Future<List<DataMessage>> fetchAttachmentsImages() async {
 
     if(!_isInitialized) {
       await initChannel();
     }
 
-    List<MyMessage> attachmentsImages = [];
+    List<DataMessage> attachmentsImages = [];
 
-    List<MyMessage> attachments = await fetchAttachments();
+    List<DataMessage> attachments = await fetchAttachments();
 
-    for (MyMessage myMessage in attachments) {
+    for (DataMessage myMessage in attachments) {
 
         if(myMessage.isImage) {
 
           for(String attachmentUrl in myMessage.attachmentImages) {
 
-            MyMessage myMessage1 = MyMessage.fromBaseMessageWithDetails(
+            DataMessage myMessage1 = DataMessage.fromBaseMessageWithDetails(
               index: myMessage.index,
               senderId: myMessage.senderId,
               senderName: myMessage.senderName,
@@ -272,17 +272,17 @@ class ModuleMessages {
     return attachmentsImages;
   }
 
-  Future<List<MyMessage>> fetchAttachmentsFiles() async {
+  Future<List<DataMessage>> fetchAttachmentsFiles() async {
 
     if(!_isInitialized) {
       await initChannel();
     }
 
-    List<MyMessage> attachmentsImages = [];
+    List<DataMessage> attachmentsImages = [];
 
-    List<MyMessage> attachments = await fetchAttachments();
+    List<DataMessage> attachments = await fetchAttachments();
 
-    for (MyMessage myMessage in attachments) {
+    for (DataMessage myMessage in attachments) {
 
       if(myMessage.isFile) {
         attachmentsImages.add(myMessage);

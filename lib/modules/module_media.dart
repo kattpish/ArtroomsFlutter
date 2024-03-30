@@ -38,22 +38,23 @@ class ModuleMedia {
       }
     }
 
-    if(!isLoadingMedia) {
-      isLoadingMedia = true;
+    if(false) {
+      if (!isLoadingMedia) {
+        isLoadingMedia = true;
 
-      loadFilesMedia().then((List<FileItem> listMedia) {
-        mediaFiles.addAll(listMedia);
+        loadFilesMedia().then((List<FileItem> listMedia) {
+          mediaFiles.addAll(listMedia);
 
-        isLoadingMedia = false;
-      });
-
-    }else {
-      Iterator<FileItem> iterator = mediaFiles.iterator;
-      while (iterator.moveNext()) {
-        FileItem currentFileItem = iterator.current;
-        if (!await currentFileItem.file.exists()) {
-          mediaFiles.remove(currentFileItem);
-          iterator = mediaFiles.iterator;
+          isLoadingMedia = false;
+        });
+      } else {
+        Iterator<FileItem> iterator = mediaFiles.iterator;
+        while (iterator.moveNext()) {
+          FileItem currentFileItem = iterator.current;
+          if (!await currentFileItem.file.exists()) {
+            mediaFiles.remove(currentFileItem);
+            iterator = mediaFiles.iterator;
+          }
         }
       }
     }
@@ -65,10 +66,10 @@ class ModuleMedia {
     if(imageFiles.isNotEmpty) return imageFiles;
 
     List<FileItem> imageFiles1 = await loadFileImages1();
-    List<FileItem> imageFiles2 = await loadFileImages2();
+    // List<FileItem> imageFiles2 = await loadFileImages2();
 
     imageFiles.addAll(imageFiles1);
-    imageFiles.addAll(imageFiles2);
+    // imageFiles.addAll(imageFiles2);
 
     imageFiles.sort((a, b) {
       return b.date.compareTo(a.date);
