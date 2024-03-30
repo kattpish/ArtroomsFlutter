@@ -71,7 +71,6 @@ class ModuleSendBird {
         print('Channel joined $id');
       }
 
-
     } catch (e) {
       if (kDebugMode) {
         print('Join channel error: $id : $e');
@@ -101,7 +100,6 @@ class ModuleSendBird {
       if (kDebugMode) {
         print('Channel joined $channelUrl');
       }
-
 
     } catch (e) {
       if (kDebugMode) {
@@ -175,7 +173,6 @@ class ModuleSendBird {
       final params = MessageListParams();
       params.previousResultSize = 200;
       params.reverse = true;
-      // params.messageType = MessageTypeFilter.file;
 
       final referenceTime = earliestMessageTimestamp ?? DateTime.now().millisecondsSinceEpoch;
       final messages = await channel.getMessagesByTimestamp(referenceTime, params);
@@ -189,25 +186,14 @@ class ModuleSendBird {
     }
   }
 
-  // Future<UserMessage> sendMessage(GroupChannel groupChannel, String text, {String data=""}) async {
-  //   final params = UserMessageParams(message: text);
-  //   params.data = data;
-  //   return performSendMessage(groupChannel, text,params);
-  // }
   Future<UserMessage> sendMessage(GroupChannel groupChannel, String text, {String data="",DataMessage? message}) async {
     final params = UserMessageParams(message: text);
      ParentMessage parentMessage = ParentMessage(message?.index ?? 0, message?.content ?? "", message?.senderId ?? "",message?.senderName ?? "");
      params.mentionedUserIds = [];
      params.data =  const JsonEncoder().convert(parentMessage);
-    // params.parentMessageId = parentId;
     return performSendMessage(groupChannel, text,params);
   }
-  // Future<UserMessage> sendThreadedMessage(GroupChannel groupChannel, String text,String parentId, {String data=""}) async {
-  //   final params = UserMessageCreateParams(message: text)
-  //   ...parenMessageId(parentId);
-  //   params.data = data;
-  //   return performSendMessage(groupChannel, text,params);
-  // }
+
   Future<UserMessage> performSendMessage(GroupChannel groupChannel, String text,UserMessageParams params) async {
     Completer<UserMessage> completer = Completer();
 
@@ -234,7 +220,9 @@ class ModuleSendBird {
 
     final params = FileMessageParams.withFile(file, name: fileName);
 
-    print('Sending message file: ${file.path}');
+    if (kDebugMode) {
+      print('Sending message file: ${file.path}');
+    }
 
     groupChannel.sendFileMessage(params, onCompleted: (FileMessage userMessage, error) {
       if (error != null) {
@@ -245,7 +233,9 @@ class ModuleSendBird {
         return;
       }
 
-      print('Sent message file: ${file.path}');
+      if (kDebugMode) {
+        print('Sent message file: ${file.path}');
+      }
 
       completer.complete(userMessage);
     });
@@ -281,9 +271,13 @@ class ModuleSendBird {
   Future<void> markMessageAsRead(GroupChannel groupChannel) async {
     try {
       groupChannel.markAsRead();
-      print("Messages marked as read.");
+      if (kDebugMode) {
+        print("Messages marked as read.");
+      }
     } catch (e) {
-      print("Failed to mark message as read: $e");
+      if (kDebugMode) {
+        print("Failed to mark message as read: $e");
+      }
     }
   }
 

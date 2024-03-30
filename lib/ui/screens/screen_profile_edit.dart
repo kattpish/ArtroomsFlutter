@@ -7,6 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../beans/bean_profile.dart';
+import '../../listeners/scroll_bouncing_physics.dart';
 import '../../main.dart';
 import '../../modules/module_profile.dart';
 import '../theme/theme_colors.dart';
@@ -97,7 +98,7 @@ class _ScreenProfileEditState extends State<ScreenProfileEdit> {
         child: Stack(
           children: [
             SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
+              physics: const ScrollPhysicsBouncing(),
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,

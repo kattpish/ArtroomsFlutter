@@ -3,6 +3,7 @@ import 'package:artrooms/ui/screens/screen_notifications.dart';
 import 'package:artrooms/ui/theme/theme_colors.dart';
 import 'package:flutter/material.dart';
 
+import '../../listeners/scroll_bouncing_physics.dart';
 import '../../main.dart';
 import '../widgets/widget_notifications.dart';
 
@@ -27,8 +28,8 @@ class _ScreenNotificationsSoundsState extends State<ScreenNotificationsSounds> {
     super.initState();
 
     _notifications = [
-      {"title": "채팅알림", "enabled": dbStore.getBool("채팅알림", true)},
-      {"title": "멘션알림", "enabled": dbStore.getBool("멘션알림", false)},
+      {"title": "채팅알림", "enabled": dbStore.isNotificationMessage()},
+      {"title": "멘션알림", "enabled": dbStore.isNotificationMention()},
     ];
 
   }
@@ -68,7 +69,7 @@ class _ScreenNotificationsSoundsState extends State<ScreenNotificationsSounds> {
         ),
         backgroundColor: colorMainScreen,
         body: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
+          physics: const ScrollPhysicsBouncing(),
           child: Column(
             children: [
               const SizedBox(height: 16),

@@ -6,6 +6,7 @@ import 'package:artrooms/ui/theme/theme_colors.dart';
 import 'package:flutter/material.dart';
 
 import '../../beans/bean_chat.dart';
+import '../../listeners/scroll_bouncing_physics.dart';
 import '../../utils/utils_screen.dart';
 
 
@@ -104,7 +105,7 @@ class _ScreenNoticesState extends State<ScreenNotices> {
           child: Stack(
             children: [
               ListView(
-                physics: const BouncingScrollPhysics(),
+                physics: const ScrollPhysicsBouncing(),
                 children: _notifications.map((notice) {
                   return Card(
                     margin: const EdgeInsets.only(bottom: 8.0),

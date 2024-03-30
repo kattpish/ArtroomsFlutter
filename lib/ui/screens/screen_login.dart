@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../listeners/scroll_bouncing_physics.dart';
 import '../../main.dart';
 import '../../modules/module_auth.dart';
 import '../../modules/module_profile.dart';
@@ -79,7 +80,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
                     Expanded(
                       child: Center(
                         child: SingleChildScrollView(
-                          physics: const BouncingScrollPhysics(),
+                          physics: const ScrollPhysicsBouncing(),
                           child: Container(
                             constraints: const BoxConstraints(maxWidth: 375),
                             child: Column(

@@ -9,12 +9,14 @@ import 'package:artrooms/utils/utils_notifications.dart';
 import 'package:flutter/material.dart';
 
 import '../../beans/bean_chat.dart';
+import '../../listeners/scroll_bouncing_physics.dart';
 import '../../modules/module_chats.dart';
 import '../../data/module_datastore.dart';
 import '../../utils/utils_permissions.dart';
 import '../../utils/utils_screen.dart';
 import '../theme/theme_colors.dart';
-import '../widgets/widget_chats.dart';
+import '../widgets/widget_chats_empty.dart';
+import '../widgets/widget_chats_exit.dart';
 import '../widgets/widget_chats_row.dart';
 import '../widgets/widget_loader.dart';
 
@@ -56,13 +58,13 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver  
     }
     requestPermissions(context);
 
-    _loadChats();
+    _doLoadChats();
     _timer = Timer.periodic(const Duration(seconds: 15), (timer) {
-      _loadChats();
+      _doLoadChats();
     });
 
     _searchController.addListener(() {
-      _searchChats(_searchController.text);
+      _doSearchChats(_searchController.text);
     });
 
   }
@@ -71,7 +73,7 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver  
   void didChangeAppLifecycleState(AppLifecycleState state) {
 
     if (state == AppLifecycleState.resumed) {
-      _loadChats();
+      _doLoadChats();
     }
 
   }
@@ -164,7 +166,7 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver  
                   Expanded(
                     child: (_listChats.isNotEmpty || _isSearching)
                         ? ListView.builder(
-                      physics: const BouncingScrollPhysics(),
+                      physics: const ScrollPhysicsBouncing(),
                       itemCount: _listChats.length,
                       itemBuilder: (context, index) {
                         DataChat dataChat = _listChats[index];
@@ -172,19 +174,26 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver  
                           key: Key(_listChats[index].id),
                           child: widgetChatRow(context, index, dataChat,
                             onClickOption1: () {
-                              _onClickOption1(context, dataChat);
+                              _doToggleNotification(context, dataChat);
                             },
                             onClickOption2: () {
-                              _onClickOption2(context, dataChat);
+                              widgetChatsExit(context, moduleSendBird, dataChat,
+                              onExit: () {
+                                setState(() {
+                                  moduleSendBird.leaveChannel(dataChat.id);
+                                  _listChats.remove(dataChat);
+                                  Navigator.of(context).pop();
+                                });
+                              });
                             },
                             onSelectChat: () {
-                              _onSelectChat(context, dataChat);
+                              _doSelectChat(context, dataChat);
                             },
                           ),
                         );
                       },
                     )
-                        : widgetChatEmpty(context),
+                        : widgetChatsEmpty(context),
                   ),
                 ],
               ),
@@ -224,117 +233,14 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver  
     );
   }
 
-  void _onClickOption1(BuildContext context, DataChat dataChat) {
+  void _doToggleNotification(BuildContext context, DataChat dataChat) {
     dbStore.toggleNotificationChat(dataChat);
     setState(() {
       dataChat.isNotification = dbStore.isNotificationChat(dataChat);
     });
   }
 
-  void _onClickOption2(BuildContext context, DataChat dataChat) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20.0),
-          ),
-          child: Container(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Align(
-                  alignment: Alignment.topRight,
-                  child: Container(
-                    width: 30,
-                    height: 30,
-                    decoration: const BoxDecoration(
-                      color: colorMainGrey200,
-                      shape: BoxShape.circle,
-                    ),
-                    child: IconButton(
-                      icon: const Icon(
-                        Icons.close,
-                        size: 16,
-                        color: Colors.white,
-                      ),
-                      padding: const EdgeInsets.all(4),
-                      constraints: const BoxConstraints(),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                const Text(
-                  '채팅방 나가기',
-                  style: TextStyle(
-                    color: Color(0xFF1F1F1F),
-                    fontSize: 20,
-                    fontFamily: 'SUIT',
-                    fontWeight: FontWeight.w600,
-                    height: 0,
-                    letterSpacing: -0.40,
-                  ),
-                ),
-                const SizedBox(height: 15),
-                const Text(
-                  '대화 내용이 모두 삭제됩니다.',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Color(0xFF6B6B6B),
-                    fontSize: 16,
-                    fontFamily: 'SUIT',
-                    fontWeight: FontWeight.w400,
-                    height: 0,
-                    letterSpacing: -0.32,
-                  ),
-                ),
-                const SizedBox(height: 50),
-                Container(
-                  height: 44,
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        moduleSendBird.leaveChannel(dataChat.id);
-                        _listChats.remove(dataChat);
-                      });
-                      Navigator.of(context).pop();
-                    },
-                    style: ElevatedButton.styleFrom(
-                      elevation: 0,
-                      foregroundColor: colorPrimaryBlue,
-                      backgroundColor: colorPrimaryBlue,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30.0),
-                      ),
-                      minimumSize: const Size(double.infinity, 50),
-                    ),
-                    child: const Text(
-                      '확인',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontFamily: 'SUIT',
-                        fontWeight: FontWeight.w700,
-                        height: 0,
-                        letterSpacing: -0.32,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  void _onSelectChat(BuildContext context, DataChat dataChat) {
+  void _doSelectChat(BuildContext context, DataChat dataChat) {
 
     _chatModule.markMessageAsRead(dataChat);
 
@@ -381,7 +287,7 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver  
     }
   }
 
-  Future<void> _loadChats() async {
+  Future<void> _doLoadChats() async {
 
     if(_isLoading) return;
 
@@ -417,7 +323,7 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver  
 
   }
 
-  void _searchChats(String query) {
+  void _doSearchChats(String query) {
 
     setState(() {
       if(query.isNotEmpty) {

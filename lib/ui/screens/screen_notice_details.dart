@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 
 import '../../beans/bean_notice.dart';
+import '../../listeners/scroll_bouncing_physics.dart';
 import '../../utils/utils_screen.dart';
 import '../theme/theme_colors.dart';
 
@@ -83,7 +84,7 @@ class _ScreenNoticeDetailsState extends State<ScreenNoticeDetails> {
           ),
         ),
         body: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
+          physics: const ScrollPhysicsBouncing(),
           child: Container(
             margin: const EdgeInsets.only(bottom: 8.0),
             child: Column(

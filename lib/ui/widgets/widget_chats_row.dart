@@ -20,9 +20,14 @@ Slidable widgetChatRow(BuildContext context, int index, DataChat dataChat, {
             onPressed: (context) {
               onClickOption1();
             },
-            backgroundColor: dataChat.isNotification ? colorMainGrey300 : colorMainGrey200,
+            backgroundColor: dataChat.isNotification ? colorMainGrey200 : colorMainGrey300,
             foregroundColor: Colors.white,
-            child: Image.asset('assets/images/icons/icon_bell.png', width: 24, height: 24)
+            child: Image.asset(
+                'assets/images/icons/icon_bell.png',
+                width: 24,
+                height: 24,
+              color: dataChat.isNotification ? colorPrimaryPurple : Colors.white,
+            )
         ),
         CustomSlidableAction(
           flex: 1,
@@ -31,7 +36,11 @@ Slidable widgetChatRow(BuildContext context, int index, DataChat dataChat, {
           },
           backgroundColor: colorPrimaryBlue,
           foregroundColor: Colors.white,
-          child: Image.asset('assets/images/icons/icon_forward.png', width: 24, height: 24),
+          child: Image.asset(
+              'assets/images/icons/icon_forward.png',
+              width: 24,
+              height: 24,
+          ),
         ),
       ],
     ),

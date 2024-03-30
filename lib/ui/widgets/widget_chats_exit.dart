@@ -3,10 +3,11 @@ import 'package:artrooms/beans/bean_chat.dart';
 import 'package:artrooms/modules/module_sendbird.dart';
 import 'package:flutter/material.dart';
 
+import '../screens/screen_chats.dart';
 import '../theme/theme_colors.dart';
 
 
-void widgetChatDrawerExit(BuildContext context, ModuleSendBird moduleSendBird, DataChat dataChat, {required Null Function() onExit}) {
+void widgetChatsExit(BuildContext context, ModuleSendBird moduleSendBird, DataChat dataChat, {required Null Function() onExit}) {
   showDialog(
     context: context,
     builder: (BuildContext context) {

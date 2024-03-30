@@ -1,35 +1,41 @@
 
+import 'package:artrooms/ui/widgets/widget_chatroom_photos_empty.dart';
 import 'package:flutter/material.dart';
 
 import '../../beans/bean_chat.dart';
 import '../../beans/bean_message.dart';
+import '../../listeners/scroll_bouncing_physics.dart';
 import '../../modules/module_messages.dart';
 import '../../utils/utils_media.dart';
 import '../../utils/utils_screen.dart';
 import '../theme/theme_colors.dart';
+import '../widgets/widget_chatroom_photos_card.dart';
 import '../widgets/widget_loader.dart';
 import '../widgets/widget_media.dart';
 
 
-class ScreenChatroomPhoto extends StatefulWidget {
+class ScreenChatroomPhotos extends StatefulWidget {
 
   final DataChat dataChat;
 
-  const ScreenChatroomPhoto({super.key, required this.dataChat});
+  const ScreenChatroomPhotos({super.key, required this.dataChat});
 
   @override
-  State<ScreenChatroomPhoto> createState() {
-    return _ScreenChatroomPhotoState();
+  State<ScreenChatroomPhotos> createState() {
+    return _ScreenChatroomPhotosState();
   }
 
 }
 
-class _ScreenChatroomPhotoState extends State<ScreenChatroomPhoto> {
+class _ScreenChatroomPhotosState extends State<ScreenChatroomPhotos> {
 
   bool _isLoading = true;
   int _selected = 0;
   bool _selectMode = false;
   bool _isButtonDisabled = true;
+  bool _isLoadingMore = false;
+  bool _isLoadingFinished = false;
+  ScrollController _scrollController = ScrollController();
 
   late final ModuleMessages _moduleMessages;
   List<DataMessage> _attachmentsImages = [];
@@ -39,6 +45,14 @@ class _ScreenChatroomPhotoState extends State<ScreenChatroomPhoto> {
     super.initState();
     _moduleMessages = ModuleMessages(widget.dataChat.id);
     _doLoadAttachmentsImages();
+    _scrollController.addListener(_doLoadAttachmentsImagesMore);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_doLoadAttachmentsImagesMore);
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -51,8 +65,8 @@ class _ScreenChatroomPhotoState extends State<ScreenChatroomPhoto> {
           title: Text(
             !_selectMode ? '이미지' : "$_selected개 선택",
             style: const TextStyle(
-                fontSize: 18,
-                color: colorMainGrey900,
+              fontSize: 18,
+              color: colorMainGrey900,
               fontFamily: 'SUIT',
               fontWeight: FontWeight.w700,
               height: 0,
@@ -89,8 +103,8 @@ class _ScreenChatroomPhotoState extends State<ScreenChatroomPhoto> {
                         child: const Text(
                             '취소',
                             style: TextStyle(
-                                fontSize: 16,
-                                color: colorMainGrey600,
+                              fontSize: 16,
+                              color: colorMainGrey600,
                               fontFamily: 'SUIT',
                               fontWeight: FontWeight.w400,
                               height: 0,
@@ -170,8 +184,11 @@ class _ScreenChatroomPhotoState extends State<ScreenChatroomPhoto> {
         body: SafeArea(
           child: _isLoading
               ? const WidgetLoader()
+              : _attachmentsImages.isEmpty
+              ? widgetChatroomPhotosEmpty(context)
               : GridView.builder(
-            physics: const BouncingScrollPhysics(),
+            controller: _scrollController,
+            physics: const ScrollPhysicsBouncing(),
             padding: const EdgeInsets.only(bottom: 32),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: isTablet(context) ? 6 : 3,
@@ -179,71 +196,35 @@ class _ScreenChatroomPhotoState extends State<ScreenChatroomPhoto> {
               mainAxisSpacing: 1,
               childAspectRatio: 1,
             ),
-            itemCount: _attachmentsImages.length,
+            itemCount: _attachmentsImages.length + (_isLoadingMore ? 1 : 0),
             itemBuilder: (context, index) {
+
+              if (index == _attachmentsImages.length) {
+                return const Center(
+                    child: SizedBox(
+                        width: 36,
+                        height: 36,
+                        child: CircularProgressIndicator(
+                          color: Color(0xFF6A79FF),
+                          strokeWidth: 4,
+                        )
+                    ),
+                );
+              }
+
               DataMessage attachmentImage = _attachmentsImages[index];
-              return Container(
-                color: Colors.white,
-                child: InkWell(
-                  onTap: () {
+              return widgetChatroomPhotosCard(context, attachmentImage, _selectMode,
+                  onView: () {
                     doOpenPhotoView(context, imageUrl:attachmentImage.getImageUrl(), fileName:attachmentImage.attachmentName);
                   },
-                  onLongPress: () {
+                  onSelect: () {
                     setState(() {
-                      attachmentImage.isSelected = !attachmentImage.isSelected;
+                      if(!attachmentImage.isDownloading) {
+                        attachmentImage.isSelected = !attachmentImage.isSelected;
+                        _checkEnableButton();
+                      }
                     });
-                    _doCheckIfPhotoShouldBeEnabled();
-                  },
-                  child: Stack(
-                    children: [
-                      FadeInImage.assetNetwork(
-                        placeholder: 'assets/images/chats/placeholder_photo.png',
-                        image: attachmentImage.getImageUrl(),
-                        fit: BoxFit.cover,
-                        width: double.infinity,
-                        height: double.infinity,
-                        fadeInDuration: const Duration(milliseconds: 100),
-                        fadeOutDuration: const Duration(milliseconds: 100),
-                        imageErrorBuilder: (context, error, stackTrace) {
-                          return Image.asset(
-                            'assets/images/chats/placeholder_photo.png',
-                            fit: BoxFit.cover,
-                          );
-                        },
-                      ),
-                      Positioned(
-                        top: 3,
-                        right: 4,
-                        child: Visibility(
-                          visible: _selectMode,
-                          child: InkWell(
-                            onTap: () {
-                              setState(() {
-                                attachmentImage.isSelected = !attachmentImage.isSelected;
-                                _doCheckIfPhotoShouldBeEnabled();
-                              });
-                            },
-                            child: Container(
-                              width: 26,
-                              height: 26,
-                              decoration: BoxDecoration(
-                                color: attachmentImage.isSelected ? colorPrimaryBlue : colorMainGrey200.withAlpha(150),
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: attachmentImage.isSelected ? colorPrimaryBlue : const Color(0xFFE3E3E3),
-                                  width: 1,
-                                ),
-                              ),
-                              child: attachmentImage.isSelected
-                                  ? const Icon(Icons.check, size: 16, color: Colors.white)
-                                  : Container(),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                  }
               );
             },
           ),
@@ -292,7 +273,25 @@ class _ScreenChatroomPhotoState extends State<ScreenChatroomPhoto> {
 
   }
 
-  void _doCheckIfPhotoShouldBeEnabled() {
+  Future<void> _doLoadAttachmentsImagesMore() async {
+    if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent && !_isLoadingMore && !_isLoadingFinished) {
+
+      setState(() {
+        _isLoadingMore = true;
+      });
+
+      List<DataMessage> attachmentsImages = await _moduleMessages.fetchAttachmentsImages();
+
+      setState(() {
+        _attachmentsImages.addAll(attachmentsImages);
+        _isLoadingMore = false;
+        _isLoadingFinished = attachmentsImages.isEmpty;
+      });
+
+    }
+  }
+
+  void _checkEnableButton() {
 
     _selected = 0;
     for(DataMessage attachmentImage in _attachmentsImages) {
@@ -333,7 +332,7 @@ class _ScreenChatroomPhotoState extends State<ScreenChatroomPhoto> {
         _selectMode = false;
       });
 
-      _doCheckIfPhotoShouldBeEnabled();
+      _checkEnableButton();
     }
 
   }
@@ -344,13 +343,25 @@ class _ScreenChatroomPhotoState extends State<ScreenChatroomPhoto> {
 
       for(DataMessage attachmentImage in _attachmentsImages) {
         if(attachmentImage.isSelected) {
-          downloadFile(context, attachmentImage.attachmentUrl, attachmentImage.attachmentName, showNotification: true);
+          downloadAttachment(context, attachmentImage);
         }
       }
 
       _doDeselectAllPhotos(true);
     }
 
+  }
+
+  Future<void> downloadAttachment(BuildContext context, DataMessage attachmentImage) async {
+    setState(() {
+      attachmentImage.isDownloading = true;
+    });
+
+    await downloadFile(context, attachmentImage.attachmentUrl, attachmentImage.attachmentName, showNotification: true);
+
+    setState(() {
+      attachmentImage.isDownloading = false;
+    });
   }
 
 }

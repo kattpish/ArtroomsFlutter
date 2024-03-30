@@ -23,6 +23,7 @@ import '../../beans/bean_chat.dart';
 import '../../beans/bean_file.dart';
 import '../../beans/bean_message.dart';
 import '../../data/module_datastore.dart';
+import '../../listeners/scroll_bouncing_physics.dart';
 import '../../main.dart';
 import '../../modules/module_messages.dart';
 import '../../utils/utils.dart';
@@ -93,8 +94,8 @@ class _ScreenChatroomState extends State<ScreenChatroom>
   late Widget attachmentPicker;
 
   late AnimationController _animationController;
-  late DataMessage? replyMessage;
-  late bool isMentioning;
+  DataMessage? replyMessage;
+  bool isMentioning = false;
   @override
   void initState() {
     super.initState();
@@ -103,8 +104,7 @@ class _ScreenChatroomState extends State<ScreenChatroom>
     _scrollControllerAttachment2.addListener(_scrollListener2);
     itemPositionsListener.itemPositions.addListener(_onItemPositionsChanged);
     moduleMessages = ModuleMessages(widget.chat.id);
-    replyMessage = null;
-    isMentioning = false;
+
     _loadMessages();
     _loadNotice();
     _loadMedia();
@@ -276,7 +276,7 @@ class _ScreenChatroomState extends State<ScreenChatroom>
                                   itemScrollController: itemScrollController,
                                   itemPositionsListener: itemPositionsListener,
                                   itemCount: listMessages.length,
-                                  physics: const BouncingScrollPhysics(),
+                                  physics: const ScrollPhysicsBouncing(),
                                   reverse: true,
                                   itemBuilder: (context, index) {
                                     itemKeys[index] = GlobalKey();
@@ -660,8 +660,7 @@ class _ScreenChatroomState extends State<ScreenChatroom>
                       Container(
                         constraints:
                         BoxConstraints(maxWidth: screenWidth * 0.55),
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 16, horizontal: 16),
+                        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                         decoration: BoxDecoration(
                           color: colorPrimaryBlue,
                           borderRadius: BorderRadius.only(
@@ -945,8 +944,7 @@ class _ScreenChatroomState extends State<ScreenChatroom>
                     setState(() {
                       message.isDownloading = true;
                     });
-                    await downloadFile(
-                        context, message.attachmentUrl, message.attachmentName);
+                    await downloadFile(context, message.attachmentUrl, message.attachmentName);
                     setState(() {
                       message.isDownloading = false;
                     });
@@ -2040,7 +2038,6 @@ class _ScreenChatroomState extends State<ScreenChatroom>
     }
 
     _loadMessages();
-
   }
 
   Future<void> _loadMessages() async {

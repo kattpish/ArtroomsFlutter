@@ -3,8 +3,9 @@ import 'package:artrooms/beans/bean_message.dart';
 import 'package:artrooms/beans/bean_notice.dart';
 import 'package:artrooms/modules/module_messages.dart';
 import 'package:artrooms/modules/module_notices.dart';
-import 'package:artrooms/ui/screens/screen_chatroom_file.dart';
-import 'package:artrooms/ui/screens/screen_chatroom_photo.dart';
+import 'package:artrooms/ui/screens/screen_chatroom_files.dart';
+import 'package:artrooms/ui/screens/screen_chatroom_photos.dart';
+import 'package:artrooms/ui/screens/screen_chats.dart';
 import 'package:artrooms/ui/screens/screen_memo.dart';
 import 'package:artrooms/ui/screens/screen_notices.dart';
 import 'package:artrooms/ui/screens/screen_notifications_sounds.dart';
@@ -12,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:sendbird_sdk/core/models/user.dart';
 
 import '../../beans/bean_chat.dart';
+import '../../listeners/scroll_bouncing_physics.dart';
 import '../../main.dart';
 import '../theme/theme_colors.dart';
 import '../widgets/widget_chat_drawer_attachments.dart';
@@ -110,7 +112,7 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
               children: [
                 Expanded(
                   child: SingleChildScrollView(
-                    physics: const BouncingScrollPhysics(),
+                    physics: const ScrollPhysicsBouncing(),
                     child: Column(
                       children: [
                         const SizedBox(height: 16),
@@ -467,7 +469,7 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
                                   ),
                                   onTap: () {
                                     Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                      return ScreenChatroomPhoto(dataChat: widget.dataChat,);
+                                      return ScreenChatroomPhotos(dataChat: widget.dataChat,);
                                     }));
                                   },
                                 ),
@@ -498,7 +500,7 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
                               ),
                               onTap: () {
                                 Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                  return ScreenChatroomFile(dataChat: widget.dataChat,);
+                                  return ScreenChatroomFiles(dataChat: widget.dataChat,);
                                 }));
                               },
                             ),
@@ -550,15 +552,20 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
                           IconButton(
                               icon: Image.asset('assets/images/icons/icon_forward.png', width: 24, height: 24, color: const Color(0xFFD9D9D9),),
                               onPressed: () {
-                                widgetChatDrawerExit(context, moduleSendBird, widget.dataChat);
+                                widgetChatDrawerExit(context, moduleSendBird, widget.dataChat,
+                                    onExit: () {
+                                      _doExitChat();
+                                    }
+                                );
                               }
                           ),
                           IconButton(
-                              icon: Image.asset('assets/images/icons/icon_bell.png', width: 24, height: 24, color: const Color(0xFFD9D9D9),),
+                              icon: Image.asset('assets/images/icons/icon_bell.png',
+                                width: 24, height: 24,
+                                color: widget.dataChat.isNotification ? colorPrimaryPurple : const Color(0xFFD9D9D9),
+                              ),
                               onPressed: () {
-                                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                  return const ScreenNotificationsSounds();
-                                }));
+                                _doToggleNotification(context, widget.dataChat);
                               }
                           ),
                         ],
@@ -617,6 +624,20 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
 
     setState(() {
       _listAttachmentsImages = attachmentsImages;
+    });
+  }
+
+  void _doExitChat() {
+    moduleSendBird.leaveChannel(widget.dataChat.id);
+    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) {
+      return const ScreenChats();
+    }));
+  }
+
+  void _doToggleNotification(BuildContext context, DataChat dataChat) {
+    dbStore.toggleNotificationChat(dataChat);
+    setState(() {
+      dataChat.isNotification = dbStore.isNotificationChat(dataChat);
     });
   }
 

@@ -1,10 +1,12 @@
 
 import 'package:flutter/material.dart';
 
+import '../../listeners/scroll_bouncing_physics.dart';
+
 
 Widget widgetLoginRestTabPassword(BuildContext context, TextEditingController emailController, {required Null Function() onSubmitted}) {
   return SingleChildScrollView(
-    physics: const BouncingScrollPhysics(),
+    physics: const ScrollPhysicsBouncing(),
     child: Padding(
       padding: const EdgeInsets.all(20.0),
       child: Column(

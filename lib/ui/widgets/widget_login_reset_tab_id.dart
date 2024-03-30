@@ -1,10 +1,12 @@
 
 import 'package:flutter/material.dart';
 
+import '../../listeners/scroll_bouncing_physics.dart';
+
 
 Widget widgetLoginRestTabId(BuildContext context, TextEditingController nameController, TextEditingController phoneController, FocusNode nameFocus, FocusNode phoneFocus, {required Null Function() onSubmitted}) {
   return SingleChildScrollView(
-    physics: const BouncingScrollPhysics(),
+    physics: const ScrollPhysicsBouncing(),
     child: Padding(
       padding: const EdgeInsets.all(20.0),
       child: Column(

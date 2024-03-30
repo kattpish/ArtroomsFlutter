@@ -22,7 +22,7 @@ class ModuleMessages {
   bool _isInitialized = false;
   bool _isLoading = false;
   int? _earliestMessageTimestamp;
-  int? _earliestMessageTimestamp1;
+  int? _earliestMessageTimestampFiles;
 
   ModuleMessages(String channelUrl) {
     _channelUrl = channelUrl;
@@ -213,7 +213,7 @@ class ModuleMessages {
 
     List<DataMessage> attachmentsImages = [];
 
-    List<BaseMessage> attachments = await moduleSendBird.fetchAttachments(_groupChannel, _earliestMessageTimestamp1);
+    List<BaseMessage> attachments = await moduleSendBird.fetchAttachments(_groupChannel, _earliestMessageTimestampFiles);
 
     for (BaseMessage message in attachments) {
 
@@ -226,7 +226,7 @@ class ModuleMessages {
     }
 
     if (attachments.isNotEmpty) {
-      _earliestMessageTimestamp1 = attachments.last.createdAt;
+      _earliestMessageTimestampFiles = attachments.last.createdAt;
     }
 
     return attachmentsImages;

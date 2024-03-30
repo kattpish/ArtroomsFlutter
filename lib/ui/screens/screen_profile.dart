@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 
 import '../../beans/bean_profile.dart';
 import '../../data/module_datastore.dart';
+import '../../listeners/scroll_bouncing_physics.dart';
 import '../../main.dart';
 import '../../modules/module_profile.dart';
 import '../../utils/utils.dart';
@@ -91,7 +92,7 @@ class _ScreenProfileState extends State<ScreenProfile> {
       ),
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
+        physics: const ScrollPhysicsBouncing(),
         child: Column(
           children: [
             const SizedBox(height: 20),

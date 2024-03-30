@@ -3,6 +3,8 @@ import 'package:artrooms/beans/bean_chat.dart';
 import 'package:artrooms/beans/bean_message.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
+import '../main.dart';
+
 
 Future<void> showNotificationChat(DataChat dataChat) async {
   if(dataChat.unreadMessages > 0) return;
@@ -11,6 +13,8 @@ Future<void> showNotificationChat(DataChat dataChat) async {
 
 Future<void> showNotificationMessage(DataChat dataChat, DataMessage message) async {
   if(message.isMe) return;
+  if(!dataChat.isNotification) return;
+  if(!dbStore.isNotificationMessage()) return;
   if(DateTime.now().millisecondsSinceEpoch - message.timestamp > 30*1000) return;
   return showNotification(dataChat.id.hashCode, dataChat.name, message.getSummary());
 }

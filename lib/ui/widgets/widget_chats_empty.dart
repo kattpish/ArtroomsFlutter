@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import '../theme/theme_colors.dart';
 
 
-Widget widgetChatEmpty(BuildContext context) {
+Widget widgetChatsEmpty(BuildContext context) {
   return Center(
     child: Column(
       mainAxisSize: MainAxisSize.min,

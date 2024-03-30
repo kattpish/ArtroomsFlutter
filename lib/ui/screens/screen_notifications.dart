@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 
 import '../../data/module_datastore.dart';
+import '../../listeners/scroll_bouncing_physics.dart';
 import '../../main.dart';
 import '../theme/theme_colors.dart';
 import '../widgets/widget_notifications.dart';
@@ -72,7 +73,7 @@ class _ScreenNotificationsState extends State<ScreenNotifications> {
         ),
         backgroundColor: colorMainScreen,
         body: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
+          physics: const ScrollPhysicsBouncing(),
           child: Column(
             children: [
               const SizedBox(height: 16),

@@ -11,7 +11,7 @@ import 'package:intl/date_symbol_data_custom.dart';
 import 'package:intl/date_symbols.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'listners/listner_route_observer.dart';
+import 'listeners/listener_route_observer.dart';
 import 'modules/module_media.dart';
 import 'modules/module_sendbird.dart';
 

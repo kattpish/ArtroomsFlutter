@@ -9,6 +9,8 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:path/path.dart' as path;
 
+import '../utils/utils_media.dart';
+
 
 class ModuleMedia {
 
@@ -180,7 +182,7 @@ class ModuleMedia {
             if (entity is File) {
 
               final String fileExtension = path.extension(entity.path).toLowerCase();
-              final bool isImage = ['.jpg', '.jpeg', '.png', '.gif', '.bmp'].contains(fileExtension);
+              final bool isImage = isFileImage(fileExtension);
 
               if (isImage) {
 
@@ -258,12 +260,12 @@ class ModuleMedia {
             if(file != null) {
 
               final String fileExtension = path.extension(asset.title ?? asset.id).toLowerCase();
-              final bool isNotImage = !['.jpg', '.jpeg', '.png', '.gif', '.bmp'].contains(fileExtension);
+              final bool isImage = isFileImage(fileExtension);
 
               final dateFormat = DateFormat('yyyy.MM.dd', 'ko_KR');
               final dateString = '${dateFormat.format(asset.createDateTime)} 만료';
 
-              if(isNotImage) {
+              if(!isImage) {
                 FileItem fileItem = FileItem(
                   file: file,
                   name: asset.title ?? asset.id,
@@ -355,9 +357,9 @@ class ModuleMedia {
             if (entity is File) {
 
               final String fileExtension = path.extension(entity.path).toLowerCase();
-              final bool isNotImage = !['.jpg', '.jpeg', '.png', '.gif', '.bmp'].contains(fileExtension);
+              final bool isImage = isFileImage(fileExtension);
 
-              if (isNotImage) {
+              if (!isImage) {
 
                 final dateFormat = DateFormat('yyyy.MM.dd', 'ko_KR');
                 final dateString = '${dateFormat.format(await entity.lastModified())} 만료';

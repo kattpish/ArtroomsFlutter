@@ -3,22 +3,32 @@ import 'dart:io';
 import 'package:artrooms/utils/utils_notifications.dart';
 import 'package:artrooms/utils/utils_permissions.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
+
 
 
 String getFileName(File file) {
   return path.basename(Uri.parse(file.path).path);
 }
 
+bool isFileImage(fileExtension) {
+  return ['.jpg', '.jpeg', '.png', '.gif', '.bmp'].contains(fileExtension);
+}
+
 Future<void> downloadFile(BuildContext context, String url, String fileName, {showNotification=true}) async {
 
-  print('File downloading: $url $fileName');
+  if (kDebugMode) {
+    print('File downloading: $url $fileName');
+  }
 
   final response = await http.get(Uri.parse(url));
 
-  print('File downloaded: ${response.body}');
+  if (kDebugMode) {
+    print('File downloaded: ${response.body}');
+  }
 
   final bytes = response.bodyBytes;
 
@@ -47,11 +57,15 @@ Future<void> downloadFile(BuildContext context, String url, String fileName, {sh
 
   final File file = File(filePath);
 
-  print('File saving: ${file.path}');
+  if (kDebugMode) {
+    print('File saving: ${file.path}');
+  }
 
   await file.writeAsBytes(bytes);
 
-  print('File saved: ${file.path}');
+  if (kDebugMode) {
+    print('File saved: ${file.path}');
+  }
 
   if(showNotification) {
     showNotificationDownload(filePath, fileName);

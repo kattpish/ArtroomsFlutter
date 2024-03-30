@@ -4,11 +4,12 @@ import 'package:artrooms/ui/widgets/widget_media.dart';
 import 'package:flutter/material.dart';
 
 import '../../beans/bean_message.dart';
+import '../../listeners/scroll_bouncing_physics.dart';
 
 
 Widget widgetChatDrawerAttachments(BuildContext context, List<DataMessage> listAttachmentsImages) {
   return SingleChildScrollView(
-    physics: const BouncingScrollPhysics(),
+    physics: const ScrollPhysicsBouncing(),
     scrollDirection: Axis.horizontal,
     child: Row(
       mainAxisAlignment: MainAxisAlignment.start,

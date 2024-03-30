@@ -110,6 +110,14 @@ class DBStore {
     return notification;
   }
 
+  bool isNotificationMessage() {
+    return getBool("채팅알림", true);
+  }
+
+  bool isNotificationMention() {
+    return getBool("멘션알림", true);
+  }
+
   void toggleNotificationChat(DataChat dataChat) {
     bool isNotification = isNotificationChat(dataChat);
     setBool("NOTIFICATION_CHAT-${dataChat.id}", !isNotification);
