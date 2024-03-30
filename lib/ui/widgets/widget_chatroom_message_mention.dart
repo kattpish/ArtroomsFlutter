@@ -14,7 +14,7 @@ Widget buildMentions({required Null Function(Member member) onCancelReply, requi
           topRight: Radius.circular(12),
         ),
       ),
-      child: WidgetChatroomMessageMention(
+      child: WidgetChatroomMentionUser(
         member: members,
         key: null,
         onCancelReply: (Member member) {

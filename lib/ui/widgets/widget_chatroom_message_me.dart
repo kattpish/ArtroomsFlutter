@@ -11,8 +11,7 @@ import '../theme/theme_colors.dart';
 
 Widget buildMyMessageBubble(BuildContext context, State state, DataMessage message, bool isLast, bool isPreviousSameDateTime, bool isNextSameTime, double screenWidth) {
   return Container(
-    margin:
-    EdgeInsets.only(left: 16, right: 16, top: 0, bottom: isLast ? 9 : 0),
+    margin: EdgeInsets.only(left: 16, right: 16, top: 0, bottom: isLast ? 9 : 0),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
@@ -60,13 +59,9 @@ Widget buildMyMessageBubble(BuildContext context, State state, DataMessage messa
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           buildReply(message),
-                          Container(
-                            // height: min(100, message.content.length * 2),
-                            padding: const EdgeInsets.only(left: 10),
-                            child: WidgetChatroomMessageText(
-                              message: message.content,
-                              color: Colors.white,
-                            ),
+                          WidgetChatroomMessageText(
+                            message: message.content,
+                            color: Colors.white,
                           ),
                         ],
                       ),

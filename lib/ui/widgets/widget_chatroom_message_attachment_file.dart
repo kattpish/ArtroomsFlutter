@@ -38,7 +38,7 @@ Widget buildAttachment(BuildContext context, State state, DataMessage message, s
               ),
               const SizedBox(height: 10),
               Text(
-                '${message.getAttachmentSize()} / ${message.getDate()} 만료',
+                '${message.getAttachmentSize()} / ${message.getDate()}',
                 style: const TextStyle(
                   color: colorMainGrey400,
                   fontSize: 11,

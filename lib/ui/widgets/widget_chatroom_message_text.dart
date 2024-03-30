@@ -7,6 +7,7 @@ class WidgetChatroomMessageText extends StatelessWidget {
 
   final String message;
   final Color color;
+
   const WidgetChatroomMessageText({super.key, required this.message, required this.color});
 
   @override
@@ -15,6 +16,7 @@ class WidgetChatroomMessageText extends StatelessWidget {
     return RichText(
         softWrap: true,
         selectionColor: color,
+        textAlign: TextAlign.center,
         text: TextSpan(
           style: TextStyle(
             color: color,

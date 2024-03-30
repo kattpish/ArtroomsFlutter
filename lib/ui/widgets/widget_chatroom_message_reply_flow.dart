@@ -14,27 +14,29 @@ class WidgetChatroomMessageFlow extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) => IntrinsicHeight(
+  Widget build(BuildContext context) {
+    return IntrinsicHeight(
     child: Row(
       children: [
         Container(
-          // color: Colors.green,
           width: 4,
         ),
-        const SizedBox(width: 8),
+        const SizedBox(width: 0),
         Expanded(child:  buildReplyMessageForText()),
       ],
     ),
   );
+  }
 
   Widget buildReplyMessageForText() {
-    // Map<String, dynamic> jsonInput
-    late ParentMessage parentMessage = ParentMessage(0, "", "","");
+
+    ParentMessage parentMessage = ParentMessage(0, "", "","");
+
     try{
        parentMessage = ParentMessage.fromJson(const JsonDecoder().convert(message.data));
     }catch(_){
-      // parentMessage = ParentMessage(0, "", "");
     }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -42,14 +44,32 @@ class WidgetChatroomMessageFlow extends StatelessWidget {
           children: [
             Expanded(
               child: Text(
-                parentMessage.content,
-                style: const TextStyle(fontWeight: FontWeight.bold,color: Colors.white),
+                '${parentMessage.senderName}답장하다',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 13,
+                  fontFamily: 'SUIT',
+                  fontWeight: FontWeight.w400,
+                  height: 0,
+                  letterSpacing: -0.26,
+                ),
               ),
             ),
           ],
         ),
-        const SizedBox(height: 8),
-        Text(parentMessage.senderName, style: const TextStyle(color: Colors.white)),
+        const SizedBox(height: 2),
+        Text(
+            parentMessage.content,
+            maxLines: 1,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.white.withOpacity(0.5),
+              fontSize: 13,
+              fontFamily: 'SUIT',
+              fontWeight: FontWeight.w400,
+              height: 0,
+              letterSpacing: -0.26,
+        )),
       ],
     );
   }

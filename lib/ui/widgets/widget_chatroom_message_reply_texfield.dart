@@ -7,6 +7,7 @@ import '../../beans/bean_message.dart';
 
 Widget buildReplyForTextField(DataMessage? replyMessage, VoidCallback cancelReply) {
   return Container(
+      margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(8),
       child: WidgetChatroomMessageReply(
         message: replyMessage!,

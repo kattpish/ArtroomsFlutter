@@ -187,7 +187,7 @@ class ModuleMedia {
               if (isImage) {
 
                 final dateFormat = DateFormat('yyyy.MM.dd', 'ko_KR');
-                final dateString = '${dateFormat.format(await entity.lastModified())} 만료';
+                final dateString = dateFormat.format(await entity.lastModified());
 
                 final fileItem = FileItem(
                   file: entity,
@@ -263,7 +263,7 @@ class ModuleMedia {
               final bool isImage = isFileImage(fileExtension);
 
               final dateFormat = DateFormat('yyyy.MM.dd', 'ko_KR');
-              final dateString = '${dateFormat.format(asset.createDateTime)} 만료';
+              final dateString = dateFormat.format(asset.createDateTime);
 
               if(!isImage) {
                 FileItem fileItem = FileItem(
@@ -350,7 +350,9 @@ class ModuleMedia {
 
       try {
 
-        print(directory.path);
+        if (kDebugMode) {
+          print(directory.path);
+        }
 
         if (await directory.exists()) {
           await for (var entity in directory.list(recursive: true, followLinks: false)) {
@@ -362,7 +364,7 @@ class ModuleMedia {
               if (!isImage) {
 
                 final dateFormat = DateFormat('yyyy.MM.dd', 'ko_KR');
-                final dateString = '${dateFormat.format(await entity.lastModified())} 만료';
+                final dateString = dateFormat.format(await entity.lastModified());
 
                 final fileItem = FileItem(
                   file: entity,

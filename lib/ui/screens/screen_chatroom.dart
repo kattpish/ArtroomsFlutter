@@ -400,9 +400,11 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                                               FocusedMenuItem(
                                                   trailingIcon:
                                                   const Icon(
-                                                      Icons.reply),
+                                                      Icons.reply,
+                                                    color: colorMainGrey500,
+                                                  ),
                                                   title: const Text(
-                                                      "reply"),
+                                                      "답장"),
                                                   onPressed: () {
                                                     _replyMessage =
                                                         message;
@@ -411,10 +413,11 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                                                   }),
                                               FocusedMenuItem(
                                                   trailingIcon:
-                                                  const Icon(
-                                                      Icons.copy),
+                                                  const Icon(Icons.copy,
+                                                    color: colorMainGrey500,
+                                                  ),
                                                   title: const Text(
-                                                      "Copy"),
+                                                      "복사"),
                                                   onPressed: () async {
                                                     await Clipboard.setData(
                                                         ClipboardData(
@@ -422,6 +425,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                                                                 .content));
                                                   })
                                             ],
+                                            blurSize: 0.0,
                                             menuOffset: 10.0,
                                             bottomOffsetHeight: 80.0,
                                             menuBoxDecoration:
@@ -1323,9 +1327,10 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
           }
         });
       }
-    })
-        .catchError((e) {})
-        .whenComplete(() {
+    }).catchError((e) {
+
+    }
+    ).whenComplete(() {
       if(mounted) {
         setState(() {
           _isLoading = false;
@@ -1440,10 +1445,9 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
   Future<void> _doSendMessageMedia() async {
 
     if (_selectedMedia > 0) {
-      List<int> index = [0];
+      List<int> index = [];
 
-      List<DataMessage> myMessages =
-      await _moduleMessages.preSendMessageMedia(_filesMedia);
+      List<DataMessage> myMessages = await _moduleMessages.preSendMessageMedia(_filesMedia);
 
       for (DataMessage myMessage1 in myMessages) {
         setState(() {
@@ -1458,10 +1462,12 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
 
       myMessages = await _moduleMessages.sendMessageMedia(_filesMedia);
 
-      for (int i = 0; i < myMessages.length; i++) {
-        DataMessage myMessage1 = myMessages[i];
-        for (int j = 0; j < _listMessages.length; j++) {
-          DataMessage myMessage = _listMessages[j];
+      for (int j = 0; j < _listMessages.length; j++) {
+        DataMessage myMessage = _listMessages[j];
+
+        for (int i = 0; i < myMessages.length; i++) {
+          DataMessage myMessage1 = myMessages[i];
+          myMessage1.isSending = false;
           if (myMessage.index == index[i]) {
             setState(() {
               _listMessages[j] = myMessage1;
@@ -1478,6 +1484,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
     File? file = await doPickImageWithCamera();
 
     if(file != null) {
+      _selectedImages++;
       FileItem fileItem = FileItem(file: file, path: file.path);
       fileItem.isSelected = true;
       _filesImages.insert(0, fileItem);
@@ -1485,6 +1492,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
   }
 
   Future<void> _doProcessPickedFiles() async {
+    _doAttachmentPickerClose();
     _doDeselectPickedMedia();
 
     List<FileItem> fileItems = await doPickFiles();
@@ -1523,11 +1531,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
   }
 
   void _doScrollToBottom() {
-    _scrollController.animateTo(
-      0,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeOut,
-    );
+    _itemScrollController.jumpTo(index: 0);
   }
 
   void _doCheckEnableButtonFile() {
