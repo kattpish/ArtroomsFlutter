@@ -61,9 +61,9 @@ class _MyScreenChatsState extends State<MyScreenChats> with WidgetsBindingObserv
 
     requestPermissions(context);
 
-    loadChats();
+    loadChats(context);
     _timer = Timer.periodic(const Duration(seconds: 30), (timer) {
-      loadChats();
+      loadChats(context);
     });
 
     searchController.addListener(() {
@@ -76,7 +76,7 @@ class _MyScreenChatsState extends State<MyScreenChats> with WidgetsBindingObserv
   void didChangeAppLifecycleState(AppLifecycleState state) {
 
     if (state == AppLifecycleState.resumed) {
-      loadChats();
+      loadChats(context);
     }
 
   }
@@ -565,7 +565,7 @@ class _MyScreenChatsState extends State<MyScreenChats> with WidgetsBindingObserv
     }
   }
 
-  Future<void> loadChats() async {
+  Future<void> loadChats(BuildContext context) async {
 
     if(isLoading) return;
 
@@ -585,7 +585,7 @@ class _MyScreenChatsState extends State<MyScreenChats> with WidgetsBindingObserv
 
       for(DataChat dataChat in chats) {
         if(dbStore.isNotificationChat(dataChat)) {
-          showNotificationChat(dataChat);
+          showNotificationChat(context, dataChat);
         }
       }
 
