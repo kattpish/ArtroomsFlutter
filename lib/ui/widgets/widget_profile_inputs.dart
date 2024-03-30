@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 
 
-Widget buildInputField({
+Widget widgetProfileInput1({
   required String label,
   required TextEditingController controller,
   bool readOnly = false,
@@ -67,7 +67,7 @@ Widget buildInputField({
   );
 }
 
-Widget buildPickerField({
+Widget widgetProfileInput2({
   required String label,
   required VoidCallback onTap,
   required TextEditingController controller,

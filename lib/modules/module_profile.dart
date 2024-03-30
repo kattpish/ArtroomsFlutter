@@ -10,7 +10,7 @@ import '../data/module_datastore.dart';
 import '../main.dart';
 
 
-class UserModule {
+class ModuleProfile {
 
   Future<Map<String, dynamic>?> getMyProfile() async {
 

@@ -26,7 +26,7 @@ class ScreenProfile extends StatefulWidget {
 
 class _ScreenProfileState extends State<ScreenProfile> {
 
-  final UserModule _userModule = UserModule();
+  final ModuleProfile _userModule = ModuleProfile();
 
   String _name = "";
   String _nickName = "";

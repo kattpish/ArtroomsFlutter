@@ -4,11 +4,12 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:sendbird_sdk/core/models/member.dart';
 
-class MentionedUser extends StatelessWidget {
+class WidgetChatroomMessageMention extends StatelessWidget {
+
   final List<Member> member;
   final void Function(Member) onCancelReply;
 
-  const MentionedUser({super.key,
+  const WidgetChatroomMessageMention({super.key,
     required this.member,
     required this.onCancelReply
   });

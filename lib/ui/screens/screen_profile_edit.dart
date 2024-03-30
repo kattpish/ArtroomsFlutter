@@ -42,7 +42,7 @@ class _ScreenProfileEditState extends State<ScreenProfileEdit> {
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  final UserModule _userModule = UserModule();
+  final ModuleProfile _userModule = ModuleProfile();
   MyProfile _profile = MyProfile();
   XFile? _fileImage;
 
@@ -185,7 +185,7 @@ class _ScreenProfileEditState extends State<ScreenProfileEdit> {
                     ),
                   ),
                   const SizedBox(height: 24),
-                  buildInputField(
+                  widgetProfileInput1(
                       label: '이름',
                       controller: _nameController,
                       focus: _nameFocus,
@@ -195,7 +195,7 @@ class _ScreenProfileEditState extends State<ScreenProfileEdit> {
                       }
                   ),
                   const SizedBox(height: 16),
-                  buildInputField(
+                  widgetProfileInput1(
                       label: '닉네임',
                       controller: _nicknameController,
                       focus: _nicknameFocus,
@@ -204,7 +204,7 @@ class _ScreenProfileEditState extends State<ScreenProfileEdit> {
                       }
                   ),
                   const SizedBox(height: 16),
-                  buildInputField(
+                  widgetProfileInput1(
                       label: '이메일',
                       controller: _emailController,
                       focus: _emailFocus,
@@ -214,7 +214,7 @@ class _ScreenProfileEditState extends State<ScreenProfileEdit> {
                       }
                   ),
                   const SizedBox(height: 16),
-                  buildPickerField(
+                  widgetProfileInput2(
                     label: '휴대전화',
                     controller: _phoneController,
                     focus: _phoneFocus,
@@ -227,7 +227,7 @@ class _ScreenProfileEditState extends State<ScreenProfileEdit> {
                     },
                   ),
                   const SizedBox(height: 16),
-                  buildPickerField(
+                  widgetProfileInput2(
                     label: '비밀번호',
                     controller: _passwordController,
                     focus: _passwordFocus,

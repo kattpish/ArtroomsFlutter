@@ -32,8 +32,8 @@ class _ScreenLoginState extends State<ScreenLogin> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  final UserModule _userModule = UserModule();
-  final AuthModule _authModule = AuthModule();
+  final ModuleProfile _userModule = ModuleProfile();
+  final ModuleAuth _authModule = ModuleAuth();
 
   @override
   void initState() {

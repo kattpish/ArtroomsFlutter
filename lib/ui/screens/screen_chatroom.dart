@@ -11,6 +11,7 @@ import 'package:artrooms/ui/widgets/widget_chatroom_mentioned_user.dart';
 import 'package:artrooms/ui/widgets/widget_loader.dart';
 import 'package:artrooms/utils/utils_media.dart';
 import 'package:artrooms/utils/utils_notifications.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -278,159 +279,159 @@ class _ScreenChatroomState extends State<ScreenChatroom>
                                   physics: const BouncingScrollPhysics(),
                                   reverse: true,
                                   itemBuilder: (context, index) {
-                                itemKeys[index] = GlobalKey();
-                                final message = listMessages[index];
-                                final isLast = index == 0;
-                                final messageNext = index > 0
-                                    ? listMessages[index - 1]
-                                    : DataMessage.empty();
-                                final messagePrevious =
-                                index < listMessages.length - 1
-                                    ? listMessages[index + 1]
-                                    : DataMessage.empty();
-                                final isPreviousSame =
-                                    messagePrevious.senderId ==
-                                        message.senderId;
-                                final isNextSame =
-                                    messageNext.senderId ==
-                                        message.senderId;
-                                final isPreviousDate =
-                                    messagePrevious.getDate() ==
-                                        message.getDate();
-                                final isPreviousSameDateTime =
-                                    isPreviousSame &&
-                                        messagePrevious
-                                            .getDateTime() ==
+                                    itemKeys[index] = GlobalKey();
+                                    final message = listMessages[index];
+                                    final isLast = index == 0;
+                                    final messageNext = index > 0
+                                        ? listMessages[index - 1]
+                                        : DataMessage.empty();
+                                    final messagePrevious =
+                                    index < listMessages.length - 1
+                                        ? listMessages[index + 1]
+                                        : DataMessage.empty();
+                                    final isPreviousSame =
+                                        messagePrevious.senderId ==
+                                            message.senderId;
+                                    final isNextSame =
+                                        messageNext.senderId ==
+                                            message.senderId;
+                                    final isPreviousDate =
+                                        messagePrevious.getDate() ==
+                                            message.getDate();
+                                    final isPreviousSameDateTime =
+                                        isPreviousSame &&
+                                            messagePrevious
+                                                .getDateTime() ==
+                                                message.getDateTime();
+                                    final isNextSameTime = isNextSame &&
+                                        messageNext.getDateTime() ==
                                             message.getDateTime();
-                                final isNextSameTime = isNextSame &&
-                                    messageNext.getDateTime() ==
-                                        message.getDateTime();
-                                return Column(
-                                  key: itemKeys[index],
-                                  children: [
-                                    Visibility(
-                                      visible: !isPreviousDate,
-                                      child: Container(
-                                        width: 145,
-                                        height: 31,
-                                        margin: EdgeInsets.only(
-                                            left: 16,
-                                            right: 16,
-                                            top:
-                                            index == 0 ? 4 : 16,
-                                            bottom:
-                                            index == 0 ? 4 : 8),
-                                        padding: const EdgeInsets
-                                            .symmetric(
-                                            horizontal: 12,
-                                            vertical: 4),
-                                        alignment: Alignment.center,
-                                        decoration: ShapeDecoration(
-                                          color: const Color(
-                                              0xFFF9F9F9),
-                                          shape:
-                                          RoundedRectangleBorder(
-                                            borderRadius:
-                                            BorderRadius
-                                                .circular(20),
+                                    return Column(
+                                      key: itemKeys[index],
+                                      children: [
+                                        Visibility(
+                                          visible: !isPreviousDate,
+                                          child: Container(
+                                            width: 145,
+                                            height: 31,
+                                            margin: EdgeInsets.only(
+                                                left: 16,
+                                                right: 16,
+                                                top:
+                                                index == 0 ? 4 : 16,
+                                                bottom:
+                                                index == 0 ? 4 : 8),
+                                            padding: const EdgeInsets
+                                                .symmetric(
+                                                horizontal: 12,
+                                                vertical: 4),
+                                            alignment: Alignment.center,
+                                            decoration: ShapeDecoration(
+                                              color: const Color(
+                                                  0xFFF9F9F9),
+                                              shape:
+                                              RoundedRectangleBorder(
+                                                borderRadius:
+                                                BorderRadius
+                                                    .circular(20),
+                                              ),
+                                            ),
+                                            child: Row(
+                                              mainAxisSize:
+                                              MainAxisSize.min,
+                                              mainAxisAlignment:
+                                              MainAxisAlignment
+                                                  .start,
+                                              crossAxisAlignment:
+                                              CrossAxisAlignment
+                                                  .center,
+                                              children: [
+                                                Text(
+                                                  formatDateLastMessage(
+                                                      message
+                                                          .timestamp),
+                                                  style:
+                                                  const TextStyle(
+                                                    color: Color(
+                                                        0xFF7D7D7D),
+                                                    fontSize: 12,
+                                                    fontFamily: 'SUIT',
+                                                    fontWeight:
+                                                    FontWeight.w400,
+                                                    height: 0,
+                                                    letterSpacing:
+                                                    -0.24,
+                                                  ),
+                                                  maxLines: 1,
+                                                  overflow: TextOverflow
+                                                      .ellipsis,
+                                                  textAlign:
+                                                  TextAlign.center,
+                                                ),
+                                              ],
+                                            ),
                                           ),
                                         ),
-                                        child: Row(
-                                          mainAxisSize:
-                                          MainAxisSize.min,
-                                          mainAxisAlignment:
-                                          MainAxisAlignment
-                                              .start,
-                                          crossAxisAlignment:
-                                          CrossAxisAlignment
-                                              .center,
-                                          children: [
-                                            Text(
-                                              formatDateLastMessage(
-                                                  message
-                                                      .timestamp),
-                                              style:
-                                              const TextStyle(
-                                                color: Color(
-                                                    0xFF7D7D7D),
-                                                fontSize: 12,
-                                                fontFamily: 'SUIT',
-                                                fontWeight:
-                                                FontWeight.w400,
-                                                height: 0,
-                                                letterSpacing:
-                                                -0.24,
-                                              ),
-                                              maxLines: 1,
-                                              overflow: TextOverflow
-                                                  .ellipsis,
-                                              textAlign:
-                                              TextAlign.center,
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                    FocusedMenuHolder(
-                                        onPressed: () {},
-                                        menuWidth:
-                                        MediaQuery.of(context)
-                                            .size
-                                            .width /
-                                            3,
-                                        menuItems: [
-                                          FocusedMenuItem(
-                                              trailingIcon:
-                                              const Icon(
-                                                  Icons.reply),
-                                              title: const Text(
-                                                  "reply"),
-                                              onPressed: () {
-                                                replyMessage =
-                                                    message;
-                                                messageFocusNode
-                                                    .requestFocus();
-                                              }),
-                                          FocusedMenuItem(
-                                              trailingIcon:
-                                              const Icon(
-                                                  Icons.copy),
-                                              title: const Text(
-                                                  "Copy"),
-                                              onPressed: () async {
-                                                await Clipboard.setData(
-                                                    ClipboardData(
-                                                        text: message
-                                                            .content));
-                                              })
-                                        ],
-                                        menuOffset: 10.0,
-                                        bottomOffsetHeight: 80.0,
-                                        menuBoxDecoration:
-                                        const BoxDecoration(
-                                            borderRadius:
-                                            BorderRadius.all(
-                                                Radius.circular(
-                                                    15.0))),
-                                        child: Container(
-                                          child: message.isMe
-                                              ? _buildMyMessageBubble(
-                                              message,
-                                              isLast,
-                                              isPreviousSameDateTime,
-                                              isNextSameTime)
-                                              : _buildOtherMessageBubble(
-                                              message,
-                                              isLast,
-                                              isPreviousSame,
-                                              isNextSame,
-                                              isPreviousSameDateTime,
-                                              isNextSameTime),
-                                        ))
-                                  ],
-                                );
-                              },
-                            )
+                                        FocusedMenuHolder(
+                                            onPressed: () {},
+                                            menuWidth:
+                                            MediaQuery.of(context)
+                                                .size
+                                                .width /
+                                                3,
+                                            menuItems: [
+                                              FocusedMenuItem(
+                                                  trailingIcon:
+                                                  const Icon(
+                                                      Icons.reply),
+                                                  title: const Text(
+                                                      "reply"),
+                                                  onPressed: () {
+                                                    replyMessage =
+                                                        message;
+                                                    messageFocusNode
+                                                        .requestFocus();
+                                                  }),
+                                              FocusedMenuItem(
+                                                  trailingIcon:
+                                                  const Icon(
+                                                      Icons.copy),
+                                                  title: const Text(
+                                                      "Copy"),
+                                                  onPressed: () async {
+                                                    await Clipboard.setData(
+                                                        ClipboardData(
+                                                            text: message
+                                                                .content));
+                                                  })
+                                            ],
+                                            menuOffset: 10.0,
+                                            bottomOffsetHeight: 80.0,
+                                            menuBoxDecoration:
+                                            const BoxDecoration(
+                                                borderRadius:
+                                                BorderRadius.all(
+                                                    Radius.circular(
+                                                        15.0))),
+                                            child: Container(
+                                              child: message.isMe
+                                                  ? _buildMyMessageBubble(
+                                                  message,
+                                                  isLast,
+                                                  isPreviousSameDateTime,
+                                                  isNextSameTime)
+                                                  : _buildOtherMessageBubble(
+                                                  message,
+                                                  isLast,
+                                                  isPreviousSame,
+                                                  isNextSame,
+                                                  isPreviousSameDateTime,
+                                                  isNextSameTime),
+                                            ))
+                                      ],
+                                    );
+                                  },
+                                )
                             )
                                 : buildNoChats(context),
                           ),
@@ -678,7 +679,7 @@ class _ScreenChatroomState extends State<ScreenChatroom>
                             Container(
                               // height: min(100, message.content.length * 2),
                               padding: const EdgeInsets.only(left: 10),
-                              child: DisplayMessageText(
+                              child: WidgetChatroomMessageText(
                                 message: message.content,
                                 color: Colors.white,
                               ),
@@ -820,7 +821,7 @@ class _ScreenChatroomState extends State<ScreenChatroom>
                                   constraints: BoxConstraints(
                                     maxWidth: screenWidth * 0.55,
                                   ),
-                                  child: DisplayMessageText(
+                                  child: WidgetChatroomMessageText(
                                     message: message.content,
                                     color: const Color(0xFF1F1F1F),
                                   ),
@@ -1151,7 +1152,6 @@ class _ScreenChatroomState extends State<ScreenChatroom>
   int _selectedImages = 0;
   int _selectedMedia = 0;
   bool _selectMode = true;
-  bool _isButtonFileDisabled = true;
 
   List<FileItem> filesImages = [];
   List<FileItem> filesMedia = [];
@@ -1810,34 +1810,41 @@ class _ScreenChatroomState extends State<ScreenChatroom>
       _dragStartY = details.globalPosition.dy;
 
       if (_boxHeight < screenHeight - 100 && _boxHeight > screenHeight - 200) {
-        print("_onVerticalDragUpdate-1");
+        if (kDebugMode) {
+          print("_onVerticalDragUpdate-1");
+        }
         _attachmentPickerMin();
       } else if (_boxHeight > _boxHeightMin + 160) {
-        print("_onVerticalDragUpdate-2");
+        if (kDebugMode) {
+          print("_onVerticalDragUpdate-2");
+        }
         _showAttachment = false;
         if (!_showAttachmentFull) {
           _showAttachmentFull = true;
           _boxHeight = screenHeight;
         }
       } else if (_boxHeight < _boxHeightMin - 160) {
-        print("_onVerticalDragUpdate-3");
+        if (kDebugMode) {
+          print("_onVerticalDragUpdate-3");
+        }
         _attachmentPickerClose();
       }
     });
   }
 
   void _scrollListener1() {
-    print("_scrollController-offset: ${_scrollControllerAttachment1.offset}");
-    print(
-        "_scrollController-minScrollExtent: ${_scrollControllerAttachment1.position.minScrollExtent}");
-    print(
-        "_scrollController-userScrollDirection: ${_scrollControllerAttachment1.position.userScrollDirection}");
+    if (kDebugMode) {
+      print("_scrollController-offset: ${_scrollControllerAttachment1.offset}");
+      print("_scrollController-minScrollExtent: ${_scrollControllerAttachment1.position.minScrollExtent}");
+      print("_scrollController-userScrollDirection: ${_scrollControllerAttachment1.position.userScrollDirection}");
+    }
 
     if (_scrollControllerAttachment1.offset == 0 &&
         _scrollControllerAttachment1.position.minScrollExtent == 0 &&
-        _scrollControllerAttachment1.position.userScrollDirection ==
-            ScrollDirection.forward) {
-      print("_scrollController-1");
+        _scrollControllerAttachment1.position.userScrollDirection == ScrollDirection.forward) {
+      if (kDebugMode) {
+        print("_scrollController-1");
+      }
       setState(() {
         _listReachedTop = true;
         _attachmentPickerMin();
@@ -1845,9 +1852,10 @@ class _ScreenChatroomState extends State<ScreenChatroom>
       });
     } else if (_scrollControllerAttachment1.offset <=
         _scrollControllerAttachment1.position.minScrollExtent &&
-        _scrollControllerAttachment1.position.userScrollDirection ==
-            ScrollDirection.forward) {
-      print("_scrollController-2");
+        _scrollControllerAttachment1.position.userScrollDirection == ScrollDirection.forward) {
+      if (kDebugMode) {
+        print("_scrollController-2");
+      }
       if (!_listReachedTop) {
         setState(() {
           _listReachedTop = true;
@@ -1855,9 +1863,10 @@ class _ScreenChatroomState extends State<ScreenChatroom>
       }
     } else if (_scrollControllerAttachment1.offset <=
         _scrollControllerAttachment1.position.minScrollExtent &&
-        _scrollControllerAttachment1.position.userScrollDirection ==
-            ScrollDirection.reverse) {
-      print("_scrollController-3");
+        _scrollControllerAttachment1.position.userScrollDirection == ScrollDirection.reverse) {
+      if (kDebugMode) {
+        print("_scrollController-3");
+      }
       if (_listReachedTop) {
         setState(() {
           _listReachedTop = false;
@@ -1866,21 +1875,29 @@ class _ScreenChatroomState extends State<ScreenChatroom>
     } else if (_scrollControllerAttachment1.offset >=
         _scrollControllerAttachment1.position.maxScrollExtent &&
         !_scrollControllerAttachment1.position.outOfRange) {
-      print("_scrollController-4");
+      if (kDebugMode) {
+        print("_scrollController-4");
+      }
       if (!_listReachedBottom) {
         setState(() {
           _listReachedBottom = true;
         });
       }
     } else {
-      print("_scrollController-5");
+      if (kDebugMode) {
+        print("_scrollController-5");
+      }
       if (_listReachedBottom) {
-        print("_scrollController-5_1");
+        if (kDebugMode) {
+          print("_scrollController-5_1");
+        }
         setState(() {
           _listReachedBottom = false;
         });
       } else {
-        print("_scrollController-5_2");
+        if (kDebugMode) {
+          print("_scrollController-5_2");
+        }
         setState(() {
           _showAttachment = false;
           _showAttachmentFull = true;
@@ -1892,17 +1909,22 @@ class _ScreenChatroomState extends State<ScreenChatroom>
   }
 
   void _scrollListener2() {
-    print("_scrollController-offset: ${_scrollControllerAttachment2.offset}");
-    print(
-        "_scrollController-minScrollExtent: ${_scrollControllerAttachment2.position.minScrollExtent}");
-    print(
-        "_scrollController-userScrollDirection: ${_scrollControllerAttachment2.position.userScrollDirection}");
+    if (kDebugMode) {
+      print("_scrollController-offset: ${_scrollControllerAttachment2.offset}");
+    }
+    if (kDebugMode) {
+      print("_scrollController-minScrollExtent: ${_scrollControllerAttachment2.position.minScrollExtent}");
+    }
+    if (kDebugMode) {
+      print("_scrollController-userScrollDirection: ${_scrollControllerAttachment2.position.userScrollDirection}");
+    }
 
     if (_scrollControllerAttachment2.offset == 0 &&
         _scrollControllerAttachment2.position.minScrollExtent == 0 &&
-        _scrollControllerAttachment2.position.userScrollDirection ==
-            ScrollDirection.forward) {
-      print("_scrollController-1");
+        _scrollControllerAttachment2.position.userScrollDirection == ScrollDirection.forward) {
+      if (kDebugMode) {
+        print("_scrollController-1");
+      }
       setState(() {
         _listReachedTop = true;
         _attachmentPickerMin();
@@ -1910,9 +1932,10 @@ class _ScreenChatroomState extends State<ScreenChatroom>
       });
     } else if (_scrollControllerAttachment2.offset <=
         _scrollControllerAttachment2.position.minScrollExtent &&
-        _scrollControllerAttachment2.position.userScrollDirection ==
-            ScrollDirection.forward) {
-      print("_scrollController-2");
+        _scrollControllerAttachment2.position.userScrollDirection == ScrollDirection.forward) {
+      if (kDebugMode) {
+        print("_scrollController-2");
+      }
       if (!_listReachedTop) {
         setState(() {
           _listReachedTop = true;
@@ -1920,9 +1943,10 @@ class _ScreenChatroomState extends State<ScreenChatroom>
       }
     } else if (_scrollControllerAttachment2.offset <=
         _scrollControllerAttachment2.position.minScrollExtent &&
-        _scrollControllerAttachment2.position.userScrollDirection ==
-            ScrollDirection.reverse) {
-      print("_scrollController-3");
+        _scrollControllerAttachment2.position.userScrollDirection == ScrollDirection.reverse) {
+      if (kDebugMode) {
+        print("_scrollController-3");
+      }
       if (_listReachedTop) {
         setState(() {
           _listReachedTop = false;
@@ -1931,21 +1955,29 @@ class _ScreenChatroomState extends State<ScreenChatroom>
     } else if (_scrollControllerAttachment2.offset >=
         _scrollControllerAttachment2.position.maxScrollExtent &&
         !_scrollControllerAttachment2.position.outOfRange) {
-      print("_scrollController-4");
+      if (kDebugMode) {
+        print("_scrollController-4");
+      }
       if (!_listReachedBottom) {
         setState(() {
           _listReachedBottom = true;
         });
       }
     } else {
-      print("_scrollController-5");
+      if (kDebugMode) {
+        print("_scrollController-5");
+      }
       if (_listReachedBottom) {
-        print("_scrollController-5_1");
+        if (kDebugMode) {
+          print("_scrollController-5_1");
+        }
         setState(() {
           _listReachedBottom = false;
         });
       } else {
-        print("_scrollController-5_2");
+        if (kDebugMode) {
+          print("_scrollController-5_2");
+        }
         setState(() {
           _showAttachment = false;
           _showAttachmentFull = true;
@@ -2041,12 +2073,12 @@ class _ScreenChatroomState extends State<ScreenChatroom>
     })
         .catchError((e) {})
         .whenComplete(() {
-          if(mounted) {
-            setState(() {
-              _isLoading = false;
-              _isLoadMore = false;
-            });
-          }
+      if(mounted) {
+        setState(() {
+          _isLoading = false;
+          _isLoadMore = false;
+        });
+      }
     });
   }
 
@@ -2162,7 +2194,7 @@ class _ScreenChatroomState extends State<ScreenChatroom>
       List<int> index = [0];
 
       List<DataMessage> myMessages =
-          await moduleMessages.preSendMessageMedia(filesMedia);
+      await moduleMessages.preSendMessageMedia(filesMedia);
 
       for (DataMessage myMessage1 in myMessages) {
         setState(() {
@@ -2309,18 +2341,6 @@ class _ScreenChatroomState extends State<ScreenChatroom>
     }
   }
 
-  void select() {
-    if (!_isButtonDisabled) {
-      Navigator.pop(context);
-    }
-  }
-
-  void selectFiles() {
-    if (!_isButtonFileDisabled) {
-      Navigator.pop(context);
-    }
-  }
-
   void cancelReply() {
     setState(() {
       replyMessage = null;
@@ -2343,7 +2363,7 @@ class _ScreenChatroomState extends State<ScreenChatroom>
   Widget buildReplyForTextField() {
     return Container(
         padding: const EdgeInsets.all(8),
-        child: ReplyMessageWidget(
+        child: WidgetChatroomMessage(
           message: replyMessage!,
           onCancelReply: cancelReply,
           key: null,
@@ -2361,7 +2381,7 @@ class _ScreenChatroomState extends State<ScreenChatroom>
                 topRight: inputTopRadius,
               ),
             ),
-            child: ReplyMessageFlowWidget(
+            child: WidgetChatroomMessageFlow(
               message: message!,
               key: null,
             )),
@@ -2381,7 +2401,7 @@ class _ScreenChatroomState extends State<ScreenChatroom>
             topRight: inputTopRadius,
           ),
         ),
-        child: MentionedUser(
+        child: WidgetChatroomMessageMention(
           member: getAllMembers(),
           key: null,
           onCancelReply: onMentionSelected,

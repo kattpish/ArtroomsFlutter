@@ -5,7 +5,6 @@ import 'package:artrooms/modules/module_messages.dart';
 import 'package:artrooms/modules/module_notices.dart';
 import 'package:artrooms/ui/screens/screen_chatroom_file.dart';
 import 'package:artrooms/ui/screens/screen_chatroom_photo.dart';
-import 'package:artrooms/ui/screens/screen_chats.dart';
 import 'package:artrooms/ui/screens/screen_memo.dart';
 import 'package:artrooms/ui/screens/screen_notices.dart';
 import 'package:artrooms/ui/screens/screen_notifications_sounds.dart';
@@ -16,6 +15,7 @@ import '../../beans/bean_chat.dart';
 import '../../main.dart';
 import '../theme/theme_colors.dart';
 import '../widgets/widget_chat_drawer_attachments.dart';
+import '../widgets/widget_chat_drawer_exit.dart';
 import '../widgets/widget_chat_drawer_members.dart';
 import '../widgets/widget_loader.dart';
 
@@ -49,10 +49,10 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
   void initState() {
     super.initState();
     _moduleMessages = ModuleMessages(widget.dataChat.id);
-    _loadMemo();
-    _loadNotice();
-    _loadMembers();
-    _loadAttachments();
+    _doLoadMemo();
+    _doLoadNotice();
+    _doLoadMembers();
+    _doLoadAttachments();
   }
 
   @override
@@ -343,7 +343,7 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
                                 await Navigator.push(context, MaterialPageRoute(builder: (context) {
                                   return ScreenMemo(dataChat: widget.dataChat,);
                                 }));
-                                _loadMemo();
+                                _doLoadMemo();
                               },
                             ),
                             Container(
@@ -550,7 +550,7 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
                           IconButton(
                               icon: Image.asset('assets/images/icons/icon_forward.png', width: 24, height: 24, color: const Color(0xFFD9D9D9),),
                               onPressed: () {
-                                _onClickOption1(context);
+                                widgetChatDrawerExit(context, moduleSendBird, widget.dataChat);
                               }
                           ),
                           IconButton(
@@ -578,92 +578,13 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
     );
   }
 
-  void _onClickOption1(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20.0),
-          ),
-          child: Container(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Align(
-                  alignment: Alignment.topRight,
-                  child: Container(
-                    width: 30,
-                    height: 30,
-                    decoration: const BoxDecoration(
-                      color: colorMainGrey200,
-                      shape: BoxShape.circle,
-                    ),
-                    child: IconButton(
-                      icon: const Icon(
-                        Icons.close,
-                        size: 16,
-                        color: Colors.white,
-                      ),
-                      padding: const EdgeInsets.all(4),
-                      constraints: const BoxConstraints(),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                const Text(
-                  '채팅방 나가기',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 15),
-                const Text(
-                  '대화 내용이 모두 삭제됩니다.',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 16),
-                ),
-                const SizedBox(height: 50),
-                ElevatedButton(
-                  onPressed: () {
-                    moduleSendBird.leaveChannel(widget.dataChat.id);
-                    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) {
-                      return const ScreenChats();
-                    }));
-                  },
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: colorPrimaryBlue,
-                    backgroundColor: colorPrimaryBlue,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30.0),
-                    ),
-                    minimumSize: const Size(double.infinity, 50),
-                  ),
-                  child: const Text(
-                    '확인',
-                    style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.white
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  void _loadMemo() {
+  void _doLoadMemo() {
     setState(() {
       _memoController.text = dbStore.getMemo(widget.dataChat).replaceAll("\n\n", "");
     });
   }
 
-  void _loadNotice() {
+  void _doLoadNotice() {
 
     moduleNotice.getNotice(widget.dataChat.id).then((DataNotice notice) {
 
@@ -684,14 +605,14 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
 
   }
 
-  Future<void> _loadMembers() async {
+  Future<void> _doLoadMembers() async {
     List<User> members = await moduleSendBird.getGroupChannelMembers(widget.dataChat.id);
     setState(() {
       _listMembers = members;
     });
   }
 
-  void _loadAttachments() async {
+  void _doLoadAttachments() async {
     List<DataMessage> attachmentsImages = await _moduleMessages.fetchAttachmentsImages();
 
     setState(() {

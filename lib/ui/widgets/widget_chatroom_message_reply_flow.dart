@@ -1,12 +1,15 @@
+
 import 'dart:convert';
 
 import 'package:artrooms/beans/bean_message.dart';
 import 'package:flutter/material.dart';
 
-class ReplyMessageFlowWidget extends StatelessWidget {
+
+class WidgetChatroomMessageFlow extends StatelessWidget {
+
   final DataMessage message;
 
-  const ReplyMessageFlowWidget({super.key,
+  const WidgetChatroomMessageFlow({super.key,
     required this.message
   });
 

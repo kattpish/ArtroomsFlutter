@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import '../api/api.dart';
 
 
-class AuthModule {
+class ModuleAuth {
 
 
   Future<void> login({

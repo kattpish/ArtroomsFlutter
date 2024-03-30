@@ -42,7 +42,7 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver  
   String _selectChatId = "";
   bool _isLoadingChatroom = false;
   final Map<String, ScreenChatroom> _listScreenChatrooms = {};
-  final ChatModule _chatModule = ChatModule();
+  final ModuleChat _chatModule = ModuleChat();
 
   @override
   void initState() {
@@ -184,7 +184,7 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver  
                         );
                       },
                     )
-                        : buildNoChats(context),
+                        : widgetChatEmpty(context),
                   ),
                 ],
               ),

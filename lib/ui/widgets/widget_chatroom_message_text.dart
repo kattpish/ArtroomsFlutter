@@ -1,12 +1,13 @@
+
 import 'package:artrooms/utils/utils.dart';
 import 'package:flutter/material.dart';
 
 
-class DisplayMessageText extends StatelessWidget {
+class WidgetChatroomMessageText extends StatelessWidget {
 
   final String message;
   final Color color;
-  const DisplayMessageText({super.key, required this.message, required this.color});
+  const WidgetChatroomMessageText({super.key, required this.message, required this.color});
 
   @override
   Widget build(BuildContext context) {

@@ -33,7 +33,7 @@ class _ScreenLoginResetState extends State<ScreenLoginReset> with SingleTickerPr
   final TextEditingController _phoneController = TextEditingController();
   bool _isButtonDisabled = true;
 
-  final AuthModule _authModule = AuthModule();
+  final ModuleAuth _authModule = ModuleAuth();
 
   @override
   void initState() {

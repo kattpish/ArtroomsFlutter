@@ -1,12 +1,14 @@
+
 import 'package:artrooms/beans/bean_message.dart';
 import 'package:flutter/material.dart';
 
-class ReplyMessageWidget extends StatelessWidget {
+
+class WidgetChatroomMessage extends StatelessWidget {
 
   final DataMessage message;
   final VoidCallback onCancelReply;
 
-  const ReplyMessageWidget({super.key,
+  const WidgetChatroomMessage({super.key,
     required this.message,
     required this.onCancelReply
   });

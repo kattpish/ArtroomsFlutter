@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 
 
-abstract class LifecycleWatcherState<T extends StatefulWidget> extends State<T> with WidgetsBindingObserver {
+abstract class ListenerLifecycleWatcherState<T extends StatefulWidget> extends State<T> with WidgetsBindingObserver {
 
   @override
   void initState() {

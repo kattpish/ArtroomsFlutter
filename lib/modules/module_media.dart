@@ -2,6 +2,7 @@
 import 'dart:io';
 
 import 'package:artrooms/beans/bean_file.dart';
+import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -22,8 +23,8 @@ class ModuleMedia {
       isLoadingImages = true;
 
       loadFileImages().then((List<FileItem> listImages) {
+        imageFiles.clear();
         imageFiles.addAll(listImages);
-
         isLoadingImages = false;
       });
 
@@ -43,10 +44,11 @@ class ModuleMedia {
         isLoadingMedia = true;
 
         loadFilesMedia().then((List<FileItem> listMedia) {
+          mediaFiles.clear();
           mediaFiles.addAll(listMedia);
-
           isLoadingMedia = false;
         });
+
       } else {
         Iterator<FileItem> iterator = mediaFiles.iterator;
         while (iterator.moveNext()) {
@@ -63,7 +65,7 @@ class ModuleMedia {
 
   Future<List<FileItem>> loadFileImages() async {
 
-    if(imageFiles.isNotEmpty) return imageFiles;
+    List<FileItem> imageFiles = [];
 
     List<FileItem> imageFiles1 = await loadFileImages1();
     // List<FileItem> imageFiles2 = await loadFileImages2();
@@ -120,6 +122,8 @@ class ModuleMedia {
   }
 
   Future<List<FileItem>> loadFileImages2() async {
+
+    List<FileItem> imageFiles = [];
 
     var status = await Permission.storage.status;
     if (!status.isGranted) {
@@ -199,7 +203,9 @@ class ModuleMedia {
         }
 
       }catch(error) {
-        print(error);
+        if (kDebugMode) {
+          print(error);
+        }
       }
     }
 
@@ -208,7 +214,7 @@ class ModuleMedia {
 
   Future<List<FileItem>> loadFilesMedia() async {
 
-    if(mediaFiles.isNotEmpty) return mediaFiles;
+    List<FileItem> mediaFiles = [];
 
     List<FileItem> mediaFiles1 = await loadFilesMedia1();
     List<FileItem> mediaFiles2 = await loadFilesMedia2();
@@ -224,6 +230,8 @@ class ModuleMedia {
   }
 
   Future<List<FileItem>> loadFilesMedia1() async {
+
+    List<FileItem> mediaFiles = [];
 
     List<AssetEntity> assetFiles = [];
 
@@ -287,6 +295,8 @@ class ModuleMedia {
   }
 
   Future<List<FileItem>> loadFilesMedia2() async {
+
+    List<FileItem> mediaFiles = [];
 
     var status = await Permission.storage.status;
     if (!status.isGranted) {

@@ -5,7 +5,7 @@ import '../beans/bean_chat.dart';
 import '../main.dart';
 
 
-class ChatModule {
+class ModuleChat {
 
   Future<List<DataChat>> getUserChats() async {
 

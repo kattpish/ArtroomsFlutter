@@ -38,7 +38,7 @@ class _ScreenChatroomPhotoState extends State<ScreenChatroomPhoto> {
   void initState() {
     super.initState();
     _moduleMessages = ModuleMessages(widget.dataChat.id);
-    _loadAttachmentsImages();
+    _doLoadAttachmentsImages();
   }
 
   @override
@@ -82,7 +82,7 @@ class _ScreenChatroomPhotoState extends State<ScreenChatroomPhoto> {
                   child: Center(
                     child: InkWell(
                       onTap: () {
-                        _deselectAllPhotos(true);
+                        _doDeselectAllPhotos(true);
                       },
                       child: Container(
                         padding: const EdgeInsets.all(8.0),
@@ -113,7 +113,7 @@ class _ScreenChatroomPhotoState extends State<ScreenChatroomPhoto> {
                 child: Center(
                   child: InkWell(
                     onTap: () {
-                      _deselectAllPhotos(false);
+                      _doDeselectAllPhotos(false);
                     },
                     child: Container(
                       padding: const EdgeInsets.all(8.0),
@@ -192,7 +192,7 @@ class _ScreenChatroomPhotoState extends State<ScreenChatroomPhoto> {
                     setState(() {
                       attachmentImage.isSelected = !attachmentImage.isSelected;
                     });
-                    _checkIfPhotoShouldBeEnabled();
+                    _doCheckIfPhotoShouldBeEnabled();
                   },
                   child: Stack(
                     children: [
@@ -220,7 +220,7 @@ class _ScreenChatroomPhotoState extends State<ScreenChatroomPhoto> {
                             onTap: () {
                               setState(() {
                                 attachmentImage.isSelected = !attachmentImage.isSelected;
-                                _checkIfPhotoShouldBeEnabled();
+                                _doCheckIfPhotoShouldBeEnabled();
                               });
                             },
                             child: Container(
@@ -257,7 +257,7 @@ class _ScreenChatroomPhotoState extends State<ScreenChatroomPhoto> {
             ),
             child: TextButton(
               onPressed: () {
-                _selectPhotos();
+                _doSelectPhotos();
               },
               child:const Text(
                   '저장',
@@ -277,7 +277,7 @@ class _ScreenChatroomPhotoState extends State<ScreenChatroomPhoto> {
     );
   }
 
-  void _loadAttachmentsImages() async {
+  void _doLoadAttachmentsImages() async {
 
     setState(() {
       _isLoading = true;
@@ -292,7 +292,7 @@ class _ScreenChatroomPhotoState extends State<ScreenChatroomPhoto> {
 
   }
 
-  void _checkIfPhotoShouldBeEnabled() {
+  void _doCheckIfPhotoShouldBeEnabled() {
 
     _selected = 0;
     for(DataMessage attachmentImage in _attachmentsImages) {
@@ -316,7 +316,7 @@ class _ScreenChatroomPhotoState extends State<ScreenChatroomPhoto> {
 
   }
 
-  void _deselectAllPhotos(isClose) {
+  void _doDeselectAllPhotos(isClose) {
 
     setState(() {
       _selected = 0;
@@ -333,12 +333,12 @@ class _ScreenChatroomPhotoState extends State<ScreenChatroomPhoto> {
         _selectMode = false;
       });
 
-      _checkIfPhotoShouldBeEnabled();
+      _doCheckIfPhotoShouldBeEnabled();
     }
 
   }
 
-  void _selectPhotos() {
+  void _doSelectPhotos() {
 
     if(!_isButtonDisabled) {
 
@@ -348,8 +348,7 @@ class _ScreenChatroomPhotoState extends State<ScreenChatroomPhoto> {
         }
       }
 
-      _deselectAllPhotos(true);
-
+      _doDeselectAllPhotos(true);
     }
 
   }
