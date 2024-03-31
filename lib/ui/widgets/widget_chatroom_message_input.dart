@@ -23,7 +23,7 @@ Widget widgetChatroomMessageInput(TextEditingController messageController, messa
           fillColor: const Color(0xFFF3F3F3),
         ),
         // cursorColor: Colors.transparent, // Hide cursor
-        style: const TextStyle(color: Colors.transparent), // Hide text
+        style: const TextStyle(color: Colors.transparent,fontSize: 14.7,letterSpacing: 1.0), // Hide text
       ),
       Positioned(
         top: 15,

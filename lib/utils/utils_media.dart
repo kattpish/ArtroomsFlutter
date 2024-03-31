@@ -25,6 +25,7 @@ Future<void> downloadFile(BuildContext context, String url, String fileName, {sh
   }
 
   final response = await http.get(Uri.parse(url));
+  final fileExtension = getFileExtension(url);
 
   if (kDebugMode) {
     print('File downloaded: ${response.body}');
@@ -51,7 +52,7 @@ Future<void> downloadFile(BuildContext context, String url, String fileName, {sh
 
   fileName = fileName.isEmpty ? path.basename(Uri.parse(url).path) : fileName;
 
-  final String filePath = path.join(dir.path, "Artrooms-$fileName")
+  final String filePath = path.join(dir.path, "Artrooms-$fileName.$fileExtension")
       .replaceAll("/Android/data/com.artrooms/files/downloads", "/Download")
   ;
 
@@ -71,4 +72,13 @@ Future<void> downloadFile(BuildContext context, String url, String fileName, {sh
     showNotificationDownload(context, filePath, fileName);
   }
 
+}
+
+
+String getFileExtension(String url) {
+  int startIndex = url.lastIndexOf('.');
+  if (startIndex != -1) {
+    return url.substring(startIndex + 1);
+  }
+  return '';
 }

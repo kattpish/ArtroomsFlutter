@@ -66,6 +66,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
   bool _listReachedBottom = false;
 
   final List<DataMessage> _listMessages = [];
+  List<Member> _listMembers = [];
   final ScrollController _scrollController = ScrollController();
   final ScrollController _scrollControllerAttachment1 = ScrollController();
   final ScrollController _scrollControllerAttachment2 = ScrollController();
@@ -116,7 +117,6 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
     _scrollControllerAttachment2.addListener(_scrollListener2);
     _itemPositionsListener.itemPositions.addListener(_doHandleScroll);
     _moduleMessages = ModuleMessages(widget.chat.id);
-
     _doLoadMessages();
     _doLoadNotice();
     _doLoadMedia();
@@ -391,56 +391,58 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                                               ),
                                             ),
                                           ),
-                                          FocusedMenuHolder(
-                                              onPressed: () {},
-                                              menuWidth:
-                                              MediaQuery.of(context)
-                                                  .size
-                                                  .width /
-                                                  3,
-                                              menuItems: [
-                                                FocusedMenuItem(
-                                                    trailingIcon:
-                                                    const Icon(
-                                                        Icons.reply,
-                                                      color: colorMainGrey500,
-                                                    ),
-                                                    title: const Text(
-                                                        "답장"),
-                                                    onPressed: () {
-                                                      _replyMessage =
-                                                          message;
-                                                      _messageFocusNode
-                                                          .requestFocus();
-                                                    }),
-                                                FocusedMenuItem(
-                                                    trailingIcon:
-                                                    const Icon(Icons.copy,
-                                                      color: colorMainGrey500,
-                                                    ),
-                                                    title: const Text(
-                                                        "복사"),
-                                                    onPressed: () async {
-                                                      await Clipboard.setData(
-                                                          ClipboardData(
-                                                              text: message
-                                                                  .content));
-                                                    })
-                                              ],
-                                              blurSize: 0.0,
-                                              menuOffset: 10.0,
-                                              bottomOffsetHeight: 80.0,
-                                              menuBoxDecoration:
-                                              const BoxDecoration(
-                                                  borderRadius:
-                                                  BorderRadius.all(
-                                                      Radius.circular(
-                                                          15.0))),
-                                              child: Container(
-                                                child: message.isMe
-                                                    ? buildMyMessageBubble(context, this, message, isLast, isPreviousSameDateTime, isNextSameTime, _screenWidth)
-                                                    : buildOtherMessageBubble(context, this, message, isLast, isPreviousSame, isNextSame, isPreviousSameDateTime, isNextSameTime, _screenWidth),
-                                              ))
+                                          Align(
+                                            child: FocusedMenuHolder(
+                                                onPressed: () {},
+                                                menuWidth:
+                                                MediaQuery.of(context)
+                                                    .size
+                                                    .width /
+                                                    3,
+                                                menuItems: [
+                                                  FocusedMenuItem(
+                                                      trailingIcon:
+                                                      const Icon(
+                                                          Icons.reply,
+                                                        color: colorMainGrey500,
+                                                      ),
+                                                      title: const Text(
+                                                          "답장"),
+                                                      onPressed: () {
+                                                        _replyMessage =
+                                                            message;
+                                                        _messageFocusNode
+                                                            .requestFocus();
+                                                      }),
+                                                  FocusedMenuItem(
+                                                      trailingIcon:
+                                                      const Icon(Icons.copy,
+                                                        color: colorMainGrey500,
+                                                      ),
+                                                      title: const Text(
+                                                          "복사"),
+                                                      onPressed: () async {
+                                                        await Clipboard.setData(
+                                                            ClipboardData(
+                                                                text: message
+                                                                    .content));
+                                                      })
+                                                ],
+                                                blurSize: 0.0,
+                                                // menuOffset: 10.0,
+                                                // bottomOffsetHeight: 80.0,
+                                                menuBoxDecoration:
+                                                const BoxDecoration(
+                                                    borderRadius:
+                                                    BorderRadius.all(
+                                                        Radius.circular(
+                                                            15.0))),
+                                                child: Container(
+                                                  child: message.isMe
+                                                      ? buildMyMessageBubble(context, this, message, isLast, isPreviousSameDateTime, isNextSameTime, _screenWidth)
+                                                      : buildOtherMessageBubble(context, this, message, isLast, isPreviousSame, isNextSame, isPreviousSameDateTime, isNextSameTime, _screenWidth),
+                                                )),
+                                          )
                                         ],
                                       );
                                     },
@@ -593,7 +595,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
         children: [
           if (isReplying) buildReplyForTextField(_replyMessage, _doCancelReply),
           if (_isMentioning) buildMentions(
-              members: _doGetAllMembers(),
+              members: _listMembers,
               onCancelReply: (Member member) {
                 _doSelectMention(member);
               }
@@ -634,16 +636,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                   child: Column(children: [
                     widgetChatroomMessageInput(_messageController, _messageFocusNode,
                         onChanged: (String text) {
-                          if (text.endsWith("@")) {
-                            setState(() {
-                              _isMentioning = !_isMentioning;
-                            });
-                          }
-                          if (text.endsWith(" ")) {
-                            setState(() {
-                              _isMentioning = false;
-                            });
-                          }
+                          _doFilterInputs(text);
                         }
                     ),
                   ])),
@@ -1332,6 +1325,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
         });
       }
     });
+
   }
 
   Future<void> _doLoadMessagesNew() async {
@@ -1378,7 +1372,10 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
   }
 
   List<Member> _doGetAllMembers() {
-    return _moduleMessages.getGroupChannel().members;
+    setState(() {
+      _listMembers = _moduleMessages.getGroupChannel().members;
+    });
+    return _listMembers;
   }
 
   Future<void> _doSendMessage() async {
@@ -1614,10 +1611,44 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
   }
 
   void _doSelectMention(Member member) {
-    _messageController.text = "${_messageController.text}${member.nickname} ";
+    _messageController.text = "@${member.nickname} ";
     setState(() {
       _isMentioning = false;
     });
   }
 
+  void _doFilterInputs(String text){
+    _doGetAllMembers();
+    String textAfterCharacter = text.substring(text.lastIndexOf('@') + 1);
+    if (text.endsWith("@")) {
+      if(_isMentioning == false){
+        setState(() {
+          _isMentioning = true;
+        });
+      }
+    }
+    if(textAfterCharacter.isNotEmpty && !textAfterCharacter.contains(' ')){
+      if(_isMentioning == false){
+        setState(() {
+          _isMentioning = true;
+        });
+      }
+      _doUpdateAllMemberByFilter(textAfterCharacter);
+    }
+    if (text.endsWith(" ") || text.isEmpty) {
+      textAfterCharacter = "";
+      setState(() {
+        _isMentioning = false;
+      });
+    }
+  }
+
+  void _doUpdateAllMemberByFilter(String textAfterCharacter) {
+      setState(() {
+        _listMembers = _listMembers
+            .where((member) =>
+            member.nickname.substring(member.nickname.lastIndexOf('@') + 1)
+                .contains(textAfterCharacter)).toList();
+      });
+  }
 }
