@@ -5,7 +5,7 @@ import '../../beans/bean_notice.dart';
 import '../../listeners/scroll_bouncing_physics.dart';
 import '../../utils/utils_screen.dart';
 import '../theme/theme_colors.dart';
-import '../widgets/widget_ui_notifiy.dart';
+import '../widgets/widget_ui_notify.dart';
 
 
 class ScreenNoticeDetails extends StatefulWidget {

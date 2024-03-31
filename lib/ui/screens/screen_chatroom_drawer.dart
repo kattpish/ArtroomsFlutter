@@ -20,7 +20,7 @@ import '../widgets/widget_chat_drawer_attachments.dart';
 import '../widgets/widget_chat_drawer_exit.dart';
 import '../widgets/widget_chat_drawer_members.dart';
 import '../widgets/widget_loader.dart';
-import '../widgets/widget_ui_notifiy.dart';
+import '../widgets/widget_ui_notify.dart';
 
 
 class ScreenChatroomDrawer extends StatefulWidget {

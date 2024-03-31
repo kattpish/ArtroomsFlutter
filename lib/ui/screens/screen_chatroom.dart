@@ -33,17 +33,17 @@ import '../widgets/widget_chatroom_message_pin.dart';
 import '../widgets/widget_chatroom_message_reply_textfield.dart';
 import '../widgets/widget_chatroom_notice_pin.dart';
 import '../widgets/widget_media.dart';
-import '../widgets/widget_ui_notifiy.dart';
+import '../widgets/widget_ui_notify.dart';
 
 class ScreenChatroom extends StatefulWidget {
 
-  final DataChat chat;
+  final DataChat dataChat;
   final double widthRatio;
   final VoidCallback? onBackPressed;
 
   const ScreenChatroom(
       {super.key,
-        required this.chat,
+        required this.dataChat,
         this.widthRatio = 1.0,
         this.onBackPressed});
 
@@ -115,7 +115,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
     _scrollControllerAttachment1.addListener(_scrollListener1);
     _scrollControllerAttachment2.addListener(_scrollListener2);
     _itemPositionsListener.itemPositions.addListener(_doHandleScroll);
-    _moduleMessages = ModuleMessages(widget.chat.id);
+    _moduleMessages = ModuleMessages(widget.dataChat.id);
 
     _doLoadMessages();
     _doLoadNotice();
@@ -231,7 +231,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                     },
                   ),
                   title: Text(
-                    widget.chat.name,
+                    widget.dataChat.name,
                     style: const TextStyle(
                       color: colorMainGrey900,
                       fontWeight: FontWeight.w600,
@@ -267,7 +267,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                           Navigator.push(context,
                               MaterialPageRoute(builder: (context) {
                                 return ScreenChatroomDrawer(
-                                  dataChat: widget.chat,
+                                  dataChat: widget.dataChat,
                                 );
                               }));
                         },
@@ -277,6 +277,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                 ),
                 backgroundColor: Colors.white,
                 body: WidgetUiNotify(
+                  dataChat: widget.dataChat,
                   child: Column(
                     children: [
                       Expanded(
@@ -1318,7 +1319,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
       });
 
       for (DataMessage message in messages) {
-        showNotificationMessage(context, widget.chat, message);
+        showNotificationMessage(context, widget.dataChat, message);
       }
 
     }).catchError((e) {
@@ -1342,7 +1343,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
       for (DataMessage message in messages) {
         if(!_listMessages.contains(message)) {
           _listMessages.insert(0, message);
-          showNotificationMessage(context, widget.chat, message);
+          showNotificationMessage(context, widget.dataChat, message);
         }
       }
 
@@ -1350,7 +1351,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
   }
 
   void _doLoadNotice() {
-    _moduleNotice.getNotices(widget.chat.id).then((List<DataNotice> listNotices) {
+    _moduleNotice.getNotices(widget.dataChat.id).then((List<DataNotice> listNotices) {
       setState(() {
         for (DataNotice notice in listNotices) {
           if (notice.noticeable) {

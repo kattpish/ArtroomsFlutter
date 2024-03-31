@@ -20,6 +20,7 @@ import '../widgets/widget_chats_empty.dart';
 import '../widgets/widget_chats_exit.dart';
 import '../widgets/widget_chats_row.dart';
 import '../widgets/widget_loader.dart';
+import '../widgets/widget_ui_notify.dart';
 
 
 class ScreenChats extends StatefulWidget {
@@ -51,6 +52,8 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver  
   void initState() {
     super.initState();
 
+    addState(this);
+
     if(!DBStore().isLoggedIn()) {
       Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) {
         return const ScreenLogin();
@@ -79,6 +82,7 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver  
 
   @override
   void dispose() {
+    removeState(this);
     _timer.cancel();
     super.dispose();
   }
@@ -198,10 +202,12 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver  
                       ),
                     ],
                   ),
-                  buildMessagePin(context, this,
-                      onSelectChat: () {
-                        _doSelectChat(context, dataChatPin);
-                      }
+                  Visibility(
+                    child: widgetChatMessagePin(context, this,
+                        onSelectChat: () {
+                          _doSelectChat(context, dataChatPin);
+                        }
+                    ),
                   ),
                 ],
               ),
@@ -269,7 +275,7 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver  
         if(!_listScreenChatrooms.containsKey(dataChat.id)) {
 
           ScreenChatroom screenChatroom = ScreenChatroom(
-            chat: dataChat,
+            dataChat: dataChat,
             widthRatio: 0.62,
             onBackPressed: () {
               setState(() {
@@ -290,7 +296,7 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver  
 
     }else {
       Navigator.push(context, MaterialPageRoute(builder: (context) {
-        return ScreenChatroom(chat: dataChat);
+        return ScreenChatroom(dataChat: dataChat);
       }));
     }
   }

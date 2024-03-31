@@ -11,7 +11,7 @@ import '../../utils/utils_media.dart';
 import '../theme/theme_colors.dart';
 import '../widgets/widget_chatroom_files_card.dart';
 import '../widgets/widget_loader.dart';
-import '../widgets/widget_ui_notifiy.dart';
+import '../widgets/widget_ui_notify.dart';
 
 
 class ScreenChatroomFiles extends StatefulWidget {

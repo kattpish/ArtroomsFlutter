@@ -4,28 +4,24 @@ import 'package:artrooms/beans/bean_message.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 import '../main.dart';
-import '../ui/theme/theme_colors.dart';
-import '../ui/widgets/widget_chatroom_message_pin.dart';
+import '../ui/widgets/widget_ui_notify.dart';
 
 
 int timeSecRefreshChat = 10;
 
 Future<void> showNotificationChat(BuildContext context, State state, DataChat dataChat) async {
   if(dataChat.unreadMessages == 0) return;
-  (statePin != null && statePin!.mounted ? statePin : state)?.setState(() {
-    dataChatPin = dataChat;
-  });
+  notifyState(dataChat);
   return showNotificationMessage(context, dataChat, dataChat.lastMessage);
 }
 
 Future<void> showNotificationMessage(BuildContext context, DataChat dataChat, DataMessage message) async {
-  // if(message.isMe) return;
-  // if(!dataChat.isNotification) return;
-  // if(!dbStore.isNotificationMessage()) return;
-  // if(DateTime.now().millisecondsSinceEpoch - message.timestamp > timeSecRefreshChat*1000) return;
+  if(message.isMe) return;
+  if(!dataChat.isNotification) return;
+  if(!dbStore.isNotificationMessage()) return;
+  if(DateTime.now().millisecondsSinceEpoch - message.timestamp > timeSecRefreshChat*1000) return;
 
   showToastWhenUserNotIdle(context, dataChat.id.hashCode, dataChat.name, message.getSummary());
 
@@ -57,13 +53,13 @@ Future<void> showNotification(BuildContext context, int id, String title, String
 }
 
 Future<void> showToastWhenUserNotIdle(BuildContext context, int id, String title, String message) async {
-  Fluttertoast.showToast(
-    msg: "$title\n$message" ,
-    toastLength: Toast.LENGTH_LONG,
-    gravity: ToastGravity.TOP,
-    timeInSecForIosWeb: 1,
-    backgroundColor: colorPrimaryPurple,
-    textColor: Colors.white,
-    fontSize: 16.0,
-  );
+  // Fluttertoast.showToast(
+  //   msg: "$title\n$message" ,
+  //   toastLength: Toast.LENGTH_LONG,
+  //   gravity: ToastGravity.TOP,
+  //   timeInSecForIosWeb: 1,
+  //   backgroundColor: colorPrimaryPurple,
+  //   textColor: Colors.white,
+  //   fontSize: 16.0,
+  // );
 }

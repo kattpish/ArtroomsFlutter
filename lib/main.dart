@@ -24,6 +24,20 @@ ModuleMedia moduleMedia = ModuleMedia();
 
 Future<void> main() async {
 
+  await init();
+
+  runApp(
+    MaterialApp(
+      home: DBStore().isLoggedIn() ? const ScreenChats() : const ScreenLogin(),
+      debugShowCheckedModeBanner: false,
+      navigatorObservers: [listenerRouteObserver],
+    ),
+  );
+
+}
+
+Future<void> init() async {
+
   WidgetsFlutterBinding.ensureInitialized();
 
   String symbolsDataString = await rootBundle.loadString('assets/locale/symbols/ko_KR.json');
@@ -46,11 +60,5 @@ Future<void> main() async {
   var initSettings = InitializationSettings(android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
   await flutterLocalNotificationsPlugin.initialize(initSettings);
 
-  runApp(
-    MaterialApp(
-      home: DBStore().isLoggedIn() ? const ScreenChats() : const ScreenLogin(),
-      debugShowCheckedModeBanner: false,
-      navigatorObservers: [listenerRouteObserver],
-    ),
-  );
 }
+

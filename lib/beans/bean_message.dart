@@ -163,6 +163,18 @@ class DataMessage {
     return "$sizeStr$unit";
   }
 
+  @override
+  bool operator == (Object other) {
+    return identical(this, other) || other is DataMessage
+        && runtimeType == other.runtimeType
+        && index == other.index;
+  }
+
+  @override
+  int get hashCode {
+    return index.hashCode;
+  }
+
 }
 
 class ParentMessage {
@@ -172,14 +184,12 @@ class ParentMessage {
   String senderName;
   ParentMessage(this.messageId, this.content,this.senderId, this.senderName);
 
-  // named constructor
   ParentMessage.fromJson(Map<String, dynamic> json)
       : messageId = json['messageId'],
         content = json['content'],
         senderId = json['senderId'],
         senderName = json['senderName'];
 
-  // method
   Map<String, dynamic> toJson() {
     return {
       'messageId': messageId,
@@ -187,6 +197,18 @@ class ParentMessage {
       'senderId': senderId,
       'senderName': senderName,
     };
+  }
+
+  @override
+  bool operator == (Object other) {
+    return identical(this, other) || other is ParentMessage
+        && runtimeType == other.runtimeType
+        && messageId == other.messageId;
+  }
+
+  @override
+  int get hashCode {
+    return messageId.hashCode;
   }
 
 }

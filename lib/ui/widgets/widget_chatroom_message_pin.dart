@@ -1,18 +1,16 @@
 
+import 'package:artrooms/ui/widgets/widget_ui_notify.dart';
 import 'package:flutter/material.dart';
 
 import '../../beans/bean_chat.dart';
 import '../screens/screen_chatroom.dart';
 
 
-State? statePin;
-DataChat dataChatPin = DataChat.empty();
-
-Widget buildMessagePin(BuildContext context, State state, {void Function()? onSelectChat}) {
-  return Visibility(
-    visible: !dataChatPin.id.isNotEmpty,
+Widget widgetChatMessagePin(BuildContext context, State state, {void Function()? onSelectChat}) {
+  return AnimatedOpacity(
+    opacity: dataChatPin.id.isNotEmpty ? 1.0 : 0.0,
+    duration: const Duration(milliseconds: 500),
     child: Container(
-      height: 40,
       margin: const EdgeInsets.symmetric(horizontal: 14, vertical: 2),
       constraints: const BoxConstraints(minHeight: 36),
       decoration: ShapeDecoration(
@@ -35,9 +33,10 @@ Widget buildMessagePin(BuildContext context, State state, {void Function()? onSe
             onSelectChat();
           }else {
             Navigator.push(context, MaterialPageRoute(builder: (context) {
-              return ScreenChatroom(chat: dataChatPin);
+              return ScreenChatroom(dataChat: dataChatPin);
             }));
           }
+          notifyState(DataChat.empty());
         },
         child: Container(
           width: double.infinity,
@@ -92,6 +91,23 @@ Widget buildMessagePin(BuildContext context, State state, {void Function()? onSe
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              Container(
+                                alignment: Alignment.topLeft,
+                                child: Text(
+                                  dataChatPin.name,
+                                  style: const TextStyle(
+                                    color: Color(0xFF3A3A3A),
+                                    fontSize: 14,
+                                    fontFamily: 'Pretendard',
+                                    fontWeight: FontWeight.w600,
+                                    height: 0,
+                                    letterSpacing: -0.28,
+                                  ),
+                                  maxLines: 1,
+                                  textAlign: TextAlign.center,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
                               Container(
                                 alignment: Alignment.topLeft,
                                 child: Text(
