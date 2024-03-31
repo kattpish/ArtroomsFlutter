@@ -12,7 +12,7 @@ Widget widgetChatroomMessageInput(TextEditingController messageController, messa
         focusNode: messageFocusNode,
         onChanged: (text) {
           onChanged(text);
-        }, // TextEditingController
+        },
         decoration: InputDecoration(
           hintText: '',
           border: UnderlineInputBorder(
@@ -24,7 +24,9 @@ Widget widgetChatroomMessageInput(TextEditingController messageController, messa
         ),
         textCapitalization: TextCapitalization.sentences,
         style: const TextStyle(
-            color: Colors.transparent
+            color: Colors.transparent,
+            fontSize: 14.7,
+            letterSpacing: 1.0,
         ), // Hide text
       ),
       Positioned(

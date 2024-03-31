@@ -15,7 +15,6 @@ Widget buildMentions({required Null Function(Member member) onCancelReply, requi
       ),
       child: WidgetChatroomMentionUser(
         member: members,
-        key: null,
         onCancelReply: (Member member) {
           onCancelReply(member);
         },

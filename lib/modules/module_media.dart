@@ -65,15 +65,15 @@ class ModuleMedia {
 
   }
 
-  Future<List<FileItem>> loadFileImages() async {
+  Future<List<FileItem>> loadFileImages({bool isShowSettings = false}) async {
 
     List<FileItem> imageFiles = [];
 
-    List<FileItem> imageFiles1 = await loadFileImages1();
-    // List<FileItem> imageFiles2 = await loadFileImages2();
+    List<FileItem> imageFiles1 = await loadFileImages1(isShowSettings: isShowSettings);
+    List<FileItem> imageFiles2 = await loadFileImages2();
 
     imageFiles.addAll(imageFiles1);
-    // imageFiles.addAll(imageFiles2);
+    imageFiles.addAll(imageFiles2);
 
     imageFiles.sort((a, b) {
       return b.date.compareTo(a.date);
@@ -82,13 +82,13 @@ class ModuleMedia {
     return imageFiles;
   }
 
-  Future<List<FileItem>> loadFileImages1({Null Function(FileItem fileItem)? onLoad}) async {
+  Future<List<FileItem>> loadFileImages1({bool isShowSettings = false, Null Function(FileItem fileItem)? onLoad}) async {
 
     List<AssetEntity> assetFiles = [];
 
     PermissionState result = await PhotoManager.requestPermissionExtend();
 
-    if(result.isAuth) {
+    if(result.isAuth || result.hasAccess) {
 
       List<AssetPathEntity> albums = await PhotoManager.getAssetPathList(type: RequestType.image);
 
@@ -123,7 +123,9 @@ class ModuleMedia {
       });
 
     } else {
-      PhotoManager.openSetting();
+      if(isShowSettings) {
+        PhotoManager.openSetting();
+      }
     }
 
     return imageFiles;
@@ -245,7 +247,7 @@ class ModuleMedia {
 
     PermissionState result = await PhotoManager.requestPermissionExtend();
 
-    if(result.isAuth) {
+    if(result.isAuth || result.hasAccess) {
 
       List<AssetPathEntity> albums = [];
 
@@ -390,7 +392,9 @@ class ModuleMedia {
         }
 
       }catch(error) {
-        print(error);
+        if (kDebugMode) {
+          print(error);
+        }
       }
     }
 

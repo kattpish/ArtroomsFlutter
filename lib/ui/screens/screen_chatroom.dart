@@ -6,7 +6,6 @@ import 'package:artrooms/modules/module_notices.dart';
 import 'package:artrooms/ui/screens/screen_chatroom_drawer.dart';
 import 'package:artrooms/ui/widgets/widget_loader.dart';
 import 'package:artrooms/utils/utils_notifications.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -36,6 +35,7 @@ import '../widgets/widget_chatroom_message_reply_textfield.dart';
 import '../widgets/widget_chatroom_notice_pin.dart';
 import '../widgets/widget_media.dart';
 import '../widgets/widget_ui_notify.dart';
+
 
 class ScreenChatroom extends StatefulWidget {
 
@@ -68,6 +68,8 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
   bool _listReachedBottom = false;
 
   final List<DataMessage> _listMessages = [];
+  List<Member> _listMembers = [];
+  List<Member> _listMembersAll = [];
   final ScrollController _scrollControllerAttachment1 = ScrollController();
   final ScrollController _scrollControllerAttachment2 = ScrollController();
   final TextEditingController _messageController = TextEditingController();
@@ -122,7 +124,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
 
     _doLoadMessages();
     _doLoadNotice();
-    _doLoadMedia();
+    _doLoadMedia(false);
 
     _timer = Timer.periodic(Duration(seconds: timeSecRefreshChat), (timer) {
       _doLoadMessagesNew();
@@ -467,7 +469,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                                   ? 1.0
                                   : 0.0,
                               duration: const Duration(milliseconds: 500),
-                              child: buildNoticePin(context, _dataNotice, _isExpandNotice, _isHideNotice,
+                              child: buildNoticePin(_dataNotice, _isExpandNotice,
                                   onToggle:() {
                                     setState(() {
                                       _isExpandNotice = !_isExpandNotice;
@@ -594,7 +596,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
         children: [
           if (isReplying) buildReplyForTextField(_replyMessage, _doCancelReply),
           if (_isMentioning) buildMentions(
-              members: _doGetAllMembers(),
+              members: _listMembers,
               onCancelReply: (Member member) {
                 _doSelectMention(member);
               }
@@ -613,7 +615,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                         _deselectPickedFiles(false);
                       } else {
                         _doAttachmentPickerMin();
-                        _doLoadMedia();
+                        _doLoadMedia(true);
                       }
                       closeKeyboard(context);
                     });
@@ -645,6 +647,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                               _isMentioning = false;
                             });
                           }
+                          _doFilterInputs(text);
                         }
                     ),
                   ])),
@@ -1160,375 +1163,6 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
     );
   }
 
-  Widget _attachmentPicker1(BuildContext context, State<StatefulWidget> state) {
-    return SizedBox(
-      child: NotificationListener<DraggableScrollableNotification>(
-        onNotification: (notification) {
-          final currentSize = notification.extent;
-          state.setState(() {
-            if(currentSize > 0.5) {
-              _showAttachmentFull = true;
-            }else {
-              _showAttachmentFull = false;
-            }
-          });
-          print("Current size: $currentSize");
-          return true;
-        },
-        child: GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onTap: () {
-            Navigator.of(context).pop();
-          },
-          child: GestureDetector(
-            onTap: () {},
-            child: DraggableScrollableSheet(
-              initialChildSize: 0.4,
-              minChildSize: 0.2,
-              maxChildSize: 0.9,
-              builder: (_, scrollController) {
-                return Container(
-                  color: Colors.white,
-                  child: Column(
-                    children: [
-                      Center(
-                        child: Container(
-                          height: 16,
-                          padding: const EdgeInsets.all(4.0),
-                          child: Container(
-                            width: 40,
-                            height: 5,
-                            decoration: const BoxDecoration(
-                              color: colorMainGrey250,
-                              borderRadius: BorderRadius.all(Radius.circular(24)),
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Visibility(
-                        visible: _showAttachmentFull,
-                        child: AppBar(
-                          backgroundColor: Colors.white,
-                          title: Text(
-                            !_selectMode ? '이미지' : "$_selectedImages개 선택",
-                            style: const TextStyle(
-                              fontSize: 18,
-                              color: colorMainGrey900,
-                              fontFamily: 'SUIT',
-                              fontWeight: FontWeight.w700,
-                              height: 0,
-                              letterSpacing: -0.36,
-                            ),
-                          ),
-                          toolbarHeight: 60,
-                          centerTitle: _selectMode,
-                          leading: Row(
-                            children: [
-                              Visibility(
-                                visible: !_selectMode,
-                                child: IconButton(
-                                  icon: const Icon(
-                                    Icons.arrow_back_ios,
-                                    color: colorMainGrey250,
-                                    size: 20,
-                                  ),
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                ),
-                              ),
-                              Visibility(
-                                visible: _selectMode,
-                                child: Container(
-                                  height: double.infinity,
-                                  margin: const EdgeInsets.only(left: 8.0),
-                                  child: Center(
-                                    child: InkWell(
-                                      onTap: () {
-                                        _deselectPickedFiles(true);
-                                      },
-                                      child: Container(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: const Text(
-                                            '취소',
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              color: colorMainGrey600,
-                                              fontFamily: 'SUIT',
-                                              fontWeight: FontWeight.w400,
-                                              height: 0,
-                                              letterSpacing: -0.32,
-                                            )
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          actions: [
-                            Visibility(
-                              visible: _selectMode,
-                              child: Container(
-                                height: double.infinity,
-                                margin: const EdgeInsets.only(right: 8.0),
-                                child: Center(
-                                  child: InkWell(
-                                    onTap: () {
-                                      _doDeselectPickedImages();
-                                    },
-                                    child: Container(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: const Text(
-                                          '선택 해제',
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                            color: colorMainGrey600,
-                                            fontFamily: 'SUIT',
-                                            fontWeight: FontWeight.w400,
-                                            height: 0,
-                                            letterSpacing: -0.32,
-                                          )
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Visibility(
-                              visible: !_selectMode,
-                              child: Container(
-                                height: double.infinity,
-                                margin: const EdgeInsets.only(left: 8.0),
-                                child: Center(
-                                  child: InkWell(
-                                    onTap: () {
-                                      setState(() {
-                                        _selectMode = true;
-                                      });
-                                    },
-                                    child: Container(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: const Text(
-                                          '선택',
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                            color: colorMainGrey600,
-                                            fontFamily: 'SUIT',
-                                            fontWeight: FontWeight.w400,
-                                            height: 0,
-                                            letterSpacing: -0.32,
-                                          )
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                          elevation: 0.2,
-                        ),
-                      ),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Container(
-                              width: double.infinity,
-                              height: 44,
-                              padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                              decoration: BoxDecoration(
-                                color: colorPrimaryPurple,
-                                borderRadius: BorderRadius.circular(30),
-                              ),
-                              child: TextButton(
-                                onPressed: () {
-                                  state.setState(() async {
-                                    _pickerType = 1;
-                                    closeKeyboard(context);
-                                    await _doProcessCameraResult();
-                                  });
-                                },
-                                child: const Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      Icons.camera_alt,
-                                      color: Colors.white,
-                                      size: 20,
-                                    ),
-                                    SizedBox(width: 6),
-                                    Text('카메라',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 16,
-                                          fontFamily: 'Pretendard',
-                                          fontWeight: FontWeight.w500,
-                                          height: 0,
-                                          letterSpacing: -0.32,
-                                        )),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 4,
-                          ),
-                          Expanded(
-                            child: Container(
-                              width: double.infinity,
-                              height: 44,
-                              padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                              decoration: BoxDecoration(
-                                color: colorPrimaryBlue,
-                                borderRadius: BorderRadius.circular(30),
-                              ),
-                              child: TextButton(
-                                onPressed: () {
-                                  state.setState(() async {
-                                    // type = 2;
-                                    closeKeyboard(context);
-                                    await _doProcessPickedFiles();
-                                  });
-                                },
-                                child: const Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      Icons.folder,
-                                      color: Colors.white,
-                                      size: 20,
-                                    ),
-                                    SizedBox(width: 6),
-                                    Text('파일',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 16,
-                                          fontFamily: 'Pretendard',
-                                          fontWeight: FontWeight.w500,
-                                          height: 0,
-                                          letterSpacing: -0.32,
-                                        )),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 12,
-                      ),
-                      Expanded(
-                        child: _filesImages.isEmpty ? const Center(
-                          child: SizedBox(
-                            width: 30,
-                            height: 30,
-                            child: CircularProgressIndicator(
-                              color: Color(0xFF6A79FF),
-                              strokeWidth: 3,
-                            ),
-                          ),
-                        )
-                            : GridView.builder(
-                          controller: scrollController,
-                          padding: const EdgeInsets.only(bottom: 24),
-                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: isTablet(context) ? 6 : 3,
-                            crossAxisSpacing: 5,
-                            mainAxisSpacing: 5,
-                            childAspectRatio: 1,
-                          ),
-                          itemCount: _filesImages.length,
-                          itemBuilder: (context, index) {
-                            var fileImage = _filesImages[index];
-                            return Container(
-                              clipBehavior: Clip.antiAlias,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: InkWell(
-                                onTap: () {
-                                  doOpenPhotoView(context,
-                                      fileImage: fileImage.file,
-                                      fileName: fileImage.name);
-                                },
-                                onLongPress: () {
-                                  state.setState(() {
-                                    fileImage.isSelected = !fileImage.isSelected;
-                                    closeKeyboard(context);
-                                  });
-                                  _doCheckEnableButtonFile();
-                                },
-                                child: Stack(
-                                  children: [
-                                    Image.file(
-                                      fileImage.file,
-                                      width: double.infinity,
-                                      height: double.infinity,
-                                      fit: BoxFit.cover,
-                                    ),
-                                    Positioned(
-                                      top: 3,
-                                      right: 4,
-                                      child: Visibility(
-                                        visible: _selectMode,
-                                        child: InkWell(
-                                          onTap: () {
-                                            state.setState(() {
-                                              fileImage.isSelected =
-                                              !fileImage.isSelected;
-                                              _doCheckEnableButtonFile();
-                                              closeKeyboard(context);
-                                            });
-                                          },
-                                          child: Container(
-                                            width: 26,
-                                            height: 26,
-                                            decoration: BoxDecoration(
-                                              color: fileImage.isSelected
-                                                  ? colorPrimaryBlue
-                                                  : colorMainGrey200
-                                                  .withAlpha(150),
-                                              shape: BoxShape.circle,
-                                              border: Border.all(
-                                                color: fileImage.isSelected
-                                                    ? colorPrimaryBlue
-                                                    : const Color(0xFFE3E3E3),
-                                                width: 1,
-                                              ),
-                                            ),
-                                            child: fileImage.isSelected
-                                                ? const Icon(Icons.check,
-                                                size: 16, color: Colors.white)
-                                                : Container(),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
   @override
   void onMessageReceived(BaseChannel channel, BaseMessage baseMessage) {
 
@@ -1616,7 +1250,13 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
   }
 
   List<Member> _doGetAllMembers() {
-    return _moduleMessages.getGroupChannel().members;
+    if(_listMembersAll.isEmpty) {
+      setState(() {
+        _listMembersAll = _moduleMessages.getGroupChannel().members;
+      });
+    }
+    _listMembers = _listMembersAll;
+    return _listMembersAll;
   }
 
   Future<void> _doSendMessage() async {
@@ -1747,11 +1387,11 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
     await _doSendMessageMedia();
   }
 
-  void _doLoadMedia() {
+  void _doLoadMedia(isShow) {
 
     moduleMedia.init();
 
-    moduleMedia.loadFileImages1(onLoad: (FileItem fileItem) {
+    moduleMedia.loadFileImages1(isShowSettings: isShow, onLoad: (FileItem fileItem) {
       if(mounted) {
         setState(() {
           if (!_filesImages.contains(fileItem)) {
@@ -1761,7 +1401,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
       }
     });
 
-    moduleMedia.loadFileImages().then((List<FileItem> listImages) {
+    moduleMedia.loadFileImages(isShowSettings: isShow).then((List<FileItem> listImages) {
       if(mounted) {
         setState(() {
           for (FileItem fileItem in listImages) {
@@ -1880,6 +1520,51 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
     });
   }
 
+  void _doFilterInputs(String text) {
+
+    _doGetAllMembers();
+
+    String textAfterCharacter = "";
+    if (text.contains("@")) {
+      textAfterCharacter = text.substring(text.lastIndexOf('@') + 1);
+    }
+
+    if (text.endsWith("@")) {
+      if(_isMentioning == false) {
+        setState(() {
+          _isMentioning = true;
+        });
+      }
+    }
+
+    if(textAfterCharacter.isNotEmpty && !textAfterCharacter.contains(' ')){
+      if(_isMentioning == false) {
+        setState(() {
+          _isMentioning = true;
+        });
+      }
+      _doUpdateAllMemberByFilter(textAfterCharacter);
+    }
+
+    if (text.endsWith(" ") || text.isEmpty) {
+      textAfterCharacter = "";
+      setState(() {
+        _isMentioning = false;
+      });
+    }
+
+  }
+
+  void _doUpdateAllMemberByFilter(String textAfterCharacter) {
+    setState(() {
+      _listMembers = _listMembersAll.where((member) {
+        return member.nickname.toLowerCase()
+            .substring(member.nickname.lastIndexOf('@') + 1)
+            .contains(textAfterCharacter.toLowerCase());
+      }).toList();
+    });
+  }
+
   void _doAttachmentPickerFull() {
     setState(() {
       _boxHeight = _boxHeightMin;
@@ -1887,26 +1572,6 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
       _showAttachment = false;
     });
     _doAnimateHeight();
-  }
-
-  void _doAttachmentPickerMin1() {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      isDismissible: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) {
-        return attachmentPicker;
-      },
-    ).then((value) {
-      return null;
-    });
-
-    setState(() {
-      _boxHeight = _boxHeightMin;
-      _showAttachment = true;
-      _showAttachmentFull = false;
-    });
   }
 
   void _doAttachmentPickerMin() {
