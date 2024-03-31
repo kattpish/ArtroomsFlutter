@@ -15,6 +15,8 @@ import 'listeners/listener_route_observer.dart';
 import 'modules/module_media.dart';
 import 'modules/module_sendbird.dart';
 
+import 'package:flutter/cupertino.dart';
+
 
 late final SharedPreferences sharedPreferences;
 late final DBStore dbStore;
@@ -28,7 +30,7 @@ Future<void> main() async {
 
   runApp(
     MaterialApp(
-      home: DBStore().isLoggedIn() ? const ScreenChats() : const ScreenLogin(),
+      home: DBStore().isLoggedIn() ?  const ScreenChats() : const ScreenLogin(),
       debugShowCheckedModeBanner: false,
       navigatorObservers: [listenerRouteObserver],
     ),
@@ -62,3 +64,64 @@ Future<void> init() async {
 
 }
 
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text('Draggable Bottom Sheet Example'),
+        ),
+        body: Center(
+          child: ElevatedButton(
+            onPressed: () {
+              showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                backgroundColor: Colors.transparent,
+                builder: (context) {
+                  return DraggableBottomSheet();
+                },
+              );
+            },
+            child: const Text('Show Bottom Sheet'),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class DraggableBottomSheet extends StatelessWidget {
+
+  const DraggableBottomSheet({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return DraggableScrollableSheet(
+      initialChildSize: 0.5,
+      minChildSize: 0.25,
+      maxChildSize: 1,
+      builder: (context, scrollController) {
+        return Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
+            ),
+          ),
+          child: ListView.builder(
+            controller: scrollController,
+            itemCount: 100, // Number of items in the list
+            itemBuilder: (context, index) {
+              return ListTile(
+                title: Text('Item $index'),
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+}

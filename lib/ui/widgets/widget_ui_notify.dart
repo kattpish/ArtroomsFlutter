@@ -7,20 +7,21 @@ import 'package:flutter/cupertino.dart';
 import '../../beans/bean_chat.dart';
 
 
-List<State> listStates = [];
+List<State<StatefulWidget>> listStates = [];
 DataChat dataChatPin = DataChat.empty();
 Timer? _timer;
 
-void addState(State state) {
+void addState(State<StatefulWidget> state) {
   listStates.add(state);
 }
 
-void removeState(State state) {
+void removeState(State<StatefulWidget> state) {
   listStates.remove(state);
 }
 
 void notifyState(DataChat dataChat) {
-  for(State state in listStates) {
+
+  for(State<StatefulWidget> state in listStates) {
     state.setState(() {
       dataChatPin = dataChat;
     });
