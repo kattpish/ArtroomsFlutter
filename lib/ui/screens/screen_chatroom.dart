@@ -13,7 +13,10 @@ import 'package:flutter/services.dart';
 import 'package:focused_menu/focused_menu.dart';
 import 'package:focused_menu/modals.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:sendbird_sdk/core/channel/base/base_channel.dart';
+import 'package:sendbird_sdk/core/message/base_message.dart';
 import 'package:sendbird_sdk/core/models/member.dart';
+import 'package:sendbird_sdk/handlers/channel_event_handler.dart';
 import '../../beans/bean_chat.dart';
 import '../../beans/bean_file.dart';
 import '../../beans/bean_message.dart';
@@ -29,7 +32,6 @@ import '../widgets/widget_chatroom_message_input.dart';
 import '../widgets/widget_chatroom_message_me.dart';
 import '../widgets/widget_chatroom_message_mention.dart';
 import '../widgets/widget_chatroom_message_other.dart';
-import '../widgets/widget_chatroom_message_pin.dart';
 import '../widgets/widget_chatroom_message_reply_textfield.dart';
 import '../widgets/widget_chatroom_notice_pin.dart';
 import '../widgets/widget_media.dart';
@@ -53,7 +55,7 @@ class ScreenChatroom extends StatefulWidget {
   }
 }
 
-class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProviderStateMixin {
+class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProviderStateMixin, ChannelEventHandler {
 
   bool _isLoading = true;
   bool _isLoadMore = false;
@@ -66,7 +68,6 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
   bool _listReachedBottom = false;
 
   final List<DataMessage> _listMessages = [];
-  final ScrollController _scrollController = ScrollController();
   final ScrollController _scrollControllerAttachment1 = ScrollController();
   final ScrollController _scrollControllerAttachment2 = ScrollController();
   final TextEditingController _messageController = TextEditingController();
@@ -105,8 +106,8 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
   int _selectedImages = 0;
   int _selectedMedia = 0;
   bool _selectMode = true;
-  final List<FileItem> _filesImages = [];
-  final List<FileItem> _filesMedia = [];
+  List<FileItem> _filesImages = [];
+  List<FileItem> _filesMedia = [];
 
   @override
   void initState() {
@@ -116,6 +117,8 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
     _scrollControllerAttachment2.addListener(_scrollListener2);
     _itemPositionsListener.itemPositions.addListener(_doHandleScroll);
     _moduleMessages = ModuleMessages(widget.dataChat.id);
+
+    _moduleMessages.init(this);
 
     _doLoadMessages();
     _doLoadNotice();
@@ -127,11 +130,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
 
     _messageFocusNode.addListener(() {
       if (_messageFocusNode.hasFocus) {
-        _scrollController.animateTo(
-          _scrollController.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeOut,
-        );
+
       }
     });
 
@@ -171,8 +170,8 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
 
   @override
   void dispose() {
+    _moduleMessages.removeChannelEventHandler();
     _messageController.dispose();
-    _scrollController.dispose();
     _scrollControllerAttachment1.dispose();
     _scrollControllerAttachment2.dispose();
     _scrollTimer?.cancel();
@@ -210,7 +209,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
           return true;
         }
       },
-      child: Builder(builder: (context) {
+      child: Builder(builder: (_) {
         return SafeArea(
           child: Stack(
             children: [
@@ -242,7 +241,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                     ),
                   ),
                   centerTitle: true,
-                  elevation: 0.5,
+                  elevation: 0.2,
                   toolbarHeight: 60,
                   backgroundColor: Colors.white,
                   actions: [
@@ -714,6 +713,131 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
             const SizedBox(
               height: 10,
             ),
+            Visibility(
+              visible: _showAttachmentFull,
+              child: AppBar(
+                backgroundColor: Colors.white,
+                title: Text(
+                  !_selectMode ? '이미지' : "$_selectedImages개 선택",
+                  style: const TextStyle(
+                    fontSize: 18,
+                    color: colorMainGrey900,
+                    fontFamily: 'SUIT',
+                    fontWeight: FontWeight.w700,
+                    height: 0,
+                    letterSpacing: -0.36,
+                  ),
+                ),
+                toolbarHeight: 60,
+                centerTitle: _selectMode,
+                leading: Row(
+                  children: [
+                    Visibility(
+                      visible: !_selectMode,
+                      child: IconButton(
+                        icon: const Icon(
+                          Icons.arrow_back_ios,
+                          color: colorMainGrey250,
+                          size: 20,
+                        ),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ),
+                    Visibility(
+                      visible: _selectMode,
+                      child: Container(
+                        height: double.infinity,
+                        margin: const EdgeInsets.only(left: 8.0),
+                        child: Center(
+                          child: InkWell(
+                            onTap: () {
+                              _deselectPickedFiles(true);
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(8.0),
+                              child: const Text(
+                                  '취소',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: colorMainGrey600,
+                                    fontFamily: 'SUIT',
+                                    fontWeight: FontWeight.w400,
+                                    height: 0,
+                                    letterSpacing: -0.32,
+                                  )
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                actions: [
+                  Visibility(
+                    visible: _selectMode,
+                    child: Container(
+                      height: double.infinity,
+                      margin: const EdgeInsets.only(right: 8.0),
+                      child: Center(
+                        child: InkWell(
+                          onTap: () {
+                            _doDeselectPickedImages();
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(8.0),
+                            child: const Text(
+                                '선택 해제',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: colorMainGrey600,
+                                  fontFamily: 'SUIT',
+                                  fontWeight: FontWeight.w400,
+                                  height: 0,
+                                  letterSpacing: -0.32,
+                                )
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Visibility(
+                    visible: !_selectMode,
+                    child: Container(
+                      height: double.infinity,
+                      margin: const EdgeInsets.only(left: 8.0),
+                      child: Center(
+                        child: InkWell(
+                          onTap: () {
+                            setState(() {
+                              _selectMode = true;
+                            });
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(8.0),
+                            child: const Text(
+                                '선택',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: colorMainGrey600,
+                                  fontFamily: 'SUIT',
+                                  fontWeight: FontWeight.w400,
+                                  height: 0,
+                                  letterSpacing: -0.32,
+                                )
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+                elevation: 0.2,
+              ),
+            ),
             Row(
               children: [
                 Expanded(
@@ -1038,6 +1162,361 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
     );
   }
 
+  @override
+  void onMessageReceived(BaseChannel channel, BaseMessage baseMessage) {
+
+    DataMessage dataMessage = DataMessage.fromBaseMessage(baseMessage);
+
+    if(!_listMessages.contains(dataMessage)) {
+      _listMessages.insert(0, dataMessage);
+      showNotificationMessage(context, widget.dataChat, dataMessage);
+    }
+
+  }
+
+  Future<void> _doLoadMessages() async {
+    if (_moduleMessages.isLoading()) return;
+
+    if (!_isLoadMore) {
+      setState(() {
+        // _isLoadMore = listMessages.isNotEmpty;
+      });
+    }
+
+    _moduleMessages.getMessagesMore().then((List<DataMessage> messages) {
+      setState(() {
+        _listMessages.addAll(messages);
+      });
+
+      for (DataMessage message in messages) {
+        showNotificationMessage(context, widget.dataChat, message);
+      }
+
+    }).catchError((e) {
+
+    }
+    ).whenComplete(() {
+      if(mounted) {
+        setState(() {
+          _isLoading = false;
+          _isLoadMore = false;
+        });
+      }
+    });
+  }
+
+  Future<void> _doLoadMessagesNew() async {
+    if (_moduleMessages.isLoading()) return;
+
+    _moduleMessages.getMessagesNew().then((List<DataMessage> messages) {
+
+      for (DataMessage message in messages) {
+        if(!_listMessages.contains(message)) {
+          _listMessages.insert(0, message);
+          showNotificationMessage(context, widget.dataChat, message);
+        }
+      }
+
+    });
+  }
+
+  void _doLoadNotice() {
+    _moduleNotice.getNotices(widget.dataChat.id).then((List<DataNotice> listNotices) {
+      setState(() {
+        for (DataNotice notice in listNotices) {
+          if (notice.noticeable) {
+            _dataNotice = notice;
+            _isHideNotice = dbStore.isNoticeHide(_dataNotice);
+            break;
+          }
+        }
+      });
+    })
+        .catchError((e) {})
+        .whenComplete(() {});
+  }
+
+  void _doCheckEnableButton() {
+    if (_messageController.text.trim().isNotEmpty) {
+      setState(() {
+        _isButtonDisabled = false;
+      });
+    } else {
+      setState(() {
+        _isButtonDisabled = true;
+      });
+    }
+  }
+
+  List<Member> _doGetAllMembers() {
+    return _moduleMessages.getGroupChannel().members;
+  }
+
+  Future<void> _doSendMessage() async {
+    if (!_isButtonDisabled) {
+
+      _doSendMessageText();
+
+      setState(() {
+        _showAttachment = false;
+        _showAttachmentFull = false;
+      });
+
+      await _doSendMessageImages();
+
+      await _doSendMessageMedia();
+
+      _deselectPickedFiles(false);
+      _doCancelReply();
+    }
+  }
+
+  void _doSendMessageText() {
+
+    if (_messageController.text.isNotEmpty) {
+
+      _moduleMessages.sendMessage(_messageController.text, _replyMessage).then((DataMessage myMessage) {
+        setState(() {
+          _listMessages.insert(0, myMessage);
+          _messageController.clear();
+        });
+
+        Future.delayed(const Duration(milliseconds: 100), () {
+          _doScrollToBottom();
+        });
+      });
+    }
+
+  }
+
+  Future<void> _doSendMessageImages() async {
+
+    if (_selectedImages > 0) {
+      DataMessage myMessage1 = _moduleMessages.preSendMessageImage(_filesImages);
+      int index = myMessage1.index;
+
+      setState(() {
+        _listMessages.insert(0, myMessage1);
+      });
+
+      Future.delayed(const Duration(milliseconds: 100), () {
+        _doScrollToBottom();
+      });
+
+      myMessage1 = await _moduleMessages.sendMessageImages(_filesImages);
+      myMessage1.isSending = false;
+
+      for (int i = 0; i < _listMessages.length; i++) {
+        DataMessage myMessage = _listMessages[i];
+        if (myMessage.index == index) {
+          setState(() {
+            _listMessages[i] = myMessage1;
+          });
+          break;
+        }
+      }
+    }
+
+  }
+
+  Future<void> _doSendMessageMedia() async {
+
+    if (_selectedMedia > 0) {
+      List<int> index = [];
+
+      List<DataMessage> myMessages = await _moduleMessages.preSendMessageMedia(_filesMedia);
+
+      for (DataMessage myMessage1 in myMessages) {
+        setState(() {
+          _listMessages.insert(0, myMessage1);
+        });
+        index.add(myMessage1.index);
+      }
+
+      Future.delayed(const Duration(milliseconds: 100), () {
+        _doScrollToBottom();
+      });
+
+      myMessages = await _moduleMessages.sendMessageMedia(_filesMedia);
+
+      for (int j = 0; j < _listMessages.length; j++) {
+        DataMessage myMessage = _listMessages[j];
+
+        for (int i = 0; i < myMessages.length; i++) {
+          DataMessage myMessage1 = myMessages[i];
+          myMessage1.isSending = false;
+          if (myMessage.index == index[i]) {
+            setState(() {
+              _listMessages[j] = myMessage1;
+            });
+            break;
+          }
+        }
+      }
+    }
+
+  }
+
+  Future<void> _doProcessCameraResult() async {
+    File? file = await doPickImageWithCamera();
+
+    if(file != null) {
+      _selectedImages++;
+      FileItem fileItem = FileItem(file: file, path: file.path);
+      fileItem.isSelected = true;
+      _filesImages.insert(0, fileItem);
+    }
+  }
+
+  Future<void> _doProcessPickedFiles() async {
+    _doAttachmentPickerClose();
+    _doDeselectPickedMedia();
+
+    List<FileItem> fileItems = await doPickFiles();
+
+    for(FileItem fileItem in fileItems) {
+      _selectedMedia++;
+      fileItem.isSelected = true;
+      _filesMedia.add(fileItem);
+    }
+
+    await _doSendMessageMedia();
+  }
+
+  void _doLoadMedia() {
+
+    moduleMedia.init();
+
+    moduleMedia.loadFileImages1(onLoad: (FileItem fileItem) {
+      if(mounted) {
+        setState(() {
+          if (!_filesImages.contains(fileItem)) {
+            _filesImages.add(fileItem);
+          }
+        });
+      }
+    });
+
+    moduleMedia.loadFileImages().then((List<FileItem> listImages) {
+      if(mounted) {
+        setState(() {
+          for (FileItem fileItem in listImages) {
+            if (!_filesImages.contains(fileItem)) {
+              _filesImages.insert(0, fileItem);
+            }
+          }
+          _filesImages.clear();
+          _filesImages = listImages;
+        });
+      }
+    });
+
+    moduleMedia.loadFilesMedia().then((List<FileItem> listMedia) {
+      if(mounted) {
+        setState(() {
+          for (FileItem fileItem in listMedia) {
+            if (!_filesMedia.contains(fileItem)) {
+              _filesMedia.insert(0, fileItem);
+            }
+          }
+          _filesMedia.clear();
+          _filesMedia = listMedia;
+        });
+      }
+    });
+  }
+
+  void _doHideAttachmentPicker() {
+    _showAttachment = false;
+    _showAttachmentFull = false;
+  }
+
+  void _doScrollToBottom() {
+    _itemScrollController.jumpTo(index: 0);
+  }
+
+  void _doCheckEnableButtonFile() {
+    _selectedImages = 0;
+    _selectedMedia = 0;
+
+    for (FileItem fileImage in _filesImages) {
+      if (fileImage.isSelected) {
+        setState(() {
+          _selectedImages++;
+        });
+      }
+    }
+    for (FileItem fileMedia in _filesMedia) {
+      if (fileMedia.isSelected) {
+        setState(() {
+          _selectedMedia++;
+        });
+      }
+    }
+
+    if (_selectedImages + _selectedMedia > 0) {
+      setState(() {
+        _selectMode = true;
+        _isButtonDisabled = false;
+      });
+    } else {
+      setState(() {
+        _isButtonDisabled = true;
+      });
+    }
+  }
+
+  void _deselectPickedFiles(isClose) {
+    _doDeselectPickedImages();
+    _doDeselectPickedMedia();
+    if(isClose) {
+      _doAttachmentPickerClose();
+    }
+  }
+
+  void _doDeselectPickedImages() {
+    setState(() {
+      _selectedImages = 0;
+    });
+
+    for (FileItem fileImage in _filesImages) {
+      setState(() {
+        fileImage.isSelected = false;
+      });
+    }
+  }
+
+  void _doDeselectPickedMedia() {
+    setState(() {
+      _selectedMedia = 0;
+    });
+
+    for (FileItem fileMedia in _filesMedia) {
+      setState(() {
+        fileMedia.isSelected = false;
+      });
+    }
+  }
+
+  void _doCancelReply() {
+    setState(() {
+      _replyMessage = null;
+    });
+  }
+
+  void _doCancelMention() {
+    setState(() {
+      _replyMessage = null;
+    });
+  }
+
+  void _doSelectMention(Member member) {
+    _messageController.text = "${_messageController.text}${member.nickname} ";
+    setState(() {
+      _isMentioning = false;
+    });
+  }
+
   void _doAttachmentPickerFull() {
     setState(() {
       _boxHeight = _boxHeightMin;
@@ -1302,323 +1781,6 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
     }
 
     _doLoadMessages();
-  }
-
-  Future<void> _doLoadMessages() async {
-    if (_moduleMessages.isLoading()) return;
-
-    if (!_isLoadMore) {
-      setState(() {
-        // _isLoadMore = listMessages.isNotEmpty;
-      });
-    }
-
-    _moduleMessages.getMessagesMore().then((List<DataMessage> messages) {
-      setState(() {
-        _listMessages.addAll(messages);
-      });
-
-      for (DataMessage message in messages) {
-        showNotificationMessage(context, widget.dataChat, message);
-      }
-
-    }).catchError((e) {
-
-    }
-    ).whenComplete(() {
-      if(mounted) {
-        setState(() {
-          _isLoading = false;
-          _isLoadMore = false;
-        });
-      }
-    });
-  }
-
-  Future<void> _doLoadMessagesNew() async {
-    if (_moduleMessages.isLoading()) return;
-
-    _moduleMessages.getMessagesNew().then((List<DataMessage> messages) {
-
-      for (DataMessage message in messages) {
-        if(!_listMessages.contains(message)) {
-          _listMessages.insert(0, message);
-          showNotificationMessage(context, widget.dataChat, message);
-        }
-      }
-
-    });
-  }
-
-  void _doLoadNotice() {
-    _moduleNotice.getNotices(widget.dataChat.id).then((List<DataNotice> listNotices) {
-      setState(() {
-        for (DataNotice notice in listNotices) {
-          if (notice.noticeable) {
-            _dataNotice = notice;
-            _isHideNotice = dbStore.isNoticeHide(_dataNotice);
-            break;
-          }
-        }
-      });
-    })
-        .catchError((e) {})
-        .whenComplete(() {});
-  }
-
-  void _doCheckEnableButton() {
-    if (_messageController.text.trim().isNotEmpty) {
-      setState(() {
-        _isButtonDisabled = false;
-      });
-    } else {
-      setState(() {
-        _isButtonDisabled = true;
-      });
-    }
-  }
-
-  List<Member> _doGetAllMembers() {
-    return _moduleMessages.getGroupChannel().members;
-  }
-
-  Future<void> _doSendMessage() async {
-    if (!_isButtonDisabled) {
-
-      _doSendMessageText();
-
-      setState(() {
-        _showAttachment = false;
-        _showAttachmentFull = false;
-      });
-
-      await _doSendMessageImages();
-
-      await _doSendMessageMedia();
-
-      _deselectPickedFiles(false);
-      _doCancelReply();
-    }
-  }
-
-  void _doSendMessageText() {
-
-    if (_messageController.text.isNotEmpty) {
-      _moduleMessages
-          .sendMessage(_messageController.text, _replyMessage)
-          .then((DataMessage myMessage) {
-        setState(() {
-          _listMessages.insert(0, myMessage);
-          _messageController.clear();
-        });
-
-        Future.delayed(const Duration(milliseconds: 100), () {
-          _doScrollToBottom();
-        });
-      });
-    }
-
-  }
-
-  Future<void> _doSendMessageImages() async {
-
-    if (_selectedImages > 0) {
-      DataMessage myMessage1 = _moduleMessages.preSendMessageImage(_filesImages);
-      int index = myMessage1.index;
-
-      setState(() {
-        _listMessages.insert(0, myMessage1);
-      });
-
-      Future.delayed(const Duration(milliseconds: 100), () {
-        _doScrollToBottom();
-      });
-
-      myMessage1 = await _moduleMessages.sendMessageImages(_filesImages);
-      myMessage1.isSending = false;
-
-      for (int i = 0; i < _listMessages.length; i++) {
-        DataMessage myMessage = _listMessages[i];
-        if (myMessage.index == index) {
-          setState(() {
-            _listMessages[i] = myMessage1;
-          });
-          break;
-        }
-      }
-    }
-
-  }
-
-  Future<void> _doSendMessageMedia() async {
-
-    if (_selectedMedia > 0) {
-      List<int> index = [];
-
-      List<DataMessage> myMessages = await _moduleMessages.preSendMessageMedia(_filesMedia);
-
-      for (DataMessage myMessage1 in myMessages) {
-        setState(() {
-          _listMessages.insert(0, myMessage1);
-        });
-        index.add(myMessage1.index);
-      }
-
-      Future.delayed(const Duration(milliseconds: 100), () {
-        _doScrollToBottom();
-      });
-
-      myMessages = await _moduleMessages.sendMessageMedia(_filesMedia);
-
-      for (int j = 0; j < _listMessages.length; j++) {
-        DataMessage myMessage = _listMessages[j];
-
-        for (int i = 0; i < myMessages.length; i++) {
-          DataMessage myMessage1 = myMessages[i];
-          myMessage1.isSending = false;
-          if (myMessage.index == index[i]) {
-            setState(() {
-              _listMessages[j] = myMessage1;
-            });
-            break;
-          }
-        }
-      }
-    }
-
-  }
-
-  Future<void> _doProcessCameraResult() async {
-    File? file = await doPickImageWithCamera();
-
-    if(file != null) {
-      _selectedImages++;
-      FileItem fileItem = FileItem(file: file, path: file.path);
-      fileItem.isSelected = true;
-      _filesImages.insert(0, fileItem);
-    }
-  }
-
-  Future<void> _doProcessPickedFiles() async {
-    _doAttachmentPickerClose();
-    _doDeselectPickedMedia();
-
-    List<FileItem> fileItems = await doPickFiles();
-
-    for(FileItem fileItem in fileItems) {
-      _selectedMedia++;
-      fileItem.isSelected = true;
-      _filesMedia.add(fileItem);
-    }
-
-    await _doSendMessageMedia();
-  }
-
-  void _doLoadMedia() {
-    _filesImages.clear();
-    _filesMedia.clear();
-
-    moduleMedia.init();
-
-    moduleMedia.loadFileImages().then((List<FileItem> listImages) {
-      setState(() {
-        _filesImages.addAll(listImages);
-      });
-    });
-
-    moduleMedia.loadFilesMedia().then((List<FileItem> listMedia) {
-      setState(() {
-        _filesMedia.addAll(listMedia);
-      });
-    });
-  }
-
-  void _doHideAttachmentPicker() {
-    _showAttachment = false;
-    _showAttachmentFull = false;
-  }
-
-  void _doScrollToBottom() {
-    _itemScrollController.jumpTo(index: 0);
-  }
-
-  void _doCheckEnableButtonFile() {
-    _selectedImages = 0;
-    _selectedMedia = 0;
-
-    for (FileItem fileImage in _filesImages) {
-      if (fileImage.isSelected) {
-        setState(() {
-          _selectedImages++;
-        });
-      }
-    }
-    for (FileItem fileMedia in _filesMedia) {
-      if (fileMedia.isSelected) {
-        setState(() {
-          _selectedMedia++;
-        });
-      }
-    }
-
-    if (_selectedImages + _selectedMedia > 0) {
-      setState(() {
-        _selectMode = true;
-        _isButtonDisabled = false;
-      });
-    } else {
-      setState(() {
-        _isButtonDisabled = true;
-      });
-    }
-  }
-
-  void _deselectPickedFiles(isClose) {
-    _doDeselectPickedImages();
-    _doDeselectPickedMedia();
-  }
-
-  void _doDeselectPickedImages() {
-    setState(() {
-      _selectedImages = 0;
-    });
-
-    for (FileItem fileImage in _filesImages) {
-      setState(() {
-        fileImage.isSelected = false;
-      });
-    }
-  }
-
-  void _doDeselectPickedMedia() {
-    setState(() {
-      _selectedMedia = 0;
-    });
-
-    for (FileItem fileMedia in _filesMedia) {
-      setState(() {
-        fileMedia.isSelected = false;
-      });
-    }
-  }
-
-  void _doCancelReply() {
-    setState(() {
-      _replyMessage = null;
-    });
-  }
-
-  void _doCancelMention() {
-    setState(() {
-      _replyMessage = null;
-    });
-  }
-
-  void _doSelectMention(Member member) {
-    _messageController.text = "${_messageController.text}${member.nickname} ";
-    setState(() {
-      _isMentioning = false;
-    });
   }
 
 }

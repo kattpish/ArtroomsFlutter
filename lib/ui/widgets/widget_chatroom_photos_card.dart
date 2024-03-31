@@ -5,7 +5,7 @@ import '../../beans/bean_message.dart';
 import '../theme/theme_colors.dart';
 
 
-Widget widgetChatroomPhotosCard(BuildContext context, DataMessage attachmentImage, selectMode, {required Null Function() onSelect, required Null Function() onView}) {
+Widget widgetChatroomPhotosCard(BuildContext context, DataMessage attachmentImage, selectMode, {required Null Function() onSelect, required Future<void> Function() onView}) {
   return Container(
     color: Colors.white,
     child: InkWell(

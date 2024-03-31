@@ -321,7 +321,7 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver  
 
       for(DataChat dataChat in chats) {
         if(dbStore.isNotificationChat(dataChat)) {
-          showNotificationChat(context, this, dataChat);
+          showNotificationChat(context, dataChat);
         }
       }
 

@@ -14,7 +14,7 @@ Widget widgetChatroomMessageInput(TextEditingController messageController, messa
           onChanged(text);
         }, // TextEditingController
         decoration: InputDecoration(
-          hintText: 'Enter your message',
+          hintText: '',
           border: UnderlineInputBorder(
             borderRadius: BorderRadius.circular(25),
             borderSide: BorderSide.none,
@@ -22,8 +22,10 @@ Widget widgetChatroomMessageInput(TextEditingController messageController, messa
           filled: true,
           fillColor: const Color(0xFFF3F3F3),
         ),
-        // cursorColor: Colors.transparent, // Hide cursor
-        style: const TextStyle(color: Colors.transparent), // Hide text
+        textCapitalization: TextCapitalization.sentences,
+        style: const TextStyle(
+            color: Colors.transparent
+        ), // Hide text
       ),
       Positioned(
         top: 15,

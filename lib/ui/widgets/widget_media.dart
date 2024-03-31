@@ -10,12 +10,11 @@ import 'package:image_picker/image_picker.dart';
 import '../../beans/bean_file.dart';
 
 
-void doOpenPhotoView(BuildContext buildContext, {File? fileImage, String imageUrl="", String fileName=""}) {
+Future<void> doOpenPhotoView(BuildContext context, {File? fileImage, String imageUrl="", String fileName=""}) async {
 
-    Navigator.push(buildContext, MaterialPageRoute(builder: (context) {
+    await Navigator.push(context, MaterialPageRoute(builder: (context) {
       return ScreenPhotoView(fileImage: fileImage, imageUrl: imageUrl, fileName: fileName,);
     }));
-    return;
 
 }
 

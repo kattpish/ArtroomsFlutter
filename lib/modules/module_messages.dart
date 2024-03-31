@@ -8,6 +8,7 @@ import 'package:sendbird_sdk/core/channel/group/group_channel.dart';
 import 'package:sendbird_sdk/core/message/base_message.dart';
 import 'package:sendbird_sdk/core/message/file_message.dart';
 import 'package:sendbird_sdk/core/message/user_message.dart';
+import 'package:sendbird_sdk/handlers/channel_event_handler.dart';
 
 import '../beans/bean_file.dart';
 import '../beans/bean_message.dart';
@@ -19,13 +20,19 @@ class ModuleMessages {
 
   late final String _channelUrl;
   late final GroupChannel _groupChannel;
+  ChannelEventHandler? _channelEventHandler;
   bool _isInitialized = false;
   bool _isLoading = false;
   int? _earliestMessageTimestamp;
   int? _earliestMessageTimestampFiles;
+  
 
   ModuleMessages(String channelUrl) {
     _channelUrl = channelUrl;
+  }
+
+  void init(ChannelEventHandler channelEventHandler) async {
+    _channelEventHandler = channelEventHandler;
   }
 
   Future<GroupChannel> initChannel() async {
@@ -35,6 +42,11 @@ class ModuleMessages {
     });
 
     _isInitialized = true;
+    
+    removeChannelEventHandler();
+    if(_channelEventHandler != null) {
+      addChannelEventHandler(_channelEventHandler!);
+    }
 
     return _groupChannel;
   }
@@ -325,7 +337,9 @@ class ModuleMessages {
 
         Map<String,dynamic> uploadData = jsonDecode(response.body);
 
-        print(uploadData.toString());
+        if (kDebugMode) {
+          print(uploadData.toString());
+        }
 
         return jsonDecode(response.body) as Map<String, dynamic>;
       } else {
@@ -341,7 +355,17 @@ class ModuleMessages {
       return null;
     }
   }
+
   GroupChannel getGroupChannel(){
     return _groupChannel;
   }
+
+  void addChannelEventHandler(ChannelEventHandler listener) {
+    moduleSendBird.addChannelEventHandler(_groupChannel, listener);
+  }
+
+  void removeChannelEventHandler() {
+    moduleSendBird.removeChannelEventHandler(_groupChannel);
+  }
+
 }

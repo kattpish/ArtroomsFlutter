@@ -82,7 +82,7 @@ class ModuleMedia {
     return imageFiles;
   }
 
-  Future<List<FileItem>> loadFileImages1() async {
+  Future<List<FileItem>> loadFileImages1({Null Function(FileItem fileItem)? onLoad}) async {
 
     List<AssetEntity> assetFiles = [];
 
@@ -95,6 +95,7 @@ class ModuleMedia {
       for(AssetPathEntity album in albums) {
 
         await album.assetCountAsync.then((assetCount) async {
+
           List<AssetEntity> images = await album.getAssetListPaged(page: 0, size: assetCount);
           assetFiles.addAll(images);
 
@@ -102,6 +103,11 @@ class ModuleMedia {
             File? file = await asset.originFile;
             if(file != null) {
               FileItem fileItem = FileItem(file: file, name: file.path, path: file.path);
+
+              if(onLoad != null) {
+                onLoad(fileItem);
+              }
+
               if(!imageFiles.contains(fileItem)) {
                 imageFiles.add(fileItem);
               }
@@ -218,11 +224,11 @@ class ModuleMedia {
 
     List<FileItem> mediaFiles = [];
 
-    List<FileItem> mediaFiles1 = await loadFilesMedia1();
-    List<FileItem> mediaFiles2 = await loadFilesMedia2();
+    // List<FileItem> mediaFiles1 = await loadFilesMedia1();
+    // List<FileItem> mediaFiles2 = await loadFilesMedia2();
 
-    mediaFiles.addAll(mediaFiles1);
-    mediaFiles.addAll(mediaFiles2);
+    // mediaFiles.addAll(mediaFiles1);
+    // mediaFiles.addAll(mediaFiles2);
 
     mediaFiles.sort((a, b) {
       return b.date.compareTo(a.date);

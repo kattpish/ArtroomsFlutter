@@ -7,6 +7,7 @@ import 'package:sendbird_sdk/core/message/file_message.dart';
 
 import '../main.dart';
 import '../utils/utils.dart';
+import '../utils/utils_notifications.dart';
 
 
 class DataMessage {
@@ -161,6 +162,10 @@ class DataMessage {
       sizeStr = sizeStr.substring(0, sizeStr.length - 3);
     }
     return "$sizeStr$unit";
+  }
+
+  bool isNew() {
+    return (DateTime.now().millisecondsSinceEpoch - timestamp < timeSecRefreshChat*1000);
   }
 
   @override

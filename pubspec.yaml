@@ -24,9 +24,7 @@ dependencies:
   photo_manager: ^3.0.0
   flutter_local_notifications: ^16.3.2
   scrollable_positioned_list: ^0.2.0
-  # fluttertoast: 8.2.4
   focused_menu: ^1.0.5
-  # background_fetch: ^1.2.2
 
 dev_dependencies:
   flutter_test:

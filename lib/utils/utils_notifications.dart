@@ -11,9 +11,8 @@ import '../ui/widgets/widget_ui_notify.dart';
 
 int timeSecRefreshChat = 10;
 
-Future<void> showNotificationChat(BuildContext context, State state, DataChat dataChat) async {
+Future<void> showNotificationChat(BuildContext context, DataChat dataChat) async {
   if(dataChat.unreadMessages == 0) return;
-  notifyState(dataChat);
   return showNotificationMessage(context, dataChat, dataChat.lastMessage);
 }
 
@@ -21,9 +20,8 @@ Future<void> showNotificationMessage(BuildContext context, DataChat dataChat, Da
   if(message.isMe) return;
   if(!dataChat.isNotification) return;
   if(!dbStore.isNotificationMessage()) return;
-  if(DateTime.now().millisecondsSinceEpoch - message.timestamp > timeSecRefreshChat*1000) return;
-
-  showToastWhenUserNotIdle(context, dataChat.id.hashCode, dataChat.name, message.getSummary());
+  if(!message.isNew()) return;
+  notifyState(dataChat);
 
   return showNotification(context, dataChat.id.hashCode, dataChat.name, message.getSummary());
 }
@@ -50,16 +48,4 @@ Future<void> showNotification(BuildContext context, int id, String title, String
     platformDetails,
     payload: 'item x',
   );
-}
-
-Future<void> showToastWhenUserNotIdle(BuildContext context, int id, String title, String message) async {
-  // Fluttertoast.showToast(
-  //   msg: "$title\n$message" ,
-  //   toastLength: Toast.LENGTH_LONG,
-  //   gravity: ToastGravity.TOP,
-  //   timeInSecForIosWeb: 1,
-  //   backgroundColor: colorPrimaryPurple,
-  //   textColor: Colors.white,
-  //   fontSize: 16.0,
-  // );
 }
