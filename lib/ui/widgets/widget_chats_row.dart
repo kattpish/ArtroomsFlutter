@@ -146,7 +146,7 @@ Slidable widgetChatRow(BuildContext context, int index, DataChat dataChat, {
                 borderRadius: BorderRadius.all(Radius.circular(10.0)),
               ),
               child: Text(
-                dataChat.unreadMessages.toString(),
+                dataChat.unreadMessages >= 100 ? '+100' : dataChat.unreadMessages.toString(),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 textAlign: TextAlign.center,

@@ -136,7 +136,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
 
     _messageFocusNode.addListener(() {
       if (_messageFocusNode.hasFocus) {
-        _doHideAttachmentPicker();
+        _doAttachmentPickerClose();
       }
     });
 
@@ -166,6 +166,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
         _animationController.stop();
       }
     });
+
   }
 
   @override
@@ -193,7 +194,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
       onWillPop: () async {
         if (_showAttachment) {
           setState(() {
-            _showAttachment = false;
+            _doAttachmentPickerClose();
           });
           return false;
         } else if (_showAttachmentFull) {
@@ -402,7 +403,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                                                 FocusedMenuItem(
                                                     trailingIcon:
                                                     const Icon(
-                                                        Icons.reply,
+                                                      Icons.reply,
                                                       color: colorMainGrey500,
                                                     ),
                                                     title: const Text(
@@ -683,10 +684,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
         onVerticalDragUpdate: _doVerticalDragUpdate,
         onTap: () {
           if (_showAttachment) {
-            state.setState(() {
-              _showAttachment = false;
-              _showAttachmentFull = true;
-            });
+            _doAttachmentPickerFull();
           } else {
             setState(() {
               _showAttachmentFull = false;
@@ -1257,10 +1255,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
 
       _doSendMessageText();
 
-      setState(() {
-        _showAttachment = false;
-        _showAttachmentFull = false;
-      });
+      _doAttachmentPickerClose();
 
       await _doSendMessageImages();
 
@@ -1426,11 +1421,6 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
     });
   }
 
-  void _doHideAttachmentPicker() {
-    _showAttachment = false;
-    _showAttachmentFull = false;
-  }
-
   void _doScrollToBottom() {
     _itemScrollController.jumpTo(index: 0);
   }
@@ -1511,7 +1501,11 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
   }
 
   void _doSelectMention(Member member) {
-    _messageController.text = "${_messageController.text}${member.nickname} ";
+    final newText = "${_messageController.text}${member.nickname} ";
+    _messageController.text = newText;
+    _messageController.selection = TextSelection.fromPosition(
+      TextPosition(offset: newText.length),
+    );
     setState(() {
       _isMentioning = false;
     });
@@ -1523,6 +1517,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
       _showAttachmentFull = true;
       _showAttachment = false;
     });
+    _doAnimateHeight();
   }
 
   void _doAttachmentPickerMin() {
@@ -1553,41 +1548,22 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
       _dragStartY = details.globalPosition.dy;
 
       if (_boxHeight < _screenHeight - 100 && _boxHeight > _screenHeight - 200) {
-        if (kDebugMode) {
-          print("_onVerticalDragUpdate-1");
-        }
         _doAttachmentPickerMin();
       } else if (_boxHeight > _boxHeightMin + 160) {
-        if (kDebugMode) {
-          print("_onVerticalDragUpdate-2");
-        }
-        _showAttachment = false;
         if (!_showAttachmentFull) {
-          _showAttachmentFull = true;
-          _boxHeight = _screenHeight;
+          _doAttachmentPickerFull();
         }
       } else if (_boxHeight < _boxHeightMin - 160) {
-        if (kDebugMode) {
-          print("_onVerticalDragUpdate-3");
-        }
         _doAttachmentPickerClose();
       }
     });
   }
 
   void _scrollListener1() {
-    if (kDebugMode) {
-      print("_scrollController-offset: ${_scrollControllerAttachment1.offset}");
-      print("_scrollController-minScrollExtent: ${_scrollControllerAttachment1.position.minScrollExtent}");
-      print("_scrollController-userScrollDirection: ${_scrollControllerAttachment1.position.userScrollDirection}");
-    }
 
     if (_scrollControllerAttachment1.offset == 0 &&
         _scrollControllerAttachment1.position.minScrollExtent == 0 &&
         _scrollControllerAttachment1.position.userScrollDirection == ScrollDirection.forward) {
-      if (kDebugMode) {
-        print("_scrollController-1");
-      }
       setState(() {
         _listReachedTop = true;
         _doAttachmentPickerMin();
@@ -1596,9 +1572,6 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
     } else if (_scrollControllerAttachment1.offset <=
         _scrollControllerAttachment1.position.minScrollExtent &&
         _scrollControllerAttachment1.position.userScrollDirection == ScrollDirection.forward) {
-      if (kDebugMode) {
-        print("_scrollController-2");
-      }
       if (!_listReachedTop) {
         setState(() {
           _listReachedTop = true;
@@ -1607,9 +1580,6 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
     } else if (_scrollControllerAttachment1.offset <=
         _scrollControllerAttachment1.position.minScrollExtent &&
         _scrollControllerAttachment1.position.userScrollDirection == ScrollDirection.reverse) {
-      if (kDebugMode) {
-        print("_scrollController-3");
-      }
       if (_listReachedTop) {
         setState(() {
           _listReachedTop = false;
@@ -1618,56 +1588,28 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
     } else if (_scrollControllerAttachment1.offset >=
         _scrollControllerAttachment1.position.maxScrollExtent &&
         !_scrollControllerAttachment1.position.outOfRange) {
-      if (kDebugMode) {
-        print("_scrollController-4");
-      }
       if (!_listReachedBottom) {
         setState(() {
           _listReachedBottom = true;
         });
       }
     } else {
-      if (kDebugMode) {
-        print("_scrollController-5");
-      }
       if (_listReachedBottom) {
-        if (kDebugMode) {
-          print("_scrollController-5_1");
-        }
         setState(() {
           _listReachedBottom = false;
         });
       } else {
-        if (kDebugMode) {
-          print("_scrollController-5_2");
-        }
         setState(() {
-          _showAttachment = false;
-          _showAttachmentFull = true;
+          _doAttachmentPickerFull();
         });
-        _doAnimateHeight();
-        closeKeyboard(context);
       }
     }
   }
 
   void _scrollListener2() {
-    if (kDebugMode) {
-      print("_scrollController-offset: ${_scrollControllerAttachment2.offset}");
-    }
-    if (kDebugMode) {
-      print("_scrollController-minScrollExtent: ${_scrollControllerAttachment2.position.minScrollExtent}");
-    }
-    if (kDebugMode) {
-      print("_scrollController-userScrollDirection: ${_scrollControllerAttachment2.position.userScrollDirection}");
-    }
-
     if (_scrollControllerAttachment2.offset == 0 &&
         _scrollControllerAttachment2.position.minScrollExtent == 0 &&
         _scrollControllerAttachment2.position.userScrollDirection == ScrollDirection.forward) {
-      if (kDebugMode) {
-        print("_scrollController-1");
-      }
       setState(() {
         _listReachedTop = true;
         _doAttachmentPickerMin();
@@ -1676,9 +1618,6 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
     } else if (_scrollControllerAttachment2.offset <=
         _scrollControllerAttachment2.position.minScrollExtent &&
         _scrollControllerAttachment2.position.userScrollDirection == ScrollDirection.forward) {
-      if (kDebugMode) {
-        print("_scrollController-2");
-      }
       if (!_listReachedTop) {
         setState(() {
           _listReachedTop = true;
@@ -1687,9 +1626,6 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
     } else if (_scrollControllerAttachment2.offset <=
         _scrollControllerAttachment2.position.minScrollExtent &&
         _scrollControllerAttachment2.position.userScrollDirection == ScrollDirection.reverse) {
-      if (kDebugMode) {
-        print("_scrollController-3");
-      }
       if (_listReachedTop) {
         setState(() {
           _listReachedTop = false;
@@ -1698,35 +1634,20 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
     } else if (_scrollControllerAttachment2.offset >=
         _scrollControllerAttachment2.position.maxScrollExtent &&
         !_scrollControllerAttachment2.position.outOfRange) {
-      if (kDebugMode) {
-        print("_scrollController-4");
-      }
       if (!_listReachedBottom) {
         setState(() {
           _listReachedBottom = true;
         });
       }
     } else {
-      if (kDebugMode) {
-        print("_scrollController-5");
-      }
       if (_listReachedBottom) {
-        if (kDebugMode) {
-          print("_scrollController-5_1");
-        }
         setState(() {
           _listReachedBottom = false;
         });
       } else {
-        if (kDebugMode) {
-          print("_scrollController-5_2");
-        }
         setState(() {
-          _showAttachment = false;
-          _showAttachmentFull = true;
+          _doAttachmentPickerFull();
         });
-        _doAnimateHeight();
-        closeKeyboard(context);
       }
     }
   }
