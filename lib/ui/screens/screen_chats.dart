@@ -306,7 +306,9 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver  
     if(_isLoading) return;
 
     setState(() {
-      _isLoading = true;
+      if(_searchController.text.isEmpty) {
+        _isLoading = true;
+      }
     });
 
     await _chatModule.getUserChats().then((List<DataChat> chats) {
@@ -318,6 +320,8 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver  
         _listChats.addAll(chats);
         _listChatsAll.addAll(chats);
       });
+
+      _doSearchChats(_searchController.text);
 
       for(DataChat dataChat in chats) {
         if(dbStore.isNotificationChat(dataChat)) {
