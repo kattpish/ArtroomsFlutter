@@ -1265,13 +1265,12 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
       _doSendMessageText();
 
       _doAttachmentPickerClose();
-
       await _doSendMessageImages();
-
       await _doSendMessageMedia();
 
       _deselectPickedFiles(false);
       _doCancelReply();
+      _doCancelMention();
     }
   }
 
@@ -1505,7 +1504,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
 
   void _doCancelMention() {
     setState(() {
-      _replyMessage = null;
+      _isMentioning = false;
     });
   }
 

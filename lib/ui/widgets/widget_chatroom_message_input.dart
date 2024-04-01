@@ -24,10 +24,11 @@ Widget widgetChatroomMessageInput(TextEditingController messageController, messa
         ),
         textCapitalization: TextCapitalization.sentences,
         style: const TextStyle(
-            color: Colors.transparent,
-            fontSize: 14.7,
-            letterSpacing: 1.0,
-        ), // Hide text
+          color: Colors.transparent,
+          fontSize: 15.8,
+          letterSpacing: 1.2,
+        ),
+        maxLines: 1,
       ),
       Positioned(
         top: 15,

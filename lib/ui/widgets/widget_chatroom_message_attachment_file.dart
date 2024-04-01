@@ -11,7 +11,7 @@ Widget buildAttachment(BuildContext context, State state, DataMessage message, s
     return Container(
       width: 216,
       margin: const EdgeInsets.symmetric(vertical: 2),
-      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+      padding: const EdgeInsets.only(right: 18, left: 18, top: 14, bottom: 6),
       constraints: BoxConstraints(maxWidth: screenWidth * 0.55),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(22),
@@ -48,7 +48,6 @@ Widget buildAttachment(BuildContext context, State state, DataMessage message, s
                   letterSpacing: -0.22,
                 ),
               ),
-              const SizedBox(height: 10),
               InkWell(
                 onTap: () async {
 
@@ -61,24 +60,28 @@ Widget buildAttachment(BuildContext context, State state, DataMessage message, s
                   });
 
                 },
-                child: message.isDownloading
-                    ? const SizedBox(
-                  width: 16,
-                  height: 16,
-                  child: CircularProgressIndicator(
-                    color: Color(0xFF6A79FF),
-                    strokeWidth: 2,
-                  ),
-                )
-                    : const Text(
-                  '저장',
-                  style: TextStyle(
-                    color: colorMainGrey400,
-                    fontSize: 14,
-                    fontFamily: 'Pretendard',
-                    fontWeight: FontWeight.w400,
-                    height: 0,
-                    letterSpacing: -0.28,
+                child: Container(
+                  alignment: Alignment.topLeft,
+                  padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 8),
+                  child: message.isDownloading
+                      ? const SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(
+                      color: Color(0xFF6A79FF),
+                      strokeWidth: 2,
+                    ),
+                  )
+                      : const Text(
+                    '저장',
+                    style: TextStyle(
+                      color: colorMainGrey400,
+                      fontSize: 14,
+                      fontFamily: 'Pretendard',
+                      fontWeight: FontWeight.w400,
+                      height: 0,
+                      letterSpacing: -0.28,
+                    ),
                   ),
                 ),
               ),
