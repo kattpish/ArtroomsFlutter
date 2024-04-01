@@ -68,7 +68,7 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver  
     });
 
     _searchController.addListener(() {
-      _doSearchChats(_searchController.text);
+      _doSearchChats(_searchController.text, true);
     });
 
   }
@@ -317,11 +317,13 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver  
       _listChatsAll.clear();
 
       setState(() {
-        _listChats.addAll(chats);
+        if(_searchController.text.isNotEmpty) {
+          _listChats.addAll(chats);
+        }
         _listChatsAll.addAll(chats);
       });
 
-      _doSearchChats(_searchController.text);
+      _doSearchChats(_searchController.text, false);
 
       for(DataChat dataChat in chats) {
         if(dbStore.isNotificationChat(dataChat)) {
@@ -341,10 +343,10 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver  
 
   }
 
-  void _doSearchChats(String query) {
+  void _doSearchChats(String query, bool showLoader) {
 
     setState(() {
-      if(query.isNotEmpty) {
+      if(showLoader && query.isNotEmpty) {
         _isSearching = true;
       }
     });
