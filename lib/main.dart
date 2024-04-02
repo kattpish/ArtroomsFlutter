@@ -4,7 +4,6 @@ import 'dart:convert';
 import 'package:artrooms/data/module_datastore.dart';
 import 'package:artrooms/ui/screens/screen_chats.dart';
 import 'package:artrooms/ui/screens/screen_login.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -14,6 +13,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'listeners/listener_route_observer.dart';
 import 'modules/module_media.dart';
+import 'modules/module_push_notifications.dart';
 import 'modules/module_sendbird.dart';
 
 
@@ -22,6 +22,7 @@ late final DBStore dbStore;
 late final ModuleSendBird moduleSendBird;
 final ListenerRouteObserver listenerRouteObserver = ListenerRouteObserver();
 ModuleMedia moduleMedia = ModuleMedia();
+ModulePushNotifications pushNotifications = ModulePushNotifications();
 
 Future<void> main() async {
 
@@ -54,8 +55,7 @@ Future<void> init() async {
   moduleSendBird = ModuleSendBird();
   await moduleSendBird.initSendbird();
 
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  pushNotifications.init();
 
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
   var initializationSettingsAndroid = const AndroidInitializationSettings('@drawable/icon_notification');

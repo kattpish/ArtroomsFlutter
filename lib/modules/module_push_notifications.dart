@@ -1,7 +1,9 @@
 
 import 'dart:io';
 
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 
 import 'package:sendbird_chat_sdk/sendbird_chat_sdk.dart';
@@ -16,15 +18,18 @@ class ModulePushNotifications {
 
   Future<void> init() async {
 
-    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-
-      // TODO: @Nelson
-
-    });
-
     try {
+
+      WidgetsFlutterBinding.ensureInitialized();
+      await Firebase.initializeApp();
+
+      FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+      FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+
+        // TODO: @Nelson
+
+      });
 
       await SendbirdChat.unregisterPushTokenAll();
 
