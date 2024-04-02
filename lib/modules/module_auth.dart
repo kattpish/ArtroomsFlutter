@@ -129,9 +129,8 @@ class ModuleAuth {
     };
 
     try {
-      print("link  $testApiUrlGraphQL  $name  $phoneNumber");
       final response = await http.post(
-        Uri.parse(testApiUrlGraphQL),
+        Uri.parse(apiUrlGraphQLTest),
         headers: {
           "Content-Type": "application/json",
         },
