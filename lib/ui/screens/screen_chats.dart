@@ -316,14 +316,21 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver  
       _listChats.clear();
       _listChatsAll.clear();
 
-      setState(() {
-        if(_searchController.text.isNotEmpty) {
+      if(_searchController.text.isNotEmpty) {
+        _listChats.addAll(chats);
+      }else {
+        setState(() {
           _listChats.addAll(chats);
-        }
+        });
+      }
+
+      setState(() {
         _listChatsAll.addAll(chats);
       });
 
-      _doSearchChats(_searchController.text, false);
+      if(_searchController.text.isNotEmpty) {
+        _doSearchChats(_searchController.text, false);
+      }
 
       for(DataChat dataChat in chats) {
         if(dbStore.isNotificationChat(dataChat)) {

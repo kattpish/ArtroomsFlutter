@@ -57,8 +57,8 @@ Widget widgetChatMessagePin(BuildContext context, State state, {void Function()?
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Container(
-                          width: 20,
-                          height: 20,
+                          width: 24,
+                          height: 24,
                           padding: const EdgeInsets.only(
                             top: 2.55,
                             left: 1.64,
@@ -73,8 +73,8 @@ Widget widgetChatMessagePin(BuildContext context, State state, {void Function()?
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Container(
-                                width: 16.5,
-                                height: 15,
+                                width: 20,
+                                height: 20,
                                 decoration: const BoxDecoration(
                                   image: DecorationImage(
                                     image: AssetImage(
@@ -88,45 +88,40 @@ Widget widgetChatMessagePin(BuildContext context, State state, {void Function()?
                         ),
                         const SizedBox(width: 8),
                         Expanded(
-                          child: SizedBox(
-                            child: Column(
+                          child: Container(
+                            padding: const EdgeInsets.only(top: 4),
+                            child: Row(
                               mainAxisSize: MainAxisSize.min,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Container(
-                                  alignment: Alignment.topLeft,
-                                  child: Text(
-                                    dataChatPin.name,
-                                    style: const TextStyle(
-                                      color: Color(0xFF3A3A3A),
-                                      fontSize: 14,
-                                      fontFamily: 'Pretendard',
-                                      fontWeight: FontWeight.w600,
-                                      height: 0,
-                                      letterSpacing: -0.28,
-                                    ),
-                                    maxLines: 1,
-                                    textAlign: TextAlign.center,
-                                    overflow: TextOverflow.ellipsis,
+                                Text(
+                                  dataChatPin.name,
+                                  style: const TextStyle(
+                                    color: Color(0xFF3A3A3A),
+                                    fontSize: 14,
+                                    fontFamily: 'Pretendard',
+                                    fontWeight: FontWeight.w600,
+                                    height: 0,
+                                    letterSpacing: -0.28,
                                   ),
+                                  maxLines: 1,
+                                  textAlign: TextAlign.center,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
-                                Container(
-                                  alignment: Alignment.topLeft,
-                                  child: Text(
-                                    dataChatPin.lastMessage.getSummary(),
-                                    style: const TextStyle(
-                                      color: Color(0xFF3A3A3A),
-                                      fontSize: 14,
-                                      fontFamily: 'Pretendard',
-                                      fontWeight: FontWeight.w400,
-                                      height: 0,
-                                      letterSpacing: -0.28,
-                                    ),
-                                    maxLines: 2,
-                                    textAlign: TextAlign.center,
-                                    overflow: TextOverflow.ellipsis,
+                                Text(
+                                  dataChatPin.lastMessage.getSummary(),
+                                  style: const TextStyle(
+                                    color: Color(0xFF3A3A3A),
+                                    fontSize: 14,
+                                    fontFamily: 'Pretendard',
+                                    fontWeight: FontWeight.w400,
+                                    height: 0,
+                                    letterSpacing: -0.28,
                                   ),
+                                  maxLines: 2,
+                                  textAlign: TextAlign.center,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ],
                             ),

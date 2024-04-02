@@ -32,7 +32,7 @@ void notifyState(DataChat dataChat) {
     if(timer != null) {
       timer.cancel();
     }
-    _timer = Timer(const Duration(seconds: 3), () {
+    _timer = Timer(const Duration(seconds: 5), () {
       notifyState(DataChat.empty());
     });
   }
