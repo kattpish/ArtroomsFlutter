@@ -56,7 +56,7 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver  
 
     if(!DBStore().isLoggedIn()) {
       Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) {
-        return const ScreenLogin();
+        return const ScreenLogin(onPageEmail: "",);
       }));
       return;
     }

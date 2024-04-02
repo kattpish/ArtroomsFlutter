@@ -248,16 +248,16 @@ class _ScreenLoginResetState extends State<ScreenLoginReset> with SingleTickerPr
       _isLoading = true;
     });
 
-    _authModule.resetPassword(
-      email: _emailController.text,
+    _authModule.getUserId(
+      name: _nameController.text,
+      phoneNumber: _phoneController.text,
       callback: (bool success, String message) async {
 
         if(success) {
-
+          showSnackBar(context, "id: $message");
           Navigator.of(context).pop();
-
           Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return const ScreenLogin();
+            return  ScreenLogin(onPageEmail: message.split("|")[1],);
           }));
 
         } else {
@@ -297,11 +297,10 @@ class _ScreenLoginResetState extends State<ScreenLoginReset> with SingleTickerPr
       callback: (bool success, String message) async {
 
         if(success) {
-
+          showSnackBar(context, "id: ${message.split("|")[0]}");
           Navigator.of(context).pop();
-
           Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return const ScreenLogin();
+            return const ScreenLogin(onPageEmail: "",);
           }));
 
         } else {
