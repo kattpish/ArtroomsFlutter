@@ -13,6 +13,7 @@ dependencies:
   flutter_slidable: ^3.0.1
   url_launcher: ^6.1.14
   sendbird_sdk: ^3.0.11
+  sendbird_chat_sdk: ^4.2.8
   intl: 0.18.1
   http: ^0.13.3
   shared_preferences: ^2.0.15
@@ -25,6 +26,8 @@ dependencies:
   flutter_local_notifications: ^16.3.2
   scrollable_positioned_list: ^0.2.0
   focused_menu: ^1.0.5
+  firebase_messaging: ^14.4.1
+  firebase_core: ^2.10.0
 
 dev_dependencies:
   flutter_test:

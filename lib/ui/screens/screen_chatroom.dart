@@ -26,7 +26,10 @@ import '../../utils/utils.dart';
 import '../../utils/utils_screen.dart';
 import '../theme/theme_colors.dart';
 import '../widgets/widget_chatroom_attachment_selected.dart';
+import '../widgets/widget_chatroom_date_pin.dart';
 import '../widgets/widget_chatroom_empty.dart';
+import '../widgets/widget_chatroom_message_date_pin.dart';
+import '../widgets/widget_chatroom_message_drawer_btn.dart';
 import '../widgets/widget_chatroom_message_input.dart';
 import '../widgets/widget_chatroom_message_me.dart';
 import '../widgets/widget_chatroom_message_mention.dart';
@@ -93,7 +96,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
   int _firstVisibleItemIndex = -1;
 
   Timer? _scrollTimer;
-  String _currentDate = '';
+  int _currentDate = 0;
   bool _showDateContainer = false;
   final Map<int, GlobalKey> _itemKeys = {};
 
@@ -248,33 +251,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                   toolbarHeight: 60,
                   backgroundColor: Colors.white,
                   actions: [
-                    Container(
-                      width: 80,
-                      height: 80,
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                      ),
-                      child: InkWell(
-                        child: Container(
-                            padding: const EdgeInsets.all(16.0),
-                            decoration: const BoxDecoration(
-                              shape: BoxShape.circle,
-                            ),
-                            child: Image.asset(
-                              'assets/images/icons/icon_archive.png',
-                              width: 24,
-                              height: 24,
-                            )),
-                        onTap: () {
-                          Navigator.push(context,
-                              MaterialPageRoute(builder: (context) {
-                                return ScreenChatroomDrawer(
-                                  dataChat: widget.dataChat,
-                                );
-                              }));
-                        },
-                      ),
-                    ),
+                    widgetChatroomMessageDrawerBtn(context, widget.dataChat),
                   ],
                 ),
                 backgroundColor: Colors.white,
@@ -333,66 +310,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                                         children: [
                                           Visibility(
                                             visible: !isPreviousDate,
-                                            child: Container(
-                                              width: 145,
-                                              height: 31,
-                                              margin: EdgeInsets.only(
-                                                  left: 16,
-                                                  right: 16,
-                                                  top:
-                                                  index == 0 ? 4 : 16,
-                                                  bottom:
-                                                  index == 0 ? 4 : 8),
-                                              padding: const EdgeInsets
-                                                  .symmetric(
-                                                  horizontal: 12,
-                                                  vertical: 4),
-                                              alignment: Alignment.center,
-                                              decoration: ShapeDecoration(
-                                                color: const Color(
-                                                    0xFFF9F9F9),
-                                                shape:
-                                                RoundedRectangleBorder(
-                                                  borderRadius:
-                                                  BorderRadius
-                                                      .circular(20),
-                                                ),
-                                              ),
-                                              child: Row(
-                                                mainAxisSize:
-                                                MainAxisSize.min,
-                                                mainAxisAlignment:
-                                                MainAxisAlignment
-                                                    .start,
-                                                crossAxisAlignment:
-                                                CrossAxisAlignment
-                                                    .center,
-                                                children: [
-                                                  Text(
-                                                    formatDateLastMessage(
-                                                        message
-                                                            .timestamp),
-                                                    style:
-                                                    const TextStyle(
-                                                      color: Color(
-                                                          0xFF7D7D7D),
-                                                      fontSize: 12,
-                                                      fontFamily: 'SUIT',
-                                                      fontWeight:
-                                                      FontWeight.w400,
-                                                      height: 0,
-                                                      letterSpacing:
-                                                      -0.24,
-                                                    ),
-                                                    maxLines: 1,
-                                                    overflow: TextOverflow
-                                                        .ellipsis,
-                                                    textAlign:
-                                                    TextAlign.center,
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
+                                            child: widgetChatroomMessageDatePin(context, message.timestamp, index),
                                           ),
                                           FocusedMenuHolder(
                                               onPressed: () {},
@@ -487,44 +405,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                             AnimatedOpacity(
                               opacity: _showDateContainer ? 1.0 : 0.0,
                               duration: const Duration(milliseconds: 500),
-                              child: Container(
-                                width: 145,
-                                height: 31,
-                                margin: const EdgeInsets.symmetric(
-                                    horizontal: 16, vertical: 2),
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 12, vertical: 4),
-                                alignment: Alignment.center,
-                                decoration: ShapeDecoration(
-                                  color: const Color(0xFFF9F9F9),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  mainAxisAlignment:
-                                  MainAxisAlignment.start,
-                                  crossAxisAlignment:
-                                  CrossAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      _currentDate,
-                                      style: const TextStyle(
-                                        color: Color(0xFF7D7D7D),
-                                        fontSize: 12,
-                                        fontFamily: 'SUIT',
-                                        fontWeight: FontWeight.w400,
-                                        height: 0,
-                                        letterSpacing: -0.24,
-                                      ),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ],
-                                ),
-                              ),
+                              child: widgetChatroomDatePin(context, _currentDate),
                             ),
                           ],
                         ),
@@ -1739,11 +1620,11 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
 
     if(_listMessages.isNotEmpty) {
 
-      var firstVisibleMessage = _listMessages[firstVisibleItemIndex];
+      DataMessage firstVisibleMessage = _listMessages[firstVisibleItemIndex];
 
       setState(() {
         _showDateContainer = true;
-        _currentDate = formatDateLastMessage(firstVisibleMessage.timestamp);
+        _currentDate = firstVisibleMessage.timestamp;
       });
 
       _scrollTimer = Timer(const Duration(milliseconds: 500), () {

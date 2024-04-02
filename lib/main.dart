@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:artrooms/data/module_datastore.dart';
 import 'package:artrooms/ui/screens/screen_chats.dart';
 import 'package:artrooms/ui/screens/screen_login.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -52,7 +53,9 @@ Future<void> init() async {
   dbStore = DBStore();
   moduleSendBird = ModuleSendBird();
   await moduleSendBird.initSendbird();
-  moduleMedia.init();
+
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
 
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
   var initializationSettingsAndroid = const AndroidInitializationSettings('@drawable/icon_notification');

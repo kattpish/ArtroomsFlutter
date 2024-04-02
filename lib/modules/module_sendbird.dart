@@ -18,7 +18,7 @@ import 'package:sendbird_sdk/handlers/channel_event_handler.dart';
 import 'package:sendbird_sdk/params/file_message_params.dart';
 import 'package:sendbird_sdk/params/message_list_params.dart';
 import 'package:sendbird_sdk/params/user_message_params.dart';
-import 'package:sendbird_sdk/query/channel_list/group_channel_list_query.dart';
+import 'package:sendbird_sdk/query/group_channel_list_query.dart';
 import 'package:sendbird_sdk/sdk/sendbird_sdk_api.dart';
 
 import '../main.dart';
