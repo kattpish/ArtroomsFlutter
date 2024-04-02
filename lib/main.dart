@@ -28,7 +28,7 @@ Future<void> main() async {
 
   runApp(
     MaterialApp(
-      home: DBStore().isLoggedIn() ?  const ScreenChats() : const ScreenLogin(),
+      home: DBStore().isLoggedIn() ?  const ScreenChats() : const ScreenLogin(onPageEmail: ""),
       debugShowCheckedModeBanner: false,
       navigatorObservers: [listenerRouteObserver],
     ),

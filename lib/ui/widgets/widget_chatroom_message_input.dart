@@ -7,6 +7,7 @@ Widget widgetChatroomMessageInput(TextEditingController messageController, messa
     children: <Widget>[
       TextFormField(
         controller: messageController,
+        keyboardType: TextInputType.multiline,
         focusNode: messageFocusNode,
         onChanged: (text) {
           onChanged(text);
@@ -18,20 +19,24 @@ Widget widgetChatroomMessageInput(TextEditingController messageController, messa
             borderSide: BorderSide.none,
           ),
           filled: true,
-          fillColor: const Color(0xFFF3F3F3),
+          fillColor: const Color(0xFFF3F3F3)
         ),
         // cursorColor: Colors.transparent, // Hide cursor
-        style: const TextStyle(color: Colors.transparent,fontSize: 14.7,letterSpacing: 1.0), // Hide text
+        style: const TextStyle(
+            // color: Colors.transparent,
+            fontSize: 14.7,letterSpacing: 1.0), // Hide text
+        minLines: 1,
+        maxLines: 3,
       ),
-      Positioned(
-        top: 15,
-        left: 15,
-        child: IgnorePointer(
-          child: RichText(
-            text: widgetChatroomMessageTextSpan(messageController.text),
-          ),
-        ),
-      ),
+      // Positioned(
+      //   top: 15,
+      //   left: 15,
+      //   child: IgnorePointer(
+      //     child: RichText(
+      //       text: widgetChatroomMessageTextSpan(messageController.text),
+      //     ),
+      //   ),
+      // ),
     ],
   );
 }

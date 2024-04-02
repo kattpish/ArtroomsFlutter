@@ -327,7 +327,7 @@ class _ScreenProfileState extends State<ScreenProfile> {
                     onTap: () {
                       DBStore().logout();
                       Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) {
-                        return const ScreenLogin();
+                        return const ScreenLogin(onPageEmail: "",);
                       }));
                     }
                 ),

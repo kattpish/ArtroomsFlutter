@@ -21,6 +21,7 @@ Widget buildOtherMessageBubble(
       bool isPreviousSameDateTime,
       bool isNextSameTime,
     double screenWidth,
+    Null Function() onReplyClick
     ) {
     return Container(
       margin: EdgeInsets.only(
@@ -122,10 +123,7 @@ Widget buildOtherMessageBubble(
                                   title: const Text(
                                       "답장"),
                                   onPressed: () {
-                                    // context.widget._replyMessage =
-                                    //     message;
-                                    // _messageFocusNode
-                                    //     .requestFocus();
+                                    onReplyClick();
                                   }),
                               FocusedMenuItem(
                                   trailingIcon:

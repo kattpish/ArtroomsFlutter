@@ -8,7 +8,6 @@ import 'package:artrooms/ui/widgets/widget_loader.dart';
 import 'package:artrooms/utils/utils_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter/services.dart';
 import 'package:focused_menu/focused_menu.dart';
 import 'package:focused_menu/modals.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
@@ -419,7 +418,11 @@ class _ScreenChatroomState extends State<ScreenChatroom>
                                                               isLast,
                                                               isPreviousSameDateTime,
                                                               isNextSameTime,
-                                                              _screenWidth)
+                                                              _screenWidth,
+                                                              (){
+                                                                _replyMessage = message;
+                                                                _messageFocusNode.requestFocus();
+                                                              })
                                                           : buildOtherMessageBubble(
                                                               context,
                                                               this,
@@ -429,7 +432,11 @@ class _ScreenChatroomState extends State<ScreenChatroom>
                                                               isNextSame,
                                                               isPreviousSameDateTime,
                                                               isNextSameTime,
-                                                              _screenWidth),
+                                                              _screenWidth,
+                                                              (){
+                                                        _replyMessage = message;
+                                                        _messageFocusNode.requestFocus();
+                                                      }),
                                                     )
                                                   ],
                                                 );

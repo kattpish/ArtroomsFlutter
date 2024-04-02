@@ -12,7 +12,7 @@ import '../../beans/bean_message.dart';
 import '../theme/theme_colors.dart';
 
 
-Widget buildMyMessageBubble(BuildContext context, State state, DataMessage message, bool isLast, bool isPreviousSameDateTime, bool isNextSameTime, double screenWidth) {
+Widget buildMyMessageBubble(BuildContext context, State state, DataMessage message, bool isLast, bool isPreviousSameDateTime, bool isNextSameTime, double screenWidth, Null Function() onReplyClick) {
   return Container(
     margin: EdgeInsets.only(left: 16, right: 16, top: 0, bottom: isLast ? 9 : 0),
     child: Column(
@@ -65,10 +65,7 @@ Widget buildMyMessageBubble(BuildContext context, State state, DataMessage messa
                             title: const Text(
                                 "답장"),
                             onPressed: () {
-                              // context.widget._replyMessage =
-                              //     message;
-                              // _messageFocusNode
-                              //     .requestFocus();
+                              onReplyClick();
                             }),
                         FocusedMenuItem(
                             trailingIcon:

@@ -15,8 +15,8 @@ import '../theme/theme_colors.dart';
 
 
 class ScreenLogin extends StatefulWidget {
-
-  const ScreenLogin({super.key});
+  final String onPageEmail;
+  const ScreenLogin({super.key, required this.onPageEmail});
 
   @override
   State<StatefulWidget> createState() {
@@ -39,7 +39,9 @@ class _ScreenLoginState extends State<ScreenLogin> {
   @override
   void initState() {
     super.initState();
-
+     if(widget.onPageEmail.isNotEmpty){
+       _emailController.text = widget.onPageEmail;
+     }
     if(DBStore().isLoggedIn()) {
       Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) {
         return const ScreenChats();
@@ -50,6 +52,8 @@ class _ScreenLoginState extends State<ScreenLogin> {
     // _emailController.text = "artrooms@test.com";
     // _passwordController.text = "1234";
   }
+
+
 
   @override
   void dispose() {
