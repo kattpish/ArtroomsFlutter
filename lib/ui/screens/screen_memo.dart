@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../../beans/bean_chat.dart';
 import '../../main.dart';
-import '../widgets/widget_ui_notifiy.dart';
+import '../widgets/widget_ui_notify.dart';
 
 
 class ScreenMemo extends StatefulWidget {

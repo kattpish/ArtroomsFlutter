@@ -44,7 +44,7 @@ class WidgetChatroomMessageFlow extends StatelessWidget {
           children: [
             Expanded(
               child: Text(
-                '${parentMessage.senderName}답장하다',
+                '${parentMessage.senderName}에게 답장',
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 13,

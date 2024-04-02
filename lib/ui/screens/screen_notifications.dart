@@ -6,7 +6,7 @@ import '../../listeners/scroll_bouncing_physics.dart';
 import '../../main.dart';
 import '../theme/theme_colors.dart';
 import '../widgets/widget_notifications.dart';
-import '../widgets/widget_ui_notifiy.dart';
+import '../widgets/widget_ui_notify.dart';
 
 
 class ScreenNotifications extends StatefulWidget {

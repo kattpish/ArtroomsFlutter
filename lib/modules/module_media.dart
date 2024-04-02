@@ -65,15 +65,15 @@ class ModuleMedia {
 
   }
 
-  Future<List<FileItem>> loadFileImages() async {
+  Future<List<FileItem>> loadFileImages({bool isShowSettings = false}) async {
 
     List<FileItem> imageFiles = [];
 
-    List<FileItem> imageFiles1 = await loadFileImages1();
-    // List<FileItem> imageFiles2 = await loadFileImages2();
+    List<FileItem> imageFiles1 = await loadFileImages1(isShowSettings: isShowSettings);
+    List<FileItem> imageFiles2 = await loadFileImages2();
 
     imageFiles.addAll(imageFiles1);
-    // imageFiles.addAll(imageFiles2);
+    imageFiles.addAll(imageFiles2);
 
     imageFiles.sort((a, b) {
       return b.date.compareTo(a.date);
@@ -82,19 +82,20 @@ class ModuleMedia {
     return imageFiles;
   }
 
-  Future<List<FileItem>> loadFileImages1() async {
+  Future<List<FileItem>> loadFileImages1({bool isShowSettings = false, Null Function(FileItem fileItem)? onLoad}) async {
 
     List<AssetEntity> assetFiles = [];
 
     PermissionState result = await PhotoManager.requestPermissionExtend();
 
-    if(result.isAuth) {
+    if(result.isAuth || result.hasAccess) {
 
       List<AssetPathEntity> albums = await PhotoManager.getAssetPathList(type: RequestType.image);
 
       for(AssetPathEntity album in albums) {
 
         await album.assetCountAsync.then((assetCount) async {
+
           List<AssetEntity> images = await album.getAssetListPaged(page: 0, size: assetCount);
           assetFiles.addAll(images);
 
@@ -102,6 +103,11 @@ class ModuleMedia {
             File? file = await asset.originFile;
             if(file != null) {
               FileItem fileItem = FileItem(file: file, name: file.path, path: file.path);
+
+              if(onLoad != null) {
+                onLoad(fileItem);
+              }
+
               if(!imageFiles.contains(fileItem)) {
                 imageFiles.add(fileItem);
               }
@@ -117,7 +123,9 @@ class ModuleMedia {
       });
 
     } else {
-      PhotoManager.openSetting();
+      if(isShowSettings) {
+        PhotoManager.openSetting();
+      }
     }
 
     return imageFiles;
@@ -218,11 +226,11 @@ class ModuleMedia {
 
     List<FileItem> mediaFiles = [];
 
-    List<FileItem> mediaFiles1 = await loadFilesMedia1();
-    List<FileItem> mediaFiles2 = await loadFilesMedia2();
+    // List<FileItem> mediaFiles1 = await loadFilesMedia1();
+    // List<FileItem> mediaFiles2 = await loadFilesMedia2();
 
-    mediaFiles.addAll(mediaFiles1);
-    mediaFiles.addAll(mediaFiles2);
+    // mediaFiles.addAll(mediaFiles1);
+    // mediaFiles.addAll(mediaFiles2);
 
     mediaFiles.sort((a, b) {
       return b.date.compareTo(a.date);
@@ -239,7 +247,7 @@ class ModuleMedia {
 
     PermissionState result = await PhotoManager.requestPermissionExtend();
 
-    if(result.isAuth) {
+    if(result.isAuth || result.hasAccess) {
 
       List<AssetPathEntity> albums = [];
 
@@ -384,7 +392,9 @@ class ModuleMedia {
         }
 
       }catch(error) {
-        print(error);
+        if (kDebugMode) {
+          print(error);
+        }
       }
     }
 

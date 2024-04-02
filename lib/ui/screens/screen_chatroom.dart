@@ -6,14 +6,16 @@ import 'package:artrooms/modules/module_notices.dart';
 import 'package:artrooms/ui/screens/screen_chatroom_drawer.dart';
 import 'package:artrooms/ui/widgets/widget_loader.dart';
 import 'package:artrooms/utils/utils_notifications.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:focused_menu/focused_menu.dart';
 import 'package:focused_menu/modals.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:sendbird_sdk/core/channel/base/base_channel.dart';
+import 'package:sendbird_sdk/core/message/base_message.dart';
 import 'package:sendbird_sdk/core/models/member.dart';
+import 'package:sendbird_sdk/handlers/channel_event_handler.dart';
 import '../../beans/bean_chat.dart';
 import '../../beans/bean_file.dart';
 import '../../beans/bean_message.dart';
@@ -29,23 +31,21 @@ import '../widgets/widget_chatroom_message_input.dart';
 import '../widgets/widget_chatroom_message_me.dart';
 import '../widgets/widget_chatroom_message_mention.dart';
 import '../widgets/widget_chatroom_message_other.dart';
-import '../widgets/widget_chatroom_message_pin.dart';
 import '../widgets/widget_chatroom_message_reply_textfield.dart';
 import '../widgets/widget_chatroom_notice_pin.dart';
 import '../widgets/widget_media.dart';
-import '../widgets/widget_ui_notifiy.dart';
+import '../widgets/widget_ui_notify.dart';
 
 class ScreenChatroom extends StatefulWidget {
-
-  final DataChat chat;
+  final DataChat dataChat;
   final double widthRatio;
   final VoidCallback? onBackPressed;
 
   const ScreenChatroom(
       {super.key,
-        required this.chat,
-        this.widthRatio = 1.0,
-        this.onBackPressed});
+      required this.dataChat,
+      this.widthRatio = 1.0,
+      this.onBackPressed});
 
   @override
   State<StatefulWidget> createState() {
@@ -53,8 +53,8 @@ class ScreenChatroom extends StatefulWidget {
   }
 }
 
-class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProviderStateMixin {
-
+class _ScreenChatroomState extends State<ScreenChatroom>
+    with SingleTickerProviderStateMixin, ChannelEventHandler {
   bool _isLoading = true;
   bool _isLoadMore = false;
   bool _isButtonDisabled = true;
@@ -67,12 +67,13 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
 
   final List<DataMessage> _listMessages = [];
   List<Member> _listMembers = [];
-  final ScrollController _scrollController = ScrollController();
+  List<Member> _listMembersAll = [];
   final ScrollController _scrollControllerAttachment1 = ScrollController();
   final ScrollController _scrollControllerAttachment2 = ScrollController();
   final TextEditingController _messageController = TextEditingController();
   final ItemScrollController _itemScrollController = ItemScrollController();
-  final ItemPositionsListener _itemPositionsListener = ItemPositionsListener.create();
+  final ItemPositionsListener _itemPositionsListener =
+      ItemPositionsListener.create();
   final FocusNode _messageFocusNode = FocusNode();
 
   late final ModuleMessages _moduleMessages;
@@ -106,8 +107,8 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
   int _selectedImages = 0;
   int _selectedMedia = 0;
   bool _selectMode = true;
-  final List<FileItem> _filesImages = [];
-  final List<FileItem> _filesMedia = [];
+  List<FileItem> _filesImages = [];
+  List<FileItem> _filesMedia = [];
 
   @override
   void initState() {
@@ -116,28 +117,25 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
     _scrollControllerAttachment1.addListener(_scrollListener1);
     _scrollControllerAttachment2.addListener(_scrollListener2);
     _itemPositionsListener.itemPositions.addListener(_doHandleScroll);
-    _moduleMessages = ModuleMessages(widget.chat.id);
+    _moduleMessages = ModuleMessages(widget.dataChat.id);
+
+    _moduleMessages.init(this);
+
     _doLoadMessages();
     _doLoadNotice();
-    _doLoadMedia();
+    _doLoadMedia(false);
 
     _timer = Timer.periodic(Duration(seconds: timeSecRefreshChat), (timer) {
       _doLoadMessagesNew();
     });
 
     _messageFocusNode.addListener(() {
-      if (_messageFocusNode.hasFocus) {
-        _scrollController.animateTo(
-          _scrollController.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeOut,
-        );
-      }
+      if (_messageFocusNode.hasFocus) {}
     });
 
     _messageFocusNode.addListener(() {
       if (_messageFocusNode.hasFocus) {
-        _doHideAttachmentPicker();
+        _doAttachmentPickerClose();
       }
     });
 
@@ -171,8 +169,8 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
 
   @override
   void dispose() {
+    _moduleMessages.removeChannelEventHandler();
     _messageController.dispose();
-    _scrollController.dispose();
     _scrollControllerAttachment1.dispose();
     _scrollControllerAttachment2.dispose();
     _scrollTimer?.cancel();
@@ -183,7 +181,6 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
 
   @override
   Widget build(BuildContext context) {
-
     _screenWidth = MediaQuery.of(context).size.width * widget.widthRatio;
     _screenHeight = MediaQuery.of(context).size.height;
     _crossAxisCount = isTablet(context) ? 4 : 2;
@@ -194,7 +191,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
       onWillPop: () async {
         if (_showAttachment) {
           setState(() {
-            _showAttachment = false;
+            _doAttachmentPickerClose();
           });
           return false;
         } else if (_showAttachmentFull) {
@@ -210,7 +207,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
           return true;
         }
       },
-      child: Builder(builder: (context) {
+      child: Builder(builder: (_) {
         return SafeArea(
           child: Stack(
             children: [
@@ -231,7 +228,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                     },
                   ),
                   title: Text(
-                    widget.chat.name,
+                    widget.dataChat.name,
                     style: const TextStyle(
                       color: colorMainGrey900,
                       fontWeight: FontWeight.w600,
@@ -242,7 +239,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                     ),
                   ),
                   centerTitle: true,
-                  elevation: 0.5,
+                  elevation: 0.2,
                   toolbarHeight: 60,
                   backgroundColor: Colors.white,
                   actions: [
@@ -266,10 +263,10 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                         onTap: () {
                           Navigator.push(context,
                               MaterialPageRoute(builder: (context) {
-                                return ScreenChatroomDrawer(
-                                  dataChat: widget.chat,
-                                );
-                              }));
+                            return ScreenChatroomDrawer(
+                              dataChat: widget.dataChat,
+                            );
+                          }));
                         },
                       ),
                     ),
@@ -277,274 +274,264 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                 ),
                 backgroundColor: Colors.white,
                 body: WidgetUiNotify(
+                  dataChat: widget.dataChat,
                   child: Column(
                     children: [
                       Expanded(
                         child: _isLoading
                             ? const WidgetLoader()
                             : Stack(
-                          alignment: AlignmentDirectional.topCenter,
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.symmetric(vertical: 0),
-                              child: _listMessages.isNotEmpty ? GestureDetector(
-                                  onTap: () {
-                                    closeKeyboard(context);
-                                  },
-                                  child: ScrollablePositionedList.builder(
-                                    itemScrollController: _itemScrollController,
-                                    itemPositionsListener: _itemPositionsListener,
-                                    itemCount: _listMessages.length,
-                                    physics: const ScrollPhysicsBouncing(),
-                                    reverse: true,
-                                    itemBuilder: (context, index) {
-                                      _itemKeys[index] = GlobalKey();
-                                      final message = _listMessages[index];
-                                      final isLast = index == 0;
-                                      final messageNext = index > 0
-                                          ? _listMessages[index - 1]
-                                          : DataMessage.empty();
-                                      final messagePrevious =
-                                      index < _listMessages.length - 1
-                                          ? _listMessages[index + 1]
-                                          : DataMessage.empty();
-                                      final isPreviousSame =
-                                          messagePrevious.senderId ==
-                                              message.senderId;
-                                      final isNextSame =
-                                          messageNext.senderId ==
-                                              message.senderId;
-                                      final isPreviousDate =
-                                          messagePrevious.getDate() ==
-                                              message.getDate();
-                                      final isPreviousSameDateTime =
-                                          isPreviousSame &&
-                                              messagePrevious
-                                                  .getDateTime() ==
-                                                  message.getDateTime();
-                                      final isNextSameTime = isNextSame &&
-                                          messageNext.getDateTime() ==
-                                              message.getDateTime();
-                                      return Column(
-                                        key: _itemKeys[index],
-                                        children: [
-                                          Visibility(
-                                            visible: !isPreviousDate,
-                                            child: Container(
-                                              width: 145,
-                                              height: 31,
-                                              margin: EdgeInsets.only(
-                                                  left: 16,
-                                                  right: 16,
-                                                  top:
-                                                  index == 0 ? 4 : 16,
-                                                  bottom:
-                                                  index == 0 ? 4 : 8),
-                                              padding: const EdgeInsets
-                                                  .symmetric(
-                                                  horizontal: 12,
-                                                  vertical: 4),
-                                              alignment: Alignment.center,
-                                              decoration: ShapeDecoration(
-                                                color: const Color(
-                                                    0xFFF9F9F9),
-                                                shape:
-                                                RoundedRectangleBorder(
-                                                  borderRadius:
-                                                  BorderRadius
-                                                      .circular(20),
-                                                ),
-                                              ),
-                                              child: Row(
-                                                mainAxisSize:
-                                                MainAxisSize.min,
-                                                mainAxisAlignment:
-                                                MainAxisAlignment
-                                                    .start,
-                                                crossAxisAlignment:
-                                                CrossAxisAlignment
-                                                    .center,
-                                                children: [
-                                                  Text(
-                                                    formatDateLastMessage(
-                                                        message
-                                                            .timestamp),
-                                                    style:
-                                                    const TextStyle(
-                                                      color: Color(
-                                                          0xFF7D7D7D),
-                                                      fontSize: 12,
-                                                      fontFamily: 'SUIT',
-                                                      fontWeight:
-                                                      FontWeight.w400,
-                                                      height: 0,
-                                                      letterSpacing:
-                                                      -0.24,
+                                alignment: AlignmentDirectional.topCenter,
+                                children: [
+                                  Container(
+                                    padding:
+                                        const EdgeInsets.symmetric(vertical: 0),
+                                    child: _listMessages.isNotEmpty
+                                        ? GestureDetector(
+                                            onTap: () {
+                                              closeKeyboard(context);
+                                            },
+                                            child: ScrollablePositionedList
+                                                .builder(
+                                              itemScrollController:
+                                                  _itemScrollController,
+                                              itemPositionsListener:
+                                                  _itemPositionsListener,
+                                              itemCount: _listMessages.length,
+                                              physics:
+                                                  const ScrollPhysicsBouncing(),
+                                              reverse: true,
+                                              itemBuilder: (context, index) {
+                                                _itemKeys[index] = GlobalKey();
+                                                final message =
+                                                    _listMessages[index];
+                                                final isLast = index == 0;
+                                                final messageNext = index > 0
+                                                    ? _listMessages[index - 1]
+                                                    : DataMessage.empty();
+                                                final messagePrevious = index <
+                                                        _listMessages.length - 1
+                                                    ? _listMessages[index + 1]
+                                                    : DataMessage.empty();
+                                                final isPreviousSame =
+                                                    messagePrevious.senderId ==
+                                                        message.senderId;
+                                                final isNextSame =
+                                                    messageNext.senderId ==
+                                                        message.senderId;
+                                                final isPreviousDate =
+                                                    messagePrevious.getDate() ==
+                                                        message.getDate();
+                                                final isPreviousSameDateTime =
+                                                    isPreviousSame &&
+                                                        messagePrevious
+                                                                .getDateTime() ==
+                                                            message
+                                                                .getDateTime();
+                                                final isNextSameTime =
+                                                    isNextSame &&
+                                                        messageNext
+                                                                .getDateTime() ==
+                                                            message
+                                                                .getDateTime();
+                                                return Column(
+                                                  key: _itemKeys[index],
+                                                  children: [
+                                                    Visibility(
+                                                      visible: !isPreviousDate,
+                                                      child: Container(
+                                                        width: 145,
+                                                        height: 31,
+                                                        margin: EdgeInsets.only(
+                                                            left: 16,
+                                                            right: 16,
+                                                            top: index == 0
+                                                                ? 4
+                                                                : 16,
+                                                            bottom: index == 0
+                                                                ? 4
+                                                                : 8),
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                                horizontal: 12,
+                                                                vertical: 4),
+                                                        alignment:
+                                                            Alignment.center,
+                                                        decoration:
+                                                            ShapeDecoration(
+                                                          color: const Color(
+                                                              0xFFF9F9F9),
+                                                          shape:
+                                                              RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        20),
+                                                          ),
+                                                        ),
+                                                        child: Row(
+                                                          mainAxisSize:
+                                                              MainAxisSize.min,
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .start,
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .center,
+                                                          children: [
+                                                            Text(
+                                                              formatDateLastMessage(
+                                                                  message
+                                                                      .timestamp),
+                                                              style:
+                                                                  const TextStyle(
+                                                                color: Color(
+                                                                    0xFF7D7D7D),
+                                                                fontSize: 12,
+                                                                fontFamily:
+                                                                    'SUIT',
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w400,
+                                                                height: 0,
+                                                                letterSpacing:
+                                                                    -0.24,
+                                                              ),
+                                                              maxLines: 1,
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                              textAlign:
+                                                                  TextAlign
+                                                                      .center,
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
                                                     ),
-                                                    maxLines: 1,
-                                                    overflow: TextOverflow
-                                                        .ellipsis,
-                                                    textAlign:
-                                                    TextAlign.center,
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                          Align(
-                                            child: FocusedMenuHolder(
-                                                onPressed: () {},
-                                                menuWidth:
-                                                MediaQuery.of(context)
-                                                    .size
-                                                    .width /
-                                                    3,
-                                                menuItems: [
-                                                  FocusedMenuItem(
-                                                      trailingIcon:
-                                                      const Icon(
-                                                          Icons.reply,
-                                                        color: colorMainGrey500,
-                                                      ),
-                                                      title: const Text(
-                                                          "답장"),
-                                                      onPressed: () {
-                                                        _replyMessage =
-                                                            message;
-                                                        _messageFocusNode
-                                                            .requestFocus();
-                                                      }),
-                                                  FocusedMenuItem(
-                                                      trailingIcon:
-                                                      const Icon(Icons.copy,
-                                                        color: colorMainGrey500,
-                                                      ),
-                                                      title: const Text(
-                                                          "복사"),
-                                                      onPressed: () async {
-                                                        await Clipboard.setData(
-                                                            ClipboardData(
-                                                                text: message
-                                                                    .content));
-                                                      })
-                                                ],
-                                                blurSize: 0.0,
-                                                // menuOffset: 10.0,
-                                                // bottomOffsetHeight: 80.0,
-                                                menuBoxDecoration:
-                                                const BoxDecoration(
-                                                    borderRadius:
-                                                    BorderRadius.all(
-                                                        Radius.circular(
-                                                            15.0))),
-                                                child: Container(
-                                                  child: message.isMe
-                                                      ? buildMyMessageBubble(context, this, message, isLast, isPreviousSameDateTime, isNextSameTime, _screenWidth)
-                                                      : buildOtherMessageBubble(context, this, message, isLast, isPreviousSame, isNextSame, isPreviousSameDateTime, isNextSameTime, _screenWidth),
-                                                )),
-                                          )
-                                        ],
-                                      );
-                                    },
-                                  )
-                              )
-                                  : widgetChatroomEmpty(context),
-                            ),
-                            Visibility(
-                              visible: _isLoadMore,
-                              child: Container(
-                                width: 12,
-                                height: 12,
-                                margin: const EdgeInsets.only(top: 2),
-                                child: const CircularProgressIndicator(
-                                  color: Color(0xFF6A79FF),
-                                  strokeWidth: 2,
-                                ),
-                              ),
-                            ),
-                            AnimatedOpacity(
-                              opacity: !_isHideNotice &&
-                                  _dataNotice.notice.isNotEmpty
-                                  ? 1.0
-                                  : 0.0,
-                              duration: const Duration(milliseconds: 500),
-                              child: buildNoticePin(context, _dataNotice, _isExpandNotice, _isHideNotice,
-                                  onToggle:() {
-                                    setState(() {
-                                      _isExpandNotice = !_isExpandNotice;
-                                      closeKeyboard(context);
-                                    });
-                                  },
-                                  onHide:() {
-                                    setState(() {
-                                      _isHideNotice = true;
-                                      dbStore.setNoticeHide(_dataNotice, _isHideNotice);
-                                    });
-                                  }
-                              ),
-                            ),
-                            AnimatedOpacity(
-                              opacity: _showDateContainer ? 1.0 : 0.0,
-                              duration: const Duration(milliseconds: 500),
-                              child: Container(
-                                width: 145,
-                                height: 31,
-                                margin: const EdgeInsets.symmetric(
-                                    horizontal: 16, vertical: 2),
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 12, vertical: 4),
-                                alignment: Alignment.center,
-                                decoration: ShapeDecoration(
-                                  color: const Color(0xFFF9F9F9),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20),
+                                                    Container(
+                                                      child: message.isMe
+                                                          ? buildMyMessageBubble(
+                                                              context,
+                                                              this,
+                                                              message,
+                                                              isLast,
+                                                              isPreviousSameDateTime,
+                                                              isNextSameTime,
+                                                              _screenWidth)
+                                                          : buildOtherMessageBubble(
+                                                              context,
+                                                              this,
+                                                              message,
+                                                              isLast,
+                                                              isPreviousSame,
+                                                              isNextSame,
+                                                              isPreviousSameDateTime,
+                                                              isNextSameTime,
+                                                              _screenWidth),
+                                                    )
+                                                  ],
+                                                );
+                                              },
+                                            ))
+                                        : widgetChatroomEmpty(context),
                                   ),
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  mainAxisAlignment:
-                                  MainAxisAlignment.start,
-                                  crossAxisAlignment:
-                                  CrossAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      _currentDate,
-                                      style: const TextStyle(
-                                        color: Color(0xFF7D7D7D),
-                                        fontSize: 12,
-                                        fontFamily: 'SUIT',
-                                        fontWeight: FontWeight.w400,
-                                        height: 0,
-                                        letterSpacing: -0.24,
+                                  Visibility(
+                                    visible: _isLoadMore,
+                                    child: Container(
+                                      width: 12,
+                                      height: 12,
+                                      margin: const EdgeInsets.only(top: 2),
+                                      child: const CircularProgressIndicator(
+                                        color: Color(0xFF6A79FF),
+                                        strokeWidth: 2,
                                       ),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      textAlign: TextAlign.center,
                                     ),
-                                  ],
-                                ),
+                                  ),
+                                  AnimatedOpacity(
+                                    opacity: !_isHideNotice &&
+                                            _dataNotice.notice.isNotEmpty
+                                        ? 1.0
+                                        : 0.0,
+                                    duration: const Duration(milliseconds: 500),
+                                    child: buildNoticePin(
+                                        _dataNotice, _isExpandNotice,
+                                        onToggle: () {
+                                      setState(() {
+                                        _isExpandNotice = !_isExpandNotice;
+                                        closeKeyboard(context);
+                                      });
+                                    }, onHide: () {
+                                      setState(() {
+                                        _isHideNotice = true;
+                                        dbStore.setNoticeHide(
+                                            _dataNotice, _isHideNotice);
+                                      });
+                                    }),
+                                  ),
+                                  AnimatedOpacity(
+                                    opacity: _showDateContainer ? 1.0 : 0.0,
+                                    duration: const Duration(milliseconds: 500),
+                                    child: Container(
+                                      width: 145,
+                                      height: 31,
+                                      margin: const EdgeInsets.symmetric(
+                                          horizontal: 16, vertical: 2),
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 12, vertical: 4),
+                                      alignment: Alignment.center,
+                                      decoration: ShapeDecoration(
+                                        color: const Color(0xFFF9F9F9),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                        ),
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            _currentDate,
+                                            style: const TextStyle(
+                                              color: Color(0xFF7D7D7D),
+                                              fontSize: 12,
+                                              fontFamily: 'SUIT',
+                                              fontWeight: FontWeight.w400,
+                                              height: 0,
+                                              letterSpacing: -0.24,
+                                            ),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ),
-                          ],
-                        ),
                       ),
                       Visibility(
                         visible: _showAttachment,
                         child: attachmentSelected(context, _filesImages,
-                            onRemove:(FileItem fileItem) {
-                              setState(() {
-                                fileItem.isSelected = false;
-                              });
-                              closeKeyboard(context);
-                            }
-                        ),
+                            onRemove: (FileItem fileItem) {
+                          setState(() {
+                            fileItem.isSelected = false;
+                          });
+                          closeKeyboard(context);
+                        }),
                       ),
                       _buildMessageInput(),
                       const SizedBox(height: 8),
                       Visibility(
                         visible: _showAttachment,
-                        child:
-                        SizedBox(height: _boxHeight, child: attachmentPicker),
+                        child: SizedBox(
+                            height: _boxHeight, child: attachmentPicker),
                       ),
                     ],
                   ),
@@ -594,12 +581,12 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
       child: Column(
         children: [
           if (isReplying) buildReplyForTextField(_replyMessage, _doCancelReply),
-          if (_isMentioning) buildMentions(
-              members: _listMembers,
-              onCancelReply: (Member member) {
-                _doSelectMention(member);
-              }
-          ),
+          if (_isMentioning)
+            buildMentions(
+                members: _listMembers,
+                onCancelReply: (Member member) {
+                  _doSelectMention(member);
+                }),
           Row(
             children: [
               Container(
@@ -614,7 +601,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                         _deselectPickedFiles(false);
                       } else {
                         _doAttachmentPickerMin();
-                        _doLoadMedia();
+                        _doLoadMedia(true);
                       }
                       closeKeyboard(context);
                     });
@@ -634,12 +621,22 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
               const SizedBox(width: 4),
               Expanded(
                   child: Column(children: [
-                    widgetChatroomMessageInput(_messageController, _messageFocusNode,
-                        onChanged: (String text) {
-                          _doFilterInputs(text);
-                        }
-                    ),
-                  ])),
+                widgetChatroomMessageInput(
+                    _messageController, _messageFocusNode,
+                    onChanged: (String text) {
+                  if (text.endsWith("@")) {
+                    setState(() {
+                      _isMentioning = !_isMentioning;
+                    });
+                  }
+                  if (text.endsWith(" ")) {
+                    setState(() {
+                      _isMentioning = false;
+                    });
+                  }
+                  _doFilterInputs(text);
+                }),
+              ])),
               const SizedBox(width: 4),
               Container(
                 padding: const EdgeInsets.all(0.0),
@@ -676,10 +673,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
         onVerticalDragUpdate: _doVerticalDragUpdate,
         onTap: () {
           if (_showAttachment) {
-            state.setState(() {
-              _showAttachment = false;
-              _showAttachmentFull = true;
-            });
+            _doAttachmentPickerFull();
           } else {
             setState(() {
               _showAttachmentFull = false;
@@ -705,6 +699,125 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
             ),
             const SizedBox(
               height: 10,
+            ),
+            Visibility(
+              visible: _showAttachmentFull,
+              child: AppBar(
+                backgroundColor: Colors.white,
+                title: Text(
+                  !_selectMode ? '이미지' : "$_selectedImages개 선택",
+                  style: const TextStyle(
+                    fontSize: 18,
+                    color: colorMainGrey900,
+                    fontFamily: 'SUIT',
+                    fontWeight: FontWeight.w700,
+                    height: 0,
+                    letterSpacing: -0.36,
+                  ),
+                ),
+                toolbarHeight: 60,
+                centerTitle: _selectMode,
+                leading: Row(
+                  children: [
+                    Visibility(
+                      visible: !_selectMode,
+                      child: IconButton(
+                        icon: const Icon(
+                          Icons.arrow_back_ios,
+                          color: colorMainGrey250,
+                          size: 20,
+                        ),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ),
+                    Visibility(
+                      visible: _selectMode,
+                      child: Container(
+                        height: double.infinity,
+                        margin: const EdgeInsets.only(left: 8.0),
+                        child: Center(
+                          child: InkWell(
+                            onTap: () {
+                              _deselectPickedFiles(true);
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(8.0),
+                              child: const Text('취소',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: colorMainGrey600,
+                                    fontFamily: 'SUIT',
+                                    fontWeight: FontWeight.w400,
+                                    height: 0,
+                                    letterSpacing: -0.32,
+                                  )),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                actions: [
+                  Visibility(
+                    visible: _selectMode,
+                    child: Container(
+                      height: double.infinity,
+                      margin: const EdgeInsets.only(right: 8.0),
+                      child: Center(
+                        child: InkWell(
+                          onTap: () {
+                            _doDeselectPickedImages();
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(8.0),
+                            child: const Text('선택 해제',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: colorMainGrey600,
+                                  fontFamily: 'SUIT',
+                                  fontWeight: FontWeight.w400,
+                                  height: 0,
+                                  letterSpacing: -0.32,
+                                )),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Visibility(
+                    visible: !_selectMode,
+                    child: Container(
+                      height: double.infinity,
+                      margin: const EdgeInsets.only(left: 8.0),
+                      child: Center(
+                        child: InkWell(
+                          onTap: () {
+                            setState(() {
+                              _selectMode = true;
+                            });
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(8.0),
+                            child: const Text('선택',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: colorMainGrey600,
+                                  fontFamily: 'SUIT',
+                                  fontWeight: FontWeight.w400,
+                                  height: 0,
+                                  letterSpacing: -0.32,
+                                )),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+                elevation: 0.2,
+              ),
             ),
             Row(
               children: [
@@ -801,98 +914,98 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
               child: Expanded(
                 child: _filesImages.isEmpty
                     ? const Center(
-                  child: SizedBox(
-                    width: 30,
-                    height: 30,
-                    child: CircularProgressIndicator(
-                      color: Color(0xFF6A79FF),
-                      strokeWidth: 3,
-                    ),
-                  ),
-                )
+                        child: SizedBox(
+                          width: 30,
+                          height: 30,
+                          child: CircularProgressIndicator(
+                            color: Color(0xFF6A79FF),
+                            strokeWidth: 3,
+                          ),
+                        ),
+                      )
                     : GridView.builder(
-                  controller: _scrollControllerAttachment1,
-                  padding: const EdgeInsets.only(bottom: 24),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: isTablet(context) ? 6 : 3,
-                    crossAxisSpacing: 5,
-                    mainAxisSpacing: 5,
-                    childAspectRatio: 1,
-                  ),
-                  itemCount: _filesImages.length,
-                  itemBuilder: (context, index) {
-                    var fileImage = _filesImages[index];
-                    return Container(
-                      clipBehavior: Clip.antiAlias,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: InkWell(
-                        onTap: () {
-                          doOpenPhotoView(context,
-                              fileImage: fileImage.file,
-                              fileName: fileImage.name);
-                        },
-                        onLongPress: () {
-                          state.setState(() {
-                            fileImage.isSelected = !fileImage.isSelected;
-                            closeKeyboard(context);
-                          });
-                          _doCheckEnableButtonFile();
-                        },
-                        child: Stack(
-                          children: [
-                            Image.file(
-                              fileImage.file,
-                              width: double.infinity,
-                              height: double.infinity,
-                              fit: BoxFit.cover,
+                        controller: _scrollControllerAttachment1,
+                        padding: const EdgeInsets.only(bottom: 24),
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: isTablet(context) ? 6 : 3,
+                          crossAxisSpacing: 5,
+                          mainAxisSpacing: 5,
+                          childAspectRatio: 1,
+                        ),
+                        itemCount: _filesImages.length,
+                        itemBuilder: (context, index) {
+                          var fileImage = _filesImages[index];
+                          return Container(
+                            clipBehavior: Clip.antiAlias,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(10),
                             ),
-                            Positioned(
-                              top: 3,
-                              right: 4,
-                              child: Visibility(
-                                visible: _selectMode,
-                                child: InkWell(
-                                  onTap: () {
-                                    state.setState(() {
-                                      fileImage.isSelected =
-                                      !fileImage.isSelected;
-                                      _doCheckEnableButtonFile();
-                                      closeKeyboard(context);
-                                    });
-                                  },
-                                  child: Container(
-                                    width: 26,
-                                    height: 26,
-                                    decoration: BoxDecoration(
-                                      color: fileImage.isSelected
-                                          ? colorPrimaryBlue
-                                          : colorMainGrey200
-                                          .withAlpha(150),
-                                      shape: BoxShape.circle,
-                                      border: Border.all(
-                                        color: fileImage.isSelected
-                                            ? colorPrimaryBlue
-                                            : const Color(0xFFE3E3E3),
-                                        width: 1,
+                            child: InkWell(
+                              onTap: () {
+                                doOpenPhotoView(context,
+                                    fileImage: fileImage.file,
+                                    fileName: fileImage.name);
+                              },
+                              onLongPress: () {
+                                state.setState(() {
+                                  fileImage.isSelected = !fileImage.isSelected;
+                                  closeKeyboard(context);
+                                });
+                                _doCheckEnableButtonFile();
+                              },
+                              child: Stack(
+                                children: [
+                                  Image.file(
+                                    fileImage.file,
+                                    width: double.infinity,
+                                    height: double.infinity,
+                                    fit: BoxFit.cover,
+                                  ),
+                                  Positioned(
+                                    top: 3,
+                                    right: 4,
+                                    child: Visibility(
+                                      visible: _selectMode,
+                                      child: InkWell(
+                                        onTap: () {
+                                          state.setState(() {
+                                            fileImage.isSelected =
+                                                !fileImage.isSelected;
+                                            _doCheckEnableButtonFile();
+                                            closeKeyboard(context);
+                                          });
+                                        },
+                                        child: Container(
+                                          width: 26,
+                                          height: 26,
+                                          decoration: BoxDecoration(
+                                            color: fileImage.isSelected
+                                                ? colorPrimaryBlue
+                                                : colorMainGrey200
+                                                    .withAlpha(150),
+                                            shape: BoxShape.circle,
+                                            border: Border.all(
+                                              color: fileImage.isSelected
+                                                  ? colorPrimaryBlue
+                                                  : const Color(0xFFE3E3E3),
+                                              width: 1,
+                                            ),
+                                          ),
+                                          child: fileImage.isSelected
+                                              ? const Icon(Icons.check,
+                                                  size: 16, color: Colors.white)
+                                              : Container(),
+                                        ),
                                       ),
                                     ),
-                                    child: fileImage.isSelected
-                                        ? const Icon(Icons.check,
-                                        size: 16, color: Colors.white)
-                                        : Container(),
                                   ),
-                                ),
+                                ],
                               ),
                             ),
-                          ],
-                        ),
+                          );
+                        },
                       ),
-                    );
-                  },
-                ),
               ),
             ),
             Visibility(
@@ -900,128 +1013,128 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
               child: Expanded(
                 child: _filesMedia.isEmpty
                     ? const Center(
-                  child: SizedBox(
-                    width: 40,
-                    height: 40,
-                    child: CircularProgressIndicator(
-                      color: Color(0xFF6A79FF),
-                      strokeWidth: 3,
-                    ),
-                  ),
-                )
-                    : GridView.builder(
-                  controller: _scrollControllerAttachment2,
-                  padding: const EdgeInsets.only(
-                      left: 8, top: 8, right: 8, bottom: 24),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: _crossAxisCount,
-                    crossAxisSpacing: _crossAxisSpacing,
-                    mainAxisSpacing: _mainAxisSpacing,
-                    childAspectRatio: (_screenWidth / _crossAxisCount -
-                        _crossAxisSpacing) /
-                        197,
-                  ),
-                  itemCount: _filesMedia.length,
-                  itemBuilder: (context, index) {
-                    var fileMedia = _filesMedia[index];
-                    return Card(
-                      elevation: 0,
-                      color: Colors.white,
-                      child: InkWell(
-                        onTap: () {
-                          setState(() {
-                            fileMedia.isSelected = !fileMedia.isSelected;
-                            _doCheckEnableButtonFile();
-                            closeKeyboard(context);
-                          });
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(16.0),
-                            border: Border.all(
-                              color: colorMainGrey200,
-                              width: 1.0,
-                            ),
+                        child: SizedBox(
+                          width: 40,
+                          height: 40,
+                          child: CircularProgressIndicator(
+                            color: Color(0xFF6A79FF),
+                            strokeWidth: 3,
                           ),
-                          child: Stack(
-                            children: [
-                              Column(
-                                crossAxisAlignment:
-                                CrossAxisAlignment.start,
-                                children: [
-                                  const SizedBox(height: 24),
-                                  Image.asset(
-                                    fileMedia.isSelected
-                                        ? 'assets/images/icons/icon_file_selected.png'
-                                        : 'assets/images/icons/icon_file.png',
-                                    width: 30,
-                                    height: 30,
+                        ),
+                      )
+                    : GridView.builder(
+                        controller: _scrollControllerAttachment2,
+                        padding: const EdgeInsets.only(
+                            left: 8, top: 8, right: 8, bottom: 24),
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: _crossAxisCount,
+                          crossAxisSpacing: _crossAxisSpacing,
+                          mainAxisSpacing: _mainAxisSpacing,
+                          childAspectRatio: (_screenWidth / _crossAxisCount -
+                                  _crossAxisSpacing) /
+                              197,
+                        ),
+                        itemCount: _filesMedia.length,
+                        itemBuilder: (context, index) {
+                          var fileMedia = _filesMedia[index];
+                          return Card(
+                            elevation: 0,
+                            color: Colors.white,
+                            child: InkWell(
+                              onTap: () {
+                                setState(() {
+                                  fileMedia.isSelected = !fileMedia.isSelected;
+                                  _doCheckEnableButtonFile();
+                                  closeKeyboard(context);
+                                });
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.all(16),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(16.0),
+                                  border: Border.all(
+                                    color: colorMainGrey200,
+                                    width: 1.0,
                                   ),
-                                  const SizedBox(height: 4),
-                                  Expanded(
-                                    child: Column(
+                                ),
+                                child: Stack(
+                                  children: [
+                                    Column(
                                       crossAxisAlignment:
-                                      CrossAxisAlignment.start,
-                                      mainAxisAlignment:
-                                      MainAxisAlignment.center,
+                                          CrossAxisAlignment.start,
                                       children: [
-                                        Text(
-                                          fileMedia.name,
-                                          style: const TextStyle(
-                                            fontSize: 16,
-                                            color: colorMainGrey700,
-                                            fontWeight: FontWeight.w400,
-                                          ),
-                                          maxLines: 2,
+                                        const SizedBox(height: 24),
+                                        Image.asset(
+                                          fileMedia.isSelected
+                                              ? 'assets/images/icons/icon_file_selected.png'
+                                              : 'assets/images/icons/icon_file.png',
+                                          width: 30,
+                                          height: 30,
                                         ),
-                                        const SizedBox(height: 8),
-                                        Text(
-                                          fileMedia.date,
-                                          style: const TextStyle(
-                                            fontSize: 16,
-                                            color: Color(0xFF8F8F8F),
-                                            fontWeight: FontWeight.w300,
+                                        const SizedBox(height: 4),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                fileMedia.name,
+                                                style: const TextStyle(
+                                                  fontSize: 16,
+                                                  color: colorMainGrey700,
+                                                  fontWeight: FontWeight.w400,
+                                                ),
+                                                maxLines: 2,
+                                              ),
+                                              const SizedBox(height: 8),
+                                              Text(
+                                                fileMedia.date,
+                                                style: const TextStyle(
+                                                  fontSize: 16,
+                                                  color: Color(0xFF8F8F8F),
+                                                  fontWeight: FontWeight.w300,
+                                                ),
+                                                maxLines: 1,
+                                              ),
+                                            ],
                                           ),
-                                          maxLines: 1,
                                         ),
                                       ],
                                     ),
-                                  ),
-                                ],
-                              ),
-                              Positioned(
-                                top: 3,
-                                right: 2,
-                                child: Container(
-                                  width: 26,
-                                  height: 26,
-                                  decoration: BoxDecoration(
-                                    color: fileMedia.isSelected
-                                        ? colorPrimaryBlue
-                                        : Colors.transparent,
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                      color: fileMedia.isSelected
-                                          ? colorPrimaryBlue
-                                          : const Color(0xFFE3E3E3),
-                                      width: 1,
+                                    Positioned(
+                                      top: 3,
+                                      right: 2,
+                                      child: Container(
+                                        width: 26,
+                                        height: 26,
+                                        decoration: BoxDecoration(
+                                          color: fileMedia.isSelected
+                                              ? colorPrimaryBlue
+                                              : Colors.transparent,
+                                          shape: BoxShape.circle,
+                                          border: Border.all(
+                                            color: fileMedia.isSelected
+                                                ? colorPrimaryBlue
+                                                : const Color(0xFFE3E3E3),
+                                            width: 1,
+                                          ),
+                                        ),
+                                        child: fileMedia.isSelected
+                                            ? const Icon(Icons.check,
+                                                size: 16, color: Colors.white)
+                                            : Container(),
+                                      ),
                                     ),
-                                  ),
-                                  child: fileMedia.isSelected
-                                      ? const Icon(Icons.check,
-                                      size: 16, color: Colors.white)
-                                      : Container(),
+                                  ],
                                 ),
                               ),
-                            ],
-                          ),
-                        ),
+                            ),
+                          );
+                        },
                       ),
-                    );
-                  },
-                ),
               ),
             ),
           ],
@@ -1030,270 +1143,14 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
     );
   }
 
-  void _doAttachmentPickerFull() {
-    setState(() {
-      _boxHeight = _boxHeightMin;
-      _showAttachmentFull = true;
-      _showAttachment = false;
-    });
-  }
+  @override
+  void onMessageReceived(BaseChannel channel, BaseMessage baseMessage) {
+    DataMessage dataMessage = DataMessage.fromBaseMessage(baseMessage);
 
-  void _doAttachmentPickerMin() {
-    setState(() {
-      _boxHeight = _boxHeightMin;
-      _showAttachment = true;
-      _showAttachmentFull = false;
-    });
-  }
-
-  void _doAttachmentPickerClose() {
-    setState(() {
-      _boxHeight = _boxHeightMin;
-      _showAttachment = false;
-      _showAttachmentFull = false;
-    });
-  }
-
-  void _doVerticalDragStart(DragStartDetails details) {
-    _dragStartY = details.globalPosition.dy;
-  }
-
-  void _doVerticalDragUpdate(DragUpdateDetails details) {
-    final newHeight = _boxHeight - details.globalPosition.dy + _dragStartY;
-
-    setState(() {
-      _boxHeight = newHeight.clamp(100.0, _screenHeight);
-      _dragStartY = details.globalPosition.dy;
-
-      if (_boxHeight < _screenHeight - 100 && _boxHeight > _screenHeight - 200) {
-        if (kDebugMode) {
-          print("_onVerticalDragUpdate-1");
-        }
-        _doAttachmentPickerMin();
-      } else if (_boxHeight > _boxHeightMin + 160) {
-        if (kDebugMode) {
-          print("_onVerticalDragUpdate-2");
-        }
-        _showAttachment = false;
-        if (!_showAttachmentFull) {
-          _showAttachmentFull = true;
-          _boxHeight = _screenHeight;
-        }
-      } else if (_boxHeight < _boxHeightMin - 160) {
-        if (kDebugMode) {
-          print("_onVerticalDragUpdate-3");
-        }
-        _doAttachmentPickerClose();
-      }
-    });
-  }
-
-  void _scrollListener1() {
-    if (kDebugMode) {
-      print("_scrollController-offset: ${_scrollControllerAttachment1.offset}");
-      print("_scrollController-minScrollExtent: ${_scrollControllerAttachment1.position.minScrollExtent}");
-      print("_scrollController-userScrollDirection: ${_scrollControllerAttachment1.position.userScrollDirection}");
+    if (!_listMessages.contains(dataMessage)) {
+      _listMessages.insert(0, dataMessage);
+      showNotificationMessage(context, widget.dataChat, dataMessage);
     }
-
-    if (_scrollControllerAttachment1.offset == 0 &&
-        _scrollControllerAttachment1.position.minScrollExtent == 0 &&
-        _scrollControllerAttachment1.position.userScrollDirection == ScrollDirection.forward) {
-      if (kDebugMode) {
-        print("_scrollController-1");
-      }
-      setState(() {
-        _listReachedTop = true;
-        _doAttachmentPickerMin();
-        _animationController.stop();
-      });
-    } else if (_scrollControllerAttachment1.offset <=
-        _scrollControllerAttachment1.position.minScrollExtent &&
-        _scrollControllerAttachment1.position.userScrollDirection == ScrollDirection.forward) {
-      if (kDebugMode) {
-        print("_scrollController-2");
-      }
-      if (!_listReachedTop) {
-        setState(() {
-          _listReachedTop = true;
-        });
-      }
-    } else if (_scrollControllerAttachment1.offset <=
-        _scrollControllerAttachment1.position.minScrollExtent &&
-        _scrollControllerAttachment1.position.userScrollDirection == ScrollDirection.reverse) {
-      if (kDebugMode) {
-        print("_scrollController-3");
-      }
-      if (_listReachedTop) {
-        setState(() {
-          _listReachedTop = false;
-        });
-      }
-    } else if (_scrollControllerAttachment1.offset >=
-        _scrollControllerAttachment1.position.maxScrollExtent &&
-        !_scrollControllerAttachment1.position.outOfRange) {
-      if (kDebugMode) {
-        print("_scrollController-4");
-      }
-      if (!_listReachedBottom) {
-        setState(() {
-          _listReachedBottom = true;
-        });
-      }
-    } else {
-      if (kDebugMode) {
-        print("_scrollController-5");
-      }
-      if (_listReachedBottom) {
-        if (kDebugMode) {
-          print("_scrollController-5_1");
-        }
-        setState(() {
-          _listReachedBottom = false;
-        });
-      } else {
-        if (kDebugMode) {
-          print("_scrollController-5_2");
-        }
-        setState(() {
-          _showAttachment = false;
-          _showAttachmentFull = true;
-        });
-        _doAnimateHeight();
-        closeKeyboard(context);
-      }
-    }
-  }
-
-  void _scrollListener2() {
-    if (kDebugMode) {
-      print("_scrollController-offset: ${_scrollControllerAttachment2.offset}");
-    }
-    if (kDebugMode) {
-      print("_scrollController-minScrollExtent: ${_scrollControllerAttachment2.position.minScrollExtent}");
-    }
-    if (kDebugMode) {
-      print("_scrollController-userScrollDirection: ${_scrollControllerAttachment2.position.userScrollDirection}");
-    }
-
-    if (_scrollControllerAttachment2.offset == 0 &&
-        _scrollControllerAttachment2.position.minScrollExtent == 0 &&
-        _scrollControllerAttachment2.position.userScrollDirection == ScrollDirection.forward) {
-      if (kDebugMode) {
-        print("_scrollController-1");
-      }
-      setState(() {
-        _listReachedTop = true;
-        _doAttachmentPickerMin();
-        _animationController.stop();
-      });
-    } else if (_scrollControllerAttachment2.offset <=
-        _scrollControllerAttachment2.position.minScrollExtent &&
-        _scrollControllerAttachment2.position.userScrollDirection == ScrollDirection.forward) {
-      if (kDebugMode) {
-        print("_scrollController-2");
-      }
-      if (!_listReachedTop) {
-        setState(() {
-          _listReachedTop = true;
-        });
-      }
-    } else if (_scrollControllerAttachment2.offset <=
-        _scrollControllerAttachment2.position.minScrollExtent &&
-        _scrollControllerAttachment2.position.userScrollDirection == ScrollDirection.reverse) {
-      if (kDebugMode) {
-        print("_scrollController-3");
-      }
-      if (_listReachedTop) {
-        setState(() {
-          _listReachedTop = false;
-        });
-      }
-    } else if (_scrollControllerAttachment2.offset >=
-        _scrollControllerAttachment2.position.maxScrollExtent &&
-        !_scrollControllerAttachment2.position.outOfRange) {
-      if (kDebugMode) {
-        print("_scrollController-4");
-      }
-      if (!_listReachedBottom) {
-        setState(() {
-          _listReachedBottom = true;
-        });
-      }
-    } else {
-      if (kDebugMode) {
-        print("_scrollController-5");
-      }
-      if (_listReachedBottom) {
-        if (kDebugMode) {
-          print("_scrollController-5_1");
-        }
-        setState(() {
-          _listReachedBottom = false;
-        });
-      } else {
-        if (kDebugMode) {
-          print("_scrollController-5_2");
-        }
-        setState(() {
-          _showAttachment = false;
-          _showAttachmentFull = true;
-        });
-        _doAnimateHeight();
-        closeKeyboard(context);
-      }
-    }
-  }
-
-  void _doAnimateHeight() {
-    if (_animationController.isAnimating && _boxHeight > _screenHeight) {
-      _animationController.stop();
-    } else {
-      _animationController.forward(from: 0.0);
-    }
-  }
-
-  void _doHandleScroll() {
-
-    final visiblePositions = _itemPositionsListener.itemPositions.value
-        .where((ItemPosition position) {
-      return position.itemTrailingEdge > 0;
-    });
-    if (visiblePositions.isEmpty) return;
-
-    final firstVisibleItemIndex = visiblePositions
-        .reduce((ItemPosition max, ItemPosition position) {
-      return position.itemTrailingEdge > max.itemTrailingEdge ? position : max;
-    }).index;
-
-    if(_firstVisibleItemIndex == -1) {
-      _firstVisibleItemIndex = firstVisibleItemIndex;
-      return;
-    }else if(_firstVisibleItemIndex == firstVisibleItemIndex) {
-      return;
-    }
-
-    _firstVisibleItemIndex = firstVisibleItemIndex;
-
-    if (_scrollTimer?.isActive ?? false) _scrollTimer?.cancel();
-
-    if(_listMessages.isNotEmpty) {
-
-      var firstVisibleMessage = _listMessages[firstVisibleItemIndex];
-
-      setState(() {
-        _showDateContainer = true;
-        _currentDate = formatDateLastMessage(firstVisibleMessage.timestamp);
-      });
-
-      _scrollTimer = Timer(const Duration(milliseconds: 500), () {
-        setState(() {
-          _showDateContainer = false;
-        });
-      });
-
-    }
-
-    _doLoadMessages();
   }
 
   Future<void> _doLoadMessages() async {
@@ -1305,56 +1162,55 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
       });
     }
 
-    _moduleMessages.getMessagesMore().then((List<DataMessage> messages) {
-      setState(() {
-        _listMessages.addAll(messages);
-      });
+    _moduleMessages
+        .getMessagesMore()
+        .then((List<DataMessage> messages) {
+          setState(() {
+            _listMessages.addAll(messages);
+          });
 
-      for (DataMessage message in messages) {
-        showNotificationMessage(context, widget.chat, message);
-      }
-
-    }).catchError((e) {
-
-    }
-    ).whenComplete(() {
-      if(mounted) {
-        setState(() {
-          _isLoading = false;
-          _isLoadMore = false;
+          for (DataMessage message in messages) {
+            showNotificationMessage(context, widget.dataChat, message);
+          }
+        })
+        .catchError((e) {})
+        .whenComplete(() {
+          if (mounted) {
+            setState(() {
+              _isLoading = false;
+              _isLoadMore = false;
+            });
+          }
         });
-      }
-    });
-
   }
 
   Future<void> _doLoadMessagesNew() async {
     if (_moduleMessages.isLoading()) return;
 
     _moduleMessages.getMessagesNew().then((List<DataMessage> messages) {
-
       for (DataMessage message in messages) {
-        if(!_listMessages.contains(message)) {
+        if (!_listMessages.contains(message)) {
           _listMessages.insert(0, message);
-          showNotificationMessage(context, widget.chat, message);
+          showNotificationMessage(context, widget.dataChat, message);
         }
       }
-
     });
   }
 
   void _doLoadNotice() {
-    _moduleNotice.getNotices(widget.chat.id).then((List<DataNotice> listNotices) {
-      setState(() {
-        for (DataNotice notice in listNotices) {
-          if (notice.noticeable) {
-            _dataNotice = notice;
-            _isHideNotice = dbStore.isNoticeHide(_dataNotice);
-            break;
-          }
-        }
-      });
-    })
+    _moduleNotice
+        .getNotices(widget.dataChat.id)
+        .then((List<DataNotice> listNotices) {
+          setState(() {
+            for (DataNotice notice in listNotices) {
+              if (notice.noticeable) {
+                _dataNotice = notice;
+                _isHideNotice = dbStore.isNoticeHide(_dataNotice);
+                break;
+              }
+            }
+          });
+        })
         .catchError((e) {})
         .whenComplete(() {});
   }
@@ -1372,33 +1228,30 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
   }
 
   List<Member> _doGetAllMembers() {
-    setState(() {
-      _listMembers = _moduleMessages.getGroupChannel().members;
-    });
-    return _listMembers;
+    if (_listMembersAll.isEmpty) {
+      setState(() {
+        _listMembersAll = _moduleMessages.getGroupChannel().members;
+      });
+    }
+    _listMembers = _listMembersAll;
+    return _listMembersAll;
   }
 
   Future<void> _doSendMessage() async {
     if (!_isButtonDisabled) {
-
       _doSendMessageText();
 
-      setState(() {
-        _showAttachment = false;
-        _showAttachmentFull = false;
-      });
-
+      _doAttachmentPickerClose();
       await _doSendMessageImages();
-
       await _doSendMessageMedia();
 
       _deselectPickedFiles(false);
       _doCancelReply();
+      _doCancelMention();
     }
   }
 
   void _doSendMessageText() {
-
     if (_messageController.text.isNotEmpty) {
       _moduleMessages
           .sendMessage(_messageController.text, _replyMessage)
@@ -1413,13 +1266,12 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
         });
       });
     }
-
   }
 
   Future<void> _doSendMessageImages() async {
-
     if (_selectedImages > 0) {
-      DataMessage myMessage1 = _moduleMessages.preSendMessageImage(_filesImages);
+      DataMessage myMessage1 =
+          _moduleMessages.preSendMessageImage(_filesImages);
       int index = myMessage1.index;
 
       setState(() {
@@ -1443,15 +1295,14 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
         }
       }
     }
-
   }
 
   Future<void> _doSendMessageMedia() async {
-
     if (_selectedMedia > 0) {
       List<int> index = [];
 
-      List<DataMessage> myMessages = await _moduleMessages.preSendMessageMedia(_filesMedia);
+      List<DataMessage> myMessages =
+          await _moduleMessages.preSendMessageMedia(_filesMedia);
 
       for (DataMessage myMessage1 in myMessages) {
         setState(() {
@@ -1481,13 +1332,11 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
         }
       }
     }
-
   }
 
   Future<void> _doProcessCameraResult() async {
     File? file = await doPickImageWithCamera();
-
-    if(file != null) {
+    if (file != null) {
       _selectedImages++;
       FileItem fileItem = FileItem(file: file, path: file.path);
       fileItem.isSelected = true;
@@ -1501,7 +1350,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
 
     List<FileItem> fileItems = await doPickFiles();
 
-    for(FileItem fileItem in fileItems) {
+    for (FileItem fileItem in fileItems) {
       _selectedMedia++;
       fileItem.isSelected = true;
       _filesMedia.add(fileItem);
@@ -1510,28 +1359,50 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
     await _doSendMessageMedia();
   }
 
-  void _doLoadMedia() {
-    _filesImages.clear();
-    _filesMedia.clear();
-
+  void _doLoadMedia(isShow) {
     moduleMedia.init();
 
-    moduleMedia.loadFileImages().then((List<FileItem> listImages) {
-      setState(() {
-        _filesImages.addAll(listImages);
-      });
+    moduleMedia.loadFileImages1(
+        isShowSettings: isShow,
+        onLoad: (FileItem fileItem) {
+          if (mounted) {
+            setState(() {
+              if (!_filesImages.contains(fileItem)) {
+                _filesImages.add(fileItem);
+              }
+            });
+          }
+        });
+
+    moduleMedia
+        .loadFileImages(isShowSettings: isShow)
+        .then((List<FileItem> listImages) {
+      if (mounted) {
+        setState(() {
+          for (FileItem fileItem in listImages) {
+            if (!_filesImages.contains(fileItem)) {
+              _filesImages.insert(0, fileItem);
+            }
+          }
+          _filesImages.clear();
+          _filesImages = listImages;
+        });
+      }
     });
 
     moduleMedia.loadFilesMedia().then((List<FileItem> listMedia) {
-      setState(() {
-        _filesMedia.addAll(listMedia);
-      });
+      if (mounted) {
+        setState(() {
+          for (FileItem fileItem in listMedia) {
+            if (!_filesMedia.contains(fileItem)) {
+              _filesMedia.insert(0, fileItem);
+            }
+          }
+          _filesMedia.clear();
+          _filesMedia = listMedia;
+        });
+      }
     });
-  }
-
-  void _doHideAttachmentPicker() {
-    _showAttachment = false;
-    _showAttachmentFull = false;
   }
 
   void _doScrollToBottom() {
@@ -1572,6 +1443,9 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
   void _deselectPickedFiles(isClose) {
     _doDeselectPickedImages();
     _doDeselectPickedMedia();
+    if (isClose) {
+      _doAttachmentPickerClose();
+    }
   }
 
   void _doDeselectPickedImages() {
@@ -1606,35 +1480,46 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
 
   void _doCancelMention() {
     setState(() {
-      _replyMessage = null;
+      _isMentioning = false;
     });
   }
 
   void _doSelectMention(Member member) {
-    _messageController.text = "@${member.nickname} ";
+    final newText = "${_messageController.text}${member.nickname} ";
+    _messageController.text = newText;
+    _messageController.selection = TextSelection.fromPosition(
+      TextPosition(offset: newText.length),
+    );
     setState(() {
       _isMentioning = false;
     });
   }
 
-  void _doFilterInputs(String text){
+  void _doFilterInputs(String text) {
     _doGetAllMembers();
-    String textAfterCharacter = text.substring(text.lastIndexOf('@') + 1);
+
+    String textAfterCharacter = "";
+    if (text.contains("@")) {
+      textAfterCharacter = text.substring(text.lastIndexOf('@') + 1);
+    }
+
     if (text.endsWith("@")) {
-      if(_isMentioning == false){
+      if (_isMentioning == false) {
         setState(() {
           _isMentioning = true;
         });
       }
     }
-    if(textAfterCharacter.isNotEmpty && !textAfterCharacter.contains(' ')){
-      if(_isMentioning == false){
+
+    if (textAfterCharacter.isNotEmpty && !textAfterCharacter.contains(' ')) {
+      if (_isMentioning == false) {
         setState(() {
           _isMentioning = true;
         });
       }
       _doUpdateAllMemberByFilter(textAfterCharacter);
     }
+
     if (text.endsWith(" ") || text.isEmpty) {
       textAfterCharacter = "";
       setState(() {
@@ -1644,11 +1529,209 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
   }
 
   void _doUpdateAllMemberByFilter(String textAfterCharacter) {
+    setState(() {
+      _listMembers = _listMembersAll.where((member) {
+        return member.nickname
+            .toLowerCase()
+            .substring(member.nickname.lastIndexOf('@') + 1)
+            .contains(textAfterCharacter.toLowerCase());
+      }).toList();
+    });
+  }
+
+  void _doAttachmentPickerFull() {
+    setState(() {
+      _boxHeight = _boxHeightMin;
+      _showAttachmentFull = true;
+      _showAttachment = false;
+    });
+    _doAnimateHeight();
+  }
+
+  void _doAttachmentPickerMin() {
+    setState(() {
+      _boxHeight = _boxHeightMin;
+      _showAttachment = true;
+      _showAttachmentFull = false;
+    });
+  }
+
+  void _doAttachmentPickerClose() {
+    setState(() {
+      _boxHeight = _boxHeightMin;
+      _showAttachment = false;
+      _showAttachmentFull = false;
+    });
+  }
+
+  void _doVerticalDragStart(DragStartDetails details) {
+    _dragStartY = details.globalPosition.dy;
+  }
+
+  void _doVerticalDragUpdate(DragUpdateDetails details) {
+    final newHeight = _boxHeight - details.globalPosition.dy + _dragStartY;
+
+    setState(() {
+      _boxHeight = newHeight.clamp(100.0, _screenHeight);
+      _dragStartY = details.globalPosition.dy;
+
+      if (_boxHeight < _screenHeight - 100 &&
+          _boxHeight > _screenHeight - 200) {
+        _doAttachmentPickerMin();
+      } else if (_boxHeight > _boxHeightMin + 160) {
+        if (!_showAttachmentFull) {
+          _doAttachmentPickerFull();
+        }
+      } else if (_boxHeight < _boxHeightMin - 160) {
+        _doAttachmentPickerClose();
+      }
+    });
+  }
+
+  void _scrollListener1() {
+    if (_scrollControllerAttachment1.offset == 0 &&
+        _scrollControllerAttachment1.position.minScrollExtent == 0 &&
+        _scrollControllerAttachment1.position.userScrollDirection ==
+            ScrollDirection.forward) {
       setState(() {
-        _listMembers = _listMembers
-            .where((member) =>
-            member.nickname.substring(member.nickname.lastIndexOf('@') + 1)
-                .contains(textAfterCharacter)).toList();
+        _listReachedTop = true;
+        _doAttachmentPickerMin();
+        _animationController.stop();
       });
+    } else if (_scrollControllerAttachment1.offset <=
+            _scrollControllerAttachment1.position.minScrollExtent &&
+        _scrollControllerAttachment1.position.userScrollDirection ==
+            ScrollDirection.forward) {
+      if (!_listReachedTop) {
+        setState(() {
+          _listReachedTop = true;
+        });
+      }
+    } else if (_scrollControllerAttachment1.offset <=
+            _scrollControllerAttachment1.position.minScrollExtent &&
+        _scrollControllerAttachment1.position.userScrollDirection ==
+            ScrollDirection.reverse) {
+      if (_listReachedTop) {
+        setState(() {
+          _listReachedTop = false;
+        });
+      }
+    } else if (_scrollControllerAttachment1.offset >=
+            _scrollControllerAttachment1.position.maxScrollExtent &&
+        !_scrollControllerAttachment1.position.outOfRange) {
+      if (!_listReachedBottom) {
+        setState(() {
+          _listReachedBottom = true;
+        });
+      }
+    } else {
+      if (_listReachedBottom) {
+        setState(() {
+          _listReachedBottom = false;
+        });
+      } else {
+        setState(() {
+          _doAttachmentPickerFull();
+        });
+      }
+    }
+  }
+
+  void _scrollListener2() {
+    if (_scrollControllerAttachment2.offset == 0 &&
+        _scrollControllerAttachment2.position.minScrollExtent == 0 &&
+        _scrollControllerAttachment2.position.userScrollDirection ==
+            ScrollDirection.forward) {
+      setState(() {
+        _listReachedTop = true;
+        _doAttachmentPickerMin();
+        _animationController.stop();
+      });
+    } else if (_scrollControllerAttachment2.offset <=
+            _scrollControllerAttachment2.position.minScrollExtent &&
+        _scrollControllerAttachment2.position.userScrollDirection ==
+            ScrollDirection.forward) {
+      if (!_listReachedTop) {
+        setState(() {
+          _listReachedTop = true;
+        });
+      }
+    } else if (_scrollControllerAttachment2.offset <=
+            _scrollControllerAttachment2.position.minScrollExtent &&
+        _scrollControllerAttachment2.position.userScrollDirection ==
+            ScrollDirection.reverse) {
+      if (_listReachedTop) {
+        setState(() {
+          _listReachedTop = false;
+        });
+      }
+    } else if (_scrollControllerAttachment2.offset >=
+            _scrollControllerAttachment2.position.maxScrollExtent &&
+        !_scrollControllerAttachment2.position.outOfRange) {
+      if (!_listReachedBottom) {
+        setState(() {
+          _listReachedBottom = true;
+        });
+      }
+    } else {
+      if (_listReachedBottom) {
+        setState(() {
+          _listReachedBottom = false;
+        });
+      } else {
+        setState(() {
+          _doAttachmentPickerFull();
+        });
+      }
+    }
+  }
+
+  void _doAnimateHeight() {
+    if (_animationController.isAnimating && _boxHeight > _screenHeight) {
+      _animationController.stop();
+    } else {
+      _animationController.forward(from: 0.0);
+    }
+  }
+
+  void _doHandleScroll() {
+    final visiblePositions = _itemPositionsListener.itemPositions.value
+        .where((ItemPosition position) {
+      return position.itemTrailingEdge > 0;
+    });
+    if (visiblePositions.isEmpty) return;
+
+    final firstVisibleItemIndex =
+        visiblePositions.reduce((ItemPosition max, ItemPosition position) {
+      return position.itemTrailingEdge > max.itemTrailingEdge ? position : max;
+    }).index;
+
+    if (_firstVisibleItemIndex == -1) {
+      _firstVisibleItemIndex = firstVisibleItemIndex;
+      return;
+    } else if (_firstVisibleItemIndex == firstVisibleItemIndex) {
+      return;
+    }
+
+    _firstVisibleItemIndex = firstVisibleItemIndex;
+
+    if (_scrollTimer?.isActive ?? false) _scrollTimer?.cancel();
+
+    if (_listMessages.isNotEmpty) {
+      var firstVisibleMessage = _listMessages[firstVisibleItemIndex];
+
+      setState(() {
+        _showDateContainer = true;
+        _currentDate = formatDateLastMessage(firstVisibleMessage.timestamp);
+      });
+
+      _scrollTimer = Timer(const Duration(milliseconds: 500), () {
+        setState(() {
+          _showDateContainer = false;
+        });
+      });
+    }
+
+    _doLoadMessages();
   }
 }

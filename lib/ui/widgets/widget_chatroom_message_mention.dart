@@ -8,7 +8,6 @@ Widget buildMentions({required Null Function(Member member) onCancelReply, requi
   return Container(
       padding: const EdgeInsets.all(0),
       decoration: const BoxDecoration(
-        // color: Colors.grey.withOpacity(0.2),
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(12),
           topRight: Radius.circular(12),
@@ -16,10 +15,8 @@ Widget buildMentions({required Null Function(Member member) onCancelReply, requi
       ),
       child: WidgetChatroomMentionUser(
         member: members,
-        key: null,
         onCancelReply: (Member member) {
           onCancelReply(member);
         },
       ));
-  // child: Text("data"));
 }

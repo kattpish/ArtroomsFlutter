@@ -2,6 +2,7 @@
 import 'package:artrooms/data/module_datastore.dart';
 import 'package:sendbird_sdk/sendbird_sdk.dart';
 import '../utils/utils.dart';
+import '../utils/utils_notifications.dart';
 import 'bean_message.dart';
 
 
@@ -9,7 +10,7 @@ class DataChat {
 
   GroupChannel? groupChannel;
   final String id;
-  final String name;
+  String name;
   String nameKr = " ";
   final int unreadMessages;
   final String date;
@@ -71,6 +72,22 @@ class DataChat {
     dataChat.isNotification = DBStore().isNotificationChat(dataChat);
 
     return dataChat;
+  }
+
+  bool isNew() {
+    return (DateTime.now().millisecondsSinceEpoch - lastMessage.timestamp < timeSecRefreshChat*1000);
+  }
+
+  @override
+  bool operator == (Object other) {
+    return identical(this, other) || other is DataChat
+        && runtimeType == other.runtimeType
+        && id == other.id;
+  }
+
+  @override
+  int get hashCode {
+    return id.hashCode;
   }
 
 }

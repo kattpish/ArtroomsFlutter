@@ -1,7 +1,5 @@
-
 import 'package:artrooms/ui/widgets/widget_chatroom_message_span.dart';
 import 'package:flutter/material.dart';
-
 
 Widget widgetChatroomMessageInput(TextEditingController messageController, messageFocusNode, {required Null Function(String text) onChanged}) {
   return Stack(

@@ -16,7 +16,7 @@ class WidgetChatroomMessageText extends StatelessWidget {
     return RichText(
         softWrap: true,
         selectionColor: color,
-        textAlign: TextAlign.center,
+        textAlign: TextAlign.start,
         text: TextSpan(
           style: TextStyle(
             color: color,

@@ -3,6 +3,9 @@ import 'package:artrooms/ui/widgets/widget_chatroom_message_attachment_file.dart
 import 'package:artrooms/ui/widgets/widget_chatroom_message_attachment_photos.dart';
 import 'package:artrooms/ui/widgets/widget_chatroom_message_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:focused_menu/focused_menu.dart';
+import 'package:focused_menu/modals.dart';
 
 import '../../beans/bean_message.dart';
 import '../theme/theme_colors.dart';
@@ -100,36 +103,88 @@ Widget buildOtherMessageBubble(
                         const SizedBox(height: 8),
                         Visibility(
                           visible: message.content.isNotEmpty,
-                          child: Container(
-                            constraints: const BoxConstraints(
-                                minHeight: 40, minWidth: 46),
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 8),
-                            alignment: Alignment.centerLeft,
-                            decoration: BoxDecoration(
-                              color: colorMainGrey200,
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(
-                                    isPreviousSameDateTime ? 20 : 0),
-                                topRight: const Radius.circular(20),
-                                bottomLeft: const Radius.circular(20),
-                                bottomRight: const Radius.circular(20),
-                              ),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const SizedBox(height: 4),
-                                Container(
-                                  constraints: BoxConstraints(
-                                    maxWidth: screenWidth * 0.55,
+                          child: FocusedMenuHolder(
+                            onPressed: () {},
+                            menuWidth:
+                            MediaQuery.of(
+                                context)
+                                .size
+                                .width /
+                                2,
+                            menuItems: [
+                              FocusedMenuItem(
+                                  trailingIcon:
+                                  const Icon(
+                                    Icons.reply,
+                                    color:
+                                    colorMainGrey500,
                                   ),
-                                  child: WidgetChatroomMessageText(
-                                    message: message.content,
-                                    color: const Color(0xFF1F1F1F),
+                                  title: const Text(
+                                      "답장"),
+                                  onPressed: () {
+                                    // context.widget._replyMessage =
+                                    //     message;
+                                    // _messageFocusNode
+                                    //     .requestFocus();
+                                  }),
+                              FocusedMenuItem(
+                                  trailingIcon:
+                                  const Icon(
+                                    Icons.copy,
+                                    color:
+                                    colorMainGrey500,
                                   ),
+                                  title: const Text(
+                                      "복사"),
+                                  onPressed:
+                                      () async {
+                                    await Clipboard.setData(
+                                        ClipboardData(
+                                            text: message
+                                                .content));
+                                  })
+                            ],
+                            blurSize: 0.0,
+                            menuOffset: 10.0,
+                            bottomOffsetHeight:
+                            80.0,
+                            menuBoxDecoration:
+                            const BoxDecoration(
+                                borderRadius: BorderRadius
+                                    .all(Radius
+                                    .circular(
+                                    15.0))),
+                            child: Container(
+                              constraints: const BoxConstraints(
+                                  minHeight: 40, minWidth: 46),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 8),
+                              alignment: Alignment.centerLeft,
+                              decoration: BoxDecoration(
+                                color: colorMainGrey200,
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(
+                                      isPreviousSameDateTime ? 20 : 0),
+                                  topRight: const Radius.circular(20),
+                                  bottomLeft: const Radius.circular(20),
+                                  bottomRight: const Radius.circular(20),
                                 ),
-                              ],
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const SizedBox(height: 4),
+                                  Container(
+                                    constraints: BoxConstraints(
+                                      maxWidth: screenWidth * 0.55,
+                                    ),
+                                    child: WidgetChatroomMessageText(
+                                      message: message.content,
+                                      color: const Color(0xFF1F1F1F),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),

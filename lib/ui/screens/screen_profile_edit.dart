@@ -13,7 +13,7 @@ import '../../modules/module_profile.dart';
 import '../theme/theme_colors.dart';
 import '../widgets/widget_loader.dart';
 import '../widgets/widget_profile_inputs.dart';
-import '../widgets/widget_ui_notifiy.dart';
+import '../widgets/widget_ui_notify.dart';
 
 
 class ScreenProfileEdit extends StatefulWidget {

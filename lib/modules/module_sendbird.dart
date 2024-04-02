@@ -14,6 +14,7 @@ import 'package:sendbird_sdk/core/message/base_message.dart';
 import 'package:sendbird_sdk/core/message/file_message.dart';
 import 'package:sendbird_sdk/core/message/user_message.dart';
 import 'package:sendbird_sdk/core/models/user.dart';
+import 'package:sendbird_sdk/handlers/channel_event_handler.dart';
 import 'package:sendbird_sdk/params/file_message_params.dart';
 import 'package:sendbird_sdk/params/message_list_params.dart';
 import 'package:sendbird_sdk/params/user_message_params.dart';
@@ -279,6 +280,14 @@ class ModuleSendBird {
         print("Failed to mark message as read: $e");
       }
     }
+  }
+
+  void addChannelEventHandler(GroupChannel groupChannel, ChannelEventHandler listener) {
+    SendbirdSdk().addChannelEventHandler(groupChannel.channelUrl, listener);
+  }
+
+  void removeChannelEventHandler(GroupChannel groupChannel) {
+    SendbirdSdk().removeChannelEventHandler(groupChannel.channelUrl);
   }
 
 }

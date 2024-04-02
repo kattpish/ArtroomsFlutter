@@ -12,7 +12,7 @@ import '../../main.dart';
 import '../../modules/module_profile.dart';
 import '../../utils/utils.dart';
 import '../theme/theme_colors.dart';
-import '../widgets/widget_ui_notifiy.dart';
+import '../widgets/widget_ui_notify.dart';
 
 
 class ScreenProfile extends StatefulWidget {
