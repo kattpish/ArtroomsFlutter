@@ -12,7 +12,8 @@ import '../../beans/bean_message.dart';
 import '../theme/theme_colors.dart';
 
 
-Widget buildMyMessageBubble(BuildContext context, State state, DataMessage message, bool isLast, bool isPreviousSameDateTime, bool isNextSameTime, double screenWidth, Null Function() onReplyClick) {
+Widget buildMyMessageBubble(BuildContext context, int index,State state, DataMessage message, bool isLast, bool isPreviousSameDateTime,
+    bool isNextSameTime, double screenWidth, Null Function() onReplyClick,Null Function(int index) onReplySelect) {
   return Container(
     margin: EdgeInsets.only(left: 16, right: 16, top: 0, bottom: isLast ? 9 : 0),
     child: Column(
@@ -110,7 +111,9 @@ Widget buildMyMessageBubble(BuildContext context, State state, DataMessage messa
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            buildReply(message),
+                            buildReply(index,message,(index){
+                              onReplySelect(index);
+                            }),
                             WidgetChatroomMessageText(
                               message: message.content,
                               color: Colors.white,

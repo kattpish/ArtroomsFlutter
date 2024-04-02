@@ -314,17 +314,20 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                                           ),
                                           Container(
                                             child: message.isMe
-                                                ? buildMyMessageBubble(context, this, message, isLast, isPreviousSameDateTime, isNextSameTime, _screenWidth,
+                                                ? buildMyMessageBubble(context, index, this, message, isLast, isPreviousSameDateTime, isNextSameTime, _screenWidth,
                                                     (){
                                       _replyMessage = message;
                                       _messageFocusNode.requestFocus();
-                                      })
-                                                : buildOtherMessageBubble(context, this, message, isLast, isPreviousSame, isNextSame, isPreviousSameDateTime, isNextSameTime, _screenWidth,
-                                                    (){
+                                      }, (index){
+                                                  print("index $index");
+                                        _itemScrollController.scrollTo(index: 20,alignment: 0.5,duration: const Duration(seconds: 1));
+                                                })
+                                      : buildOtherMessageBubble(context, this, message, isLast, isPreviousSame, isNextSame, isPreviousSameDateTime, isNextSameTime, _screenWidth,
+                                      (){
                                       _replyMessage = message;
                                       _messageFocusNode.requestFocus();
                                       }),
-                                          )
+                                          ),
                                         ],
                                       );
                                     },

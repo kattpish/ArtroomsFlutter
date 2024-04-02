@@ -87,21 +87,26 @@ class WidgetChatroomMessageReply extends StatelessWidget {
 
 }
 
-Widget buildReply(DataMessage message) {
+Widget buildReply(int index, DataMessage message,Null Function(int index) onReplyClick) {
   return (_doParseReplyMessage(message.data))
       ? Column(
     children: [
-      Container(
-          decoration: const BoxDecoration(
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(12),
-              topRight: Radius.circular(12),
+      InkWell(
+        onTap: (){
+          onReplyClick(index);
+        },
+        child: Container(
+            decoration: const BoxDecoration(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(12),
+                topRight: Radius.circular(12),
+              ),
             ),
-          ),
-          child: WidgetChatroomMessageFlow(
-            message: message,
-            key: null,
-          )
+            child: WidgetChatroomMessageFlow(
+              message: message,
+              key: null,
+            )
+        ),
       ),
       const Divider(color: Colors.white),
     ],
