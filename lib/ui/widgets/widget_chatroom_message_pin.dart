@@ -109,6 +109,7 @@ Widget widgetChatMessagePin(BuildContext context, State state, {void Function()?
                                   textAlign: TextAlign.center,
                                   overflow: TextOverflow.ellipsis,
                                 ),
+                                const SizedBox(width: 3),
                                 Text(
                                   dataChatPin.lastMessage.getSummary(),
                                   style: const TextStyle(
