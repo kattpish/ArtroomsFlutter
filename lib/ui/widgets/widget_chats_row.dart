@@ -58,14 +58,14 @@ Slidable widgetChatRow(BuildContext context, int index, DataChat dataChat, {
                 radius: 30,
                 backgroundColor: Colors.transparent,
                 child: FadeInImage.assetNetwork(
-                  placeholder: dataChat.isArtrooms ? 'assets/images/chats/chat_artrooms.png' : 'assets/images/chats/placeholder_chat.png',
+                  placeholder: dataChat.isArtrooms ? 'assets/images/chats/chat_artrooms.png' : 'assets/images/chats/placeholder_photo.png',
                   image: dataChat.profilePictureUrl,
                   fit: BoxFit.cover,
                   fadeInDuration: const Duration(milliseconds: 100),
                   fadeOutDuration: const Duration(milliseconds: 100),
                   imageErrorBuilder: (context, error, stackTrace) {
                     return Image.asset(
-                      dataChat.isArtrooms ? 'assets/images/chats/chat_artrooms.png' : 'assets/images/chats/placeholder_chat.png',
+                      dataChat.isArtrooms ? 'assets/images/chats/chat_artrooms.png' : 'assets/images/chats/placeholder_photo.png',
                       fit: BoxFit.cover,
                     );
                   },

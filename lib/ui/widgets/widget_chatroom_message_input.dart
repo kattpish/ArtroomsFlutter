@@ -10,6 +10,9 @@ Widget widgetChatroomMessageInput(TextEditingController messageController, messa
       TextFormField(
         controller: messageController,
         focusNode: messageFocusNode,
+        maxLines: null,
+        textInputAction: TextInputAction.newline,
+        textCapitalization: TextCapitalization.sentences,
         onChanged: (text) {
           onChanged(text);
         },
@@ -22,13 +25,11 @@ Widget widgetChatroomMessageInput(TextEditingController messageController, messa
           filled: true,
           fillColor: const Color(0xFFF3F3F3),
         ),
-        textCapitalization: TextCapitalization.sentences,
         style: const TextStyle(
           color: Colors.transparent,
           fontSize: 15.8,
           letterSpacing: 1.2,
         ),
-        maxLines: 1,
       ),
       Positioned(
         top: 15,

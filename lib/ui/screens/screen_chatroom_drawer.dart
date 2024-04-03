@@ -131,14 +131,14 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
                                 child: CircleAvatar(
                                   radius: 32,
                                   child: FadeInImage.assetNetwork(
-                                    placeholder: widget.dataChat.isArtrooms ? 'assets/images/chats/chat_artrooms.png' : 'assets/images/chats/placeholder_chat.png',
+                                    placeholder: widget.dataChat.isArtrooms ? 'assets/images/chats/chat_artrooms.png' : 'assets/images/chats/placeholder_photo.png',
                                     image: widget.dataChat.profilePictureUrl,
                                     fit: BoxFit.cover,
                                     fadeInDuration: const Duration(milliseconds: 100),
                                     fadeOutDuration: const Duration(milliseconds: 100),
                                     imageErrorBuilder: (context, error, stackTrace) {
                                       return Image.asset(
-                                        widget.dataChat.isArtrooms ? 'assets/images/chats/chat_artrooms.png' : 'assets/images/chats/placeholder_chat.png',
+                                        widget.dataChat.isArtrooms ? 'assets/images/chats/chat_artrooms.png' : 'assets/images/chats/placeholder_photo.png',
                                         fit: BoxFit.cover,
                                       );
                                     },

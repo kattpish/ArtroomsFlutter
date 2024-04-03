@@ -21,14 +21,14 @@ Widget widgetChatDrawerMembers(BuildContext context, List<User> listMembers) {
                     ),
                   ),
                   child: FadeInImage.assetNetwork(
-                    placeholder: (member.nickname == "artrooms" || member.nickname == "artroom") ? 'assets/images/chats/chat_artrooms.png' : 'assets/images/chats/placeholder_chat.png',
+                    placeholder: (member.nickname == "artrooms" || member.nickname == "artroom") ? 'assets/images/chats/chat_artrooms.png' : 'assets/images/chats/placeholder_photo.png',
                     image: member.profileUrl != null ? member.profileUrl.toString() : "",
                     fit: BoxFit.cover,
                     fadeInDuration: const Duration(milliseconds: 100),
                     fadeOutDuration: const Duration(milliseconds: 100),
                     imageErrorBuilder: (context, error, stackTrace) {
                       return Image.asset(
-                        (member.nickname == "artrooms" || member.nickname == "artroom") ? 'assets/images/chats/chat_artrooms.png' : 'assets/images/chats/placeholder_chat.png',
+                        (member.nickname == "artrooms" || member.nickname == "artroom") ? 'assets/images/chats/chat_artrooms.png' : 'assets/images/chats/placeholder_photo.png',
                         fit: BoxFit.cover,
                       );
                     },
