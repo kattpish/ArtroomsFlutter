@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 import '../api/api.dart';
@@ -46,9 +47,7 @@ class ModuleAuth {
     callback(false, null, null);
   }
 
-  Future<void> resetPassword(
-      {required String email,
-        required Function(bool success, String message) callback}) async {
+  Future<void> resetPassword({required String email, required Function(bool success, String message) callback}) async {
     Map<String, dynamic> body = {
       "operationName": "SendEmailForPassword",
       "variables": {
@@ -102,8 +101,7 @@ class ModuleAuth {
       final responseData = json.decode(response.body);
       if (response.statusCode == 200 &&
           responseData['data']['sendEmailForPassword'] != null &&
-          responseData['data']['sendEmailForPassword']['__typename'] ==
-              "Error") {
+          responseData['data']['sendEmailForPassword']['__typename'] == "Error") {
         callback(
             false, responseData['data']['sendEmailForPassword']['message']);
       } else {
@@ -114,8 +112,7 @@ class ModuleAuth {
     }
   }
 
-  Future<void> getUserId(
-      {required String name,
+  Future<void> getUserId({required String name,
         required String phoneNumber,
         required Function(bool success, String message) callback}) async {
     Map<String, dynamic> body = {
@@ -129,21 +126,27 @@ class ModuleAuth {
     };
 
     try {
+
       final response = await http.post(
-        Uri.parse(apiUrlGraphQLTest),
+        Uri.parse(apiUrlGraphQL),
         headers: {
           "Content-Type": "application/json",
         },
         body: json.encode(body),
       );
+
       final responseData = json.decode(response.body);
-      print(responseData);
+
+      if (kDebugMode) {
+        print(responseData);
+      }
+
       if (response.statusCode != 200) {
         callback(false, "네트워크 오류가 발생했습니다. 다시 시도해주세요.");
       } else {
-        callback(
-            true, "${responseData["data"]["getUserByNameAndPhoneNumber"]}");
+        callback(true, "${responseData["data"]["getUserByNameAndPhoneNumber"]}");
       }
+
     } catch (e) {
       callback(false, "네트워크 오류가 발생했습니다. 다시 시도해주세요.");
     }

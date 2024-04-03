@@ -28,6 +28,8 @@ dependencies:
   focused_menu: ^1.0.5
   firebase_messaging: ^14.4.1
   firebase_core: ^2.10.0
+  channel_talk_flutter: ^2.4.0
+  toast: ^0.2.9
 
 dev_dependencies:
   flutter_test:
