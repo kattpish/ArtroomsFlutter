@@ -3,9 +3,10 @@ import 'dart:io';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+// import 'firebase_options.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-
+import 'package:artrooms/utils/utils_permissions.dart';
 import 'package:sendbird_chat_sdk/sendbird_chat_sdk.dart';
 
 
@@ -22,15 +23,19 @@ class ModulePushNotifications {
 
       WidgetsFlutterBinding.ensureInitialized();
       await Firebase.initializeApp();
-
+      await requestNotificationPermission();
+      await FirebaseMessaging.instance.setAutoInitEnabled(true);
       FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
       FirebaseMessaging.onMessage.listen((RemoteMessage message) {
 
         // TODO: @Nelson
+        if(message.notification !=null){
+          print("message have notification");
+        }
 
       });
-
+      print('fcm token $_getToken()');
       await SendbirdChat.unregisterPushTokenAll();
 
       await SendbirdChat.registerPushToken(

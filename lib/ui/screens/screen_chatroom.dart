@@ -312,56 +312,22 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                                             visible: !isPreviousDate,
                                             child: widgetChatroomMessageDatePin(context, message.timestamp, index),
                                           ),
-                                          FocusedMenuHolder(
-                                              onPressed: () {},
-                                              menuWidth:
-                                              MediaQuery.of(context)
-                                                  .size
-                                                  .width /
-                                                  3,
-                                              menuItems: [
-                                                FocusedMenuItem(
-                                                    trailingIcon:
-                                                    const Icon(
-                                                      Icons.reply,
-                                                      color: colorMainGrey500,
-                                                    ),
-                                                    title: const Text(
-                                                        "답장"),
-                                                    onPressed: () {
-                                                      _replyMessage =
-                                                          message;
-                                                      _messageFocusNode
-                                                          .requestFocus();
-                                                    }),
-                                                FocusedMenuItem(
-                                                    trailingIcon:
-                                                    const Icon(Icons.copy,
-                                                      color: colorMainGrey500,
-                                                    ),
-                                                    title: const Text(
-                                                        "복사"),
-                                                    onPressed: () async {
-                                                      await Clipboard.setData(
-                                                          ClipboardData(
-                                                              text: message
-                                                                  .content));
-                                                    })
-                                              ],
-                                              blurSize: 0.0,
-                                              menuOffset: 10.0,
-                                              bottomOffsetHeight: 80.0,
-                                              menuBoxDecoration:
-                                              const BoxDecoration(
-                                                  borderRadius:
-                                                  BorderRadius.all(
-                                                      Radius.circular(
-                                                          15.0))),
-                                              child: Container(
-                                                child: message.isMe
-                                                    ? buildMyMessageBubble(context, this, message, isLast, isPreviousSameDateTime, isNextSameTime, _screenWidth)
-                                                    : buildOtherMessageBubble(context, this, message, isLast, isPreviousSame, isNextSame, isPreviousSameDateTime, isNextSameTime, _screenWidth),
-                                              ))
+                                          Container(
+                                            child: message.isMe
+                                                ? buildMyMessageBubble(context, index, this, message, isLast, isPreviousSameDateTime, isNextSameTime, _screenWidth,
+                                                    (){
+                                      _replyMessage = message;
+                                      _messageFocusNode.requestFocus();
+                                      }, (index){
+                                                  print("index $index");
+                                        _itemScrollController.scrollTo(index: 20,alignment: 0.5,duration: const Duration(seconds: 1));
+                                                })
+                                      : buildOtherMessageBubble(context, this, message, isLast, isPreviousSame, isNextSame, isPreviousSameDateTime, isNextSameTime, _screenWidth,
+                                      (){
+                                      _replyMessage = message;
+                                      _messageFocusNode.requestFocus();
+                                      }),
+                                          ),
                                         ],
                                       );
                                     },
