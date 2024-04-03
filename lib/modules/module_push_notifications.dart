@@ -1,6 +1,7 @@
 
 import 'dart:io';
 
+import 'package:artrooms/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 // import 'firebase_options.dart';
@@ -22,7 +23,9 @@ class ModulePushNotifications {
     try {
 
       WidgetsFlutterBinding.ensureInitialized();
-      await Firebase.initializeApp();
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
       await requestNotificationPermission();
       await FirebaseMessaging.instance.setAutoInitEnabled(true);
       FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
@@ -30,12 +33,15 @@ class ModulePushNotifications {
       FirebaseMessaging.onMessage.listen((RemoteMessage message) {
 
         // TODO: @Nelson
-        if(message.notification !=null){
-          print("message have notification");
+        print('Got a message whilst in the foreground!');
+        print('Message data: ${message.data}');
+
+        if (message.notification != null) {
+          print('Message also contained a notification: ${message.notification}');
         }
 
       });
-      print('fcm token $_getToken()');
+      await _getToken();
       await SendbirdChat.unregisterPushTokenAll();
 
       await SendbirdChat.registerPushToken(
@@ -71,6 +77,7 @@ class ModulePushNotifications {
     } else if (Platform.isIOS) {
       token = await FirebaseMessaging.instance.getAPNSToken();
     }
+    print('fcm token $token');
     return token ?? "";
   }
 
