@@ -13,7 +13,7 @@ Slidable widgetChatRow(BuildContext context, int index, DataChat dataChat, {
   return Slidable(
     key: const ValueKey(0),
     endActionPane: ActionPane(
-      motion: const ScrollMotion(),
+      motion: const StretchMotion(),
       children: [
         CustomSlidableAction(
             flex: 1,

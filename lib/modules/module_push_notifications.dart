@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:artrooms/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-// import 'firebase_options.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:artrooms/utils/utils_permissions.dart';
@@ -34,12 +33,15 @@ class ModulePushNotifications {
 
       FirebaseMessaging.onMessage.listen((RemoteMessage message) {
 
-        // TODO: @Nelson
-        print('Got a message whilst in the foreground!');
-        print('Message data: ${message.data}');
+        if (kDebugMode) {
+          print('Got a message whilst in the foreground!');
+          print('Message data: ${message.data}');
+        }
 
         if (message.notification != null) {
-          print('Message also contained a notification: ${message.notification}');
+          if (kDebugMode) {
+            print('Message also contained a notification: ${message.notification}');
+          }
         }
 
       });
@@ -79,7 +81,9 @@ class ModulePushNotifications {
     } else if (Platform.isIOS) {
       token = await FirebaseMessaging.instance.getAPNSToken();
     }
-    print('fcm token $token');
+    if (kDebugMode) {
+      print('fcm token $token');
+    }
     return token ?? "";
   }
 

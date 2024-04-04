@@ -1,4 +1,5 @@
 
+import 'package:artrooms/ui/screens/screen_channel_talk.dart';
 import 'package:artrooms/ui/screens/screen_login.dart';
 import 'package:artrooms/ui/screens/screen_notifications_sounds.dart';
 import 'package:artrooms/ui/screens/screen_profile_edit.dart';
@@ -110,7 +111,7 @@ class _ScreenProfileState extends State<ScreenProfile> {
                       radius: 32,
                       backgroundColor: Colors.transparent,
                       child: FadeInImage.assetNetwork(
-                        placeholder: 'assets/images/profile/placeholder.png',
+                        placeholder: 'assets/images/profile/placeholder_photo.png',
                         image: _profile.profileImg,
                         fit: BoxFit.cover,
                         height: 64,
@@ -119,7 +120,7 @@ class _ScreenProfileState extends State<ScreenProfile> {
                         fadeOutDuration: const Duration(milliseconds: 100),
                         imageErrorBuilder: (context, error, stackTrace) {
                           return Image.asset(
-                            'assets/images/profile/placeholder.png',
+                            'assets/images/profile/placeholder_photo.png',
                             fit: BoxFit.cover,
                           );
                         },
@@ -253,7 +254,7 @@ class _ScreenProfileState extends State<ScreenProfile> {
                     ),
                   ),
                   onTap: () {
-                    launchInBrowser(Uri(scheme: 'https', host: 'artrooms.com', path: 'about'));
+                    doShowChannelTak();
                   },
                 ),
               ),
@@ -356,11 +357,13 @@ class _ScreenProfileState extends State<ScreenProfile> {
     if (profileMap != null) {
       dbStore.saveProfile(profileMap);
 
-      setState(() {
-        _profile = MyProfile.fromProfileMap(profileMap);
-        _name = _profile.name;
-        _nickName = _profile.nickName;
-      });
+      if(mounted) {
+        setState(() {
+          _profile = MyProfile.fromProfileMap(profileMap);
+          _name = _profile.name;
+          _nickName = _profile.nickName;
+        });
+      }
 
       if (kDebugMode) {
         print("User Profile: $profileMap");

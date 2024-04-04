@@ -13,9 +13,16 @@ class ScrollPhysicsBouncing extends BouncingScrollPhysics {
   @override
   SpringDescription get spring {
     return SpringDescription.withDampingRatio(
-      mass: 0.1,
+      mass: 0.09,
       stiffness: 1000.0,
-      ratio: 1.0,
+      ratio: 17.0,
     );
   }
+
+  @override
+  double applyPhysicsToUserOffset(ScrollMetrics position, double offset) {
+    return super.applyPhysicsToUserOffset(position, offset * 0.65);
+  }
+
+
 }

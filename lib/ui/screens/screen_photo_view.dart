@@ -1,5 +1,6 @@
 
 import 'dart:io';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
@@ -34,6 +35,7 @@ class _ScreenPhotoView extends State<ScreenPhotoView> {
 
   bool isDownloading = false;
   late ImageProvider imageProvider;
+  double rotationAngleDegrees = 0;
 
   @override
   void initState() {
@@ -53,7 +55,7 @@ class _ScreenPhotoView extends State<ScreenPhotoView> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        backgroundColor: Colors.white.withOpacity(0.40),
+        backgroundColor: Colors.black.withOpacity(0.5),
         body: WidgetUiNotify(
           child: Builder(
             builder: (_) {
@@ -62,30 +64,44 @@ class _ScreenPhotoView extends State<ScreenPhotoView> {
                   color: Colors.black.withOpacity(0.5),
                   child: Stack(
                     children: [
-                      Center(
-                        child: Stack(
-                          children: [
-                            PhotoView(
-                              imageProvider: imageProvider,
-                              backgroundDecoration: BoxDecoration(
-                                color: Colors.black.withOpacity(0.5),
-                              ),
-                              loadingBuilder: (context, event) {
-                                return Center(
-                                child: CircularProgressIndicator(
-                                  value: event == null ? 0 : event.cumulativeBytesLoaded / event.expectedTotalBytes!,
+                      Transform.rotate(
+                        angle: rotationAngleDegrees * math.pi / 180,
+                        alignment: FractionalOffset.center,
+                        child: Center(
+                          child: Stack(
+                            children: [
+                              PhotoView(
+                                imageProvider: imageProvider,
+                                backgroundDecoration: BoxDecoration(
+                                  color: Colors.black.withOpacity(0.5),
                                 ),
-                              );
-                              },
-                              errorBuilder: (context, error, stackTrace) {
-                                return Image.asset(
-                                  'assets/images/chats/placeholder_photo.png',
-                                  width: 0,
-                                  fit: BoxFit.cover,
+                                loadingBuilder: (context, event) {
+                                  return Center(
+                                  child: CircularProgressIndicator(
+                                    value: event == null ? 0 : event.cumulativeBytesLoaded / event.expectedTotalBytes!,
+                                  ),
                                 );
-                              },
-                            ),
-                          ],
+                                },
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Image.asset(
+                                    'assets/images/chats/placeholder_photo.png',
+                                    width: 0,
+                                    fit: BoxFit.cover,
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        bottom: 18,
+                        right: 18,
+                        child: IconButton(
+                          icon: const Icon(Icons.flip_camera_android, color: colorMainGrey250),
+                          onPressed: () {
+                            rotateImage();
+                          },
                         ),
                       ),
                       Positioned(
@@ -168,6 +184,14 @@ class _ScreenPhotoView extends State<ScreenPhotoView> {
         ),
       ),
     );
+  }
+
+  void rotateImage() {
+    setState(() {
+      rotationAngleDegrees += 90; // Rotate 90 degrees
+      // Normalize angle to be within 0-360 degrees
+      rotationAngleDegrees %= 360;
+    });
   }
 
 }

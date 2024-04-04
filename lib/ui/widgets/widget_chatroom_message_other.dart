@@ -179,6 +179,7 @@ Widget buildOtherMessageBubble(
                                   child: WidgetChatroomMessageText(
                                     message: message.content,
                                     color: const Color(0xFF1F1F1F),
+                                    colorMention: colorPrimaryPurple,
                                   ),
                                 ),
                               ],

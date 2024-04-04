@@ -115,7 +115,7 @@ class _ScreenProfileEditState extends State<ScreenProfileEdit> {
                         backgroundColor: Colors.transparent,
                         child: _fileImage == null
                             ? FadeInImage.assetNetwork(
-                          placeholder: 'assets/images/profile/placeholder.png',
+                          placeholder: 'assets/images/profile/placeholder_photo.png',
                           image: _profile.profileImg,
                           fit: BoxFit.cover,
                           width: 120,
@@ -124,7 +124,7 @@ class _ScreenProfileEditState extends State<ScreenProfileEdit> {
                           fadeOutDuration: const Duration(milliseconds: 100),
                           imageErrorBuilder: (context, error, stackTrace) {
                             return Image.asset(
-                              'assets/images/profile/placeholder.png',
+                              'assets/images/profile/placeholder_photo.png',
                               fit: BoxFit.cover,
                             );
                           },

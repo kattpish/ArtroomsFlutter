@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../ui/theme/theme_colors.dart';
+
 
 String formatTime(int timestamp) {
   var date = DateTime.fromMillisecondsSinceEpoch(timestamp);
@@ -107,21 +109,42 @@ void closeKeyboard(BuildContext context) {
   FocusScope.of(context).requestFocus(FocusNode());
 }
 
-List<TextSpan> replacePattern(String original, Color color, bool isTyping) {
-  Color textColor = Colors.black;
-  if(!isTyping) {
-    textColor = color;
+List<TextSpan> replacePattern(String original, Color color, Color colorMention, bool isTyping) {
+
+  if(isTyping) {
+    color = colorMainGrey800;
   }
-  List<TextSpan> spans=[];
-  int lastMatchIndex=0;
-  RegExp regex = RegExp(r'@.*?(?=\s)');
-  Iterable<RegExpMatch> matches= regex.allMatches(original);
+
+  List<TextSpan> spans = [];
+  int lastMatchIndex = 0;
+  RegExp regex = RegExp(r'@\p{L}[\p{L}\p{N}_]*', unicode: true);
+  Iterable<RegExpMatch> matches = regex.allMatches(original);
 
   for (var match in matches) {
-    spans.add(TextSpan(text: original.substring(lastMatchIndex,match.start), style: TextStyle(color: textColor)));
-    spans.add(TextSpan(text: original.substring(match.start,match.end), style: const TextStyle(color: Colors.lightBlue)));
-    lastMatchIndex=match.end;
+    spans.add(
+        TextSpan(
+            text: original.substring(lastMatchIndex, match.start),
+            style: TextStyle(
+              color: color,
+              fontSize: 15.8,
+              letterSpacing: 1.2,
+            )
+        )
+    );
+    spans.add(
+        TextSpan(
+            text: original.substring(match.start, match.end),
+            style: TextStyle(
+              color: colorMention,
+              fontSize: 15.8,
+              letterSpacing: 1.2,
+            )
+        )
+    );
+    lastMatchIndex = match.end;
   }
-  spans.add(TextSpan(text: original.substring(lastMatchIndex,original.length), style: TextStyle(color: textColor)));
+
+  spans.add(TextSpan(text: original.substring(lastMatchIndex, original.length), style: TextStyle(color: color)));
+
   return spans;
 }
