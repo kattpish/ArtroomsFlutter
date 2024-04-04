@@ -8,11 +8,11 @@ import '../theme/theme_colors.dart';
 class WidgetChatroomNoticePin extends StatefulWidget {
 
   final DataNotice dataNotice;
-  bool isExpandNotice;
+  final bool isExpandNotice;
   final void Function() onToggle;
   final void Function() onHide;
 
-  WidgetChatroomNoticePin(this.dataNotice, this.isExpandNotice, {super.key,
+  const WidgetChatroomNoticePin(this.dataNotice, this.isExpandNotice, {super.key,
     required this.onToggle,
     required this.onHide,
   });

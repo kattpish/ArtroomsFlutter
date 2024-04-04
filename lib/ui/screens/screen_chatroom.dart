@@ -70,8 +70,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
   final List<DataMessage> _listMessages = [];
   List<Member> _listMembers = [];
   List<Member> _listMembersAll = [];
-  final ScrollController _scrollControllerAttachment1 = ScrollController();
-  final ScrollController _scrollControllerAttachment2 = ScrollController();
+  final ScrollController _scrollControllerAttachment = ScrollController();
   final TextEditingController _messageController = TextEditingController();
   final RichTextEditorController _richTextEditorController = RichTextEditorController();
   final ItemScrollController _itemScrollController = ItemScrollController();
@@ -87,10 +86,6 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
   double _dragStartY = 0.0;
   double _screenWidth = 0;
   double _screenHeight = 0;
-
-  int _crossAxisCount = 2;
-  final double _crossAxisSpacing = 8;
-  final double _mainAxisSpacing = 8;
   int _firstVisibleItemIndex = -1;
 
   Timer? _scrollTimer;
@@ -105,7 +100,6 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
   DataMessage? _replyMessage;
   bool _isMentioning = false;
 
-  int _pickerType = 1;
   int _selectedImages = 0;
   int _selectedMedia = 0;
   bool _selectMode = true;
@@ -116,8 +110,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
   void initState() {
     super.initState();
     _messageController.addListener(_doCheckEnableButton);
-    _scrollControllerAttachment1.addListener(_scrollListener1);
-    _scrollControllerAttachment2.addListener(_scrollListener2);
+    _scrollControllerAttachment.addListener(_scrollListener);
     _itemPositionsListener.itemPositions.addListener(_doHandleScroll);
     _moduleMessages = ModuleMessages(widget.dataChat.id);
 
@@ -176,8 +169,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
   void dispose() {
     _moduleMessages.removeChannelEventHandler();
     _messageController.dispose();
-    _scrollControllerAttachment1.dispose();
-    _scrollControllerAttachment2.dispose();
+    _scrollControllerAttachment.dispose();
     _scrollTimer?.cancel();
     _animationController.dispose();
     _timer.cancel();
@@ -189,7 +181,6 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
 
     _screenWidth = MediaQuery.of(context).size.width * widget.widthRatio;
     _screenHeight = MediaQuery.of(context).size.height;
-    _crossAxisCount = isTablet(context) ? 4 : 2;
 
     attachmentPicker = _attachmentPicker(context, this);
 
@@ -701,7 +692,6 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                     child: TextButton(
                       onPressed: () {
                         state.setState(() async {
-                          _pickerType = 1;
                           closeKeyboard(context);
                           await _doProcessCameraResult();
                         });
@@ -777,232 +767,100 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
             const SizedBox(
               height: 12,
             ),
-            Visibility(
-              visible: _pickerType == 1,
-              child: Expanded(
-                child: _filesImages.isEmpty
-                    ? const Center(
-                  child: SizedBox(
-                    width: 30,
-                    height: 30,
-                    child: CircularProgressIndicator(
-                      color: Color(0xFF6A79FF),
-                      strokeWidth: 3,
-                    ),
+            Expanded(
+              child: _filesImages.isEmpty
+                  ? const Center(
+                child: SizedBox(
+                  width: 30,
+                  height: 30,
+                  child: CircularProgressIndicator(
+                    color: Color(0xFF6A79FF),
+                    strokeWidth: 3,
                   ),
-                )
-                    : GridView.builder(
-                  controller: _scrollControllerAttachment1,
-                  padding: const EdgeInsets.only(bottom: 24),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: isTablet(context) ? 6 : 3,
-                    crossAxisSpacing: 5,
-                    mainAxisSpacing: 5,
-                    childAspectRatio: 1,
-                  ),
-                  itemCount: _filesImages.length,
-                  itemBuilder: (context, index) {
-                    var fileImage = _filesImages[index];
-                    return Container(
-                      clipBehavior: Clip.antiAlias,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: InkWell(
-                        onTap: () {
-                          doOpenPhotoView(context,
-                              fileImage: fileImage.file,
-                              fileName: fileImage.name);
-                        },
-                        onLongPress: () {
-                          state.setState(() {
-                            fileImage.isSelected = !fileImage.isSelected;
-                            closeKeyboard(context);
-                          });
-                          _doCheckEnableButtonFile();
-                        },
-                        child: Stack(
-                          children: [
-                            Image.file(
-                              fileImage.getPreviewFile(),
-                              width: double.infinity,
-                              height: double.infinity,
-                              fit: BoxFit.cover,
-                            ),
-                            Positioned(
-                              top: 3,
-                              right: 4,
-                              child: Visibility(
-                                visible: _selectMode,
-                                child: InkWell(
-                                  onTap: () {
-                                    state.setState(() {
-                                      fileImage.isSelected =
-                                      !fileImage.isSelected;
-                                      _doCheckEnableButtonFile();
-                                      closeKeyboard(context);
-                                    });
-                                  },
-                                  child: Container(
-                                    width: 26,
-                                    height: 26,
-                                    decoration: BoxDecoration(
-                                      color: fileImage.isSelected
-                                          ? colorPrimaryBlue
-                                          : colorMainGrey200
-                                          .withAlpha(150),
-                                      shape: BoxShape.circle,
-                                      border: Border.all(
-                                        color: fileImage.isSelected
-                                            ? colorPrimaryBlue
-                                            : const Color(0xFFE3E3E3),
-                                        width: 1,
-                                      ),
-                                    ),
-                                    child: fileImage.isSelected
-                                        ? const Icon(Icons.check,
-                                        size: 16, color: Colors.white)
-                                        : Container(),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
                 ),
-              ),
-            ),
-            Visibility(
-              visible: _pickerType == 2,
-              child: Expanded(
-                child: _filesMedia.isEmpty
-                    ? const Center(
-                  child: SizedBox(
-                    width: 40,
-                    height: 40,
-                    child: CircularProgressIndicator(
-                      color: Color(0xFF6A79FF),
-                      strokeWidth: 3,
-                    ),
-                  ),
-                )
-                    : GridView.builder(
-                  controller: _scrollControllerAttachment2,
-                  padding: const EdgeInsets.only(
-                      left: 8, top: 8, right: 8, bottom: 24),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: _crossAxisCount,
-                    crossAxisSpacing: _crossAxisSpacing,
-                    mainAxisSpacing: _mainAxisSpacing,
-                    childAspectRatio: (_screenWidth / _crossAxisCount -
-                        _crossAxisSpacing) /
-                        197,
-                  ),
-                  itemCount: _filesMedia.length,
-                  itemBuilder: (context, index) {
-                    var fileMedia = _filesMedia[index];
-                    return Card(
-                      elevation: 0,
+              )
+                  : GridView.builder(
+                controller: _scrollControllerAttachment,
+                padding: const EdgeInsets.only(bottom: 24),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: isTablet(context) ? 6 : 3,
+                  crossAxisSpacing: 5,
+                  mainAxisSpacing: 5,
+                  childAspectRatio: 1,
+                ),
+                itemCount: _filesImages.length,
+                itemBuilder: (context, index) {
+                  var fileImage = _filesImages[index];
+                  return Container(
+                    clipBehavior: Clip.antiAlias,
+                    decoration: BoxDecoration(
                       color: Colors.white,
-                      child: InkWell(
-                        onTap: () {
-                          setState(() {
-                            fileMedia.isSelected = !fileMedia.isSelected;
-                            _doCheckEnableButtonFile();
-                            closeKeyboard(context);
-                          });
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(16.0),
-                            border: Border.all(
-                              color: colorMainGrey200,
-                              width: 1.0,
-                            ),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: InkWell(
+                      onTap: () {
+                        doOpenPhotoView(context,
+                            fileImage: fileImage.file,
+                            fileName: fileImage.name);
+                      },
+                      onLongPress: () {
+                        state.setState(() {
+                          fileImage.isSelected = !fileImage.isSelected;
+                          closeKeyboard(context);
+                        });
+                        _doCheckEnableButtonFile();
+                      },
+                      child: Stack(
+                        children: [
+                          Image.file(
+                            fileImage.getPreviewFile(),
+                            width: double.infinity,
+                            height: double.infinity,
+                            fit: BoxFit.cover,
                           ),
-                          child: Stack(
-                            children: [
-                              Column(
-                                crossAxisAlignment:
-                                CrossAxisAlignment.start,
-                                children: [
-                                  const SizedBox(height: 24),
-                                  Image.asset(
-                                    fileMedia.isSelected
-                                        ? 'assets/images/icons/icon_file_selected.png'
-                                        : 'assets/images/icons/icon_file.png',
-                                    width: 30,
-                                    height: 30,
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                      CrossAxisAlignment.start,
-                                      mainAxisAlignment:
-                                      MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          fileMedia.name,
-                                          style: const TextStyle(
-                                            fontSize: 16,
-                                            color: colorMainGrey700,
-                                            fontWeight: FontWeight.w400,
-                                          ),
-                                          maxLines: 2,
-                                        ),
-                                        const SizedBox(height: 8),
-                                        Text(
-                                          fileMedia.date,
-                                          style: const TextStyle(
-                                            fontSize: 16,
-                                            color: Color(0xFF8F8F8F),
-                                            fontWeight: FontWeight.w300,
-                                          ),
-                                          maxLines: 1,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Positioned(
-                                top: 3,
-                                right: 2,
+                          Positioned(
+                            top: 3,
+                            right: 4,
+                            child: Visibility(
+                              visible: _selectMode,
+                              child: InkWell(
+                                onTap: () {
+                                  state.setState(() {
+                                    fileImage.isSelected =
+                                    !fileImage.isSelected;
+                                    _doCheckEnableButtonFile();
+                                    closeKeyboard(context);
+                                  });
+                                },
                                 child: Container(
                                   width: 26,
                                   height: 26,
                                   decoration: BoxDecoration(
-                                    color: fileMedia.isSelected
+                                    color: fileImage.isSelected
                                         ? colorPrimaryBlue
-                                        : Colors.transparent,
+                                        : colorMainGrey200
+                                        .withAlpha(150),
                                     shape: BoxShape.circle,
                                     border: Border.all(
-                                      color: fileMedia.isSelected
+                                      color: fileImage.isSelected
                                           ? colorPrimaryBlue
                                           : const Color(0xFFE3E3E3),
                                       width: 1,
                                     ),
                                   ),
-                                  child: fileMedia.isSelected
+                                  child: fileImage.isSelected
                                       ? const Icon(Icons.check,
                                       size: 16, color: Colors.white)
                                       : Container(),
                                 ),
                               ),
-                            ],
+                            ),
                           ),
-                        ),
+                        ],
                       ),
-                    );
-                  },
-                ),
+                    ),
+                  );
+                },
               ),
             ),
           ],
@@ -1460,35 +1318,35 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
     });
   }
 
-  void _scrollListener1() {
+  void _scrollListener() {
 
-    if (_scrollControllerAttachment1.offset == 0 &&
-        _scrollControllerAttachment1.position.minScrollExtent == 0 &&
-        _scrollControllerAttachment1.position.userScrollDirection == ScrollDirection.forward) {
+    if (_scrollControllerAttachment.offset == 0 &&
+        _scrollControllerAttachment.position.minScrollExtent == 0 &&
+        _scrollControllerAttachment.position.userScrollDirection == ScrollDirection.forward) {
       setState(() {
         _listReachedTop = true;
         _doAttachmentPickerMin();
         _animationController.stop();
       });
-    } else if (_scrollControllerAttachment1.offset <=
-        _scrollControllerAttachment1.position.minScrollExtent &&
-        _scrollControllerAttachment1.position.userScrollDirection == ScrollDirection.forward) {
+    } else if (_scrollControllerAttachment.offset <=
+        _scrollControllerAttachment.position.minScrollExtent &&
+        _scrollControllerAttachment.position.userScrollDirection == ScrollDirection.forward) {
       if (!_listReachedTop) {
         setState(() {
           _listReachedTop = true;
         });
       }
-    } else if (_scrollControllerAttachment1.offset <=
-        _scrollControllerAttachment1.position.minScrollExtent &&
-        _scrollControllerAttachment1.position.userScrollDirection == ScrollDirection.reverse) {
+    } else if (_scrollControllerAttachment.offset <=
+        _scrollControllerAttachment.position.minScrollExtent &&
+        _scrollControllerAttachment.position.userScrollDirection == ScrollDirection.reverse) {
       if (_listReachedTop) {
         setState(() {
           _listReachedTop = false;
         });
       }
-    } else if (_scrollControllerAttachment1.offset >=
-        _scrollControllerAttachment1.position.maxScrollExtent &&
-        !_scrollControllerAttachment1.position.outOfRange) {
+    } else if (_scrollControllerAttachment.offset >=
+        _scrollControllerAttachment.position.maxScrollExtent &&
+        !_scrollControllerAttachment.position.outOfRange) {
       if (!_listReachedBottom) {
         setState(() {
           _listReachedBottom = true;
@@ -1506,53 +1364,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
       }
     }
   }
-
-  void _scrollListener2() {
-    if (_scrollControllerAttachment2.offset == 0 &&
-        _scrollControllerAttachment2.position.minScrollExtent == 0 &&
-        _scrollControllerAttachment2.position.userScrollDirection == ScrollDirection.forward) {
-      setState(() {
-        _listReachedTop = true;
-        _doAttachmentPickerMin();
-        _animationController.stop();
-      });
-    } else if (_scrollControllerAttachment2.offset <=
-        _scrollControllerAttachment2.position.minScrollExtent &&
-        _scrollControllerAttachment2.position.userScrollDirection == ScrollDirection.forward) {
-      if (!_listReachedTop) {
-        setState(() {
-          _listReachedTop = true;
-        });
-      }
-    } else if (_scrollControllerAttachment2.offset <=
-        _scrollControllerAttachment2.position.minScrollExtent &&
-        _scrollControllerAttachment2.position.userScrollDirection == ScrollDirection.reverse) {
-      if (_listReachedTop) {
-        setState(() {
-          _listReachedTop = false;
-        });
-      }
-    } else if (_scrollControllerAttachment2.offset >=
-        _scrollControllerAttachment2.position.maxScrollExtent &&
-        !_scrollControllerAttachment2.position.outOfRange) {
-      if (!_listReachedBottom) {
-        setState(() {
-          _listReachedBottom = true;
-        });
-      }
-    } else {
-      if (_listReachedBottom) {
-        setState(() {
-          _listReachedBottom = false;
-        });
-      } else {
-        setState(() {
-          _doAttachmentPickerFull();
-        });
-      }
-    }
-  }
-
+  
   void _doAnimateHeight() {
     if (_animationController.isAnimating && _boxHeight > _screenHeight) {
       _animationController.stop();
