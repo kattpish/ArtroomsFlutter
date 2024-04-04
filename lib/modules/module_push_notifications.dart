@@ -2,6 +2,7 @@
 import 'dart:io';
 
 import 'package:artrooms/firebase_options.dart';
+import 'package:artrooms/utils/utils_notification_service.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
@@ -10,11 +11,11 @@ import 'package:artrooms/utils/utils_permissions.dart';
 import 'package:sendbird_chat_sdk/sendbird_chat_sdk.dart';
 
 
-class ModulePushNotifications {
-
+ class ModulePushNotifications {
   @pragma('vm:entry-point')
   Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-
+   print('calling handling background message ${message.messageId}');
+   NotificationService.showNotification(message.notification?.title ?? '', message.notification?.body ?? '');
   }
 
   Future<void> init() async {
@@ -25,7 +26,6 @@ class ModulePushNotifications {
       await Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform,
       );
-      FirebaseMessaging _messaging = FirebaseMessaging.instance;
       await requestNotificationPermission();
       await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(alert: true,badge: true,sound: true);
       await FirebaseMessaging.instance.setAutoInitEnabled(true);
@@ -43,17 +43,17 @@ class ModulePushNotifications {
             print('Message also contained a notification: ${message.notification}');
           }
         }
-
+        NotificationService.showNotification(message.notification?.title ?? '', message.notification?.body ?? '');
       });
-      await _getToken();
-      await SendbirdChat.unregisterPushTokenAll();
+      await getToken();
+      // await SendbirdChat.unregisterPushTokenAll();
 
-      await SendbirdChat.registerPushToken(
+      PushTokenRegistrationStatus status = await SendbirdChat.registerPushToken(
         type: _getPushTokenType(),
-        token: await _getToken(),
+        token: await getToken(),
         unique: true,
       );
-
+      print('status ${status.name}');
     } catch (e) {
       if (kDebugMode) {
         print(e);
@@ -74,7 +74,7 @@ class ModulePushNotifications {
     return pushTokenType;
   }
 
-  Future<String> _getToken() async {
+  static Future<String> getToken() async {
     String? token;
     if (Platform.isAndroid) {
       token = await FirebaseMessaging.instance.getToken();
