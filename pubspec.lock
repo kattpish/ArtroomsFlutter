@@ -696,6 +696,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.2.4"
+  rich_text_editor_controller:
+    dependency: "direct main"
+    description:
+      name: rich_text_editor_controller
+      sha256: e9d7744343de9a5d3772554dfded892a95b6ef5aaf2282a9a6c2951562729ab9
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.5"
   scrollable_positioned_list:
     dependency: "direct main"
     description:

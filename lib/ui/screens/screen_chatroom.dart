@@ -3,14 +3,11 @@ import 'dart:io';
 
 import 'package:artrooms/beans/bean_notice.dart';
 import 'package:artrooms/modules/module_notices.dart';
-import 'package:artrooms/ui/screens/screen_chatroom_drawer.dart';
 import 'package:artrooms/ui/widgets/widget_loader.dart';
 import 'package:artrooms/utils/utils_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter/services.dart';
-import 'package:focused_menu/focused_menu.dart';
-import 'package:focused_menu/modals.dart';
+import 'package:rich_text_editor_controller/rich_text_editor_controller.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:sendbird_sdk/core/channel/base/base_channel.dart';
 import 'package:sendbird_sdk/core/message/base_message.dart';
@@ -76,6 +73,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
   final ScrollController _scrollControllerAttachment1 = ScrollController();
   final ScrollController _scrollControllerAttachment2 = ScrollController();
   final TextEditingController _messageController = TextEditingController();
+  final RichTextEditorController _richTextEditorController = RichTextEditorController();
   final ItemScrollController _itemScrollController = ItemScrollController();
   final ItemPositionsListener _itemPositionsListener = ItemPositionsListener.create();
   final FocusNode _messageFocusNode = FocusNode();
@@ -353,7 +351,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                                   ? 1.0
                                   : 0.0,
                               duration: const Duration(milliseconds: 500),
-                              child: buildNoticePin(_dataNotice, _isExpandNotice,
+                              child: WidgetChatroomNoticePin(_dataNotice, _isExpandNotice,
                                   onToggle:() {
                                     setState(() {
                                       _isExpandNotice = !_isExpandNotice;
@@ -481,8 +479,9 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
               ),
               const SizedBox(width: 4),
               Expanded(
-                  child: Column(children: [
-                    widgetChatroomMessageInput(_messageController, _messageFocusNode,
+                  child: Column(
+                      children: [
+                        widgetChatroomMessageInput(_messageController, _richTextEditorController, _messageFocusNode,
                         onChanged: (String text) {
                           if (text.endsWith("@")) {
                             setState(() {
@@ -495,9 +494,11 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                             });
                           }
                           _doFilterInputs(text);
-                        }
+                        },
                     ),
-                  ])),
+                  ],
+                  ),
+              ),
               const SizedBox(width: 4),
               Container(
                 padding: const EdgeInsets.all(0.0),
@@ -824,7 +825,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                         child: Stack(
                           children: [
                             Image.file(
-                              fileImage.file,
+                              fileImage.getPreviewFile(),
                               width: double.infinity,
                               height: double.infinity,
                               fit: BoxFit.cover,

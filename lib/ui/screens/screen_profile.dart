@@ -111,7 +111,7 @@ class _ScreenProfileState extends State<ScreenProfile> {
                       radius: 32,
                       backgroundColor: Colors.transparent,
                       child: FadeInImage.assetNetwork(
-                        placeholder: 'assets/images/profile/placeholder.png',
+                        placeholder: 'assets/images/profile/placeholder_photo.png',
                         image: _profile.profileImg,
                         fit: BoxFit.cover,
                         height: 64,
@@ -120,7 +120,7 @@ class _ScreenProfileState extends State<ScreenProfile> {
                         fadeOutDuration: const Duration(milliseconds: 100),
                         imageErrorBuilder: (context, error, stackTrace) {
                           return Image.asset(
-                            'assets/images/profile/placeholder.png',
+                            'assets/images/profile/placeholder_photo.png',
                             fit: BoxFit.cover,
                           );
                         },

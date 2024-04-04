@@ -5,26 +5,26 @@ import 'package:flutter/material.dart';
 import '../theme/theme_colors.dart';
 
 
-class buildNoticePin extends StatefulWidget {
+class WidgetChatroomNoticePin extends StatefulWidget {
 
   final DataNotice dataNotice;
   bool isExpandNotice;
   final void Function() onToggle;
   final void Function() onHide;
 
-  buildNoticePin(this.dataNotice, this.isExpandNotice, {super.key,
+  WidgetChatroomNoticePin(this.dataNotice, this.isExpandNotice, {super.key,
     required this.onToggle,
     required this.onHide,
   });
 
   @override
-  State<buildNoticePin> createState() {
-    return _buildNoticePin();
+  State<WidgetChatroomNoticePin> createState() {
+    return _WidgetChatroomNoticePin();
   }
 
 }
 
-class _buildNoticePin extends State<buildNoticePin> {
+class _WidgetChatroomNoticePin extends State<WidgetChatroomNoticePin> {
 
   @override
   Widget build(BuildContext context) {

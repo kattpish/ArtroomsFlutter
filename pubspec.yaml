@@ -30,6 +30,7 @@ dependencies:
   firebase_core: ^2.10.0
   channel_talk_flutter: ^2.4.0
   toast: ^0.2.9
+  rich_text_editor_controller: ^0.0.5
 
 dev_dependencies:
   flutter_test:

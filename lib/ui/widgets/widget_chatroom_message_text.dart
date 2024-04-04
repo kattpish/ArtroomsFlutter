@@ -7,12 +7,13 @@ class WidgetChatroomMessageText extends StatelessWidget {
 
   final String message;
   final Color color;
+  final Color colorMention;
 
-  const WidgetChatroomMessageText({super.key, required this.message, required this.color});
+  const WidgetChatroomMessageText({super.key, required this.message, required this.color, required this.colorMention});
 
   @override
   Widget build(BuildContext context) {
-    List<TextSpan> parsedMessage = replacePattern(message, color, false);
+    List<TextSpan> parsedMessage = replacePattern(message, color, colorMention, false);
     return RichText(
         softWrap: true,
         selectionColor: color,
@@ -26,7 +27,8 @@ class WidgetChatroomMessageText extends StatelessWidget {
             letterSpacing: -0.32,
           ),
           children: parsedMessage,
-        ));
+        )
+    );
   }
 
 }

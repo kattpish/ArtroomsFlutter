@@ -54,7 +54,7 @@ Widget buildOtherMessageBubble(
                     child: FadeInImage.assetNetwork(
                       placeholder: message.isArtrooms
                           ? 'assets/images/chats/chat_artrooms.png'
-                          : 'assets/images/chats/placeholder_chat.png',
+                          : 'assets/images/chats/placeholder_photo.png',
                       image: message.profilePictureUrl,
                       fit: BoxFit.cover,
                       fadeInDuration: const Duration(milliseconds: 100),
@@ -63,7 +63,7 @@ Widget buildOtherMessageBubble(
                         return Image.asset(
                           message.isArtrooms
                               ? 'assets/images/chats/chat_artrooms.png'
-                              : 'assets/images/chats/placeholder_chat.png',
+                              : 'assets/images/chats/placeholder_photo.png',
                           fit: BoxFit.cover,
                         );
                       },
@@ -179,6 +179,7 @@ Widget buildOtherMessageBubble(
                                   child: WidgetChatroomMessageText(
                                     message: message.content,
                                     color: const Color(0xFF1F1F1F),
+                                    colorMention: colorPrimaryPurple,
                                   ),
                                 ),
                               ],

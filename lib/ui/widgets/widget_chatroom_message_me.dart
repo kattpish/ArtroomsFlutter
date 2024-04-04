@@ -117,6 +117,7 @@ Widget buildMyMessageBubble(BuildContext context, int index,State state, DataMes
                             WidgetChatroomMessageText(
                               message: message.content,
                               color: Colors.white,
+                              colorMention: colorMainGrey200,
                             ),
                           ],
                         ),

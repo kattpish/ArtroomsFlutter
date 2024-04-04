@@ -101,8 +101,26 @@ class ModuleMedia {
 
           for(AssetEntity asset in images) {
             File? file = await asset.originFile;
+
+            final Uint8List? thumbData = await asset.thumbnailDataWithSize(
+              const ThumbnailSize(200, 200),
+            );
+
             if(file != null) {
-              FileItem fileItem = FileItem(file: file, name: file.path, path: file.path);
+
+              File? thumbFile;
+              if (thumbData != null) {
+                final String fileName = path.basename(asset.relativePath ?? "") + (asset.title ?? "");
+                final String thumbnailPath = path.join((await getTemporaryDirectory()).path, fileName);
+                thumbFile = File(thumbnailPath)..writeAsBytesSync(thumbData);
+              }
+
+              FileItem fileItem = FileItem(
+                  file: file,
+                  thumbFile: thumbFile,
+                  name: file.path,
+                  path: file.path
+              );
 
               if(onLoad != null) {
                 onLoad(fileItem);

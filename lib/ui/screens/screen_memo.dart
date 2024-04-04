@@ -89,6 +89,7 @@ class _ScreenMemoState extends State<ScreenMemo> {
                 controller: _memoController,
                 maxLines: null,
                 keyboardType: TextInputType.multiline,
+                textInputAction: TextInputAction.newline,
                 style: const TextStyle(
                   color: colorMainGrey900,
                   fontSize: 16,

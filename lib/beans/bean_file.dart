@@ -5,6 +5,7 @@ import 'dart:io';
 class FileItem {
 
   File file;
+  File? thumbFile;
   String name;
   String date;
   String path;
@@ -12,11 +13,16 @@ class FileItem {
 
   FileItem({
     required this.file,
+    this.thumbFile,
     this.name = "",
     this.date = "",
     this.path = "",
     this.isSelected = false
   });
+
+  File getPreviewFile() {
+    return thumbFile ?? file;
+  }
 
   @override
   bool operator == (Object other) {
