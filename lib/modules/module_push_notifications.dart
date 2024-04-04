@@ -26,7 +26,9 @@ class ModulePushNotifications {
       await Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform,
       );
+      FirebaseMessaging _messaging = FirebaseMessaging.instance;
       await requestNotificationPermission();
+      await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(alert: true,badge: true,sound: true);
       await FirebaseMessaging.instance.setAutoInitEnabled(true);
       FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
