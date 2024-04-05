@@ -12,7 +12,7 @@ import '../../beans/bean_message.dart';
 import '../theme/theme_colors.dart';
 
 
-Widget buildMyMessageBubble(BuildContext context, int index,State state, DataMessage message, bool isLast, bool isPreviousSameDateTime,
+Widget buildMyMessageBubble(BuildContext context, int index, State state, DataMessage message, bool isLast, bool isPreviousSameDateTime,
     bool isNextSameTime, double screenWidth, Null Function() onReplyClick,Null Function(int index) onReplySelect) {
   return Container(
     margin: EdgeInsets.only(left: 16, right: 16, top: 0, bottom: isLast ? 9 : 0),
@@ -98,26 +98,32 @@ Widget buildMyMessageBubble(BuildContext context, int index,State state, DataMes
                       child: Container(
                         constraints:
                         BoxConstraints(maxWidth: screenWidth * 0.55),
-                        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                         decoration: BoxDecoration(
                           color: colorPrimaryBlue,
                           borderRadius: BorderRadius.only(
                               topLeft: const Radius.circular(24),
                               topRight: Radius.circular(
-                                  isPreviousSameDateTime ? 24 : 0),
+                                  isPreviousSameDateTime ? 24 : 2),
                               bottomLeft: const Radius.circular(24),
                               bottomRight: const Radius.circular(24)),
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            buildReply(index,message,(index){
+                            buildReply(index,message, true, (index){
                               onReplySelect(index);
                             }),
-                            WidgetChatroomMessageText(
-                              message: message.content,
-                              color: Colors.white,
-                              colorMention: colorMainGrey200,
+                            Container(
+                              padding: const EdgeInsets.only(bottom: 2),
+                              constraints: BoxConstraints(
+                                maxWidth: screenWidth * 0.55,
+                              ),
+                              child: WidgetChatroomMessageText(
+                                message: message.content,
+                                color: Colors.white,
+                                colorMention: const Color(0xFFD9E8FF),
+                              ),
                             ),
                           ],
                         ),

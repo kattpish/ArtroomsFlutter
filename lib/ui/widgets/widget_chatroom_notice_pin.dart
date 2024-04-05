@@ -1,5 +1,6 @@
 
 import 'package:artrooms/beans/bean_notice.dart';
+import 'package:artrooms/utils/utils_screen.dart';
 import 'package:flutter/material.dart';
 
 import '../theme/theme_colors.dart';
@@ -30,7 +31,7 @@ class _WidgetChatroomNoticePin extends State<WidgetChatroomNoticePin> {
   Widget build(BuildContext context) {
     return Container(
       height: widget.isExpandNotice ? null : 36,
-      margin: const EdgeInsets.symmetric(horizontal: 14, vertical: 2),
+      margin: const EdgeInsets.symmetric(horizontal: 14, vertical: 0),
       constraints: BoxConstraints(minHeight: widget.isExpandNotice ? 50 : 36),
       decoration: ShapeDecoration(
         color: Colors.white,
@@ -52,7 +53,7 @@ class _WidgetChatroomNoticePin extends State<WidgetChatroomNoticePin> {
         },
         child: Container(
           width: double.infinity,
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.start,
@@ -66,8 +67,8 @@ class _WidgetChatroomNoticePin extends State<WidgetChatroomNoticePin> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(
-                        width: 20,
-                        height: 20,
+                        width: isTablet(context) ? 22 : 20,
+                        height: isTablet(context) ? 22 : 20,
                         padding: const EdgeInsets.only(
                           top: 2.55,
                           left: 1.64,
@@ -109,9 +110,9 @@ class _WidgetChatroomNoticePin extends State<WidgetChatroomNoticePin> {
                                     : Alignment.topLeft,
                                 child: Text(
                                   widget.dataNotice.notice,
-                                  style: const TextStyle(
-                                    color: Color(0xFF3A3A3A),
-                                    fontSize: 14,
+                                  style: TextStyle(
+                                    color: const Color(0xFF3A3A3A),
+                                    fontSize: widget.isExpandNotice ? (isTablet(context) ? 17 : 15) : (isTablet(context) ? 15 : 14),
                                     fontFamily: 'Pretendard',
                                     fontWeight: FontWeight.w400,
                                     height: 0,
@@ -165,8 +166,9 @@ class _WidgetChatroomNoticePin extends State<WidgetChatroomNoticePin> {
                       ),
                       const SizedBox(width: 8),
                       Container(
-                        width: 20,
-                        height: 20,
+                        width: isTablet(context) ? 22 : 20,
+                        height: isTablet(context) ? 22 : 20,
+                        margin: const EdgeInsets.only(right: 2.0),
                         clipBehavior: Clip.antiAlias,
                         decoration: const BoxDecoration(color: Colors.white),
                         child: Container(

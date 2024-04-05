@@ -73,7 +73,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
       child: MaterialApp(
         title: 'Login',
         home: Scaffold(
-          backgroundColor: colorPrimaryBlue,
+          backgroundColor: Colors.white,
           body: Builder(
             builder: (context) {
               return SafeArea(
@@ -91,30 +91,51 @@ class _ScreenLoginState extends State<ScreenLogin> {
                                 Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: <Widget>[
-                                    Image.asset(
-                                      'assets/images/icons/logo.png',
-                                      height: 60,
+                                    Container(
+                                      width: 56,
+                                      height: 56,
+                                      padding: const EdgeInsets.all(14),
+                                      decoration: ShapeDecoration(
+                                        gradient: const LinearGradient(
+                                          begin: Alignment(0.71, -0.71),
+                                          end: Alignment(-0.71, 0.71),
+                                          colors: [Color(0xFF6A79FF), Color(0xFF6D6AFF)],
+                                        ),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(15.75),
+                                        ),
+                                      ),
+                                      child: Image.asset(
+                                        'assets/images/icons/logo.png',
+                                        height: 60,
+                                      ),
                                     ),
-                                    const SizedBox(height: 20),
+                                    const SizedBox(height: 16),
                                     const Text(
-                                      '아트플룻 도넛',
-                                      textAlign: TextAlign.center,
+                                      'ARTROOMS',
                                       style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 26,
-                                        fontFamily: 'LINE Seed Sans KR',
-                                        fontWeight: FontWeight.w400,
-                                        letterSpacing: -0.52,
+                                        color: Color(0xFF6A79FF),
+                                        fontSize: 20,
+                                        fontFamily: 'Gmarket Sans',
+                                        fontWeight: FontWeight.w500,
+                                        height: 0,
                                       ),
                                     ),
                                   ],
                                 ),
-                                const SizedBox(height: 45),
+                                const SizedBox(height: 40),
                                 Column(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: <Widget>[
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                                    Container(
+                                      height: 54,
+                                      margin: const EdgeInsets.symmetric(horizontal: 20.0),
+                                      decoration: ShapeDecoration(
+                                        shape: RoundedRectangleBorder(
+                                          side: const BorderSide(width: 1, color: Color(0xFFE3E3E3)),
+                                          borderRadius: BorderRadius.circular(30),
+                                        ),
+                                      ),
                                       child: TextField(
                                         controller: _emailController,
                                         focusNode: _emailFocus,
@@ -125,29 +146,38 @@ class _ScreenLoginState extends State<ScreenLogin> {
                                           FocusScope.of(context).requestFocus(_passwordFocus);
                                         },
                                         style: const TextStyle(
-                                          color: Colors.white,
+                                          color: colorPrimaryBlue,
                                           fontSize: 14,
                                           fontFamily: 'SUIT',
                                           fontWeight: FontWeight.w300,
                                           height: 0,
                                           letterSpacing: -0.28,
                                         ),
-                                        decoration: InputDecoration(
-                                          filled: true,
-                                          fillColor: const Color(0xFF7F94FE).withAlpha(255),
-                                          hintText: '아이디 입력',
-                                          hintStyle: const TextStyle(color: Colors.white),
-                                          border: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(30.0),
-                                            borderSide: BorderSide.none,
+                                        decoration: const InputDecoration(
+                                          hintText: '아이디(이메일)',
+                                          hintStyle: TextStyle(
+                                            color: Color(0xFFBFBFBF),
+                                            fontSize: 15,
+                                            fontFamily: 'Pretendard',
+                                            fontWeight: FontWeight.w400,
+                                            height: 0,
+                                            letterSpacing: -0.30,
                                           ),
-                                          contentPadding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16),
+                                          border: InputBorder.none,
+                                          contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 18),
                                         ),
                                       ),
                                     ),
-                                    const SizedBox(height: 12),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                                    const SizedBox(height: 14),
+                                    Container(
+                                      height: 54,
+                                      margin: const EdgeInsets.symmetric(horizontal: 20.0),
+                                      decoration: ShapeDecoration(
+                                        shape: RoundedRectangleBorder(
+                                          side: const BorderSide(width: 1, color: Color(0xFFE3E3E3)),
+                                          borderRadius: BorderRadius.circular(30),
+                                        ),
+                                      ),
                                       child: TextField(
                                         controller: _passwordController,
                                         focusNode: _passwordFocus,
@@ -157,27 +187,29 @@ class _ScreenLoginState extends State<ScreenLogin> {
                                         },
                                         obscureText: true,
                                         style: const TextStyle(
-                                          color: Colors.white,
+                                          color: colorPrimaryBlue,
                                           fontSize: 14,
                                           fontFamily: 'SUIT',
                                           fontWeight: FontWeight.w300,
                                           height: 0,
                                           letterSpacing: -0.28,
                                         ),
-                                        decoration: InputDecoration(
-                                          filled: true,
-                                          fillColor: const Color(0xFF7F94FE).withAlpha(255),
-                                          hintText: '비밀번호 입력',
-                                          hintStyle: const TextStyle(color: Colors.white),
-                                          border: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(30.0),
-                                            borderSide: BorderSide.none,
+                                        decoration: const InputDecoration(
+                                          hintText: '비밀번호',
+                                          hintStyle: TextStyle(
+                                            color: Color(0xFFBFBFBF),
+                                            fontSize: 15,
+                                            fontFamily: 'Pretendard',
+                                            fontWeight: FontWeight.w400,
+                                            height: 0,
+                                            letterSpacing: -0.30,
                                           ),
-                                          contentPadding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16),
+                                          border: InputBorder.none,
+                                          contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 18),
                                         ),
                                       ),
                                     ),
-                                    const SizedBox(height: 12),
+                                    const SizedBox(height: 14),
                                     Container(
                                       height: 54,
                                       padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -185,8 +217,8 @@ class _ScreenLoginState extends State<ScreenLogin> {
                                         style: ElevatedButton.styleFrom(
                                           elevation: 0,
                                           minimumSize: const Size(double.infinity, 48),
-                                          foregroundColor: colorPrimaryBlue,
-                                          backgroundColor: Colors.white,
+                                          foregroundColor: Colors.white,
+                                          backgroundColor: colorPrimaryBlue,
                                           padding: const EdgeInsets.symmetric(vertical: 16.0),
                                           shape: RoundedRectangleBorder(
                                             borderRadius: BorderRadius.circular(30.0),
@@ -197,14 +229,14 @@ class _ScreenLoginState extends State<ScreenLogin> {
                                           width: 24,
                                           height: 24,
                                           child: CircularProgressIndicator(
-                                            color: Color(0xFF6A79FF),
+                                            color: Colors.white,
                                             strokeWidth: 3,
                                           ),
                                         )
                                             : const Text(
                                           '로그인',
                                           style: TextStyle(
-                                            color: Color(0xFF6A79FF),
+                                            color: Colors.white,
                                             fontSize: 18,
                                             fontFamily: 'SUIT',
                                             fontWeight: FontWeight.w700,
@@ -217,7 +249,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
                                         },
                                       ),
                                     ),
-                                    const SizedBox(height: 20),
+                                    const SizedBox(height: 12),
                                     Padding(
                                       padding: const EdgeInsets.symmetric(horizontal: 20.0),
                                       child: Row(
@@ -227,9 +259,9 @@ class _ScreenLoginState extends State<ScreenLogin> {
                                             child: const Text(
                                               '아이디 찾기',
                                               style: TextStyle(
-                                                color: Colors.white,
+                                                color: Color(0xFF8F8F8F),
                                                 fontSize: 14,
-                                                fontFamily: 'SUIT',
+                                                fontFamily: 'Pretendard',
                                                 fontWeight: FontWeight.w400,
                                                 height: 0,
                                                 letterSpacing: -0.28,
@@ -244,16 +276,16 @@ class _ScreenLoginState extends State<ScreenLogin> {
                                           Container(
                                             width: 1,
                                             height: 18,
-                                            color: Colors.white,
-                                            margin: const EdgeInsets.symmetric(horizontal: 20.0),
+                                            color: const Color(0xFFE3E3E3),
+                                            margin: const EdgeInsets.symmetric(horizontal: 12.0),
                                           ),
                                           TextButton(
                                             child: const Text(
                                               '비밀번호 찾기',
                                               style: TextStyle(
-                                                color: Colors.white,
+                                                color: Color(0xFF8F8F8F),
                                                 fontSize: 14,
-                                                fontFamily: 'SUIT',
+                                                fontFamily: 'Pretendard',
                                                 fontWeight: FontWeight.w400,
                                                 height: 0,
                                                 letterSpacing: -0.28,
@@ -275,14 +307,14 @@ class _ScreenLoginState extends State<ScreenLogin> {
                                   alignment: Alignment.center,
                                   padding: const EdgeInsets.only(bottom: 20.0),
                                   child: TextButton(
-                                    style: TextButton.styleFrom(foregroundColor: Colors.white70),
+                                    style: TextButton.styleFrom(foregroundColor: colorPrimaryBlue,),
                                     child: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         const Text(
                                           '회원가입은 홈페이지에서 진행해주세요',
                                           style: TextStyle(
-                                            color: Colors.white,
+                                            color: Color(0xFF7D7D7D),
                                             fontSize: 14,
                                             fontFamily: 'SUIT',
                                             fontWeight: FontWeight.w400,
@@ -296,7 +328,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
                                           alignment: Alignment.center,
                                           child: const Icon(
                                             Icons.arrow_forward_ios,
-                                            color: Colors.white,
+                                            color: colorMainGrey500,
                                             size: 12.0,
                                           ),
                                         ),

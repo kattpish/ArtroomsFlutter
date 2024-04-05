@@ -353,7 +353,7 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
                               Container(
                                 height: 82,
                                 margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 0.0),
-                                padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 0.0),
+                                padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
                                 decoration: BoxDecoration(
                                   color: Colors.white,
                                   borderRadius: BorderRadius.circular(10.0),
@@ -369,6 +369,7 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
                                     ),
                                     filled: true,
                                     fillColor: Colors.white,
+                                    contentPadding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 0),
                                   ),
                                   minLines: 2,
                                   maxLines: 2,
@@ -380,6 +381,7 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
                                     fontFamily: 'SUIT',
                                     fontWeight: FontWeight.w300,
                                     letterSpacing: -0.32,
+
                                   ),
                                 ),
                               )
@@ -414,7 +416,7 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
                               Container(
                                 height: 82,
                                 margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 0.0),
-                                padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 0.0),
+                                padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
                                 decoration: BoxDecoration(
                                   color: Colors.white,
                                   borderRadius: BorderRadius.circular(10.0),
@@ -430,6 +432,7 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
                                     ),
                                     filled: true,
                                     fillColor: Colors.white,
+                                    contentPadding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 0),
                                   ),
                                   minLines: 2,
                                   maxLines: 2,
@@ -564,7 +567,7 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
                             IconButton(
                                 icon: Image.asset('assets/images/icons/icon_bell.png',
                                   width: 24, height: 24,
-                                  color: widget.dataChat.isNotification ? colorPrimaryPurple : const Color(0xFFD9D9D9),
+                                  color: widget.dataChat.isNotification ? const Color(0xFF6A79FF) : const Color(0xFFD9D9D9),
                                 ),
                                 onPressed: () {
                                   _doToggleNotification(context, widget.dataChat);

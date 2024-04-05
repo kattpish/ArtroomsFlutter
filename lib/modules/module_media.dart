@@ -19,61 +19,13 @@ class ModuleMedia {
   List<FileItem> imageFiles = [];
   List<FileItem> mediaFiles = [];
 
-  Future<void> init() async {
-
-    if(!isLoadingImages) {
-      isLoadingImages = true;
-
-      loadFileImages().then((List<FileItem> listImages) {
-        imageFiles.clear();
-        imageFiles.addAll(listImages);
-        isLoadingImages = false;
-      });
-
-    }else {
-      Iterator<FileItem> iterator = imageFiles.iterator;
-      while (iterator.moveNext()) {
-        FileItem currentFileItem = iterator.current;
-        if (!await currentFileItem.file.exists()) {
-          imageFiles.remove(currentFileItem);
-          iterator = imageFiles.iterator;
-        }
-      }
-    }
-
-    if(false) {
-      if (!isLoadingMedia) {
-        isLoadingMedia = true;
-
-        loadFilesMedia().then((List<FileItem> listMedia) {
-          mediaFiles.clear();
-          mediaFiles.addAll(listMedia);
-          isLoadingMedia = false;
-        });
-
-      } else {
-        Iterator<FileItem> iterator = mediaFiles.iterator;
-        while (iterator.moveNext()) {
-          FileItem currentFileItem = iterator.current;
-          if (!await currentFileItem.file.exists()) {
-            mediaFiles.remove(currentFileItem);
-            iterator = mediaFiles.iterator;
-          }
-        }
-      }
-    }
-
-  }
-
   Future<List<FileItem>> loadFileImages({bool isShowSettings = false}) async {
 
     List<FileItem> imageFiles = [];
 
     List<FileItem> imageFiles1 = await loadFileImages1(isShowSettings: isShowSettings);
-    List<FileItem> imageFiles2 = await loadFileImages2();
 
     imageFiles.addAll(imageFiles1);
-    imageFiles.addAll(imageFiles2);
 
     imageFiles.sort((a, b) {
       return b.date.compareTo(a.date);
@@ -85,6 +37,8 @@ class ModuleMedia {
   Future<List<FileItem>> loadFileImages1({bool isShowSettings = false, Null Function(FileItem fileItem)? onLoad}) async {
 
     List<AssetEntity> assetFiles = [];
+
+    PhotoManager.clearFileCache();
 
     PermissionState result = await PhotoManager.requestPermissionExtend();
 
@@ -149,106 +103,15 @@ class ModuleMedia {
     return imageFiles;
   }
 
-  Future<List<FileItem>> loadFileImages2() async {
-
-    List<FileItem> imageFiles = [];
-
-    var status = await Permission.storage.status;
-    if (!status.isGranted) {
-      await Permission.storage.request();
-    }
-
-    List<Directory> directories = [];
-
-    final Directory? dir = (await getDownloadsDirectory())?.parent.parent.parent.parent.parent;
-
-    final Directory? dir1 = await getDownloadsDirectory();
-    final Directory dir3 = await getApplicationDocumentsDirectory();
-
-    directories.add(dir!);
-    directories.add(dir1!);
-    directories.add(dir3);
-
-    var directory;
-    if (Platform.isIOS) {
-      directory = await getDownloadsDirectory();
-    } else {
-      directory = "/storage/emulated/0/Download/";
-      bool dirDownloadExists = await Directory(directory).exists();
-      if(dirDownloadExists){
-        directory = Directory("/storage/emulated/0/Download/");
-      }else{
-        directory = Directory("/storage/emulated/0/Downloads/");
-      }
-    }
-    directories.add(directory);
-
-    var directoryRoot;
-    if (Platform.isIOS) {
-      directoryRoot = await getDownloadsDirectory();
-    } else {
-      directoryRoot = "/storage/emulated/0/";
-      bool dirDownloadExists = await Directory(directoryRoot).exists();
-      if(dirDownloadExists){
-        directoryRoot = Directory("/storage/emulated/0/");
-      }else{
-        directoryRoot = Directory("/storage/emulated/0/");
-      }
-    }
-    directories.add(directoryRoot);
-
-    for (var directory in directories) {
-
-      try {
-
-        if (await directory.exists()) {
-
-          await for (var entity in directory.list(recursive: true, followLinks: false)) {
-
-            if (entity is File) {
-
-              final String fileExtension = path.extension(entity.path).toLowerCase();
-              final bool isImage = isFileImage(fileExtension);
-
-              if (isImage) {
-
-                final dateFormat = DateFormat('yyyy.MM.dd', 'ko_KR');
-                final dateString = dateFormat.format(await entity.lastModified());
-
-                final fileItem = FileItem(
-                  file: entity,
-                  name: path.basename(entity.path),
-                  path: entity.path,
-                  date: dateString,
-                );
-
-                if (!imageFiles.contains(fileItem)) {
-                  imageFiles.add(fileItem);
-                }
-              }
-            }
-          }
-        }
-
-      }catch(error) {
-        if (kDebugMode) {
-          print(error);
-        }
-      }
-    }
-
-    return imageFiles;
-  }
-
   Future<List<FileItem>> loadFilesMedia() async {
 
     List<FileItem> mediaFiles = [];
 
-    // List<FileItem> mediaFiles1 = await loadFilesMedia1();
-    // List<FileItem> mediaFiles2 = await loadFilesMedia2();
+    List<FileItem> mediaFiles1 = await loadFilesMedia1();
+    List<FileItem> mediaFiles2 = await loadFilesMedia2();
 
-    // mediaFiles.addAll(mediaFiles1);
-    // mediaFiles.addAll(mediaFiles2);
+    mediaFiles.addAll(mediaFiles1);
+    mediaFiles.addAll(mediaFiles2);
 
     mediaFiles.sort((a, b) {
       return b.date.compareTo(a.date);

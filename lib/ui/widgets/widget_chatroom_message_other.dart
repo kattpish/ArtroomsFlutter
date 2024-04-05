@@ -1,6 +1,7 @@
 
 import 'package:artrooms/ui/widgets/widget_chatroom_message_attachment_file.dart';
 import 'package:artrooms/ui/widgets/widget_chatroom_message_attachment_photos.dart';
+import 'package:artrooms/ui/widgets/widget_chatroom_message_reply.dart';
 import 'package:artrooms/ui/widgets/widget_chatroom_message_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -13,6 +14,7 @@ import '../theme/theme_colors.dart';
 
 Widget buildOtherMessageBubble(
     BuildContext context,
+    int index,
     State state,
     DataMessage message,
     bool isLast,
@@ -21,7 +23,8 @@ Widget buildOtherMessageBubble(
     bool isPreviousSameDateTime,
     bool isNextSameTime,
     double screenWidth,
-    Null Function() onReplyClick
+    Null Function() onReplyClick,
+Null Function(int index) onReplySelect
     ) {
   return Container(
     margin: EdgeInsets.only(
@@ -155,14 +158,13 @@ Widget buildOtherMessageBubble(
                           child: Container(
                             constraints: const BoxConstraints(
                                 minHeight: 40, minWidth: 46),
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 8),
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                             alignment: Alignment.centerLeft,
                             decoration: BoxDecoration(
                               color: colorMainGrey200,
                               borderRadius: BorderRadius.only(
                                 topLeft: Radius.circular(
-                                    isPreviousSameDateTime ? 20 : 0),
+                                    isPreviousSameDateTime ? 20 : 2),
                                 topRight: const Radius.circular(20),
                                 bottomLeft: const Radius.circular(20),
                                 bottomRight: const Radius.circular(20),
@@ -171,15 +173,23 @@ Widget buildOtherMessageBubble(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const SizedBox(height: 4),
                                 Container(
+                                  padding: const EdgeInsets.only(bottom: 2),
                                   constraints: BoxConstraints(
                                     maxWidth: screenWidth * 0.55,
                                   ),
-                                  child: WidgetChatroomMessageText(
-                                    message: message.content,
-                                    color: const Color(0xFF1F1F1F),
-                                    colorMention: colorPrimaryPurple,
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      buildReply(index,message, false, (index){
+                                        onReplySelect(index);
+                                      }),
+                                      WidgetChatroomMessageText(
+                                        message: message.content,
+                                        color: const Color(0xFF1F1F1F),
+                                        colorMention: const Color(0xFF6385FF),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ],

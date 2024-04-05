@@ -15,6 +15,7 @@ Widget widgetChatroomMessageDrawerBtn(BuildContext context, DataChat dataChat) {
     child: InkWell(
       child: Container(
           padding: const EdgeInsets.all(16.0),
+          alignment: Alignment.centerRight,
           decoration: const BoxDecoration(
             shape: BoxShape.circle,
           ),

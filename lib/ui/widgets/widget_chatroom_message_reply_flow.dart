@@ -2,15 +2,17 @@
 import 'dart:convert';
 
 import 'package:artrooms/beans/bean_message.dart';
+import 'package:artrooms/ui/theme/theme_colors.dart';
 import 'package:flutter/material.dart';
 
 
 class WidgetChatroomMessageFlow extends StatelessWidget {
 
   final DataMessage message;
+  final bool isMe;
 
   const WidgetChatroomMessageFlow({super.key,
-    required this.message
+    required this.message, required this.isMe
   });
 
   @override
@@ -22,13 +24,13 @@ class WidgetChatroomMessageFlow extends StatelessWidget {
           width: 4,
         ),
         const SizedBox(width: 0),
-        Expanded(child:  buildReplyMessageForText()),
+        Expanded(child:  buildReplyMessageForText(isMe)),
       ],
     ),
   );
   }
 
-  Widget buildReplyMessageForText() {
+  Widget buildReplyMessageForText(bool isMe) {
 
     ParentMessage parentMessage = ParentMessage(0, "", "","");
 
@@ -45,8 +47,8 @@ class WidgetChatroomMessageFlow extends StatelessWidget {
             Expanded(
               child: Text(
                 '${parentMessage.senderName}에게 답장',
-                style: const TextStyle(
-                  color: Colors.white,
+                style: TextStyle(
+                  color: isMe ? Colors.white : colorMainGrey800,
                   fontSize: 13,
                   fontFamily: 'SUIT',
                   fontWeight: FontWeight.w400,
@@ -61,9 +63,10 @@ class WidgetChatroomMessageFlow extends StatelessWidget {
         Text(
             parentMessage.content,
             maxLines: 1,
-            textAlign: TextAlign.center,
+            textAlign: TextAlign.start,
+            overflow: TextOverflow.ellipsis,
             style: TextStyle(
-              color: Colors.white.withOpacity(0.5),
+              color: isMe ? Colors.white.withOpacity(0.5) : Colors.black.withOpacity(0.5),
               fontSize: 13,
               fontFamily: 'SUIT',
               fontWeight: FontWeight.w400,
