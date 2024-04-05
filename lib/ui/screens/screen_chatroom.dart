@@ -543,6 +543,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                     letterSpacing: -0.36,
                   ),
                 ),
+                elevation: 0,
                 toolbarHeight: 60,
                 centerTitle: _selectMode,
                 leading: Row(
@@ -650,7 +651,6 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                     ),
                   ),
                 ],
-                elevation: 0.2,
               ),
             ),
             Row(
@@ -1089,41 +1089,6 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
 
   }
 
-  void _doScrollToBottom() {
-    _itemScrollController.jumpTo(index: 0);
-  }
-
-  void _doCheckEnableButtonFile() {
-    _selectedImages = 0;
-    _selectedMedia = 0;
-
-    for (FileItem fileImage in _filesImages) {
-      if (fileImage.isSelected) {
-        setState(() {
-          _selectedImages++;
-        });
-      }
-    }
-    for (FileItem fileMedia in _filesMedia) {
-      if (fileMedia.isSelected) {
-        setState(() {
-          _selectedMedia++;
-        });
-      }
-    }
-
-    if (_selectedImages + _selectedMedia > 0) {
-      setState(() {
-        _selectMode = true;
-        _isButtonDisabled = false;
-      });
-    } else {
-      setState(() {
-        _isButtonDisabled = true;
-      });
-    }
-  }
-
   void _deselectPickedFiles(isClose) {
     _doDeselectPickedImages();
     _doDeselectPickedMedia();
@@ -1276,6 +1241,41 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
     });
 
     print(_boxHeight);
+  }
+
+  void _doScrollToBottom() {
+    _itemScrollController.jumpTo(index: 0);
+  }
+
+  void _doCheckEnableButtonFile() {
+    _selectedImages = 0;
+    _selectedMedia = 0;
+
+    for (FileItem fileImage in _filesImages) {
+      if (fileImage.isSelected) {
+        setState(() {
+          _selectedImages++;
+        });
+      }
+    }
+    for (FileItem fileMedia in _filesMedia) {
+      if (fileMedia.isSelected) {
+        setState(() {
+          _selectedMedia++;
+        });
+      }
+    }
+
+    if (_selectedImages + _selectedMedia > 0) {
+      setState(() {
+        _selectMode = true;
+        _isButtonDisabled = false;
+      });
+    } else {
+      setState(() {
+        _isButtonDisabled = true;
+      });
+    }
   }
 
   void _scrollListener() {
