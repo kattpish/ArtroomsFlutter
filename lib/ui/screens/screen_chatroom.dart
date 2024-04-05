@@ -83,13 +83,13 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
   bool _showAttachmentFull = false;
   double _boxHeight = 320.0;
   final double _boxHeightMin = 320.0;
+  late double _boxHeightMax;
   double _dragStartY = 0.0;
   double _screenWidth = 0;
   double _screenHeight = 0;
   late Widget attachmentPicker;
-  late Timer _timer;
-  late AnimationController _animationController;
 
+  late Timer _timer;
   Timer? _scrollTimer;
   int _currentDate = 0;
   int _firstVisibleItemIndex = -1;
@@ -134,8 +134,6 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
       }
     });
 
-    _doInitAttachmentScroll();
-
   }
 
   @override
@@ -144,7 +142,6 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
     _messageController.dispose();
     _scrollControllerAttachment.dispose();
     _scrollTimer?.cancel();
-    _animationController.dispose();
     _timer.cancel();
     super.dispose();
   }
@@ -154,6 +151,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
 
     _screenWidth = MediaQuery.of(context).size.width * widget.widthRatio;
     _screenHeight = MediaQuery.of(context).size.height;
+    _boxHeightMax = _screenHeight - 50;
 
     attachmentPicker = _attachmentPicker(context, this);
 
@@ -232,6 +230,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                               child: _listMessages.isNotEmpty ? GestureDetector(
                                   onTap: () {
                                     closeKeyboard(context);
+                                    _doAttachmentPickerClose();
                                   },
                                   child: ScrollablePositionedList.builder(
                                     itemScrollController: _itemScrollController,
@@ -355,7 +354,12 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                       Visibility(
                         visible: _showAttachment,
                         child:
-                        SizedBox(height: _boxHeight, child: attachmentPicker),
+                        AnimatedContainer(
+                          duration: const Duration(milliseconds: 1000),
+                          curve: Curves.easeOut,
+                          height: _boxHeight,
+                            child: attachmentPicker,
+                        ),
                       ),
                     ],
                   ),
@@ -365,34 +369,34 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                 visible: _showAttachmentFull,
                 child: Scaffold(
                   backgroundColor: Colors.black.withOpacity(0.4),
-                  body: Container(
-                    height: double.infinity,
-                    alignment: Alignment.bottomCenter,
-                    child: Stack(
-                      children: [
-                        Stack(
-                          children: [
-                            InkWell(
-                              onTap: () {
-                                setState(() {
-                                  _doAttachmentPickerMin();
-                                });
-                              },
+                  body: Stack(
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            _doAttachmentPickerMin();
+                          });
+                        },
+                      ),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          AnimatedContainer(
+                            duration: const Duration(milliseconds: 1000),
+                            curve: Curves.easeOut,
+                            height: _boxHeight,
+                            child: Container(
+                                height: double.infinity,
+                                alignment: Alignment.bottomCenter,
+                                margin: const EdgeInsets.only(top: 80),
+                                padding: const EdgeInsets.only(top: 16),
+                                color: Colors.white,
+                                child: attachmentPicker
                             ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: double.infinity,
-                          child: Container(
-                              height: _boxHeight,
-                              margin: const EdgeInsets.only(top: 80),
-                              padding: const EdgeInsets.only(top: 16),
-                              color: Colors.white,
-                              child: attachmentPicker
                           ),
-                        ),
-                      ],
-                    ),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -420,7 +424,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
             children: [
               Container(
                 padding: const EdgeInsets.all(0.0),
-                child: InkWell(
+                child: GestureDetector(
                   onTap: () {
                     setState(() {
                       if (_showAttachmentFull) {
@@ -802,7 +806,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                             right: 4,
                             child: Visibility(
                               visible: _selectMode,
-                              child: InkWell(
+                              child: GestureDetector(
                                 onTap: () {
                                   state.setState(() {
                                     fileImage.isSelected =
@@ -1230,11 +1234,10 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
 
   void _doAttachmentPickerFull() {
     setState(() {
-      _boxHeight = _boxHeightMin;
+      _boxHeight = _boxHeightMax;
       _showAttachmentFull = true;
       _showAttachment = false;
     });
-    _doAnimateHeight();
   }
 
   void _doAttachmentPickerMin() {
@@ -1261,19 +1264,21 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
     final newHeight = _boxHeight - details.globalPosition.dy + _dragStartY;
 
     setState(() {
-      _boxHeight = newHeight.clamp(100.0, _screenHeight);
+      _boxHeight = newHeight.clamp(100.0, _boxHeightMax);
       _dragStartY = details.globalPosition.dy;
 
-      if (_boxHeight < _screenHeight - 100 && _boxHeight > _screenHeight - 200) {
+      if (_boxHeight < _boxHeightMax - 50 && _boxHeight > _boxHeightMax - 150) {
         _doAttachmentPickerMin();
-      } else if (_boxHeight > _boxHeightMin + 160) {
+      } else if (_boxHeight > _boxHeightMin + 150) {
         if (!_showAttachmentFull) {
           _doAttachmentPickerFull();
         }
-      } else if (_boxHeight < _boxHeightMin - 160) {
+      } else if (_boxHeight < _boxHeightMin - 150) {
         _doAttachmentPickerClose();
       }
     });
+
+    print(_boxHeight);
   }
 
   void _scrollListener() {
@@ -1284,7 +1289,6 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
       setState(() {
         _listReachedTop = true;
         _doAttachmentPickerMin();
-        _animationController.stop();
       });
     } else if (_scrollControllerAttachment.offset <=
         _scrollControllerAttachment.position.minScrollExtent &&
@@ -1321,45 +1325,6 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
         });
       }
     }
-  }
-
-  void _doAnimateHeight() {
-    if (_animationController.isAnimating && _boxHeight > _screenHeight) {
-      _animationController.stop();
-    } else {
-      _animationController.forward(from: 0.0);
-    }
-  }
-
-  void _doInitAttachmentScroll() {
-
-    _animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1000),
-    );
-
-    double interval = 0;
-    Tween(begin: _boxHeight, end: _screenHeight)
-        .animate(_animationController)
-        .addListener(() {
-      if (interval <= 0) {
-        interval = (_screenHeight - _boxHeight) / 10;
-      }
-
-      setState(() {
-        if (_boxHeight < _screenHeight) {
-          _boxHeight += interval;
-        }
-        if (_boxHeight > _screenHeight) {
-          _boxHeight = _screenHeight;
-        }
-      });
-
-      if (_boxHeight == _screenHeight) {
-        _animationController.stop();
-      }
-    });
-
   }
 
   void _doHandleScroll() {
