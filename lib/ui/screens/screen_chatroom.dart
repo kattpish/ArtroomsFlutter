@@ -74,7 +74,8 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
   final TextEditingController _messageController = TextEditingController();
   final RichTextEditorController _richTextEditorController = RichTextEditorController();
   final ItemScrollController _itemScrollController = ItemScrollController();
-  final ItemPositionsListener _itemPositionsListener = ItemPositionsListener.create();
+  final ItemPositionsListener _itemPositionsListener = ItemPositionsListener
+      .create();
   final FocusNode _messageFocusNode = FocusNode();
 
   late final ModuleMessages _moduleMessages;
@@ -162,7 +163,6 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
         _animationController.stop();
       }
     });
-
   }
 
   @override
@@ -178,9 +178,14 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
 
   @override
   Widget build(BuildContext context) {
-
-    _screenWidth = MediaQuery.of(context).size.width * widget.widthRatio;
-    _screenHeight = MediaQuery.of(context).size.height;
+    _screenWidth = MediaQuery
+        .of(context)
+        .size
+        .width * widget.widthRatio;
+    _screenHeight = MediaQuery
+        .of(context)
+        .size
+        .height;
 
     attachmentPicker = _attachmentPicker(context, this);
 
@@ -299,23 +304,48 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                                         children: [
                                           Visibility(
                                             visible: !isPreviousDate,
-                                            child: widgetChatroomMessageDatePin(context, message.timestamp, index),
+                                            child: widgetChatroomMessageDatePin(
+                                                context, message.timestamp,
+                                                index),
                                           ),
                                           Container(
                                             child: message.isMe
-                                                ? buildMyMessageBubble(context, index, this, message, isLast, isPreviousSameDateTime, isNextSameTime, _screenWidth,
-                                                    (){
-                                      _replyMessage = message;
-                                      _messageFocusNode.requestFocus();
-                                      }, (index){
-                                                  print("index $index");
-                                        _itemScrollController.scrollTo(index: 20,alignment: 0.5,duration: const Duration(seconds: 1));
-                                                })
-                                      : buildOtherMessageBubble(context, this, message, isLast, isPreviousSame, isNextSame, isPreviousSameDateTime, isNextSameTime, _screenWidth,
-                                      (){
-                                      _replyMessage = message;
-                                      _messageFocusNode.requestFocus();
-                                      }),
+                                                ? buildMyMessageBubble(
+                                                context,
+                                                index,
+                                                this,
+                                                message,
+                                                isLast,
+                                                isPreviousSameDateTime,
+                                                isNextSameTime,
+                                                _screenWidth,
+                                                    () {
+                                                  _replyMessage = message;
+                                                  _messageFocusNode
+                                                      .requestFocus();
+                                                }, (index) {
+                                              print("index $index");
+                                              _itemScrollController.scrollTo(
+                                                  index: 20,
+                                                  alignment: 0.5,
+                                                  duration: const Duration(
+                                                      seconds: 1));
+                                            })
+                                                : buildOtherMessageBubble(
+                                                context,
+                                                this,
+                                                message,
+                                                isLast,
+                                                isPreviousSame,
+                                                isNextSame,
+                                                isPreviousSameDateTime,
+                                                isNextSameTime,
+                                                _screenWidth,
+                                                    () {
+                                                  _replyMessage = message;
+                                                  _messageFocusNode
+                                                      .requestFocus();
+                                                }),
                                           ),
                                         ],
                                       );
@@ -342,17 +372,19 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                                   ? 1.0
                                   : 0.0,
                               duration: const Duration(milliseconds: 500),
-                              child: WidgetChatroomNoticePin(_dataNotice, _isExpandNotice,
-                                  onToggle:() {
+                              child: WidgetChatroomNoticePin(
+                                  _dataNotice, _isExpandNotice,
+                                  onToggle: () {
                                     setState(() {
                                       _isExpandNotice = !_isExpandNotice;
                                       closeKeyboard(context);
                                     });
                                   },
-                                  onHide:() {
+                                  onHide: () {
                                     setState(() {
                                       _isHideNotice = true;
-                                      dbStore.setNoticeHide(_dataNotice, _isHideNotice);
+                                      dbStore.setNoticeHide(
+                                          _dataNotice, _isHideNotice);
                                     });
                                   }
                               ),
@@ -360,7 +392,8 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                             AnimatedOpacity(
                               opacity: _showDateContainer ? 1.0 : 0.0,
                               duration: const Duration(milliseconds: 500),
-                              child: widgetChatroomDatePin(context, _currentDate),
+                              child: widgetChatroomDatePin(
+                                  context, _currentDate),
                             ),
                           ],
                         ),
@@ -368,7 +401,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                       Visibility(
                         visible: _showAttachment,
                         child: attachmentSelected(context, _filesImages,
-                            onRemove:(FileItem fileItem) {
+                            onRemove: (FileItem fileItem) {
                               setState(() {
                                 fileItem.isSelected = false;
                               });
@@ -444,17 +477,25 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                 child: InkWell(
                   onTap: () {
                     setState(() {
-                      if (_showAttachmentFull) {
-                        _doAttachmentPickerMin();
-                      } else if (_showAttachment) {
-                        _doAttachmentPickerClose();
-                        _deselectPickedFiles(false);
-                      } else {
-                        _doAttachmentPickerMin();
-                        _doLoadMedia(true);
-                      }
-                      closeKeyboard(context);
-                    });
+                      //   if (_showAttachmentFull) {
+                      //     _doAttachmentPickerMin();
+                      //   } else if (_showAttachment) {
+                      //     _doAttachmentPickerClose();
+                      //     _deselectPickedFiles(false);
+                      //   } else {
+                      //     _doAttachmentPickerMin();
+                      //     _doLoadMedia(true);
+                      //   }
+                      //   closeKeyboard(context);
+                      // });
+                      // _doLoadMedia(true);
+                      showModalBottomSheet(
+                        isScrollControlled: true,
+                        backgroundColor: Colors.transparent,
+                          context: context, builder: (context) => attachmentPicker
+                      );
+                    }
+                  );
                   },
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -470,25 +511,27 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
               ),
               const SizedBox(width: 4),
               Expanded(
-                  child: Column(
-                      children: [
-                        widgetChatroomMessageInput(_messageController, _richTextEditorController, _messageFocusNode,
-                        onChanged: (String text) {
-                          if (text.endsWith("@")) {
-                            setState(() {
-                              _isMentioning = !_isMentioning;
-                            });
-                          }
-                          if (text.endsWith(" ")) {
-                            setState(() {
-                              _isMentioning = false;
-                            });
-                          }
-                          _doFilterInputs(text);
-                        },
+                child: Column(
+                  children: [
+                    widgetChatroomMessageInput(
+                      _messageController, _richTextEditorController,
+                      _messageFocusNode,
+                      onChanged: (String text) {
+                        if (text.endsWith("@")) {
+                          setState(() {
+                            _isMentioning = !_isMentioning;
+                          });
+                        }
+                        if (text.endsWith(" ")) {
+                          setState(() {
+                            _isMentioning = false;
+                          });
+                        }
+                        _doFilterInputs(text);
+                      },
                     ),
                   ],
-                  ),
+                ),
               ),
               const SizedBox(width: 4),
               Container(
@@ -517,353 +560,366 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
     );
   }
 
+  Widget makeDismissible({required DraggableScrollableSheet child}) {
+    return GestureDetector(behavior: HitTestBehavior.opaque, onTap: ()=> Navigator.of(context).pop(),
+      child: GestureDetector(onTap: (){},child: child,),);
+  }
   Widget _attachmentPicker(BuildContext context, State<StatefulWidget> state) {
-    return Container(
-      height: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: GestureDetector(
-        onVerticalDragStart: _doVerticalDragStart,
-        onVerticalDragUpdate: _doVerticalDragUpdate,
-        onTap: () {
-          if (_showAttachment) {
-            _doAttachmentPickerFull();
-          } else {
-            setState(() {
-              _showAttachmentFull = false;
-            });
-          }
-          closeKeyboard(context);
-        },
-        child: Column(
-          children: [
-            Center(
-              child: Container(
-                height: 16,
-                padding: const EdgeInsets.all(4.0),
-                child: Container(
-                  width: 40,
-                  height: 5,
-                  decoration: const BoxDecoration(
-                    color: colorMainGrey250,
-                    borderRadius: BorderRadius.all(Radius.circular(24)),
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            Visibility(
-              visible: _showAttachmentFull,
-              child: AppBar(
-                backgroundColor: Colors.white,
-                title: Text(
-                  !_selectMode ? '이미지' : "$_selectedImages개 선택",
-                  style: const TextStyle(
-                    fontSize: 18,
-                    color: colorMainGrey900,
-                    fontFamily: 'SUIT',
-                    fontWeight: FontWeight.w700,
-                    height: 0,
-                    letterSpacing: -0.36,
-                  ),
-                ),
-                toolbarHeight: 60,
-                centerTitle: _selectMode,
-                leading: Row(
-                  children: [
-                    Visibility(
-                      visible: !_selectMode,
-                      child: IconButton(
-                        icon: const Icon(
-                          Icons.arrow_back_ios,
-                          color: colorMainGrey250,
-                          size: 20,
-                        ),
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
+    return makeDismissible(
+      child: DraggableScrollableSheet(
+        initialChildSize: 0.5,
+        minChildSize: 0.5,
+        maxChildSize: 0.8,
+        builder: (_,controller)=>
+        Container(
+          color: Colors.white,
+          // height: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: GestureDetector(
+            onVerticalDragStart: _doVerticalDragStart,
+            onVerticalDragUpdate: _doVerticalDragUpdate,
+            onTap: () {
+              if (_showAttachment) {
+                _doAttachmentPickerFull();
+              } else {
+                setState(() {
+                  _showAttachmentFull = false;
+                });
+              }
+              closeKeyboard(context);
+            },
+            child: Column(
+              children: [
+                Center(
+                  child: Container(
+                    height: 16,
+                    padding: const EdgeInsets.all(4.0),
+                    child: Container(
+                      width: 40,
+                      height: 5,
+                      decoration: const BoxDecoration(
+                        color: colorMainGrey250,
+                        borderRadius: BorderRadius.all(Radius.circular(24)),
                       ),
                     ),
-                    Visibility(
-                      visible: _selectMode,
-                      child: Container(
-                        height: double.infinity,
-                        margin: const EdgeInsets.only(left: 8.0),
-                        child: Center(
-                          child: InkWell(
-                            onTap: () {
-                              _deselectPickedFiles(true);
+                  ),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Visibility(
+                  visible: _showAttachmentFull,
+                  child: AppBar(
+                    backgroundColor: Colors.white,
+                    title: Text(
+                      !_selectMode ? '이미지' : "$_selectedImages개 선택",
+                      style: const TextStyle(
+                        fontSize: 18,
+                        color: colorMainGrey900,
+                        fontFamily: 'SUIT',
+                        fontWeight: FontWeight.w700,
+                        height: 0,
+                        letterSpacing: -0.36,
+                      ),
+                    ),
+                    toolbarHeight: 60,
+                    centerTitle: _selectMode,
+                    leading: Row(
+                      children: [
+                        Visibility(
+                          visible: !_selectMode,
+                          child: IconButton(
+                            icon: const Icon(
+                              Icons.arrow_back_ios,
+                              color: colorMainGrey250,
+                              size: 20,
+                            ),
+                            onPressed: () {
+                              Navigator.of(context).pop();
                             },
-                            child: Container(
-                              padding: const EdgeInsets.all(8.0),
-                              child: const Text(
-                                  '취소',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: colorMainGrey600,
-                                    fontFamily: 'SUIT',
-                                    fontWeight: FontWeight.w400,
-                                    height: 0,
-                                    letterSpacing: -0.32,
-                                  )
+                          ),
+                        ),
+                        Visibility(
+                          visible: _selectMode,
+                          child: Container(
+                            height: double.infinity,
+                            margin: const EdgeInsets.only(left: 8.0),
+                            child: Center(
+                              child: InkWell(
+                                onTap: () {
+                                  _deselectPickedFiles(true);
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: const Text(
+                                      '취소',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: colorMainGrey600,
+                                        fontFamily: 'SUIT',
+                                        fontWeight: FontWeight.w400,
+                                        height: 0,
+                                        letterSpacing: -0.32,
+                                      )
+                                  ),
+                                ),
                               ),
                             ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    actions: [
+                      Visibility(
+                        visible: _selectMode,
+                        child: Container(
+                          height: double.infinity,
+                          margin: const EdgeInsets.only(right: 8.0),
+                          child: Center(
+                            child: InkWell(
+                              onTap: () {
+                                _doDeselectPickedImages();
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.all(8.0),
+                                child: const Text(
+                                    '선택 해제',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: colorMainGrey600,
+                                      fontFamily: 'SUIT',
+                                      fontWeight: FontWeight.w400,
+                                      height: 0,
+                                      letterSpacing: -0.32,
+                                    )
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Visibility(
+                        visible: !_selectMode,
+                        child: Container(
+                          height: double.infinity,
+                          margin: const EdgeInsets.only(left: 8.0),
+                          child: Center(
+                            child: InkWell(
+                              onTap: () {
+                                setState(() {
+                                  _selectMode = true;
+                                });
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.all(8.0),
+                                child: const Text(
+                                    '선택',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: colorMainGrey600,
+                                      fontFamily: 'SUIT',
+                                      fontWeight: FontWeight.w400,
+                                      height: 0,
+                                      letterSpacing: -0.32,
+                                    )
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                    elevation: 0.2,
+                  ),
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        width: double.infinity,
+                        height: 44,
+                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                        decoration: BoxDecoration(
+                          color: colorPrimaryPurple,
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        child: TextButton(
+                          onPressed: () {
+                            state.setState(() async {
+                              closeKeyboard(context);
+                              await _doProcessCameraResult();
+                            });
+                          },
+                          child: const Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.camera_alt,
+                                color: Colors.white,
+                                size: 20,
+                              ),
+                              SizedBox(width: 6),
+                              Text('카메라',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontFamily: 'Pretendard',
+                                    fontWeight: FontWeight.w500,
+                                    height: 0,
+                                    letterSpacing: -0.32,
+                                  )),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 4,
+                    ),
+                    Expanded(
+                      child: Container(
+                        width: double.infinity,
+                        height: 44,
+                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                        decoration: BoxDecoration(
+                          color: colorPrimaryBlue,
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        child: TextButton(
+                          onPressed: () {
+                            state.setState(() async {
+                              // type = 2;
+                              closeKeyboard(context);
+                              await _doProcessPickedFiles();
+                            });
+                          },
+                          child: const Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.folder,
+                                color: Colors.white,
+                                size: 20,
+                              ),
+                              SizedBox(width: 6),
+                              Text('파일',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontFamily: 'Pretendard',
+                                    fontWeight: FontWeight.w500,
+                                    height: 0,
+                                    letterSpacing: -0.32,
+                                  )),
+                            ],
                           ),
                         ),
                       ),
                     ),
                   ],
                 ),
-                actions: [
-                  Visibility(
-                    visible: _selectMode,
-                    child: Container(
-                      height: double.infinity,
-                      margin: const EdgeInsets.only(right: 8.0),
-                      child: Center(
-                        child: InkWell(
-                          onTap: () {
-                            _doDeselectPickedImages();
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.all(8.0),
-                            child: const Text(
-                                '선택 해제',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: colorMainGrey600,
-                                  fontFamily: 'SUIT',
-                                  fontWeight: FontWeight.w400,
-                                  height: 0,
-                                  letterSpacing: -0.32,
-                                )
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Visibility(
-                    visible: !_selectMode,
-                    child: Container(
-                      height: double.infinity,
-                      margin: const EdgeInsets.only(left: 8.0),
-                      child: Center(
-                        child: InkWell(
-                          onTap: () {
-                            setState(() {
-                              _selectMode = true;
-                            });
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.all(8.0),
-                            child: const Text(
-                                '선택',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: colorMainGrey600,
-                                  fontFamily: 'SUIT',
-                                  fontWeight: FontWeight.w400,
-                                  height: 0,
-                                  letterSpacing: -0.32,
-                                )
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-                elevation: 0.2,
-              ),
-            ),
-            Row(
-              children: [
-                Expanded(
-                  child: Container(
-                    width: double.infinity,
-                    height: 44,
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                    decoration: BoxDecoration(
-                      color: colorPrimaryPurple,
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    child: TextButton(
-                      onPressed: () {
-                        state.setState(() async {
-                          closeKeyboard(context);
-                          await _doProcessCameraResult();
-                        });
-                      },
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.camera_alt,
-                            color: Colors.white,
-                            size: 20,
-                          ),
-                          SizedBox(width: 6),
-                          Text('카메라',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontFamily: 'Pretendard',
-                                fontWeight: FontWeight.w500,
-                                height: 0,
-                                letterSpacing: -0.32,
-                              )),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
                 const SizedBox(
-                  width: 4,
+                  height: 12,
                 ),
                 Expanded(
-                  child: Container(
-                    width: double.infinity,
-                    height: 44,
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                    decoration: BoxDecoration(
-                      color: colorPrimaryBlue,
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    child: TextButton(
-                      onPressed: () {
-                        state.setState(() async {
-                          // type = 2;
-                          closeKeyboard(context);
-                          await _doProcessPickedFiles();
-                        });
-                      },
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.folder,
-                            color: Colors.white,
-                            size: 20,
-                          ),
-                          SizedBox(width: 6),
-                          Text('파일',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontFamily: 'Pretendard',
-                                fontWeight: FontWeight.w500,
-                                height: 0,
-                                letterSpacing: -0.32,
-                              )),
-                        ],
+                  child: _filesImages.isEmpty
+                      ? const Center(
+                    child: SizedBox(
+                      width: 30,
+                      height: 30,
+                      child: CircularProgressIndicator(
+                        color: Color(0xFF6A79FF),
+                        strokeWidth: 3,
                       ),
                     ),
+                  )
+                      : GridView.builder(
+                    controller: _scrollControllerAttachment,
+                    padding: const EdgeInsets.only(bottom: 24),
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: isTablet(context) ? 6 : 3,
+                      crossAxisSpacing: 5,
+                      mainAxisSpacing: 5,
+                      childAspectRatio: 1,
+                    ),
+                    itemCount: _filesImages.length,
+                    itemBuilder: (context, index) {
+                      var fileImage = _filesImages[index];
+                      return Container(
+                        clipBehavior: Clip.antiAlias,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: InkWell(
+                          onTap: () {
+                            doOpenPhotoView(context,
+                                fileImage: fileImage.file,
+                                fileName: fileImage.name);
+                          },
+                          onLongPress: () {
+                            state.setState(() {
+                              fileImage.isSelected = !fileImage.isSelected;
+                              closeKeyboard(context);
+                            });
+                            _doCheckEnableButtonFile();
+                          },
+                          child: Stack(
+                            children: [
+                              Image.file(
+                                fileImage.getPreviewFile(),
+                                width: double.infinity,
+                                height: double.infinity,
+                                fit: BoxFit.cover,
+                              ),
+                              Positioned(
+                                top: 3,
+                                right: 4,
+                                child: Visibility(
+                                  visible: _selectMode,
+                                  child: InkWell(
+                                    onTap: () {
+                                      state.setState(() {
+                                        fileImage.isSelected =
+                                        !fileImage.isSelected;
+                                        _doCheckEnableButtonFile();
+                                        closeKeyboard(context);
+                                      });
+                                    },
+                                    child: Container(
+                                      width: 26,
+                                      height: 26,
+                                      decoration: BoxDecoration(
+                                        color: fileImage.isSelected
+                                            ? colorPrimaryBlue
+                                            : colorMainGrey200
+                                            .withAlpha(150),
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                          color: fileImage.isSelected
+                                              ? colorPrimaryBlue
+                                              : const Color(0xFFE3E3E3),
+                                          width: 1,
+                                        ),
+                                      ),
+                                      child: fileImage.isSelected
+                                          ? const Icon(Icons.check,
+                                          size: 16, color: Colors.white)
+                                          : Container(),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
                   ),
                 ),
               ],
             ),
-            const SizedBox(
-              height: 12,
-            ),
-            Expanded(
-              child: _filesImages.isEmpty
-                  ? const Center(
-                child: SizedBox(
-                  width: 30,
-                  height: 30,
-                  child: CircularProgressIndicator(
-                    color: Color(0xFF6A79FF),
-                    strokeWidth: 3,
-                  ),
-                ),
-              )
-                  : GridView.builder(
-                controller: _scrollControllerAttachment,
-                padding: const EdgeInsets.only(bottom: 24),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: isTablet(context) ? 6 : 3,
-                  crossAxisSpacing: 5,
-                  mainAxisSpacing: 5,
-                  childAspectRatio: 1,
-                ),
-                itemCount: _filesImages.length,
-                itemBuilder: (context, index) {
-                  var fileImage = _filesImages[index];
-                  return Container(
-                    clipBehavior: Clip.antiAlias,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: InkWell(
-                      onTap: () {
-                        doOpenPhotoView(context,
-                            fileImage: fileImage.file,
-                            fileName: fileImage.name);
-                      },
-                      onLongPress: () {
-                        state.setState(() {
-                          fileImage.isSelected = !fileImage.isSelected;
-                          closeKeyboard(context);
-                        });
-                        _doCheckEnableButtonFile();
-                      },
-                      child: Stack(
-                        children: [
-                          Image.file(
-                            fileImage.getPreviewFile(),
-                            width: double.infinity,
-                            height: double.infinity,
-                            fit: BoxFit.cover,
-                          ),
-                          Positioned(
-                            top: 3,
-                            right: 4,
-                            child: Visibility(
-                              visible: _selectMode,
-                              child: InkWell(
-                                onTap: () {
-                                  state.setState(() {
-                                    fileImage.isSelected =
-                                    !fileImage.isSelected;
-                                    _doCheckEnableButtonFile();
-                                    closeKeyboard(context);
-                                  });
-                                },
-                                child: Container(
-                                  width: 26,
-                                  height: 26,
-                                  decoration: BoxDecoration(
-                                    color: fileImage.isSelected
-                                        ? colorPrimaryBlue
-                                        : colorMainGrey200
-                                        .withAlpha(150),
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                      color: fileImage.isSelected
-                                          ? colorPrimaryBlue
-                                          : const Color(0xFFE3E3E3),
-                                      width: 1,
-                                    ),
-                                  ),
-                                  child: fileImage.isSelected
-                                      ? const Icon(Icons.check,
-                                      size: 16, color: Colors.white)
-                                      : Container(),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );
@@ -871,14 +927,12 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
 
   @override
   void onMessageReceived(BaseChannel channel, BaseMessage baseMessage) {
-
     DataMessage dataMessage = DataMessage.fromBaseMessage(baseMessage);
 
-    if(!_listMessages.contains(dataMessage)) {
+    if (!_listMessages.contains(dataMessage)) {
       _listMessages.insert(0, dataMessage);
       showNotificationMessage(context, widget.dataChat, dataMessage);
     }
-
   }
 
   Future<void> _doLoadMessages() async {
@@ -898,12 +952,11 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
       for (DataMessage message in messages) {
         showNotificationMessage(context, widget.dataChat, message);
       }
-
     }).catchError((e) {
 
     }
     ).whenComplete(() {
-      if(mounted) {
+      if (mounted) {
         setState(() {
           _isLoading = false;
           _isLoadMore = false;
@@ -916,19 +969,18 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
     if (_moduleMessages.isLoading()) return;
 
     _moduleMessages.getMessagesNew().then((List<DataMessage> messages) {
-
       for (DataMessage message in messages) {
-        if(!_listMessages.contains(message)) {
+        if (!_listMessages.contains(message)) {
           _listMessages.insert(0, message);
           showNotificationMessage(context, widget.dataChat, message);
         }
       }
-
     });
   }
 
   void _doLoadNotice() {
-    _moduleNotice.getNotices(widget.dataChat.id).then((List<DataNotice> listNotices) {
+    _moduleNotice.getNotices(widget.dataChat.id).then((
+        List<DataNotice> listNotices) {
       setState(() {
         for (DataNotice notice in listNotices) {
           if (notice.noticeable) {
@@ -944,7 +996,9 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
   }
 
   void _doCheckEnableButton() {
-    if (_messageController.text.trim().isNotEmpty) {
+    if (_messageController.text
+        .trim()
+        .isNotEmpty) {
       setState(() {
         _isButtonDisabled = false;
       });
@@ -956,9 +1010,11 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
   }
 
   List<Member> _doGetAllMembers() {
-    if(_listMembersAll.isEmpty) {
+    if (_listMembersAll.isEmpty) {
       setState(() {
-        _listMembersAll = _moduleMessages.getGroupChannel().members;
+        _listMembersAll = _moduleMessages
+            .getGroupChannel()
+            .members;
       });
     }
     _listMembers = _listMembersAll;
@@ -967,7 +1023,6 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
 
   Future<void> _doSendMessage() async {
     if (!_isButtonDisabled) {
-
       _doSendMessageText();
 
       _doAttachmentPickerClose();
@@ -981,10 +1036,9 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
   }
 
   void _doSendMessageText() {
-
     if (_messageController.text.isNotEmpty) {
-
-      _moduleMessages.sendMessage(_messageController.text, _replyMessage).then((DataMessage myMessage) {
+      _moduleMessages.sendMessage(_messageController.text, _replyMessage).then((
+          DataMessage myMessage) {
         setState(() {
           _listMessages.insert(0, myMessage);
           _messageController.clear();
@@ -995,13 +1049,12 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
         });
       });
     }
-
   }
 
   Future<void> _doSendMessageImages() async {
-
     if (_selectedImages > 0) {
-      DataMessage myMessage1 = _moduleMessages.preSendMessageImage(_filesImages);
+      DataMessage myMessage1 = _moduleMessages.preSendMessageImage(
+          _filesImages);
       int index = myMessage1.index;
 
       setState(() {
@@ -1025,15 +1078,14 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
         }
       }
     }
-
   }
 
   Future<void> _doSendMessageMedia() async {
-
     if (_selectedMedia > 0) {
       List<int> index = [];
 
-      List<DataMessage> myMessages = await _moduleMessages.preSendMessageMedia(_filesMedia);
+      List<DataMessage> myMessages = await _moduleMessages.preSendMessageMedia(
+          _filesMedia);
 
       for (DataMessage myMessage1 in myMessages) {
         setState(() {
@@ -1063,13 +1115,12 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
         }
       }
     }
-
   }
 
   Future<void> _doProcessCameraResult() async {
     File? file = await doPickImageWithCamera();
 
-    if(file != null) {
+    if (file != null) {
       _selectedImages++;
       FileItem fileItem = FileItem(file: file, path: file.path);
       fileItem.isSelected = true;
@@ -1083,7 +1134,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
 
     List<FileItem> fileItems = await doPickFiles();
 
-    for(FileItem fileItem in fileItems) {
+    for (FileItem fileItem in fileItems) {
       _selectedMedia++;
       fileItem.isSelected = true;
       _filesMedia.add(fileItem);
@@ -1093,11 +1144,11 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
   }
 
   void _doLoadMedia(isShow) {
-
     moduleMedia.init();
 
-    moduleMedia.loadFileImages1(isShowSettings: isShow, onLoad: (FileItem fileItem) {
-      if(mounted) {
+    moduleMedia.loadFileImages1(
+        isShowSettings: isShow, onLoad: (FileItem fileItem) {
+      if (mounted) {
         setState(() {
           if (!_filesImages.contains(fileItem)) {
             _filesImages.add(fileItem);
@@ -1106,8 +1157,9 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
       }
     });
 
-    moduleMedia.loadFileImages(isShowSettings: isShow).then((List<FileItem> listImages) {
-      if(mounted) {
+    moduleMedia.loadFileImages(isShowSettings: isShow).then((
+        List<FileItem> listImages) {
+      if (mounted) {
         setState(() {
           for (FileItem fileItem in listImages) {
             if (!_filesImages.contains(fileItem)) {
@@ -1121,7 +1173,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
     });
 
     moduleMedia.loadFilesMedia().then((List<FileItem> listMedia) {
-      if(mounted) {
+      if (mounted) {
         setState(() {
           for (FileItem fileItem in listMedia) {
             if (!_filesMedia.contains(fileItem)) {
@@ -1173,7 +1225,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
   void _deselectPickedFiles(isClose) {
     _doDeselectPickedImages();
     _doDeselectPickedMedia();
-    if(isClose) {
+    if (isClose) {
       _doAttachmentPickerClose();
     }
   }
@@ -1226,7 +1278,6 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
   }
 
   void _doFilterInputs(String text) {
-
     _doGetAllMembers();
 
     String textAfterCharacter = "";
@@ -1235,15 +1286,15 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
     }
 
     if (text.endsWith("@")) {
-      if(_isMentioning == false) {
+      if (_isMentioning == false) {
         setState(() {
           _isMentioning = true;
         });
       }
     }
 
-    if(textAfterCharacter.isNotEmpty && !textAfterCharacter.contains(' ')){
-      if(_isMentioning == false) {
+    if (textAfterCharacter.isNotEmpty && !textAfterCharacter.contains(' ')) {
+      if (_isMentioning == false) {
         setState(() {
           _isMentioning = true;
         });
@@ -1257,7 +1308,6 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
         _isMentioning = false;
       });
     }
-
   }
 
   void _doUpdateAllMemberByFilter(String textAfterCharacter) {
@@ -1306,7 +1356,8 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
       _boxHeight = newHeight.clamp(100.0, _screenHeight);
       _dragStartY = details.globalPosition.dy;
 
-      if (_boxHeight < _screenHeight - 100 && _boxHeight > _screenHeight - 200) {
+      if (_boxHeight < _screenHeight - 100 &&
+          _boxHeight > _screenHeight - 200) {
         _doAttachmentPickerMin();
       } else if (_boxHeight > _boxHeightMin + 160) {
         if (!_showAttachmentFull) {
@@ -1319,10 +1370,10 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
   }
 
   void _scrollListener() {
-
     if (_scrollControllerAttachment.offset == 0 &&
         _scrollControllerAttachment.position.minScrollExtent == 0 &&
-        _scrollControllerAttachment.position.userScrollDirection == ScrollDirection.forward) {
+        _scrollControllerAttachment.position.userScrollDirection ==
+            ScrollDirection.forward) {
       setState(() {
         _listReachedTop = true;
         _doAttachmentPickerMin();
@@ -1330,7 +1381,8 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
       });
     } else if (_scrollControllerAttachment.offset <=
         _scrollControllerAttachment.position.minScrollExtent &&
-        _scrollControllerAttachment.position.userScrollDirection == ScrollDirection.forward) {
+        _scrollControllerAttachment.position.userScrollDirection ==
+            ScrollDirection.forward) {
       if (!_listReachedTop) {
         setState(() {
           _listReachedTop = true;
@@ -1338,7 +1390,8 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
       }
     } else if (_scrollControllerAttachment.offset <=
         _scrollControllerAttachment.position.minScrollExtent &&
-        _scrollControllerAttachment.position.userScrollDirection == ScrollDirection.reverse) {
+        _scrollControllerAttachment.position.userScrollDirection ==
+            ScrollDirection.reverse) {
       if (_listReachedTop) {
         setState(() {
           _listReachedTop = false;
@@ -1364,7 +1417,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
       }
     }
   }
-  
+
   void _doAnimateHeight() {
     if (_animationController.isAnimating && _boxHeight > _screenHeight) {
       _animationController.stop();
@@ -1374,7 +1427,6 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
   }
 
   void _doHandleScroll() {
-
     final visiblePositions = _itemPositionsListener.itemPositions.value
         .where((ItemPosition position) {
       return position.itemTrailingEdge > 0;
@@ -1386,10 +1438,10 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
       return position.itemTrailingEdge > max.itemTrailingEdge ? position : max;
     }).index;
 
-    if(_firstVisibleItemIndex == -1) {
+    if (_firstVisibleItemIndex == -1) {
       _firstVisibleItemIndex = firstVisibleItemIndex;
       return;
-    }else if(_firstVisibleItemIndex == firstVisibleItemIndex) {
+    } else if (_firstVisibleItemIndex == firstVisibleItemIndex) {
       return;
     }
 
@@ -1397,8 +1449,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
 
     if (_scrollTimer?.isActive ?? false) _scrollTimer?.cancel();
 
-    if(_listMessages.isNotEmpty) {
-
+    if (_listMessages.isNotEmpty) {
       DataMessage firstVisibleMessage = _listMessages[firstVisibleItemIndex];
 
       setState(() {
@@ -1411,10 +1462,8 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
           _showDateContainer = false;
         });
       });
-
     }
 
     _doLoadMessages();
   }
-
 }
