@@ -13,7 +13,7 @@ Widget widgetChatMessagePin(BuildContext context, State state, {void Function()?
       opacity: dataChatPin.id.isNotEmpty ? 1.0 : 0.0,
       duration: const Duration(milliseconds: 500),
       child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 14, vertical: 2),
+        margin: const EdgeInsets.symmetric(horizontal: 14, vertical: 0),
         decoration: ShapeDecoration(
           color: Colors.white,
           shape: RoundedRectangleBorder(

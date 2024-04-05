@@ -12,13 +12,20 @@ Slidable widgetChatRow(BuildContext context, int index, DataChat dataChat, {
 }) {
   return Slidable(
     key: const ValueKey(0),
+    closeOnScroll: true,
+    groupTag: 0,
     endActionPane: ActionPane(
       motion: const StretchMotion(),
       children: [
         CustomSlidableAction(
             flex: 1,
-            onPressed: (context) {
+            autoClose: false,
+            onPressed: (context) async {
               onClickOption1();
+              final controller = Slidable.of(context);
+              await controller?.close(
+                duration: const Duration(milliseconds: 1500)
+              );
             },
             backgroundColor: dataChat.isNotification ? colorMainGrey200 : colorMainGrey300,
             foregroundColor: Colors.white,
@@ -31,7 +38,12 @@ Slidable widgetChatRow(BuildContext context, int index, DataChat dataChat, {
         ),
         CustomSlidableAction(
           flex: 1,
-          onPressed: (context) {
+          autoClose: false,
+          onPressed: (context) async {
+            final controller = Slidable.of(context);
+            await controller?.close(
+                duration: const Duration(milliseconds: 1000)
+            );
             onClickOption2();
           },
           backgroundColor: colorPrimaryBlue,

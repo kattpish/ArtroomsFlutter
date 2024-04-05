@@ -88,7 +88,8 @@ class WidgetChatroomMessageReply extends StatelessWidget {
 }
 
 Widget buildReply(int index, DataMessage message,Null Function(int index) onReplyClick) {
-  return (_doParseReplyMessage(message.data))
+  return (
+      _doParseReplyMessage(message.data))
       ? Column(
     children: [
       InkWell(
@@ -108,7 +109,14 @@ Widget buildReply(int index, DataMessage message,Null Function(int index) onRepl
             )
         ),
       ),
-      const Divider(color: Colors.white),
+      Container(
+        width: 194,
+        height: 1,
+        margin: const EdgeInsets.only(top: 10, bottom: 8),
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.20000000298023224),
+        ),
+      ),
     ],
   )
       : const SizedBox.shrink()

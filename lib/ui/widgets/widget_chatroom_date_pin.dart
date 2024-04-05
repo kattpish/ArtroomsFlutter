@@ -9,7 +9,7 @@ Widget widgetChatroomDatePin(BuildContext context, int currentDate) {
     width: 145,
     height: 31,
     margin: const EdgeInsets.symmetric(
-        horizontal: 16, vertical: 2),
+        horizontal: 16, vertical: 3),
     padding: const EdgeInsets.symmetric(
         horizontal: 12, vertical: 4),
     alignment: Alignment.center,

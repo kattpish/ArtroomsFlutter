@@ -302,20 +302,21 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                                             child: widgetChatroomMessageDatePin(context, message.timestamp, index),
                                           ),
                                           Container(
-                                            child: message.isMe
+                                            child: !message.isMe
                                                 ? buildMyMessageBubble(context, index, this, message, isLast, isPreviousSameDateTime, isNextSameTime, _screenWidth,
                                                     (){
                                       _replyMessage = message;
                                       _messageFocusNode.requestFocus();
                                       }, (index){
-                                                  print("index $index");
                                         _itemScrollController.scrollTo(index: 20,alignment: 0.5,duration: const Duration(seconds: 1));
                                                 })
-                                      : buildOtherMessageBubble(context, this, message, isLast, isPreviousSame, isNextSame, isPreviousSameDateTime, isNextSameTime, _screenWidth,
+                                      : buildOtherMessageBubble(context, index, this, message, isLast, isPreviousSame, isNextSame, isPreviousSameDateTime, isNextSameTime, _screenWidth,
                                       (){
                                       _replyMessage = message;
                                       _messageFocusNode.requestFocus();
-                                      }),
+                                      }, (index){
+                                                  _itemScrollController.scrollTo(index: 20,alignment: 0.5,duration: const Duration(seconds: 1));
+                                                }),
                                           ),
                                         ],
                                       );

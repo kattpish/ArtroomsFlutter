@@ -61,7 +61,8 @@ class WidgetChatroomMessageFlow extends StatelessWidget {
         Text(
             parentMessage.content,
             maxLines: 1,
-            textAlign: TextAlign.center,
+            textAlign: TextAlign.start,
+            overflow: TextOverflow.ellipsis,
             style: TextStyle(
               color: Colors.white.withOpacity(0.5),
               fontSize: 13,

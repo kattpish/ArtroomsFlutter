@@ -7,6 +7,7 @@ import 'package:artrooms/ui/screens/screen_login.dart';
 import 'package:artrooms/ui/screens/screen_profile.dart';
 import 'package:artrooms/utils/utils_notifications.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 
 import '../../beans/bean_chat.dart';
 import '../../listeners/scroll_bouncing_physics.dart';
@@ -175,34 +176,36 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver  
                                 physics: const ScrollPhysicsBouncing(),
                                 child: ConstrainedBox(
                                   constraints: BoxConstraints(minHeight: constraints.maxHeight + 1),
-                                  child: ListView.builder(
-                                    physics: const NeverScrollableScrollPhysics(),
-                                    shrinkWrap: true,
-                                    itemCount: _listChats.length,
-                                    itemBuilder: (context, index) {
-                                      DataChat dataChat = _listChats[index];
-                                      return Container(
-                                        key: Key(_listChats[index].id),
-                                        child: widgetChatRow(context, index, dataChat,
-                                          onClickOption1: () {
-                                            _doToggleNotification(context, dataChat);
-                                          },
-                                          onClickOption2: () {
-                                            widgetChatsExit(context, moduleSendBird, dataChat,
-                                                onExit: () {
-                                                  setState(() {
-                                                    moduleSendBird.leaveChannel(dataChat.id);
-                                                    _listChats.remove(dataChat);
-                                                    Navigator.of(context).pop();
+                                  child: SlidableAutoCloseBehavior(
+                                    child: ListView.builder(
+                                      physics: const NeverScrollableScrollPhysics(),
+                                      shrinkWrap: true,
+                                      itemCount: _listChats.length,
+                                      itemBuilder: (context, index) {
+                                        DataChat dataChat = _listChats[index];
+                                        return Container(
+                                          key: Key(_listChats[index].id),
+                                          child: widgetChatRow(context, index, dataChat,
+                                            onClickOption1: () {
+                                              _doToggleNotification(context, dataChat);
+                                            },
+                                            onClickOption2: () {
+                                              widgetChatsExit(context, moduleSendBird, dataChat,
+                                                  onExit: () {
+                                                    setState(() {
+                                                      moduleSendBird.leaveChannel(dataChat.id);
+                                                      _listChats.remove(dataChat);
+                                                      Navigator.of(context).pop();
+                                                    });
                                                   });
-                                                });
-                                          },
-                                          onSelectChat: () {
-                                            _doSelectChat(context, dataChat);
-                                          },
-                                        ),
-                                      );
-                                    },
+                                            },
+                                            onSelectChat: () {
+                                              _doSelectChat(context, dataChat);
+                                            },
+                                          ),
+                                        );
+                                      },
+                                    ),
                                   ),
                                 ),
                               );
