@@ -62,8 +62,6 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
   bool _isButtonDisabled = true;
   bool _isHideNotice = false;
   bool _isExpandNotice = false;
-  bool _showAttachment = false;
-  bool _showAttachmentFull = false;
   bool _listReachedTop = false;
   bool _listReachedBottom = false;
 
@@ -81,30 +79,31 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
   final ModuleNotice _moduleNotice = ModuleNotice();
   DataNotice _dataNotice = DataNotice();
 
+  bool _showAttachment = false;
+  bool _showAttachmentFull = false;
   double _boxHeight = 320.0;
   final double _boxHeightMin = 320.0;
   double _dragStartY = 0.0;
   double _screenWidth = 0;
   double _screenHeight = 0;
-  int _firstVisibleItemIndex = -1;
+  late Widget attachmentPicker;
+  late Timer _timer;
+  late AnimationController _animationController;
 
   Timer? _scrollTimer;
   int _currentDate = 0;
+  int _firstVisibleItemIndex = -1;
   bool _showDateContainer = false;
   final Map<int, GlobalKey> _itemKeys = {};
 
-  late Widget attachmentPicker;
-  late Timer _timer;
-
-  late AnimationController _animationController;
   DataMessage? _replyMessage;
   bool _isMentioning = false;
 
   int _selectedImages = 0;
   int _selectedMedia = 0;
   bool _selectMode = true;
-  List<FileItem> _filesImages = [];
-  List<FileItem> _filesMedia = [];
+  final List<FileItem> _filesImages = [];
+  final List<FileItem> _filesMedia = [];
 
   @override
   void initState() {
@@ -118,7 +117,6 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
 
     _doLoadMessages();
     _doLoadNotice();
-    _doLoadMedia(false);
 
     _timer = Timer.periodic(Duration(seconds: timeSecRefreshChat), (timer) {
       _doLoadMessagesNew();
@@ -136,32 +134,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
       }
     });
 
-    _animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1000),
-    );
-
-    double interval = 0;
-    Tween(begin: _boxHeight, end: _screenHeight)
-        .animate(_animationController)
-        .addListener(() {
-      if (interval <= 0) {
-        interval = (_screenHeight - _boxHeight) / 10;
-      }
-
-      setState(() {
-        if (_boxHeight < _screenHeight) {
-          _boxHeight += interval;
-        }
-        if (_boxHeight > _screenHeight) {
-          _boxHeight = _screenHeight;
-        }
-      });
-
-      if (_boxHeight == _screenHeight) {
-        _animationController.stop();
-      }
-    });
+    _doInitAttachmentScroll();
 
   }
 
@@ -302,19 +275,19 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                                             child: widgetChatroomMessageDatePin(context, message.timestamp, index),
                                           ),
                                           Container(
-                                            child: !message.isMe
+                                            child: message.isMe
                                                 ? buildMyMessageBubble(context, index, this, message, isLast, isPreviousSameDateTime, isNextSameTime, _screenWidth,
                                                     (){
-                                      _replyMessage = message;
-                                      _messageFocusNode.requestFocus();
-                                      }, (index){
-                                        _itemScrollController.scrollTo(index: 20,alignment: 0.5,duration: const Duration(seconds: 1));
+                                                  _replyMessage = message;
+                                                  _messageFocusNode.requestFocus();
+                                                }, (index){
+                                                  _itemScrollController.scrollTo(index: 20,alignment: 0.5,duration: const Duration(seconds: 1));
                                                 })
-                                      : buildOtherMessageBubble(context, index, this, message, isLast, isPreviousSame, isNextSame, isPreviousSameDateTime, isNextSameTime, _screenWidth,
-                                      (){
-                                      _replyMessage = message;
-                                      _messageFocusNode.requestFocus();
-                                      }, (index){
+                                                : buildOtherMessageBubble(context, index, this, message, isLast, isPreviousSame, isNextSame, isPreviousSameDateTime, isNextSameTime, _screenWidth,
+                                                    (){
+                                                  _replyMessage = message;
+                                                  _messageFocusNode.requestFocus();
+                                                }, (index){
                                                   _itemScrollController.scrollTo(index: 20,alignment: 0.5,duration: const Duration(seconds: 1));
                                                 }),
                                           ),
@@ -397,13 +370,17 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                     alignment: Alignment.bottomCenter,
                     child: Stack(
                       children: [
-                        Expanded(child: InkWell(
-                          onTap: () {
-                            setState(() {
-                              _doAttachmentPickerMin();
-                            });
-                          },
-                        )),
+                        Stack(
+                          children: [
+                            InkWell(
+                              onTap: () {
+                                setState(() {
+                                  _doAttachmentPickerMin();
+                                });
+                              },
+                            ),
+                          ],
+                        ),
                         SizedBox(
                           height: double.infinity,
                           child: Container(
@@ -411,7 +388,8 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                               margin: const EdgeInsets.only(top: 80),
                               padding: const EdgeInsets.only(top: 16),
                               color: Colors.white,
-                              child: attachmentPicker),
+                              child: attachmentPicker
+                          ),
                         ),
                       ],
                     ),
@@ -471,25 +449,25 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
               ),
               const SizedBox(width: 4),
               Expanded(
-                  child: Column(
-                      children: [
-                        widgetChatroomMessageInput(_messageController, _richTextEditorController, _messageFocusNode,
-                        onChanged: (String text) {
-                          if (text.endsWith("@")) {
-                            setState(() {
-                              _isMentioning = !_isMentioning;
-                            });
-                          }
-                          if (text.endsWith(" ")) {
-                            setState(() {
-                              _isMentioning = false;
-                            });
-                          }
-                          _doFilterInputs(text);
-                        },
+                child: Column(
+                  children: [
+                    widgetChatroomMessageInput(_messageController, _richTextEditorController, _messageFocusNode,
+                      onChanged: (String text) {
+                        if (text.endsWith("@")) {
+                          setState(() {
+                            _isMentioning = !_isMentioning;
+                          });
+                        }
+                        if (text.endsWith(" ")) {
+                          setState(() {
+                            _isMentioning = false;
+                          });
+                        }
+                        _doFilterInputs(text);
+                      },
                     ),
                   ],
-                  ),
+                ),
               ),
               const SizedBox(width: 4),
               Container(
@@ -1093,9 +1071,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
     await _doSendMessageMedia();
   }
 
-  void _doLoadMedia(isShow) {
-
-    moduleMedia.init();
+  Future<void> _doLoadMedia(isShow) async {
 
     moduleMedia.loadFileImages1(isShowSettings: isShow, onLoad: (FileItem fileItem) {
       if(mounted) {
@@ -1107,33 +1083,14 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
       }
     });
 
-    moduleMedia.loadFileImages(isShowSettings: isShow).then((List<FileItem> listImages) {
-      if(mounted) {
+    for (FileItem fileItem in _filesImages) {
+      if (!await fileItem.file.exists()) {
         setState(() {
-          for (FileItem fileItem in listImages) {
-            if (!_filesImages.contains(fileItem)) {
-              _filesImages.insert(0, fileItem);
-            }
-          }
-          _filesImages.clear();
-          _filesImages = listImages;
+          _filesImages.remove(fileItem);
         });
       }
-    });
+    }
 
-    moduleMedia.loadFilesMedia().then((List<FileItem> listMedia) {
-      if(mounted) {
-        setState(() {
-          for (FileItem fileItem in listMedia) {
-            if (!_filesMedia.contains(fileItem)) {
-              _filesMedia.insert(0, fileItem);
-            }
-          }
-          _filesMedia.clear();
-          _filesMedia = listMedia;
-        });
-      }
-    });
   }
 
   void _doScrollToBottom() {
@@ -1365,13 +1322,44 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
       }
     }
   }
-  
+
   void _doAnimateHeight() {
     if (_animationController.isAnimating && _boxHeight > _screenHeight) {
       _animationController.stop();
     } else {
       _animationController.forward(from: 0.0);
     }
+  }
+
+  void _doInitAttachmentScroll() {
+
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1000),
+    );
+
+    double interval = 0;
+    Tween(begin: _boxHeight, end: _screenHeight)
+        .animate(_animationController)
+        .addListener(() {
+      if (interval <= 0) {
+        interval = (_screenHeight - _boxHeight) / 10;
+      }
+
+      setState(() {
+        if (_boxHeight < _screenHeight) {
+          _boxHeight += interval;
+        }
+        if (_boxHeight > _screenHeight) {
+          _boxHeight = _screenHeight;
+        }
+      });
+
+      if (_boxHeight == _screenHeight) {
+        _animationController.stop();
+      }
+    });
+
   }
 
   void _doHandleScroll() {

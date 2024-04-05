@@ -111,7 +111,7 @@ Widget buildMyMessageBubble(BuildContext context, int index, State state, DataMe
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            buildReply(index,message,(index){
+                            buildReply(index,message, true, (index){
                               onReplySelect(index);
                             }),
                             Container(
@@ -122,7 +122,7 @@ Widget buildMyMessageBubble(BuildContext context, int index, State state, DataMe
                               child: WidgetChatroomMessageText(
                                 message: message.content,
                                 color: Colors.white,
-                                colorMention: colorMainGrey200,
+                                colorMention: const Color(0xFFD9E8FF),
                               ),
                             ),
                           ],

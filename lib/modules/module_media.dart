@@ -19,52 +19,6 @@ class ModuleMedia {
   List<FileItem> imageFiles = [];
   List<FileItem> mediaFiles = [];
 
-  Future<void> init() async {
-
-    if(!isLoadingImages) {
-      isLoadingImages = true;
-
-      loadFileImages().then((List<FileItem> listImages) {
-        imageFiles.clear();
-        imageFiles.addAll(listImages);
-        isLoadingImages = false;
-      });
-
-    }else {
-      Iterator<FileItem> iterator = imageFiles.iterator;
-      while (iterator.moveNext()) {
-        FileItem currentFileItem = iterator.current;
-        if (!await currentFileItem.file.exists()) {
-          imageFiles.remove(currentFileItem);
-          iterator = imageFiles.iterator;
-        }
-      }
-    }
-
-    if(false) {
-      if (!isLoadingMedia) {
-        isLoadingMedia = true;
-
-        loadFilesMedia().then((List<FileItem> listMedia) {
-          mediaFiles.clear();
-          mediaFiles.addAll(listMedia);
-          isLoadingMedia = false;
-        });
-
-      } else {
-        Iterator<FileItem> iterator = mediaFiles.iterator;
-        while (iterator.moveNext()) {
-          FileItem currentFileItem = iterator.current;
-          if (!await currentFileItem.file.exists()) {
-            mediaFiles.remove(currentFileItem);
-            iterator = mediaFiles.iterator;
-          }
-        }
-      }
-    }
-
-  }
-
   Future<List<FileItem>> loadFileImages({bool isShowSettings = false}) async {
 
     List<FileItem> imageFiles = [];

@@ -178,10 +178,18 @@ Null Function(int index) onReplySelect
                                   constraints: BoxConstraints(
                                     maxWidth: screenWidth * 0.55,
                                   ),
-                                  child: WidgetChatroomMessageText(
-                                    message: message.content,
-                                    color: const Color(0xFF1F1F1F),
-                                    colorMention: colorPrimaryPurple,
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      buildReply(index,message, false, (index){
+                                        onReplySelect(index);
+                                      }),
+                                      WidgetChatroomMessageText(
+                                        message: message.content,
+                                        color: const Color(0xFF1F1F1F),
+                                        colorMention: const Color(0xFF6385FF),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ],
