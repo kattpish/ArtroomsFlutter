@@ -10,13 +10,14 @@ import 'package:flutter/foundation.dart';
 import 'package:artrooms/utils/utils_permissions.dart';
 import 'package:sendbird_chat_sdk/sendbird_chat_sdk.dart';
 
+@pragma('vm:entry-point')
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  print('calling handling background message ${message.messageId}');
+  NotificationService.showNotification(message.notification?.title ?? '', message.notification?.body ?? '');
+}
 
  class ModulePushNotifications {
-  @pragma('vm:entry-point')
-  Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-   print('calling handling background message ${message.messageId}');
-   NotificationService.showNotification(message.notification?.title ?? '', message.notification?.body ?? '');
-  }
+
 
   Future<void> init() async {
 
@@ -30,14 +31,12 @@ import 'package:sendbird_chat_sdk/sendbird_chat_sdk.dart';
       await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(alert: true,badge: true,sound: true);
       await FirebaseMessaging.instance.setAutoInitEnabled(true);
       FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-
       FirebaseMessaging.onMessage.listen((RemoteMessage message) {
 
         if (kDebugMode) {
           print('Got a message whilst in the foreground!');
           print('Message data: ${message.data}');
         }
-
         if (message.notification != null) {
           if (kDebugMode) {
             print('Message also contained a notification: ${message.notification}');
@@ -45,15 +44,7 @@ import 'package:sendbird_chat_sdk/sendbird_chat_sdk.dart';
         }
         NotificationService.showNotification(message.notification?.title ?? '', message.notification?.body ?? '');
       });
-      await getToken();
       // await SendbirdChat.unregisterPushTokenAll();
-
-      PushTokenRegistrationStatus status = await SendbirdChat.registerPushToken(
-        type: _getPushTokenType(),
-        token: await getToken(),
-        unique: true,
-      );
-      print('status ${status.name}');
     } catch (e) {
       if (kDebugMode) {
         print(e);
@@ -61,30 +52,30 @@ import 'package:sendbird_chat_sdk/sendbird_chat_sdk.dart';
     }
 
   }
+  //
+  // PushTokenType _getPushTokenType() {
+  //   PushTokenType pushTokenType;
+  //   if (Platform.isAndroid) {
+  //     pushTokenType = PushTokenType.fcm;
+  //   } else if (Platform.isIOS) {
+  //     pushTokenType = PushTokenType.apns;
+  //   }else {
+  //     pushTokenType = PushTokenType.fcm;
+  //   }
+  //   return pushTokenType;
+  // }
 
-  PushTokenType _getPushTokenType() {
-    PushTokenType pushTokenType;
-    if (Platform.isAndroid) {
-      pushTokenType = PushTokenType.fcm;
-    } else if (Platform.isIOS) {
-      pushTokenType = PushTokenType.apns;
-    }else {
-      pushTokenType = PushTokenType.fcm;
-    }
-    return pushTokenType;
-  }
-
-  static Future<String> getToken() async {
-    String? token;
-    if (Platform.isAndroid) {
-      token = await FirebaseMessaging.instance.getToken();
-    } else if (Platform.isIOS) {
-      token = await FirebaseMessaging.instance.getAPNSToken();
-    }
-    if (kDebugMode) {
-      print('fcm token $token');
-    }
-    return token ?? "";
-  }
+  // static Future<String> getToken() async {
+  //   String? token;
+  //   if (Platform.isAndroid) {
+  //     token = await FirebaseMessaging.instance.getToken();
+  //   } else if (Platform.isIOS) {
+  //     token = await FirebaseMessaging.instance.getAPNSToken();
+  //   }
+  //   if (kDebugMode) {
+  //     print('fcm token $token');
+  //   }
+  //   return token ?? "";
+  // }
 
 }
