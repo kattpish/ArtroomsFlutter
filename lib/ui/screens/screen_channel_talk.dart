@@ -2,7 +2,7 @@
 import 'package:channel_talk_flutter/channel_talk_flutter.dart';
 
 
-Future<void> doShowChannelTak() async {
+Future<void> initChannelTak() async {
 
   await ChannelTalk.boot(
     pluginKey: 'a2700e01-158d-4561-a81a-e4a899890724',
@@ -15,6 +15,12 @@ Future<void> doShowChannelTak() async {
     hidePopup: false,
     language: 'english',
   );
+
+}
+
+Future<void> doShowChannelTak() async {
+
+  await initChannelTak();
 
   await ChannelTalk.showMessenger();
 

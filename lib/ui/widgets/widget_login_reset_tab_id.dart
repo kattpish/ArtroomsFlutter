@@ -61,6 +61,8 @@ Widget widgetLoginRestTabId(BuildContext context, TextEditingController nameCont
               autofocus: false,
               keyboardType: TextInputType.name,
               textInputAction: TextInputAction.next,
+              minLines: 1,
+              maxLines: 1,
               onSubmitted: (_) {
                 FocusScope.of(context).requestFocus(phoneFocus);
               },
@@ -104,7 +106,10 @@ Widget widgetLoginRestTabId(BuildContext context, TextEditingController nameCont
             child: TextField(
               controller: phoneController,
               focusNode: phoneFocus,
+              keyboardType: TextInputType.phone,
               textInputAction: TextInputAction.done,
+              minLines: 1,
+              maxLines: 1,
               onSubmitted: (_) {
                 onSubmitted();
               },

@@ -269,6 +269,9 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver  
   void _doSelectChat(BuildContext context, DataChat dataChat) {
 
     _chatModule.markMessageAsRead(dataChat);
+    setState(() {
+      dataChat.unreadMessages = 0;
+    });
 
     if(dataChat.id == _selectChatId) return;
 

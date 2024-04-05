@@ -12,7 +12,7 @@ class DataChat {
   final String id;
   String name;
   String nameKr = " ";
-  final int unreadMessages;
+  int unreadMessages;
   final String date;
   String role = "";
   String profilePictureUrl = "";

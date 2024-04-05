@@ -254,11 +254,14 @@ class _ScreenLoginResetState extends State<ScreenLoginReset> with SingleTickerPr
       callback: (bool success, String message) async {
 
         if(success) {
-          showSnackBar(context, "id: $message");
-          Navigator.of(context).pop();
-          Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return  ScreenLogin(onPageEmail: message.split("|")[1],);
-          }));
+          showSnackBar(context, "귀하의 Artrooms ID가 귀하의 전화번호로 전송되었습니다");
+
+          await Future.delayed(const Duration(milliseconds: 2000), (){
+            Navigator.of(context).pop();
+            Navigator.push(context, MaterialPageRoute(builder: (context) {
+              return const ScreenLogin(onPageEmail: "",);
+            }));
+          });
 
         } else {
           showSnackBar(context, "로그인 실패");

@@ -1,7 +1,9 @@
 
 import 'package:artrooms/data/module_datastore.dart';
+import 'package:artrooms/ui/screens/screen_channel_talk.dart';
 import 'package:artrooms/ui/screens/screen_chats.dart';
 import 'package:artrooms/ui/screens/screen_login_reset.dart';
+import 'package:artrooms/utils/utils_screen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -15,6 +17,7 @@ import '../theme/theme_colors.dart';
 
 
 class ScreenLogin extends StatefulWidget {
+
   final String onPageEmail;
   const ScreenLogin({super.key, required this.onPageEmail});
 
@@ -39,9 +42,11 @@ class _ScreenLoginState extends State<ScreenLogin> {
   @override
   void initState() {
     super.initState();
+
     if(widget.onPageEmail.isNotEmpty){
       _emailController.text = widget.onPageEmail;
     }
+
     if(DBStore().isLoggedIn()) {
       Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) {
         return const ScreenChats();
@@ -61,7 +66,6 @@ class _ScreenLoginState extends State<ScreenLogin> {
     _passwordController.dispose();
     super.dispose();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -84,7 +88,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
                         child: SingleChildScrollView(
                           physics: const ScrollPhysicsBouncing(),
                           child: Container(
-                            constraints: const BoxConstraints(maxWidth: 375),
+                            margin: EdgeInsets.symmetric(horizontal: isTablet(context) ? 50.0 : 20.0),
                             child: Column(
                               children: <Widget>[
                                 SizedBox(height: MediaQuery.of(context).size.height / 6),
@@ -129,7 +133,6 @@ class _ScreenLoginState extends State<ScreenLogin> {
                                   children: <Widget>[
                                     Container(
                                       height: 54,
-                                      margin: const EdgeInsets.symmetric(horizontal: 20.0),
                                       decoration: ShapeDecoration(
                                         shape: RoundedRectangleBorder(
                                           side: const BorderSide(width: 1, color: Color(0xFFE3E3E3)),
@@ -142,6 +145,8 @@ class _ScreenLoginState extends State<ScreenLogin> {
                                         autofocus: false,
                                         keyboardType: TextInputType.emailAddress,
                                         textInputAction: TextInputAction.next,
+                                        minLines: 1,
+                                        maxLines: 1,
                                         onSubmitted: (_) {
                                           FocusScope.of(context).requestFocus(_passwordFocus);
                                         },
@@ -171,7 +176,6 @@ class _ScreenLoginState extends State<ScreenLogin> {
                                     const SizedBox(height: 14),
                                     Container(
                                       height: 54,
-                                      margin: const EdgeInsets.symmetric(horizontal: 20.0),
                                       decoration: ShapeDecoration(
                                         shape: RoundedRectangleBorder(
                                           side: const BorderSide(width: 1, color: Color(0xFFE3E3E3)),
@@ -182,6 +186,8 @@ class _ScreenLoginState extends State<ScreenLogin> {
                                         controller: _passwordController,
                                         focusNode: _passwordFocus,
                                         textInputAction: TextInputAction.done,
+                                        minLines: 1,
+                                        maxLines: 1,
                                         onSubmitted: (_) {
                                           _doLogin(context);
                                         },
@@ -210,9 +216,8 @@ class _ScreenLoginState extends State<ScreenLogin> {
                                       ),
                                     ),
                                     const SizedBox(height: 14),
-                                    Container(
+                                    SizedBox(
                                       height: 54,
-                                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
                                       child: ElevatedButton(
                                         style: ElevatedButton.styleFrom(
                                           elevation: 0,
