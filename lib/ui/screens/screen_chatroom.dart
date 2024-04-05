@@ -80,8 +80,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
   DataNotice _dataNotice = DataNotice();
 
   bool _showAttachment = false;
-  bool _showAttachmentFull = false;
-  double _boxHeight = 320.0;
+  double _boxHeight = 0;
   final double _boxHeightMin = 320.0;
   late double _boxHeightMax;
   double _dragStartY = 0.0;
@@ -158,14 +157,11 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
     return WillPopScope(
       onWillPop: () async {
         if (_showAttachment) {
-          setState(() {
-            _doAttachmentPickerClose();
-          });
-          return false;
-        } else if (_showAttachmentFull) {
-          setState(() {
+          if(_boxHeight > _boxHeightMin) {
             _doAttachmentPickerMin();
-          });
+          }else {
+            _doAttachmentPickerClose();
+          }
           return false;
         }
         if (widget.onBackPressed != null) {
@@ -352,7 +348,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                       _buildMessageInput(),
                       const SizedBox(height: 8),
                       Visibility(
-                        visible: _showAttachment,
+                        visible: _showAttachment && _boxHeight <= _boxHeightMin,
                         child:
                         AnimatedContainer(
                           duration: const Duration(milliseconds: 1000),
@@ -366,7 +362,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                 ),
               ),
               Visibility(
-                visible: _showAttachmentFull,
+                visible: _showAttachment && _boxHeight > _boxHeightMin,
                 child: Scaffold(
                   backgroundColor: Colors.black.withOpacity(0.4),
                   body: Stack(
@@ -427,9 +423,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                 child: GestureDetector(
                   onTap: () {
                     setState(() {
-                      if (_showAttachmentFull) {
-                        _doAttachmentPickerMin();
-                      } else if (_showAttachment) {
+                      if (_showAttachment) {
                         _doAttachmentPickerClose();
                         _deselectPickedFiles(false);
                       } else {
@@ -508,12 +502,10 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
         onVerticalDragStart: _doVerticalDragStart,
         onVerticalDragUpdate: _doVerticalDragUpdate,
         onTap: () {
-          if (_showAttachment) {
+          if (_boxHeight <= _boxHeightMin) {
             _doAttachmentPickerFull();
           } else {
-            setState(() {
-              _showAttachmentFull = false;
-            });
+            _doAttachmentPickerMin();
           }
           closeKeyboard(context);
         },
@@ -537,7 +529,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
               height: 10,
             ),
             Visibility(
-              visible: _showAttachmentFull,
+              visible: _showAttachment && _boxHeight > _boxHeightMin,
               child: AppBar(
                 backgroundColor: Colors.white,
                 title: Text(
@@ -1232,27 +1224,30 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
     });
   }
 
-  void _doAttachmentPickerFull() {
+  Future<void> _doAttachmentPickerFull() async {
+    setState(() {
+      _showAttachment = true;
+    });
     setState(() {
       _boxHeight = _boxHeightMax;
-      _showAttachmentFull = true;
-      _showAttachment = false;
     });
   }
 
   void _doAttachmentPickerMin() {
     setState(() {
-      _boxHeight = _boxHeightMin;
       _showAttachment = true;
-      _showAttachmentFull = false;
+    });
+    setState(() {
+      _boxHeight = _boxHeightMin;
     });
   }
 
   void _doAttachmentPickerClose() {
     setState(() {
-      _boxHeight = _boxHeightMin;
       _showAttachment = false;
-      _showAttachmentFull = false;
+    });
+    setState(() {
+      _boxHeight = 0;
     });
   }
 
@@ -1262,20 +1257,22 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
 
   void _doVerticalDragUpdate(DragUpdateDetails details) {
     final newHeight = _boxHeight - details.globalPosition.dy + _dragStartY;
+    bool isIncrease = newHeight > _boxHeight;
 
     setState(() {
       _boxHeight = newHeight.clamp(100.0, _boxHeightMax);
       _dragStartY = details.globalPosition.dy;
 
-      if (_boxHeight < _boxHeightMax - 50 && _boxHeight > _boxHeightMax - 150) {
-        _doAttachmentPickerMin();
-      } else if (_boxHeight > _boxHeightMin + 150) {
-        if (!_showAttachmentFull) {
-          _doAttachmentPickerFull();
+      if(isIncrease) {
+        _doAttachmentPickerFull();
+      }else {
+        if (_boxHeight < _boxHeightMin) {
+          _doAttachmentPickerClose();
+      }else {
+          _doAttachmentPickerMin();
         }
-      } else if (_boxHeight < _boxHeightMin - 150) {
-        _doAttachmentPickerClose();
       }
+
     });
 
     print(_boxHeight);
