@@ -53,7 +53,6 @@ Future<void> init() async {
   sharedPreferences = await SharedPreferences.getInstance();
   dbStore = DBStore();
   moduleSendBird = ModuleSendBird();
-  pushNotifications.init();
   await moduleSendBird.initSendbird();
 
   pushNotifications.init();
