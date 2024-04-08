@@ -61,6 +61,6 @@ Future<void> init() async {
   var initializationSettingsAndroid = const AndroidInitializationSettings('@drawable/icon_notification');
   var initializationSettingsIOS = const DarwinInitializationSettings();
   var initSettings = InitializationSettings(android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
-  await flutterLocalNotificationsPlugin.initialize(initSettings);
+  flutterLocalNotificationsPlugin.initialize(initSettings);
 
 }

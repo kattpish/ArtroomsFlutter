@@ -2,6 +2,7 @@
 import 'dart:async';
 
 import 'package:artrooms/ui/widgets/widget_chatroom_message_pin.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/cupertino.dart';
 
 import '../../beans/bean_chat.dart';
@@ -10,6 +11,7 @@ import '../../beans/bean_chat.dart';
 List<State<StatefulWidget>> listStates = [];
 DataChat dataChatPin = DataChat.empty();
 Timer? _timer;
+AudioPlayer? audioPlayer;
 
 void addState(State<StatefulWidget> state) {
   listStates.add(state);
@@ -32,6 +34,10 @@ void notifyState(DataChat dataChat) {
     if(timer != null) {
       timer.cancel();
     }
+
+    audioPlayer ??= AudioPlayer();
+    audioPlayer?.play(AssetSource('sounds/notification_chat.mp3'));
+
     _timer = Timer(const Duration(seconds: 5), () {
       notifyState(DataChat.empty());
     });

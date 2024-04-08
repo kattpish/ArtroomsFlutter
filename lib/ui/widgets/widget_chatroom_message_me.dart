@@ -12,9 +12,23 @@ import '../../beans/bean_message.dart';
 import '../theme/theme_colors.dart';
 
 
-Widget buildMyMessageBubble(BuildContext context, int index, State state, DataMessage message, bool isLast, bool isPreviousSameDateTime,
-    bool isNextSameTime, double screenWidth, Null Function() onReplyClick,Null Function(int index) onReplySelect) {
-  return Container(
+Widget buildMyMessageBubble(
+    BuildContext context,
+    int index,
+    State state,
+    DataMessage message,
+    List<DataMessage> listMessages,
+    bool isLast,
+    bool isPreviousSame,
+    bool isNextSame,
+    bool isPreviousSameDateTime,
+    bool isNextSameTime,
+    double screenWidth,
+    Null Function() onReplyClick,
+    Null Function(int index) onReplySelect
+    ) {
+
+ return Container(
     margin: EdgeInsets.only(left: 16, right: 16, top: 0, bottom: isLast ? 9 : 0),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.end,
@@ -144,7 +158,7 @@ Widget buildMyMessageBubble(BuildContext context, int index, State state, DataMe
             Container(
                 alignment: Alignment.topRight,
                 margin: const EdgeInsets.only(top: 4),
-                child: buildImageAttachments(context, message, screenWidth,)),
+                child: buildImageAttachments(context, message, listMessages, screenWidth,)),
           ],
         ),
       ],

@@ -3,6 +3,7 @@ import 'package:artrooms/ui/widgets/widget_chatroom_photos_empty.dart';
 import 'package:flutter/material.dart';
 
 import '../../beans/bean_chat.dart';
+import '../../beans/bean_file.dart';
 import '../../beans/bean_message.dart';
 import '../../listeners/scroll_bouncing_physics.dart';
 import '../../modules/module_messages.dart';
@@ -233,7 +234,8 @@ class _ScreenChatroomPhotosState extends State<ScreenChatroomPhotos> {
                         setState(() {
                           _isViewing = true;
                         });
-                        await doOpenPhotoView(context, imageUrl:attachmentImage.getImageUrl(), fileName:attachmentImage.attachmentName);
+                        List<FileItem> listImages = toFileItems(_attachmentsImages);
+                        await doOpenPhotoView(context, listImages, initialIndex: index);
                         setState(() {
                           _isViewing = false;
                         });
@@ -241,7 +243,13 @@ class _ScreenChatroomPhotosState extends State<ScreenChatroomPhotos> {
                       onSelect: () {
                         setState(() {
                           if(!attachmentImage.isDownloading) {
-                            attachmentImage.isSelected = !attachmentImage.isSelected;
+                            if(!attachmentImage.isSelected) {
+                              attachmentImage.isSelected = true;
+                              attachmentImage.timeSelected = DateTime.now().millisecondsSinceEpoch;
+                            }else {
+                              attachmentImage.isSelected = false;
+                              attachmentImage.timeSelected = 0;
+                            }
                             _checkEnableButton();
                           }
                         });
@@ -347,6 +355,7 @@ class _ScreenChatroomPhotosState extends State<ScreenChatroomPhotos> {
     for(DataMessage attachmentImage in _attachmentsImages) {
       setState(() {
         attachmentImage.isSelected = false;
+        attachmentImage.timestamp = 0;
       });
     }
 

@@ -17,6 +17,7 @@ Widget buildOtherMessageBubble(
     int index,
     State state,
     DataMessage message,
+    List<DataMessage> listMessages,
     bool isLast,
     bool isPreviousSame,
     bool isNextSame,
@@ -229,7 +230,7 @@ Null Function(int index) onReplySelect
         ),
         Container(
           alignment: Alignment.topLeft,
-          child: buildImageAttachments(context, message, screenWidth),
+          child: buildImageAttachments(context, message, listMessages, screenWidth),
         ),
       ],
     ),

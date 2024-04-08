@@ -9,7 +9,10 @@ class FileItem {
   String name;
   String date;
   String path;
+  String url;
   bool isSelected;
+  int index;
+  int timeSelected;
 
   FileItem({
     required this.file,
@@ -17,7 +20,10 @@ class FileItem {
     this.name = "",
     this.date = "",
     this.path = "",
-    this.isSelected = false
+    this.url = "",
+    this.isSelected = false,
+    this.index = 0,
+    this.timeSelected = 0,
   });
 
   File getPreviewFile() {

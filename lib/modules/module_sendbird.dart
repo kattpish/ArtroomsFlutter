@@ -176,7 +176,7 @@ class ModuleSendBird {
     return completer.future;
   }
 
-  Future<List<BaseMessage>> fetchAttachments(GroupChannel channel, int? earliestMessageTimestamp) async {
+  Future<List<BaseMessage>> fetchAttachments(GroupChannel groupChannel, int? earliestMessageTimestamp) async {
     try {
 
       final params = MessageListParams();
@@ -184,7 +184,7 @@ class ModuleSendBird {
       params.reverse = true;
 
       final referenceTime = earliestMessageTimestamp ?? DateTime.now().millisecondsSinceEpoch;
-      final messages = await channel.getMessagesByTimestamp(referenceTime, params);
+      final messages = await groupChannel.getMessagesByTimestamp(referenceTime, params);
 
       return messages;
     } catch (e) {

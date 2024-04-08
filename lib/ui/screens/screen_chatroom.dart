@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:artrooms/beans/bean_notice.dart';
 import 'package:artrooms/modules/module_notices.dart';
+import 'package:artrooms/ui/screens/screen_photo_view.dart';
 import 'package:artrooms/ui/widgets/widget_loader.dart';
 import 'package:artrooms/utils/utils_notifications.dart';
 import 'package:flutter/material.dart';
@@ -80,9 +81,9 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
   DataNotice _dataNotice = DataNotice();
 
   bool _showAttachment = false;
-  double _boxHeight = 0;
-  final double _boxHeightMin = 320.0;
-  late double _boxHeightMax;
+  double _bottomSheetHeight = 0;
+  double _bottomSheetHeightMin = 0;
+  double _bottomSheetHeightMax = 0;
   double _dragStartY = 0.0;
   double _screenWidth = 0;
   double _screenHeight = 0;
@@ -108,7 +109,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
   void initState() {
     super.initState();
     _messageController.addListener(_doCheckEnableButton);
-    _scrollControllerAttachment.addListener(_scrollListener);
+    _scrollControllerAttachment.addListener(_scrollListenerAttachment);
     _itemPositionsListener.itemPositions.addListener(_doHandleScroll);
     _moduleMessages = ModuleMessages(widget.dataChat.id);
 
@@ -119,12 +120,6 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
 
     _timer = Timer.periodic(Duration(seconds: timeSecRefreshChat), (timer) {
       _doLoadMessagesNew();
-    });
-
-    _messageFocusNode.addListener(() {
-      if (_messageFocusNode.hasFocus) {
-
-      }
     });
 
     _messageFocusNode.addListener(() {
@@ -150,14 +145,15 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
 
     _screenWidth = MediaQuery.of(context).size.width * widget.widthRatio;
     _screenHeight = MediaQuery.of(context).size.height;
-    _boxHeightMax = _screenHeight - 50;
+    _bottomSheetHeightMin = _screenHeight * 0.35;
+    _bottomSheetHeightMax = _screenHeight * 0.95;
 
     attachmentPicker = _attachmentPicker(context, this);
 
     return WillPopScope(
       onWillPop: () async {
         if (_showAttachment) {
-          if(_boxHeight > _boxHeightMin) {
+          if(_bottomSheetHeight > _bottomSheetHeightMin) {
             _doAttachmentPickerMin();
           }else {
             _doAttachmentPickerClose();
@@ -174,6 +170,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
       child: Builder(builder: (_) {
         return SafeArea(
           child: Stack(
+            alignment: Alignment.bottomCenter,
             children: [
               Scaffold(
                 appBar: AppBar(
@@ -271,14 +268,14 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                                           ),
                                           Container(
                                             child: message.isMe
-                                                ? buildMyMessageBubble(context, index, this, message, isLast, isPreviousSameDateTime, isNextSameTime, _screenWidth,
+                                                ? buildMyMessageBubble(context, index, this, message, _listMessages, isLast, isPreviousSameDateTime, isNextSameTime, isPreviousSameDateTime, isNextSameTime, _screenWidth,
                                                     (){
                                                   _replyMessage = message;
                                                   _messageFocusNode.requestFocus();
                                                 }, (index){
                                                   _itemScrollController.scrollTo(index: 20,alignment: 0.5,duration: const Duration(seconds: 1));
                                                 })
-                                                : buildOtherMessageBubble(context, index, this, message, isLast, isPreviousSame, isNextSame, isPreviousSameDateTime, isNextSameTime, _screenWidth,
+                                                : buildOtherMessageBubble(context, index, this, message, _listMessages, isLast, isPreviousSame, isNextSame, isPreviousSameDateTime, isNextSameTime, _screenWidth,
                                                     (){
                                                   _replyMessage = message;
                                                   _messageFocusNode.requestFocus();
@@ -305,25 +302,30 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                                 ),
                               ),
                             ),
-                            AnimatedOpacity(
-                              opacity: !_isHideNotice &&
-                                  _dataNotice.notice.isNotEmpty
-                                  ? 1.0
-                                  : 0.0,
-                              duration: const Duration(milliseconds: 500),
-                              child: WidgetChatroomNoticePin(_dataNotice, _isExpandNotice,
-                                  onToggle:() {
-                                    setState(() {
-                                      _isExpandNotice = !_isExpandNotice;
-                                      closeKeyboard(context);
-                                    });
-                                  },
-                                  onHide:() {
-                                    setState(() {
-                                      _isHideNotice = true;
-                                      dbStore.setNoticeHide(_dataNotice, _isHideNotice);
-                                    });
-                                  }
+                            Visibility(
+                              visible: !_isHideNotice,
+                              child: AnimatedOpacity(
+                                opacity: !_isHideNotice && _dataNotice.notice.isNotEmpty ? 1.0 : 0.0,
+                                duration: const Duration(milliseconds: 500),
+                                onEnd: () {
+                                  setState(() {
+                                    _isHideNotice = true;
+                                  });
+                                },
+                                child: WidgetChatroomNoticePin(_dataNotice, _isExpandNotice,
+                                    onToggle:() {
+                                      setState(() {
+                                        _isExpandNotice = !_isExpandNotice;
+                                        closeKeyboard(context);
+                                      });
+                                    },
+                                    onHide:() {
+                                      setState(() {
+                                        _isHideNotice = true;
+                                        dbStore.setNoticeHide(_dataNotice, _isHideNotice);
+                                      });
+                                    }
+                                ),
                               ),
                             ),
                             AnimatedOpacity(
@@ -340,6 +342,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                             onRemove:(FileItem fileItem) {
                               setState(() {
                                 fileItem.isSelected = false;
+                                fileItem.timeSelected = 0;
                               });
                               closeKeyboard(context);
                             }
@@ -347,50 +350,47 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                       ),
                       _buildMessageInput(),
                       const SizedBox(height: 8),
-                      Visibility(
-                        visible: _showAttachment && _boxHeight <= _boxHeightMin,
-                        child:
-                        AnimatedContainer(
-                          duration: const Duration(milliseconds: 1000),
-                          curve: Curves.easeOut,
-                          height: _boxHeight,
-                            child: attachmentPicker,
-                        ),
+                      AnimatedContainer(
+                        duration: const Duration(milliseconds: 500),
+                        curve: Curves.easeOut,
+                        height: _bottomSheetHeight > _bottomSheetHeightMin ? _bottomSheetHeightMin : _bottomSheetHeight,
+                        // child: attachmentPicker,
                       ),
                     ],
                   ),
                 ),
               ),
               Visibility(
-                visible: _showAttachment && _boxHeight > _boxHeightMin,
+                visible:  _showAttachment && _bottomSheetHeight > _bottomSheetHeightMin,
+                child: Container(
+                  color: Colors.black.withOpacity(0.4),
+                ),
+              ),
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 500),
+                curve: Curves.easeOut,
+                height: _bottomSheetHeight,
+                alignment: Alignment.bottomCenter,
                 child: Scaffold(
-                  backgroundColor: Colors.black.withOpacity(0.4),
+                  backgroundColor: Colors.transparent,
                   body: Stack(
                     children: [
                       GestureDetector(
                         onTap: () {
                           setState(() {
-                            _doAttachmentPickerMin();
+                            if( _bottomSheetHeight > _bottomSheetHeightMin) {
+                              _doAttachmentPickerMin();
+                            }else {
+                              _doAttachmentPickerClose();
+                            }
                           });
                         },
                       ),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          AnimatedContainer(
-                            duration: const Duration(milliseconds: 1000),
-                            curve: Curves.easeOut,
-                            height: _boxHeight,
-                            child: Container(
-                                height: double.infinity,
-                                alignment: Alignment.bottomCenter,
-                                margin: const EdgeInsets.only(top: 80),
-                                padding: const EdgeInsets.only(top: 16),
-                                color: Colors.white,
-                                child: attachmentPicker
-                            ),
-                          ),
-                        ],
+                      Container(
+                          height: double.infinity,
+                          margin: EdgeInsets.only(top: _bottomSheetHeight > _bottomSheetHeightMin ? 80 : 0),
+                          color: Colors.white,
+                          child: attachmentPicker
                       ),
                     ],
                   ),
@@ -502,7 +502,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
         onVerticalDragStart: _doVerticalDragStart,
         onVerticalDragUpdate: _doVerticalDragUpdate,
         onTap: () {
-          if (_boxHeight <= _boxHeightMin) {
+          if (_bottomSheetHeight <= _bottomSheetHeightMin) {
             _doAttachmentPickerFull();
           } else {
             _doAttachmentPickerMin();
@@ -529,7 +529,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
               height: 10,
             ),
             Visibility(
-              visible: _showAttachment && _boxHeight > _boxHeightMin,
+              visible: _showAttachment && _bottomSheetHeight > _bottomSheetHeightMin,
               child: AppBar(
                 backgroundColor: Colors.white,
                 title: Text(
@@ -756,6 +756,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
               )
                   : GridView.builder(
                 controller: _scrollControllerAttachment,
+                physics: const ClampingScrollPhysics(),
                 padding: const EdgeInsets.only(bottom: 24),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: isTablet(context) ? 6 : 3,
@@ -774,13 +775,22 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                     ),
                     child: InkWell(
                       onTap: () {
-                        doOpenPhotoView(context,
-                            fileImage: fileImage.file,
-                            fileName: fileImage.name);
+                        Navigator.push(context, MaterialPageRoute(builder: (context) {
+                          return ScreenPhotoView(images: _filesImages, initialIndex: index, isSelectMode: true,
+                          onSelect: (bool isSelected, index, FileItem fileItem) {
+                            _doCheckEnableButtonFile();
+                          },);
+                        }));
                       },
                       onLongPress: () {
                         state.setState(() {
-                          fileImage.isSelected = !fileImage.isSelected;
+                          if(!fileImage.isSelected) {
+                            fileImage.isSelected = true;
+                            fileImage.timeSelected = DateTime.now().millisecondsSinceEpoch;
+                          }else {
+                            fileImage.isSelected = false;
+                            fileImage.timeSelected = 0;
+                          }
                           closeKeyboard(context);
                         });
                         _doCheckEnableButtonFile();
@@ -801,8 +811,13 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                               child: GestureDetector(
                                 onTap: () {
                                   state.setState(() {
-                                    fileImage.isSelected =
-                                    !fileImage.isSelected;
+                                    if(!fileImage.isSelected) {
+                                      fileImage.isSelected = true;
+                                      fileImage.timeSelected = DateTime.now().millisecondsSinceEpoch;
+                                    }else {
+                                      fileImage.isSelected = false;
+                                      fileImage.timeSelected = 0;
+                                    }
                                     _doCheckEnableButtonFile();
                                     closeKeyboard(context);
                                   });
@@ -1048,6 +1063,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
       _selectedImages++;
       FileItem fileItem = FileItem(file: file, path: file.path);
       fileItem.isSelected = true;
+      fileItem.timeSelected = DateTime.now().millisecondsSinceEpoch;
       _filesImages.insert(0, fileItem);
     }
   }
@@ -1061,6 +1077,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
     for(FileItem fileItem in fileItems) {
       _selectedMedia++;
       fileItem.isSelected = true;
+      fileItem.timeSelected = DateTime.now().millisecondsSinceEpoch;
       _filesMedia.add(fileItem);
     }
 
@@ -1105,6 +1122,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
     for (FileItem fileImage in _filesImages) {
       setState(() {
         fileImage.isSelected = false;
+        fileImage.timeSelected = 0;
       });
     }
   }
@@ -1117,6 +1135,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
     for (FileItem fileMedia in _filesMedia) {
       setState(() {
         fileMedia.isSelected = false;
+        fileMedia.timeSelected = 0;
       });
     }
   }
@@ -1189,12 +1208,21 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
     });
   }
 
-  Future<void> _doAttachmentPickerFull() async {
+  void _doAttachmentPickerFull() {
+
+    if(_bottomSheetHeight < _bottomSheetHeightMax) {
+      _scrollControllerAttachment.animateTo(
+        10,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeOut,
+      );
+    }
+
     setState(() {
       _showAttachment = true;
     });
     setState(() {
-      _boxHeight = _boxHeightMax;
+      _bottomSheetHeight = _bottomSheetHeightMax;
     });
   }
 
@@ -1203,7 +1231,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
       _showAttachment = true;
     });
     setState(() {
-      _boxHeight = _boxHeightMin;
+      _bottomSheetHeight = _bottomSheetHeightMin;
     });
   }
 
@@ -1212,7 +1240,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
       _showAttachment = false;
     });
     setState(() {
-      _boxHeight = 0;
+      _bottomSheetHeight = 0;
     });
   }
 
@@ -1221,17 +1249,17 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
   }
 
   void _doVerticalDragUpdate(DragUpdateDetails details) {
-    final newHeight = _boxHeight - details.globalPosition.dy + _dragStartY;
-    bool isIncrease = newHeight > _boxHeight;
+    final newHeight = _bottomSheetHeight - details.globalPosition.dy + _dragStartY;
+    bool isIncrease = newHeight > _bottomSheetHeight;
 
     setState(() {
-      _boxHeight = newHeight.clamp(100.0, _boxHeightMax);
+      _bottomSheetHeight = newHeight.clamp(100.0, _bottomSheetHeightMax);
       _dragStartY = details.globalPosition.dy;
 
       if(isIncrease) {
         _doAttachmentPickerFull();
       }else {
-        if (_boxHeight < _boxHeightMin) {
+        if (_bottomSheetHeight < _bottomSheetHeightMin) {
           _doAttachmentPickerClose();
       }else {
           _doAttachmentPickerMin();
@@ -1240,7 +1268,6 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
 
     });
 
-    print(_boxHeight);
   }
 
   void _doScrollToBottom() {
@@ -1258,6 +1285,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
         });
       }
     }
+
     for (FileItem fileMedia in _filesMedia) {
       if (fileMedia.isSelected) {
         setState(() {
@@ -1278,7 +1306,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
     }
   }
 
-  void _scrollListener() {
+  void _scrollListenerAttachment() {
 
     if (_scrollControllerAttachment.offset == 0 &&
         _scrollControllerAttachment.position.minScrollExtent == 0 &&
@@ -1322,6 +1350,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
         });
       }
     }
+
   }
 
   void _doHandleScroll() {

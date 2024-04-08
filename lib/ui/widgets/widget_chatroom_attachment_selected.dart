@@ -15,6 +15,16 @@ Widget attachmentSelected(BuildContext context, List<FileItem> filesImages, {req
     }
   }
 
+  filesAttachment.sort((a, b) {
+    return a.timeSelected.compareTo(b.timeSelected);
+  });
+
+  int index = 0;
+  for (FileItem fileImage in filesAttachment) {
+    fileImage.index = index;
+    index++;
+  }
+
   return Container(
     padding: const EdgeInsets.symmetric(horizontal: 4),
     child: SingleChildScrollView(
@@ -27,7 +37,7 @@ Widget attachmentSelected(BuildContext context, List<FileItem> filesImages, {req
               margin: const EdgeInsets.only(right: 4, top: 4, bottom: 4),
               child: InkWell(
                 onTap: () {
-                  doOpenPhotoView(context, fileImage: fileItem.file, fileName: fileItem.name);
+                  doOpenPhotoView(context, filesImages, initialIndex: fileItem.index);
                 },
                 child: Stack(
                   children: [

@@ -281,6 +281,7 @@ class ModuleMessages {
             myMessage1.attachmentUrl = attachmentUrl;
             myMessage1.attachmentName = myMessage.attachmentName;
             myMessage1.attachmentSize = myMessage.attachmentSize;
+            myMessage1.attachmentImages.add(attachmentUrl);
 
             attachmentsImages.add(myMessage1);
           }

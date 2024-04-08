@@ -1,25 +1,31 @@
 
+import 'dart:io';
+
 import 'package:artrooms/ui/widgets/widget_media.dart';
 
 import 'package:flutter/material.dart';
 
+import '../../beans/bean_file.dart';
 import '../../beans/bean_message.dart';
 import '../../listeners/scroll_bouncing_physics.dart';
 
 
 Widget widgetChatDrawerAttachments(BuildContext context, List<DataMessage> listAttachmentsImages) {
+
+  List<FileItem> listImages = toFileItems(listAttachmentsImages);
+
   return SingleChildScrollView(
     physics: const ScrollPhysicsBouncing(),
     scrollDirection: Axis.horizontal,
     child: Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        for(DataMessage message in listAttachmentsImages)
+        for(FileItem fileItem in listImages)
           Container(
             margin: const EdgeInsets.only(right: 4),
             child: InkWell(
               onTap: () {
-                doOpenPhotoView(context, imageUrl:message.getImageUrl(), fileName:message.attachmentName);
+                doOpenPhotoView(context, listImages, initialIndex: fileItem.index);
               },
               child: Container(
                 width: 80,
@@ -33,7 +39,7 @@ Widget widgetChatDrawerAttachments(BuildContext context, List<DataMessage> listA
                 ),
                 child: FadeInImage.assetNetwork(
                   placeholder: 'assets/images/chats/placeholder_photo.png',
-                  image: message.getImageUrl(),
+                  image: fileItem.url,
                   fit: BoxFit.cover,
                   fadeInDuration: const Duration(milliseconds: 100),
                   fadeOutDuration: const Duration(milliseconds: 100),

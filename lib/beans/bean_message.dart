@@ -32,6 +32,7 @@ class DataMessage {
   bool isDownloading = false;
   int? parentMessageId;
   String data = "";
+  int timeSelected = 0;
 
   DataMessage.empty({
     this.index = 0,

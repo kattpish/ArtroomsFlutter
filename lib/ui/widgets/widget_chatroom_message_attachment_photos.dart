@@ -2,6 +2,7 @@
 import 'package:artrooms/ui/widgets/widget_media.dart';
 import 'package:flutter/material.dart';
 
+import '../../beans/bean_file.dart';
 import '../../beans/bean_message.dart';
 import '../theme/theme_colors.dart';
 
@@ -9,8 +10,10 @@ import '../theme/theme_colors.dart';
 Widget buildImageAttachments(
     BuildContext context,
     DataMessage message,
+    List<DataMessage> listMessages,
     double screenWidth
     ) {
+
   if (message.attachmentImages.isNotEmpty) {
     List<Widget> rows = [];
     int itemsPlaced = 0;
@@ -58,16 +61,23 @@ Widget buildImageAttachments(
                 margin: EdgeInsets.only(right: isLast ? 0 : 2),
                 child: Container(
                   width: (screenWidth * 0.55) /
-                      (message.attachmentImages.length > 3
-                          ? 3
-                          : message.attachmentImages.length),
+                      (message.attachmentImages.length > 3 ? 3 : message.attachmentImages.length),
                   decoration: const BoxDecoration(
                     color: colorMainGrey200,
                   ),
                   child: InkWell(
                     onTap: () {
                       if (!message.isSending) {
-                        doOpenPhotoView(context, imageUrl: attachment, fileName: message.attachmentName);
+                        List<FileItem> listImages = toFileItems(listMessages);
+                        int initialIndex = 0;
+                        for (int i = 0; i < listImages.length; i++) {
+                          FileItem fileItem = listImages[i];
+                          if(fileItem.url == attachment) {
+                            initialIndex = i;
+                            break;
+                          }
+                        }
+                        doOpenPhotoView(context, listImages, initialIndex: initialIndex);
                       }
                     },
                     child: FadeInImage.assetNetwork(

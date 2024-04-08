@@ -38,7 +38,7 @@ class _ScreenChatroomFilesState extends State<ScreenChatroomFiles> {
   final double _mainAxisSpacing = 8;
   bool _isLoadingMore = false;
   bool _isLoadingFinished = false;
-  ScrollController _scrollController = ScrollController();
+  final ScrollController _scrollController = ScrollController();
 
   late final ModuleMessages _moduleMessages;
   List<DataMessage> _attachmentsMedia = [];
@@ -128,7 +128,13 @@ class _ScreenChatroomFilesState extends State<ScreenChatroomFiles> {
                     onSelect: () {
                       setState(() {
                         if(!attachmentFile.isDownloading) {
-                          attachmentFile.isSelected = !attachmentFile.isSelected;
+                          if(!attachmentFile.isSelected) {
+                            attachmentFile.isSelected = true;
+                            attachmentFile.timeSelected = DateTime.now().millisecondsSinceEpoch;
+                          }else {
+                            attachmentFile.isSelected = false;
+                            attachmentFile.timeSelected = 0;
+                          }
                           _checkEnableButton();
                         }
                       });
@@ -221,6 +227,7 @@ class _ScreenChatroomFilesState extends State<ScreenChatroomFiles> {
     for(DataMessage attachmentImage in _attachmentsMedia) {
       setState(() {
         attachmentImage.isSelected = false;
+        attachmentImage.timestamp = 0;
       });
     }
 
