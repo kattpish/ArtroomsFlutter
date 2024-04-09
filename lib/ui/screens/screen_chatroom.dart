@@ -687,7 +687,6 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                     child: TextButton(
                       onPressed: () {
                         state.setState(() async {
-                          // type = 2;
                           closeKeyboard(context);
                           await _doProcessPickedFiles();
                         });
@@ -969,6 +968,8 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
   Future<void> _doSendMessageImages() async {
 
     if (_selectedImages > 0) {
+      _doAttachmentPickerClose();
+
       DataMessage myMessage1 = _moduleMessages.preSendMessageImage(_filesImages);
       int index = myMessage1.index;
 
@@ -999,6 +1000,8 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
   Future<void> _doSendMessageMedia() async {
 
     if (_selectedMedia > 0) {
+      _doAttachmentPickerClose();
+
       List<int> index = [];
 
       List<DataMessage> myMessages = await _moduleMessages.preSendMessageMedia(_filesMedia);
@@ -1047,7 +1050,6 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
   }
 
   Future<void> _doProcessPickedFiles() async {
-    _doAttachmentPickerClose();
     _doDeselectPickedMedia();
 
     List<FileItem> fileItems = await doPickFiles();
