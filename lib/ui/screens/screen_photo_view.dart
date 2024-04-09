@@ -6,7 +6,7 @@ import 'package:artrooms/beans/bean_file.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 
-import '../../listeners/scroll_bouncing_physics.dart';
+import '../../listeners/scroll_bouncing_physics_normal.dart';
 import '../../utils/utils.dart';
 import '../../utils/utils_media.dart';
 import '../theme/theme_colors.dart';
@@ -68,11 +68,10 @@ class _ScreenPhotoView extends State<ScreenPhotoView> {
                             PageView.builder(
                               controller: _pageController,
                               itemCount: widget.images.length,
-                              physics: const ScrollPhysicsBouncing(),
+                              physics: const ScrollPhysicsBouncingNormal(),
                               onPageChanged: (int index) {
                                 setState(() {
                                   currentIndex = index;
-                                  rotationAngleDegrees = 0;
                                 });
                               },
                               itemBuilder: (context, index) {

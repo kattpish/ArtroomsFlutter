@@ -1,13 +1,14 @@
 
 import 'package:flutter/cupertino.dart';
 
-class ScrollPhysicsBouncing extends BouncingScrollPhysics {
 
-  const ScrollPhysicsBouncing({ScrollPhysics? parent}) : super(parent: parent);
+class ScrollPhysicsBouncingNormal extends BouncingScrollPhysics {
+
+  const ScrollPhysicsBouncingNormal({ScrollPhysics? parent}) : super(parent: parent);
 
   @override
-  ScrollPhysicsBouncing applyTo(ScrollPhysics? ancestor) {
-    return ScrollPhysicsBouncing(parent: buildParent(ancestor));
+  ScrollPhysicsBouncingNormal applyTo(ScrollPhysics? ancestor) {
+    return ScrollPhysicsBouncingNormal(parent: buildParent(ancestor));
   }
 
   @override
@@ -15,7 +16,7 @@ class ScrollPhysicsBouncing extends BouncingScrollPhysics {
     return SpringDescription.withDampingRatio(
       mass: 0.09,
       stiffness: 1000.0,
-      ratio: 17.0,
+      ratio: 5.0,
     );
   }
 

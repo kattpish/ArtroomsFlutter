@@ -32,6 +32,7 @@ dependencies:
   audioplayers: ^5.2.1
   toast: ^0.2.9
   rich_text_editor_controller: ^0.0.5
+  flutter_top_blocked_bouncing_scroll_physics: ^1.0.0
 
 dev_dependencies:
   flutter_test:

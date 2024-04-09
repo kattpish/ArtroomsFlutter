@@ -25,7 +25,7 @@ Widget buildOtherMessageBubble(
     bool isNextSameTime,
     double screenWidth,
     Null Function() onReplyClick,
-Null Function(int index) onReplySelect
+    Null Function(int index) onReplySelect
     ) {
   return Container(
     margin: EdgeInsets.only(
@@ -41,10 +41,9 @@ Null Function(int index) onReplySelect
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            InkWell(
-              onTap: () {},
-              child: Visibility(
-                visible: !isPreviousSame,
+            if(!isPreviousSame)
+              InkWell(
+                onTap: () {},
                 child: Container(
                   decoration: const BoxDecoration(
                     shape: BoxShape.circle,
@@ -75,7 +74,6 @@ Null Function(int index) onReplySelect
                   ),
                 ),
               ),
-            ),
             const SizedBox(width: 6),
             Row(
               crossAxisAlignment: CrossAxisAlignment.end,
@@ -87,9 +85,8 @@ Null Function(int index) onReplySelect
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Visibility(
-                        visible: !isPreviousSame,
-                        child: SizedBox(
+                      if(!isPreviousSame)
+                        SizedBox(
                           child: Text(
                             message.getName(),
                             textAlign: TextAlign.start,
@@ -104,18 +101,11 @@ Null Function(int index) onReplySelect
                             maxLines: 1,
                           ),
                         ),
-                      ),
                       const SizedBox(height: 8),
-                      Visibility(
-                        visible: message.content.isNotEmpty,
-                        child: FocusedMenuHolder(
+                      if(message.content.isNotEmpty)
+                        FocusedMenuHolder(
                           onPressed: () {},
-                          menuWidth:
-                          MediaQuery.of(
-                              context)
-                              .size
-                              .width /
-                              2,
+                          menuWidth: screenWidth / 2,
                           menuItems: [
                             FocusedMenuItem(
                                 trailingIcon:
@@ -197,15 +187,11 @@ Null Function(int index) onReplySelect
                             ),
                           ),
                         ),
-                      ),
                     ],
                   ),
                 ),
-                Visibility(
-                  visible: ((isPreviousSameDateTime && !isNextSameTime) ||
-                      (!isPreviousSameDateTime && !isNextSameTime)) &&
-                      message.content.isNotEmpty,
-                  child: Text(
+                if(((isPreviousSameDateTime && !isNextSameTime) || (!isPreviousSameDateTime && !isNextSameTime)) && message.content.isNotEmpty)
+                  Text(
                     message.getTime(),
                     style: const TextStyle(
                       color: colorMainGrey300,
@@ -218,7 +204,6 @@ Null Function(int index) onReplySelect
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                ),
               ],
             ),
           ],

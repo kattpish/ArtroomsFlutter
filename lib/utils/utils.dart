@@ -6,10 +6,14 @@ import 'package:url_launcher/url_launcher.dart';
 import '../ui/theme/theme_colors.dart';
 
 
+final DateFormat formatterTime = DateFormat('a h:mm', 'ko_KR');
+final DateFormat formatterDate = DateFormat('yyyy.MM.dd', 'ko_KR');
+final DateFormat formatterLastMessage = DateFormat('y년 M월 d일 EEEE', 'ko_KR');
+final DateFormat timeFormatChat = DateFormat("a h:mm", "ko_KR");
+
 String formatTime(int timestamp) {
   var date = DateTime.fromMillisecondsSinceEpoch(timestamp);
-  final DateFormat formatter = DateFormat('a h:mm', 'ko_KR');
-  String time = formatter.format(date);
+  String time = formatterTime.format(date);
   time = time.replaceFirst("AM", "오전");
   time = time.replaceFirst("PM", "오후");
   return time;
@@ -17,8 +21,7 @@ String formatTime(int timestamp) {
 
 String formatDate(int timestamp) {
   var date = DateTime.fromMillisecondsSinceEpoch(timestamp);
-  var formatter = DateFormat('yyyy.MM.dd', 'ko_KR');
-  return formatter.format(date);
+  return formatterDate.format(date);
 }
 
 String formatDateTime(int timestamp) {
@@ -28,8 +31,7 @@ String formatDateTime(int timestamp) {
 
 String formatDateLastMessage(int timestamp) {
   final DateTime date = DateTime.fromMillisecondsSinceEpoch(timestamp);
-  final DateFormat formatter = DateFormat('y년 M월 d일 EEEE', 'ko_KR');
-  final String formattedDate = formatter.format(date);
+  final String formattedDate = formatterLastMessage.format(date);
   return formattedDate;
 }
 
@@ -39,10 +41,9 @@ String formatChatDateString(String dateString) {
     final DateTime now = DateTime.now();
     final DateTime today = DateTime(now.year, now.month, now.day);
     final DateTime yesterday = today.subtract(const Duration(days: 1));
-    final DateFormat timeFormat = DateFormat("a h:mm", "ko_KR");
 
     if (date.isAfter(today.subtract(const Duration(seconds: 1)))) {
-      return timeFormat.format(date).replaceAll("AM", "오전").replaceAll("PM", "오후");
+      return timeFormatChat.format(date).replaceAll("AM", "오전").replaceAll("PM", "오후");
     } else if (date.isAfter(yesterday.subtract(const Duration(seconds: 1)))) {
       return "어제";
     } else if (date.year == now.year) {
@@ -111,19 +112,49 @@ void closeKeyboard(BuildContext context) {
 
 List<TextSpan> replacePattern(String original, Color color, Color colorMention, bool isTyping) {
 
+  List<TextSpan> spans = [];
+
   if(isTyping) {
     color = colorMainGrey800;
   }
 
-  List<TextSpan> spans = [];
-  int lastMatchIndex = 0;
-  RegExp regex = RegExp(r'@\p{L}[\p{L}\p{N}_]*', unicode: true);
-  Iterable<RegExpMatch> matches = regex.allMatches(original);
+  if(original.contains("@")) {
 
-  for (var match in matches) {
+    int lastMatchIndex = 0;
+    RegExp regex = RegExp(r'@\p{L}[\p{L}\p{N}_]*', unicode: true);
+    Iterable<RegExpMatch> matches = regex.allMatches(original);
+
+    for (var match in matches) {
+      spans.add(
+          TextSpan(
+              text: original.substring(lastMatchIndex, match.start),
+              style: TextStyle(
+                color: color,
+                fontSize: 15.8,
+                letterSpacing: 1.2,
+              )
+          )
+      );
+      spans.add(
+          TextSpan(
+              text: original.substring(match.start, match.end),
+              style: TextStyle(
+                color: colorMention,
+                fontSize: 15.8,
+                letterSpacing: 1.2,
+              )
+          )
+      );
+      lastMatchIndex = match.end;
+    }
+
+    spans.add(TextSpan(text: original.substring(lastMatchIndex, original.length), style: TextStyle(color: color)));
+
+  }else {
+
     spans.add(
         TextSpan(
-            text: original.substring(lastMatchIndex, match.start),
+            text: original,
             style: TextStyle(
               color: color,
               fontSize: 15.8,
@@ -131,20 +162,8 @@ List<TextSpan> replacePattern(String original, Color color, Color colorMention, 
             )
         )
     );
-    spans.add(
-        TextSpan(
-            text: original.substring(match.start, match.end),
-            style: TextStyle(
-              color: colorMention,
-              fontSize: 15.8,
-              letterSpacing: 1.2,
-            )
-        )
-    );
-    lastMatchIndex = match.end;
-  }
 
-  spans.add(TextSpan(text: original.substring(lastMatchIndex, original.length), style: TextStyle(color: color)));
+  }
 
   return spans;
 }

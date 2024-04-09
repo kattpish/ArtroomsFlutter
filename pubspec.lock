@@ -395,6 +395,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_top_blocked_bouncing_scroll_physics:
+    dependency: "direct main"
+    description:
+      name: flutter_top_blocked_bouncing_scroll_physics
+      sha256: "82fc130cffcd77875d3ec3e1dd607f7f058e0766e66496b66122a4cb7da582f6"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.0"
   flutter_web_plugins:
     dependency: transitive
     description: flutter

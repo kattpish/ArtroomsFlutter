@@ -235,39 +235,18 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                                       _itemKeys[index] = GlobalKey();
                                       final message = _listMessages[index];
                                       final isLast = index == 0;
-                                      final messageNext = index > 0
-                                          ? _listMessages[index - 1]
-                                          : DataMessage.empty();
-                                      final messagePrevious =
-                                      index < _listMessages.length - 1
-                                          ? _listMessages[index + 1]
-                                          : DataMessage.empty();
-                                      final isPreviousSame =
-                                          messagePrevious.senderId ==
-                                              message.senderId;
-                                      final isNextSame =
-                                          messageNext.senderId ==
-                                              message.senderId;
-                                      final isPreviousDate =
-                                          messagePrevious.getDate() ==
-                                              message.getDate();
-                                      final isPreviousSameDateTime =
-                                          isPreviousSame &&
-                                              messagePrevious
-                                                  .getDateTime() ==
-                                                  message.getDateTime();
-                                      final isNextSameTime = isNextSame &&
-                                          messageNext.getDateTime() ==
-                                              message.getDateTime();
+                                      final messageNext = index > 0 ? _listMessages[index - 1] : DataMessage.empty();
+                                      final messagePrevious = index < _listMessages.length - 1 ? _listMessages[index + 1] : DataMessage.empty();
+                                      final isPreviousSame = messagePrevious.senderId == message.senderId;
+                                      final isNextSame = messageNext.senderId == message.senderId;
+                                      final isPreviousDate = messagePrevious.getDate() == message.getDate();
+                                      final isPreviousSameDateTime = isPreviousSame && messagePrevious.timestamp == message.timestamp;
+                                      final isNextSameTime = isNextSame && messageNext.getTime() == message.getTime();
                                       return Column(
                                         key: _itemKeys[index],
                                         children: [
-                                          Visibility(
-                                            visible: !isPreviousDate,
-                                            child: widgetChatroomMessageDatePin(context, message.timestamp, index),
-                                          ),
-                                          Container(
-                                            child: message.isMe
+                                          if(isPreviousDate) widgetChatroomMessageDatePin(context, message.timestamp, index),
+                                          message.isMe
                                                 ? buildMyMessageBubble(context, index, this, message, _listMessages, isLast, isPreviousSameDateTime, isNextSameTime, isPreviousSameDateTime, isNextSameTime, _screenWidth,
                                                     (){
                                                   _replyMessage = message;
@@ -282,7 +261,6 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                                                 }, (index){
                                                   _itemScrollController.scrollTo(index: 20,alignment: 0.5,duration: const Duration(seconds: 1));
                                                 }),
-                                          ),
                                         ],
                                       );
                                     },

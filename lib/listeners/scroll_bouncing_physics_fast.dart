@@ -13,8 +13,8 @@ class ScrollPhysicsBouncingFast extends BouncingScrollPhysics {
   @override
   SpringDescription get spring {
     return SpringDescription.withDampingRatio(
-      mass: 0.05,
-      stiffness: 1500.0,
+      mass: 0.01,
+      stiffness: 2000.0,
       ratio: 1.0,
     );
   }

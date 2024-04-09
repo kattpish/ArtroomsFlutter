@@ -40,35 +40,35 @@ Widget widgetChatroomMessageInput(TextEditingController messageController, RichT
           ),
         ),
       ),
-      Visibility(
-        visible: false,
-        child: Positioned(
-          top: 12.5,
-          left: 12.5,
-          right: 0,
-          child: Container(
-            decoration: BoxDecoration(
-              color: const Color(0xFFF3F3F3),
-              borderRadius: BorderRadius.circular(25),
-            ),
-            child: RichText(
-              maxLines: 3,
-              text: widgetChatroomMessageTextSpan(messageController.text),
-            ),
-          ),
-        ),
-      ),
-      Visibility(
-        visible: false,
-        child: RichTextField(
-          controller: richTextEditorController,
-          maxLines: 10,
-          minLines: 1,
-          onChanged: (char) {
-            updateMentions(richTextEditorController);
-          },
-        ),
-      ),
+      // Visibility(
+      //   visible: false,
+      //   child: Positioned(
+      //     top: 12.5,
+      //     left: 12.5,
+      //     right: 0,
+      //     child: Container(
+      //       decoration: BoxDecoration(
+      //         color: const Color(0xFFF3F3F3),
+      //         borderRadius: BorderRadius.circular(25),
+      //       ),
+      //       child: RichText(
+      //         maxLines: 3,
+      //         text: widgetChatroomMessageTextSpan(messageController.text),
+      //       ),
+      //     ),
+      //   ),
+      // ),
+      // Visibility(
+      //   visible: false,
+      //   child: RichTextField(
+      //     controller: richTextEditorController,
+      //     maxLines: 10,
+      //     minLines: 1,
+      //     onChanged: (char) {
+      //       updateMentions(richTextEditorController);
+      //     },
+      //   ),
+      // ),
     ],
   );
 }

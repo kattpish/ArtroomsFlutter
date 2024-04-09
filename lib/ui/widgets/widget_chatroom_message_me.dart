@@ -28,14 +28,13 @@ Widget buildMyMessageBubble(
     Null Function(int index) onReplySelect
     ) {
 
- return Container(
+  return Container(
     margin: EdgeInsets.only(left: 16, right: 16, top: 0, bottom: isLast ? 9 : 0),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        Visibility(
-          visible: message.content.isNotEmpty,
-          child: Column(
+        if(message.content.isNotEmpty)
+          Column(
             children: [
               Container(
                 // color: Colors.red,
@@ -44,11 +43,8 @@ Widget buildMyMessageBubble(
                   mainAxisAlignment: MainAxisAlignment.end,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Visibility(
-                      visible: ((isPreviousSameDateTime && !isNextSameTime) ||
-                          (!isPreviousSameDateTime && !isNextSameTime)) &&
-                          message.content.isNotEmpty,
-                      child: Text(
+                    if(((isPreviousSameDateTime && !isNextSameTime) || (!isPreviousSameDateTime && !isNextSameTime)) && message.content.isNotEmpty)
+                      Text(
                         message.getTime(),
                         style: const TextStyle(
                           color: colorMainGrey300,
@@ -59,16 +55,10 @@ Widget buildMyMessageBubble(
                           letterSpacing: -0.20,
                         ),
                       ),
-                    ),
                     const SizedBox(width: 8),
                     FocusedMenuHolder(
                       onPressed: () {},
-                      menuWidth:
-                      MediaQuery.of(
-                          context)
-                          .size
-                          .width /
-                          2,
+                      menuWidth: screenWidth / 2,
                       menuItems: [
                         FocusedMenuItem(
                             trailingIcon:
@@ -105,10 +95,7 @@ Widget buildMyMessageBubble(
                       80.0,
                       menuBoxDecoration:
                       const BoxDecoration(
-                          borderRadius: BorderRadius
-                              .all(Radius
-                              .circular(
-                              15.0))),
+                          borderRadius: BorderRadius.all(Radius.circular(15.0))),
                       child: Container(
                         constraints:
                         BoxConstraints(maxWidth: screenWidth * 0.55),
@@ -117,8 +104,7 @@ Widget buildMyMessageBubble(
                           color: colorPrimaryBlue,
                           borderRadius: BorderRadius.only(
                               topLeft: const Radius.circular(24),
-                              topRight: Radius.circular(
-                                  isPreviousSameDateTime ? 24 : 2),
+                              topRight: Radius.circular(isPreviousSameDateTime ? 24 : 2),
                               bottomLeft: const Radius.circular(24),
                               bottomRight: const Radius.circular(24)),
                         ),
@@ -148,7 +134,6 @@ Widget buildMyMessageBubble(
               ),
             ],
           ),
-        ),
         Stack(
           children: [
             Container(

@@ -15,6 +15,7 @@ Widget buildImageAttachments(
     ) {
 
   if (message.attachmentImages.isNotEmpty) {
+
     List<Widget> rows = [];
     int itemsPlaced = 0;
     int rowIndex = 1;
@@ -124,24 +125,23 @@ Widget buildImageAttachments(
               child: Stack(
                 children: [
                   Column(children: rows),
-                  Visibility(
-                      visible: message.isSending,
-                      child: Container(
-                        height: heights,
-                        constraints:
-                        BoxConstraints(maxWidth: screenWidth * 0.55),
-                        child: Center(
-                          child: Container(
-                            width: 30,
-                            height: 30,
-                            alignment: Alignment.topRight,
-                            child: const CircularProgressIndicator(
-                              color: Color(0xFF6A79FF),
-                              strokeWidth: 2,
-                            ),
+                  if(message.isSending)
+                    Container(
+                      height: heights,
+                      constraints:
+                      BoxConstraints(maxWidth: screenWidth * 0.55),
+                      child: Center(
+                        child: Container(
+                          width: 30,
+                          height: 30,
+                          alignment: Alignment.topRight,
+                          child: const CircularProgressIndicator(
+                            color: Color(0xFF6A79FF),
+                            strokeWidth: 2,
                           ),
                         ),
-                      ))
+                      ),
+                    ),
                 ],
               ),
             ),

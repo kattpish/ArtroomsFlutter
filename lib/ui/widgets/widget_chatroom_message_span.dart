@@ -11,7 +11,6 @@ TextSpan widgetChatroomMessageTextSpan(String text) {
       fontSize: 15.8,
       letterSpacing: 1.2,
       height: 1.4,
-
       color: colorMainGrey800,
     ),
     children: replacePattern(text, colorMainGrey800, colorPrimaryPurple, true),
