@@ -168,6 +168,26 @@ class DataMessage {
     return (DateTime.now().millisecondsSinceEpoch - timestamp < timeSecRefreshChat*1000);
   }
 
+  bool isSameTime(DataMessage dataMessage) {
+    DateTime dateTime1 = DateTime.fromMillisecondsSinceEpoch(timestamp);
+    DateTime dateTime2 = DateTime.fromMillisecondsSinceEpoch(dataMessage.timestamp);
+    return dateTime1.hour == dateTime2.hour &&
+        dateTime1.minute == dateTime2.minute;
+  }
+
+  bool isSameDate(DataMessage dataMessage) {
+    DateTime dateTime1 = DateTime.fromMillisecondsSinceEpoch(timestamp);
+    DateTime dateTime2 = DateTime.fromMillisecondsSinceEpoch(dataMessage.timestamp);
+    return dateTime1.year == dateTime2.year &&
+        dateTime1.month == dateTime2.month &&
+        dateTime1.day == dateTime2.day;
+  }
+
+  bool isSameDateTime(DataMessage dataMessage) {
+    return isSameTime(dataMessage) && isSameDate(dataMessage);
+  }
+
+
   @override
   bool operator == (Object other) {
     return identical(this, other) || other is DataMessage

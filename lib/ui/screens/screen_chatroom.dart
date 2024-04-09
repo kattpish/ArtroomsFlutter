@@ -239,13 +239,13 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                                       final messagePrevious = index < _listMessages.length - 1 ? _listMessages[index + 1] : DataMessage.empty();
                                       final isPreviousSame = messagePrevious.senderId == message.senderId;
                                       final isNextSame = messageNext.senderId == message.senderId;
-                                      final isPreviousDate = messagePrevious.getDate() == message.getDate();
-                                      final isPreviousSameDateTime = isPreviousSame && messagePrevious.timestamp == message.timestamp;
-                                      final isNextSameTime = isNextSame && messageNext.getTime() == message.getTime();
+                                      final isPreviousDate = messagePrevious.isSameDate(message);
+                                      final isPreviousSameDateTime = isPreviousSame && messagePrevious.isSameDateTime(message);
+                                      final isNextSameTime = isNextSame && messageNext.isSameTime(message);
                                       return Column(
                                         key: _itemKeys[index],
                                         children: [
-                                          if(isPreviousDate) widgetChatroomMessageDatePin(context, message.timestamp, index),
+                                          if(!isPreviousDate) widgetChatroomMessageDatePin(context, message.timestamp, index),
                                           message.isMe
                                                 ? buildMyMessageBubble(context, index, this, message, _listMessages, isLast, isPreviousSameDateTime, isNextSameTime, isPreviousSameDateTime, isNextSameTime, _screenWidth,
                                                     (){
