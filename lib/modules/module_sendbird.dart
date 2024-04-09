@@ -29,7 +29,9 @@ import '../main.dart';
 class ModuleSendBird {
 
   Future<void> initSendbird() async {
+
     ModulePushNotifications modulePushNotifications = ModulePushNotifications();
+
     try {
 
       final String email = dbStore.getEmail();
@@ -45,8 +47,9 @@ class ModuleSendBird {
         token: await getToken(),
         unique: true,
       );
-      print(' PushTokenRegistrationStatus -> $status');
+
       if (kDebugMode) {
+        print(' PushTokenRegistrationStatus -> $status');
         print('Connected as ${user.userId}');
       }
 
@@ -159,7 +162,7 @@ class ModuleSendBird {
 
       try {
         final params = MessageListParams();
-        params.previousResultSize = 20;
+        params.previousResultSize = 200;
         params.reverse = true;
 
         final referenceTime = earliestMessageTimestamp ?? DateTime.now().millisecondsSinceEpoch;
@@ -195,12 +198,12 @@ class ModuleSendBird {
     }
   }
 
-  Future<UserMessage> sendMessage(GroupChannel groupChannel, String text, {String data="",DataMessage? message}) async {
+  Future<UserMessage> sendMessage(GroupChannel groupChannel, String text, {String data="", DataMessage? message}) async {
     final params = UserMessageParams(message: text);
-     ParentMessage parentMessage = ParentMessage(message?.index ?? 0, message?.content ?? "", message?.senderId ?? "",message?.senderName ?? "");
+     ParentMessage parentMessage = ParentMessage(message?.index ?? 0, message?.content ?? "", message?.senderId ?? "", message?.senderName ?? "", message?.data ?? data);
      params.mentionedUserIds = [];
-     params.data =  const JsonEncoder().convert(parentMessage);
-    return performSendMessage(groupChannel, text,params);
+     params.data = const JsonEncoder().convert(parentMessage);
+    return performSendMessage(groupChannel, text, params);
   }
 
   Future<UserMessage> performSendMessage(GroupChannel groupChannel, String text,UserMessageParams params) async {

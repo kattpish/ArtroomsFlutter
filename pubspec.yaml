@@ -13,7 +13,7 @@ dependencies:
   flutter_slidable: ^3.0.1
   url_launcher: ^6.1.14
   sendbird_sdk: ^3.0.11
-  sendbird_chat_sdk: ^4.2.8
+  # sendbird_chat_sdk: ^4.2.8
   intl: 0.18.1
   http: ^0.13.3
   shared_preferences: ^2.0.15

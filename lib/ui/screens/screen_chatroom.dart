@@ -17,7 +17,7 @@ import 'package:sendbird_sdk/handlers/channel_event_handler.dart';
 import '../../beans/bean_chat.dart';
 import '../../beans/bean_file.dart';
 import '../../beans/bean_message.dart';
-import '../../listeners/scroll_bouncing_physics.dart';
+import '../../listeners/scroll_bouncing_physics_fast.dart';
 import '../../main.dart';
 import '../../modules/module_messages.dart';
 import '../../utils/utils.dart';
@@ -229,7 +229,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                                     itemScrollController: _itemScrollController,
                                     itemPositionsListener: _itemPositionsListener,
                                     itemCount: _listMessages.length,
-                                    physics: const ScrollPhysicsBouncing(),
+                                    physics: const ScrollPhysicsBouncingFast(),
                                     reverse: true,
                                     itemBuilder: (context, index) {
                                       _itemKeys[index] = GlobalKey();

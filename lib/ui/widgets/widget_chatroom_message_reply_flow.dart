@@ -32,7 +32,7 @@ class WidgetChatroomMessageFlow extends StatelessWidget {
 
   Widget buildReplyMessageForText(bool isMe) {
 
-    ParentMessage parentMessage = ParentMessage(0, "", "","");
+    ParentMessage parentMessage = ParentMessage(0, "", "", "", "");
 
     try{
        parentMessage = ParentMessage.fromJson(const JsonDecoder().convert(message.data));

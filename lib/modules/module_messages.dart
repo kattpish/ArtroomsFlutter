@@ -89,13 +89,13 @@ class ModuleMessages {
     return messages;
   }
 
-  Future<DataMessage> sendMessage(String text,DataMessage? message) async {
+  Future<DataMessage> sendMessage(String text, DataMessage? message) async {
 
     if(!_isInitialized) {
       await initChannel();
     }
 
-    final UserMessage userMessage = await moduleSendBird.sendMessage(_groupChannel, text.trim(),message: message);
+    final UserMessage userMessage = await moduleSendBird.sendMessage(_groupChannel, text.trim(), message: message);
 
     final myMessage = DataMessage.fromBaseMessage(userMessage);
 
@@ -166,7 +166,6 @@ class ModuleMessages {
       myMessage = await moduleSendBird.sendMessageFiles(_groupChannel, files);
     }else {
 
-      Map<String, dynamic> data = {};
       List<String> dataImages = [];
 
       for(File file in files) {
@@ -183,13 +182,11 @@ class ModuleMessages {
         }
       }
 
-      data["data"] = dataImages;
-
       if(kDebugMode) {
-        print("message images data: ${jsonEncode(data)}");
+        print("message images data: ${jsonEncode(dataImages)}");
       }
 
-      UserMessage userMessage = await moduleSendBird.sendMessage(_groupChannel, "multiple:image", data: jsonEncode(data));
+      UserMessage userMessage = await moduleSendBird.sendMessage(_groupChannel, "multiple:image", data: jsonEncode(dataImages));
       myMessage = DataMessage.fromBaseMessage(userMessage);
     }
 

@@ -21,8 +21,7 @@ class ScrollPhysicsBouncing extends BouncingScrollPhysics {
 
   @override
   double applyPhysicsToUserOffset(ScrollMetrics position, double offset) {
-    return super.applyPhysicsToUserOffset(position, offset * 0.65);
+    return super.applyPhysicsToUserOffset(position, offset * 0.10);
   }
-
 
 }

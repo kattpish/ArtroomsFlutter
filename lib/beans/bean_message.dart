@@ -79,20 +79,19 @@ class DataMessage {
 
     } else if (baseMessage.message == 'multiple:image') {
       try {
-        try {
           final data = jsonDecode(baseMessage.data ?? "");
           if (data is Map && data.containsKey('data')) {
             final images = data['data'];
-            if (images is List) {
+            if (images is List<dynamic>) {
               attachmentImages.addAll(images.cast<String>());
+            }else {
+              final List<dynamic> imageUrls = jsonDecode(images);
+              for(dynamic imageUrl in imageUrls) {
+                attachmentImages.add(imageUrl.toString());
+              }
             }
           }
           isImage = true;
-        }catch(e) {
-          if (kDebugMode) {
-            print("Error fromBaseMessage: $e");
-          }
-        }
       } catch (e) {
         if (kDebugMode) {
           print('Error parsing image attachments: $e');
@@ -184,17 +183,21 @@ class DataMessage {
 }
 
 class ParentMessage {
+
   int messageId;
   String content;
   String senderId;
   String senderName;
-  ParentMessage(this.messageId, this.content,this.senderId, this.senderName);
+  String data;
+
+  ParentMessage(this.messageId, this.content,this.senderId, this.senderName, this.data);
 
   ParentMessage.fromJson(Map<String, dynamic> json)
       : messageId = json['messageId'],
         content = json['content'],
         senderId = json['senderId'],
-        senderName = json['senderName'];
+        senderName = json['senderName'],
+        data = json['data'];
 
   Map<String, dynamic> toJson() {
     return {
@@ -202,6 +205,7 @@ class ParentMessage {
       'content': content,
       'senderId': senderId,
       'senderName': senderName,
+      'data': data,
     };
   }
 
