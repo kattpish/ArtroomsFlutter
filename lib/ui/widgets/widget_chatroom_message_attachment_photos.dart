@@ -1,9 +1,11 @@
 
 import 'package:artrooms/ui/widgets/widget_media.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import '../../beans/bean_file.dart';
 import '../../beans/bean_message.dart';
+import '../../utils/utils_media.dart';
 import '../theme/theme_colors.dart';
 
 
@@ -89,20 +91,43 @@ Widget buildImageAttachments(
                       height: double.infinity,
                       fit: BoxFit.cover,
                     )
-                        : FadeInImage.assetNetwork(
-                      placeholder:
-                      'assets/images/chats/placeholder_photo.png',
-                      image: attachment,
+                        :
+
+                    CachedNetworkImage(
+                      imageUrl: attachment,
+                      cacheManager: customCacheManager,
+                      placeholder: (context, url) {
+                        return Image.asset(
+                        'assets/images/chats/placeholder_photo.png',
+                        fit: BoxFit.cover,
+                      );
+                      },
+                      errorWidget: (context, url, error) {
+                        return Image.asset(
+                        'assets/images/chats/placeholder_photo.png',
+                        fit: BoxFit.cover,
+                      );
+                      },
                       fit: BoxFit.cover,
                       fadeInDuration: const Duration(milliseconds: 100),
                       fadeOutDuration: const Duration(milliseconds: 100),
-                      imageErrorBuilder: (context, error, stackTrace) {
-                        return Image.asset(
-                          'assets/images/chats/placeholder_photo.png',
-                          fit: BoxFit.cover,
-                        );
-                      },
                     ),
+
+                    // FadeInImage.assetNetwork(
+                    //   placeholder:
+                    //   'assets/images/chats/placeholder_photo.png',
+                    //   image: attachment,
+                    //   fit: BoxFit.cover,
+                    //   fadeInDuration: const Duration(milliseconds: 100),
+                    //   fadeOutDuration: const Duration(milliseconds: 100),
+                    //   imageErrorBuilder: (context, error, stackTrace) {
+                    //     return Image.asset(
+                    //       'assets/images/chats/placeholder_photo.png',
+                    //       fit: BoxFit.cover,
+                    //     );
+                    //   },
+                    // ),
+
                   ),
                 ),
               ),

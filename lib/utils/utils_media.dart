@@ -7,8 +7,18 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
 
+final customCacheManager = CacheManager(
+  Config(
+    'customCacheKey',
+    stalePeriod: const Duration(days: 15),
+    maxNrOfCacheObjects: 100,
+    repo: JsonCacheInfoRepository(databaseName: 'artrooms-cache.db'),
+    fileService: HttpFileService(),
+  ),
+);
 
 String getFileName(File file) {
   return path.basename(Uri.parse(file.path).path);
