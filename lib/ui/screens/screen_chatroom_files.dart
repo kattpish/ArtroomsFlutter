@@ -98,51 +98,54 @@ class _ScreenChatroomFilesState extends State<ScreenChatroomFiles> {
                 ? const WidgetLoader()
                 : _attachmentsMedia.isEmpty
                 ? widgetChatroomFilesEmpty(context)
-                : GridView.builder(
+                : ScrollConfiguration(
+              behavior: scrollBehavior,
+                  child: GridView.builder(
               controller: _scrollController,
-              physics: const ScrollPhysicsBouncing(),
+              // physics: const ScrollPhysicsBouncing(),
               padding: const EdgeInsets.only(left: 16, top: 12, right: 16, bottom: 32),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: _crossAxisCount,
-                crossAxisSpacing: _crossAxisSpacing,
-                mainAxisSpacing: _mainAxisSpacing,
-                childAspectRatio: (_screenWidth / _crossAxisCount - _crossAxisSpacing) / (200),
+                  crossAxisCount: _crossAxisCount,
+                  crossAxisSpacing: _crossAxisSpacing,
+                  mainAxisSpacing: _mainAxisSpacing,
+                  childAspectRatio: (_screenWidth / _crossAxisCount - _crossAxisSpacing) / (200),
               ),
               itemCount: _attachmentsMedia.length + (_isLoadingMore ? 1 : 0),
               itemBuilder: (context, index) {
 
-                if (index == _attachmentsMedia.length) {
-                  return const Center(
-                    child: SizedBox(
-                        width: 36,
-                        height: 36,
-                        child: CircularProgressIndicator(
-                          color: Color(0xFF6A79FF),
-                          strokeWidth: 4,
-                        )
-                    ),
-                  );
-                }
+                  if (index == _attachmentsMedia.length) {
+                    return const Center(
+                      child: SizedBox(
+                          width: 36,
+                          height: 36,
+                          child: CircularProgressIndicator(
+                            color: Color(0xFF6A79FF),
+                            strokeWidth: 4,
+                          )
+                      ),
+                    );
+                  }
 
-                DataMessage attachmentFile = _attachmentsMedia[index];
-                return widgetChatroomFilesCard(context, attachmentFile,
-                    onSelect: () {
-                      setState(() {
-                        if(!attachmentFile.isDownloading) {
-                          if(!attachmentFile.isSelected) {
-                            attachmentFile.isSelected = true;
-                            attachmentFile.timeSelected = DateTime.now().millisecondsSinceEpoch;
-                          }else {
-                            attachmentFile.isSelected = false;
-                            attachmentFile.timeSelected = 0;
+                  DataMessage attachmentFile = _attachmentsMedia[index];
+                  return widgetChatroomFilesCard(context, attachmentFile,
+                      onSelect: () {
+                        setState(() {
+                          if(!attachmentFile.isDownloading) {
+                            if(!attachmentFile.isSelected) {
+                              attachmentFile.isSelected = true;
+                              attachmentFile.timeSelected = DateTime.now().millisecondsSinceEpoch;
+                            }else {
+                              attachmentFile.isSelected = false;
+                              attachmentFile.timeSelected = 0;
+                            }
+                            _checkEnableButton();
                           }
-                          _checkEnableButton();
-                        }
-                      });
-                    }
-                );
+                        });
+                      }
+                  );
               },
             ),
+                ),
           ),
         ),
         bottomNavigationBar: SafeArea(

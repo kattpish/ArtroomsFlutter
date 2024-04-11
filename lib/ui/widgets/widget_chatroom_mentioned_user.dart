@@ -34,62 +34,65 @@ class WidgetChatroomMentionUser extends StatelessWidget {
   }
 
   Widget widgetChatroomMentionUsers(List<Member> memberList) {
-    return ListView.builder(
-        itemCount: memberList.length,
-        shrinkWrap: true,
-        physics: const ScrollPhysicsBouncing(),
-        itemBuilder: (context,index) {
-          Member member = memberList[index];
-          return Container(
-            margin: const EdgeInsets.only(bottom: 8),
-            child: InkWell(
-              onTap: () {
-                onCancelReply(memberList[index]);
-              },
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Container(
-                    width: 36,
-                    height: 36,
-                    clipBehavior: Clip.antiAlias,
-                    decoration: ShapeDecoration(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(18),
+    return ScrollConfiguration(
+      behavior: scrollBehavior,
+      child: ListView.builder(
+          itemCount: memberList.length,
+          shrinkWrap: true,
+          // physics: const ScrollPhysicsBouncing(),
+          itemBuilder: (context,index) {
+            Member member = memberList[index];
+            return Container(
+              margin: const EdgeInsets.only(bottom: 8),
+              child: InkWell(
+                onTap: () {
+                  onCancelReply(memberList[index]);
+                },
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: 36,
+                      height: 36,
+                      clipBehavior: Clip.antiAlias,
+                      decoration: ShapeDecoration(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(18),
+                        ),
+                      ),
+                      child: FadeInImage.assetNetwork(
+                        placeholder: (member.nickname == "artrooms" || member.nickname == "artroom") ? 'assets/images/chats/chat_artrooms.png' : 'assets/images/chats/placeholder_photo.png',
+                        image: member.profileUrl != null ? member.profileUrl.toString() : "",
+                        fit: BoxFit.cover,
+                        fadeInDuration: const Duration(milliseconds: 100),
+                        fadeOutDuration: const Duration(milliseconds: 100),
+                        imageErrorBuilder: (context, error, stackTrace) {
+                          return Image.asset(
+                            (member.nickname == "artrooms" || member.nickname == "artroom") ? 'assets/images/chats/chat_artrooms.png' : 'assets/images/chats/placeholder_photo.png',
+                            fit: BoxFit.cover,
+                          );
+                        },
                       ),
                     ),
-                    child: FadeInImage.assetNetwork(
-                      placeholder: (member.nickname == "artrooms" || member.nickname == "artroom") ? 'assets/images/chats/chat_artrooms.png' : 'assets/images/chats/placeholder_photo.png',
-                      image: member.profileUrl != null ? member.profileUrl.toString() : "",
-                      fit: BoxFit.cover,
-                      fadeInDuration: const Duration(milliseconds: 100),
-                      fadeOutDuration: const Duration(milliseconds: 100),
-                      imageErrorBuilder: (context, error, stackTrace) {
-                        return Image.asset(
-                          (member.nickname == "artrooms" || member.nickname == "artroom") ? 'assets/images/chats/chat_artrooms.png' : 'assets/images/chats/placeholder_photo.png',
-                          fit: BoxFit.cover,
-                        );
-                      },
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      memberList[index].nickname,
-                      style: const TextStyle(
-                        color: Color(0xFF393939),
-                        fontSize: 15,
-                        fontFamily: 'SUIT',
-                        fontWeight: FontWeight.w600,
-                        height: 0,
-                        letterSpacing: -0.30,
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        memberList[index].nickname,
+                        style: const TextStyle(
+                          color: Color(0xFF393939),
+                          fontSize: 15,
+                          fontFamily: 'SUIT',
+                          fontWeight: FontWeight.w600,
+                          height: 0,
+                          letterSpacing: -0.30,
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          );}
+            );}
+      ),
     );
   }
 }

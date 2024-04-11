@@ -21,7 +21,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 class ModulePushNotifications {
 
 
-  Future<void> init() async {
+  Future<void> init(User user) async {
 
     try {
 
@@ -46,6 +46,8 @@ class ModulePushNotifications {
         }
         NotificationService.showNotification(message.notification?.title ?? '', message.notification?.body ?? '');
       });
+
+      register(user);
 
     } catch (e) {
       if (kDebugMode) {

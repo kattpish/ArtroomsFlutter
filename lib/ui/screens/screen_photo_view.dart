@@ -1,12 +1,11 @@
 
-import 'dart:io';
 import 'dart:math' as math;
 
 import 'package:artrooms/beans/bean_file.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 
-import '../../listeners/scroll_bouncing_physics_normal.dart';
+import '../../listeners/scroll_bouncing_physics.dart';
 import '../../utils/utils.dart';
 import '../../utils/utils_media.dart';
 import '../theme/theme_colors.dart';
@@ -66,11 +65,11 @@ class _ScreenPhotoView extends State<ScreenPhotoView> {
                         child: Stack(
                           children: [
                             ScrollConfiguration(
-                              behavior: const ScrollBehavior().copyWith(overscroll: false),
+                              behavior: scrollBehavior,
                               child: PageView.builder(
                                 controller: _pageController,
                                 itemCount: widget.images.length,
-                                // physics: const ScrollPhysicsBouncingNormal(),
+                                // // physics: const ScrollPhysicsBouncingNormal(),
                                 onPageChanged: (int index) {
                                   setState(() {
                                     currentIndex = index;

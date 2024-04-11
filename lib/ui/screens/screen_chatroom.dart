@@ -17,6 +17,7 @@ import 'package:sendbird_sdk/handlers/channel_event_handler.dart';
 import '../../beans/bean_chat.dart';
 import '../../beans/bean_file.dart';
 import '../../beans/bean_message.dart';
+import '../../listeners/scroll_bouncing_physics.dart';
 import '../../main.dart';
 import '../../modules/module_media.dart';
 import '../../modules/module_messages.dart';
@@ -325,7 +326,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                 closeKeyboard(context);
               },
               child: ScrollConfiguration(
-                behavior: const ScrollBehavior().copyWith(overscroll: false),
+                behavior: scrollBehavior,
                 child: ScrollablePositionedList.builder(
                   itemScrollController: _itemScrollController,
                   itemPositionsListener: _itemPositionsListener,
@@ -758,7 +759,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                 behavior: const ScrollBehavior().copyWith(overscroll: false),
                 child: GridView.builder(
                   controller: scrollController,
-                  physics: const ClampingScrollPhysics(),
+                  // physics: const ClampingScrollPhysics(),
                   padding: const EdgeInsets.only(bottom: 24),
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: isTablet(context) ? 6 : 3,

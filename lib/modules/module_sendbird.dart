@@ -39,8 +39,7 @@ class ModuleSendBird {
 
       final User user = await SendbirdSdk().connect(email);
 
-      modulePushNotifications.init();
-      modulePushNotifications.register(user);
+      modulePushNotifications.init(user);
 
     } catch (e) {
       if (kDebugMode) {
