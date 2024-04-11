@@ -20,9 +20,8 @@ import 'modules/module_sendbird.dart';
 late final SharedPreferences sharedPreferences;
 late final DBStore dbStore;
 late final ModuleSendBird moduleSendBird;
-final ListenerRouteObserver listenerRouteObserver = ListenerRouteObserver();
-ModuleMedia moduleMedia = ModuleMedia();
-ModulePushNotifications pushNotifications = ModulePushNotifications();
+late final ListenerRouteObserver listenerRouteObserver;
+late final ModulePushNotifications modulePushNotifications;
 
 Future<void> main() async {
 
@@ -53,9 +52,11 @@ Future<void> init() async {
   sharedPreferences = await SharedPreferences.getInstance();
   dbStore = DBStore();
   moduleSendBird = ModuleSendBird();
-  await moduleSendBird.initSendbird();
+  listenerRouteObserver = ListenerRouteObserver();
+  modulePushNotifications = ModulePushNotifications();
 
-  pushNotifications.init();
+  await moduleSendBird.initSendbird();
+  modulePushNotifications.init();
 
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
   var initializationSettingsAndroid = const AndroidInitializationSettings('@drawable/icon_notification');

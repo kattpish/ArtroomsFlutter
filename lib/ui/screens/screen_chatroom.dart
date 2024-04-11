@@ -18,6 +18,7 @@ import '../../beans/bean_chat.dart';
 import '../../beans/bean_file.dart';
 import '../../beans/bean_message.dart';
 import '../../main.dart';
+import '../../modules/module_media.dart';
 import '../../modules/module_messages.dart';
 import '../../utils/utils.dart';
 import '../../utils/utils_screen.dart';
@@ -79,6 +80,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
   late final ModuleMessages _moduleMessages;
   final ModuleNotice _moduleNotice = ModuleNotice();
   DataNotice _dataNotice = DataNotice();
+  final ModuleMedia _moduleMedia = ModuleMedia();
 
   bool _showAttachment = false;
   double _bottomSheetHeight = 0;
@@ -1092,7 +1094,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
 
   Future<void> _doLoadMedia(isShow) async {
 
-    moduleMedia.loadFileImages1(isShowSettings: isShow, onLoad: (FileItem fileItem) {
+    _moduleMedia.loadFileImages1(isShowSettings: isShow, onLoad: (FileItem fileItem) {
       if(mounted) {
         setState(() {
           if (!_filesImages.contains(fileItem)) {

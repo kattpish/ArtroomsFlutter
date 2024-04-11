@@ -2,8 +2,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'package:artrooms/modules/module_push_notifications.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:path/path.dart' as path;
 
 import 'package:artrooms/beans/bean_message.dart';
@@ -30,8 +28,6 @@ class ModuleSendBird {
 
   Future<void> initSendbird() async {
 
-    ModulePushNotifications modulePushNotifications = ModulePushNotifications();
-
     try {
 
       final String email = dbStore.getEmail();
@@ -41,17 +37,9 @@ class ModuleSendBird {
           apiToken: "39ac9b8e2125ad49035c7bd9c105ccc9d4dc7ba4"
       );
 
-      final user = await SendbirdSdk().connect(email);
-      PushTokenRegistrationStatus status = await SendbirdSdk().registerPushToken(
-        type: getPushTokenType(),
-        token: await getToken(),
-        unique: true,
-      );
+      final User user = await SendbirdSdk().connect(email);
 
-      if (kDebugMode) {
-        print(' PushTokenRegistrationStatus -> $status');
-        print('Connected as ${user.userId}');
-      }
+      modulePushNotifications.register(user);
 
     } catch (e) {
       if (kDebugMode) {
@@ -299,31 +287,6 @@ class ModuleSendBird {
 
   void removeChannelEventHandler(GroupChannel groupChannel) {
     SendbirdSdk().removeChannelEventHandler(groupChannel.channelUrl);
-  }
-
-  PushTokenType getPushTokenType() {
-    PushTokenType pushTokenType;
-    if (Platform.isAndroid) {
-      pushTokenType = PushTokenType.fcm;
-    } else if (Platform.isIOS) {
-      pushTokenType = PushTokenType.apns;
-    }else {
-      pushTokenType = PushTokenType.fcm;
-    }
-    return pushTokenType;
-  }
-
-  Future<String> getToken() async {
-    String? token;
-    if (Platform.isAndroid) {
-      token = await FirebaseMessaging.instance.getToken();
-    } else if (Platform.isIOS) {
-      token = await FirebaseMessaging.instance.getAPNSToken();
-    }
-    if (kDebugMode) {
-      print('fcm token $token');
-    }
-    return token ?? "";
   }
 
 }
