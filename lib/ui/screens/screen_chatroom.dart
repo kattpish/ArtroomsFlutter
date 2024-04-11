@@ -90,7 +90,6 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
   double _dragStartY = 0.0;
   double _screenWidth = 0;
   double _screenHeight = 0;
-  late Widget attachmentPicker;
 
   late Timer _timer;
   Timer? _scrollTimer;
@@ -150,8 +149,6 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
     _screenHeight = MediaQuery.of(context).size.height;
     _bottomSheetHeightMin = _screenHeight * 0.35;
     _bottomSheetHeightMax = _screenHeight;
-
-    attachmentPicker = _attachmentPicker(context, this, _scrollControllerAttachment);
 
     return WillPopScope(
       onWillPop: () async {
@@ -243,7 +240,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                   child: GestureDetector(
                     onTap: () {
                       if(_bottomSheetHeight > _bottomSheetHeightMin) {
-                        _doAttachmentPickerClose();
+                        _doAttachmentPickerMin();
                       }
                     },
                   ),
@@ -277,12 +274,12 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                               children: [
                                 GestureDetector(
                                   onTap: () {
-                                    _doAttachmentPickerClose();
+                                    _doAttachmentPickerMin();
                                   },
                                 ),
                                 Container(
                                     color: Colors.white,
-                                    child: _attachmentPicker(context, this, scrollController)
+                                    child: _attachmentPicker(scrollController)
                                 ),
                                 Visibility(
                                     visible: _filesImages.isEmpty,
@@ -442,7 +439,6 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                       if (_showAttachment) {
                         _doAttachmentPickerClose();
                         _deselectPickedFiles(false);
-                        // showKeyboard(context, _messageFocusNode);
                       } else {
                         _doAttachmentPickerMin();
                         _doLoadMedia(true);
@@ -511,7 +507,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
     );
   }
 
-  Widget _attachmentPicker(BuildContext context, State<StatefulWidget> state, ScrollController scrollController) {
+  Widget _attachmentPicker(ScrollController scrollController) {
     return Container(
       height: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -681,7 +677,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                     ),
                     child: TextButton(
                       onPressed: () {
-                        state.setState(() async {
+                        setState(() async {
                           closeKeyboard(context);
                           await _doProcessCameraResult();
                         });
@@ -722,7 +718,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                     ),
                     child: TextButton(
                       onPressed: () {
-                        state.setState(() async {
+                        setState(() async {
                           closeKeyboard(context);
                           await _doProcessPickedFiles();
                         });
@@ -786,7 +782,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                           }));
                         },
                         onLongPress: () {
-                          state.setState(() {
+                          setState(() {
                             if(!fileImage.isSelected) {
                               fileImage.isSelected = true;
                               fileImage.timeSelected = DateTime.now().millisecondsSinceEpoch;
@@ -813,7 +809,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                                 visible: _selectMode,
                                 child: GestureDetector(
                                   onTap: () {
-                                    state.setState(() {
+                                    setState(() {
                                       if(!fileImage.isSelected) {
                                         fileImage.isSelected = true;
                                         fileImage.timeSelected = DateTime.now().millisecondsSinceEpoch;
