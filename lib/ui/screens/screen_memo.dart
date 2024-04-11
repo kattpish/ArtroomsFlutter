@@ -58,7 +58,8 @@ class _ScreenMemoState extends State<ScreenMemo> {
             },
           ),
           toolbarHeight: 60,
-          leadingWidth: 32,
+          titleSpacing: 0,
+          leadingWidth: 46,
           title: const Text(
             '메모',
             style: TextStyle(

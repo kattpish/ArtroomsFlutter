@@ -68,18 +68,18 @@ class _ScreenProfileEditState extends State<ScreenProfileEdit> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 8.0, right: 10.0),
-          child: IconButton(
-            icon: const Icon(
-              Icons.arrow_back_ios,
-              color: colorMainGrey250,
-              size: 20,
-            ),
-            onPressed: () => Navigator.of(context).pop(),
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back_ios,
+            color: colorMainGrey250,
+            size: 20,
           ),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
         ),
-        leadingWidth: 32,
+        titleSpacing: 0,
+        leadingWidth: 46,
         title: const Text(
           '프로필 수정',
           style: TextStyle(

@@ -26,11 +26,14 @@ Widget attachmentSelected(BuildContext context, List<FileItem> filesImages, {req
   }
 
   return Container(
+    width: double.infinity,
+    color: Colors.white,
+    alignment: Alignment.center,
     padding: const EdgeInsets.symmetric(horizontal: 4),
     child: SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           for (FileItem fileItem in filesAttachment)
             Container(

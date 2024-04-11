@@ -17,7 +17,6 @@ import '../../utils/utils_permissions.dart';
 import '../../utils/utils_screen.dart';
 import '../theme/theme_colors.dart';
 import '../widgets/widget_chatroom_message_pin.dart';
-import '../widgets/widget_chats_empty.dart';
 import '../widgets/widget_chats_exit.dart';
 import '../widgets/widget_chats_row.dart';
 import '../widgets/widget_loader.dart';
@@ -142,19 +141,10 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver  
                             controller: _searchController,
                             decoration: InputDecoration(
                               hintText: '',
-                              suffixIcon: !_isSearching
-                                  ? Icon(
+                              suffixIcon: const Icon(
                                   Icons.search,
                                   size: 30,
-                                  color: _searchController.text.isNotEmpty ? colorPrimaryBlue : colorMainGrey300
-                              ) : Container(
-                                width: 20,
-                                height: 20,
-                                padding: const EdgeInsets.all(15),
-                                child: const CircularProgressIndicator(
-                                  color: colorPrimaryBlue,
-                                  strokeWidth: 2,
-                                ),
+                                  color: colorMainGrey300
                               ),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(30),

@@ -87,7 +87,8 @@ class _ScreenChatroomFilesState extends State<ScreenChatroomFiles> {
               Navigator.of(context).pop();
             },
           ),
-          leadingWidth: 32,
+          titleSpacing: 0,
+          leadingWidth: 46,
           elevation: 0.2,
         ),
         backgroundColor: colorMainScreen,

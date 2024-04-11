@@ -54,7 +54,8 @@ class _ScreenNotificationsSoundsState extends State<ScreenNotificationsSounds> {
             ),
           ),
           toolbarHeight: 60,
-          leadingWidth: 32,
+          titleSpacing: 0,
+          leadingWidth: 46,
           title: const Text(
             '알림 및 소리',
             style: TextStyle(

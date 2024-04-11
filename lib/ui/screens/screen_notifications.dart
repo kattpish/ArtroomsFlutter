@@ -58,7 +58,8 @@ class _ScreenNotificationsState extends State<ScreenNotifications> {
             ),
           ),
           toolbarHeight: 60,
-          leadingWidth: 32,
+          titleSpacing: 0,
+          leadingWidth: 46,
           title: const Text(
             '알림음',
             style: TextStyle(

@@ -147,7 +147,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
     _screenWidth = MediaQuery.of(context).size.width * widget.widthRatio;
     _screenHeight = MediaQuery.of(context).size.height;
     _bottomSheetHeightMin = _screenHeight * 0.35;
-    _bottomSheetHeightMax = _screenHeight * 0.95;
+    _bottomSheetHeightMax = _screenHeight;
 
     attachmentPicker = _attachmentPicker(context, this);
 
@@ -250,20 +250,20 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                                           children: [
                                             if(!isPreviousDate) widgetChatroomMessageDatePin(context, message.timestamp, index),
                                             message.isMe
-                                                  ? buildMyMessageBubble(context, index, this, message, _listMessages, isLast, isPreviousSameDateTime, isNextSameTime, isPreviousSameDateTime, isNextSameTime, _screenWidth,
-                                                      (){
-                                                    _replyMessage = message;
-                                                    _messageFocusNode.requestFocus();
-                                                  }, (index){
-                                                    _itemScrollController.scrollTo(index: 20,alignment: 0.5,duration: const Duration(seconds: 1));
-                                                  })
-                                                  : buildOtherMessageBubble(context, index, this, message, _listMessages, isLast, isPreviousSame, isNextSame, isPreviousSameDateTime, isNextSameTime, _screenWidth,
-                                                      (){
-                                                    _replyMessage = message;
-                                                    _messageFocusNode.requestFocus();
-                                                  }, (index){
-                                                    _itemScrollController.scrollTo(index: 20,alignment: 0.5,duration: const Duration(seconds: 1));
-                                                  }),
+                                                ? buildMyMessageBubble(context, index, this, message, _listMessages, isLast, isPreviousSameDateTime, isNextSameTime, isPreviousSameDateTime, isNextSameTime, _screenWidth,
+                                                    (){
+                                                  _replyMessage = message;
+                                                  _messageFocusNode.requestFocus();
+                                                }, (index){
+                                                  _itemScrollController.scrollTo(index: 20,alignment: 0.5,duration: const Duration(seconds: 1));
+                                                })
+                                                : buildOtherMessageBubble(context, index, this, message, _listMessages, isLast, isPreviousSame, isNextSame, isPreviousSameDateTime, isNextSameTime, _screenWidth,
+                                                    (){
+                                                  _replyMessage = message;
+                                                  _messageFocusNode.requestFocus();
+                                                }, (index){
+                                                  _itemScrollController.scrollTo(index: 20,alignment: 0.5,duration: const Duration(seconds: 1));
+                                                }),
                                           ],
                                         );
                                       },
@@ -331,12 +331,10 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                         ),
                       ),
                       _buildMessageInput(),
-                      const SizedBox(height: 8),
                       AnimatedContainer(
                         duration: const Duration(milliseconds: 500),
                         curve: Curves.easeOut,
                         height: _bottomSheetHeight > _bottomSheetHeightMin ? _bottomSheetHeightMin : _bottomSheetHeight,
-                        // child: attachmentPicker,
                       ),
                     ],
                   ),
@@ -370,7 +368,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                       ),
                       Container(
                           height: double.infinity,
-                          margin: EdgeInsets.only(top: _bottomSheetHeight > _bottomSheetHeightMin ? 80 : 0),
+                          margin: EdgeInsets.only(top: _bottomSheetHeight > _bottomSheetHeightMin ? 60 : 0),
                           color: Colors.white,
                           child: attachmentPicker
                       ),
@@ -387,8 +385,9 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
 
   Widget _buildMessageInput() {
     final isReplying = _replyMessage != null;
-    return Padding(
-      padding: const EdgeInsets.only(left: 8.0, right: 8.0, top: 3.0),
+    return Container(
+      color: Colors.white,
+      padding: const EdgeInsets.only(left: 8.0, right: 8.0, top: 3.0, bottom: 8.0),
       child: Column(
         children: [
           if (isReplying) buildReplyForTextField(_replyMessage, _doCancelReply),

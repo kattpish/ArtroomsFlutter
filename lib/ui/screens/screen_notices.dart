@@ -54,7 +54,8 @@ class _ScreenNoticesState extends State<ScreenNotices> {
               Navigator.of(context).pop();
             },
           ),
-          leadingWidth: 32,
+          titleSpacing: 0,
+          leadingWidth: 46,
           title: const Text(
             '공지',
             style: TextStyle(
