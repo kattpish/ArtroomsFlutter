@@ -56,7 +56,6 @@ Future<void> init() async {
   modulePushNotifications = ModulePushNotifications();
 
   await moduleSendBird.initSendbird();
-  modulePushNotifications.init();
 
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
   var initializationSettingsAndroid = const AndroidInitializationSettings('@drawable/icon_notification');
