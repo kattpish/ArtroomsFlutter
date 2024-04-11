@@ -8,7 +8,6 @@ import 'package:artrooms/ui/screens/screen_chatroom_photos.dart';
 import 'package:artrooms/ui/screens/screen_chats.dart';
 import 'package:artrooms/ui/screens/screen_memo.dart';
 import 'package:artrooms/ui/screens/screen_notices.dart';
-import 'package:artrooms/ui/screens/screen_notifications_sounds.dart';
 import 'package:flutter/material.dart';
 import 'package:sendbird_sdk/core/models/user.dart';
 
