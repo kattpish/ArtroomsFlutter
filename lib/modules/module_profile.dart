@@ -185,9 +185,10 @@ class ModuleProfile {
     DBStore dbStore = DBStore();
 
     const String mutation = '''
-      mutation UpdateUser(\$updateUserId: Int, \$updateStudentInput: UpdateStudentInput) {
+      mutation UpdateUser(\$id: Int, \$updateStudentInput: UpdateStudentInput, \$updateUserInput: UpdateUserInput) {
         updateUser(
-          id: \$updateUserId
+          id: \$id
+          updateUserInput: \$updateUserInput
           updateStudentInput: \$updateStudentInput
         ) {
           ... on User {
@@ -235,7 +236,7 @@ class ModuleProfile {
       body: jsonEncode({
         'operationName': 'UpdateUser',
         'variables': {
-          'updateUserId': userId,
+          'id': userId,
           'updateUserInput': {
             'id': userId,
             'profileImgId': profileImgId,
