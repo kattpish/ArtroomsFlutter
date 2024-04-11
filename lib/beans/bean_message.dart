@@ -1,5 +1,6 @@
 
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:sendbird_sdk/core/message/base_message.dart';
@@ -22,6 +23,7 @@ class DataMessage {
   String attachmentName = "";
   int attachmentSize = 0;
   List<String> attachmentImages = [];
+  List<File?> attachmentImagesThumbs = [];
   bool isMe;
   bool isArtrooms = false;
 
@@ -133,6 +135,14 @@ class DataMessage {
 
   String getSummary() {
     return isImage ? "첨부 파일" : (isFile ? "첨부 이미지" : content);
+  }
+
+  bool hasImagesThumb(int index) {
+    return attachmentImagesThumbs.length > index;
+  }
+
+  File getImagesThumb(int index) {
+    return attachmentImagesThumbs[index] ?? File("/");
   }
 
   String getAttachmentSize() {

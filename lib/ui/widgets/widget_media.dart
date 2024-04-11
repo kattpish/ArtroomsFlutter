@@ -27,20 +27,19 @@ List<FileItem> toFileItems(List<DataMessage> listAttachmentsImages) {
   for (int i = 0; i < listAttachmentsImages.length; i++) {
     DataMessage dataMessage = listAttachmentsImages[i];
 
-    for(String imageUrl in dataMessage.attachmentImages) {
+    if(!dataMessage.isSending) {
+      for (String imageUrl in dataMessage.attachmentImages) {
+        if (imageUrl.isNotEmpty) {
+          FileItem fileItem = FileItem(
+            index: index,
+            file: File("/"),
+            url: imageUrl,
+          );
 
-      if(imageUrl.isNotEmpty) {
-
-        FileItem fileItem = FileItem(
-          index: index,
-          file: File("/"),
-          url: imageUrl,
-        );
-
-        listImages.add(fileItem);
-        index++;
+          listImages.add(fileItem);
+          index++;
+        }
       }
-
     }
 
   }

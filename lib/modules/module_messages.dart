@@ -115,7 +115,12 @@ class ModuleMessages {
       if(fileItem.isSelected) {
         myMessage.index = DateTime.now().millisecondsSinceEpoch + fileItem.path.hashCode;
         myMessage.attachmentImages.add(fileItem.path);
+        myMessage.attachmentImagesThumbs.add(fileItem.thumbFile);
       }
+    }
+
+    if (kDebugMode) {
+      print("preSendMessageImage ${myMessage.attachmentImages.length}");
     }
 
     return myMessage;
@@ -143,6 +148,10 @@ class ModuleMessages {
       }
     }
 
+    if (kDebugMode) {
+      print("preSendMessageMedia :${messages.length}");
+    }
+
     return messages;
   }
 
@@ -163,7 +172,17 @@ class ModuleMessages {
     final DataMessage myMessage;
 
     if(files.length == 1) {
+
+      if(kDebugMode) {
+        print("sendMessageImages Start: ${files.length}");
+      }
+
       myMessage = await moduleSendBird.sendMessageFiles(_groupChannel, files);
+
+      if(kDebugMode) {
+        print("sendMessageImages Done: ${myMessage.attachmentImages.length}");
+      }
+
     }else {
 
       List<String> dataImages = [];
@@ -182,12 +201,17 @@ class ModuleMessages {
         }
       }
 
+      UserMessage userMessage = await moduleSendBird.sendMessage(_groupChannel, "multiple:image", data: jsonEncode(dataImages));
+
       if(kDebugMode) {
-        print("message images data: ${jsonEncode(dataImages)}");
+        print("sendMessageImages Start: ${jsonEncode(dataImages)}");
       }
 
-      UserMessage userMessage = await moduleSendBird.sendMessage(_groupChannel, "multiple:image", data: jsonEncode(dataImages));
       myMessage = DataMessage.fromBaseMessage(userMessage);
+
+      if (kDebugMode) {
+        print("sendMessageImages End ${myMessage.attachmentImages.length}");
+      }
     }
 
     return myMessage;
@@ -206,14 +230,19 @@ class ModuleMessages {
     for(FileItem fileItem in fileItems) {
       if(fileItem.isSelected) {
         files.add(fileItem.file);
+        fileItem.isSelected = false;
       }
     }
+
+    print("sendMessageMedia Start :${files.length}");
 
     for(File file in files) {
       FileMessage fileMessage = await moduleSendBird.sendMessageFile(_groupChannel, file);
       DataMessage myMessage = DataMessage.fromBaseMessage(fileMessage);
       messages.add(myMessage);
     }
+
+    print("sendMessageMedia End :${messages.length}");
 
     return messages;
   }

@@ -2,6 +2,7 @@
 import 'package:artrooms/beans/bean_chat.dart';
 import 'package:flutter/material.dart';
 
+import '../../test_screen.dart';
 import '../screens/screen_chatroom_drawer.dart';
 
 
@@ -26,11 +27,12 @@ Widget widgetChatroomMessageDrawerBtn(BuildContext context, DataChat dataChat) {
           )),
       onTap: () {
         Navigator.push(context,
-            MaterialPageRoute(builder: (context) {
-              return ScreenChatroomDrawer(
-                dataChat: dataChat,
-              );
-            }));
+          MaterialPageRoute(builder: (context) {
+            return ScreenChatroomDrawer(
+              dataChat: dataChat,
+            );
+          }),
+        );
       },
     ),
   );

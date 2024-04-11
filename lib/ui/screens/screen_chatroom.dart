@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:artrooms/beans/bean_notice.dart';
-import 'package:artrooms/listeners/scroll_noglow_behavior.dart';
 import 'package:artrooms/modules/module_notices.dart';
 import 'package:artrooms/ui/screens/screen_photo_view.dart';
 import 'package:artrooms/ui/widgets/widget_loader.dart';
@@ -18,7 +17,6 @@ import 'package:sendbird_sdk/handlers/channel_event_handler.dart';
 import '../../beans/bean_chat.dart';
 import '../../beans/bean_file.dart';
 import '../../beans/bean_message.dart';
-import '../../listeners/scroll_bouncing_physics_fast.dart';
 import '../../main.dart';
 import '../../modules/module_messages.dart';
 import '../../utils/utils.dart';
@@ -75,6 +73,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
   final RichTextEditorController _richTextEditorController = RichTextEditorController();
   final ItemScrollController _itemScrollController = ItemScrollController();
   final ItemPositionsListener _itemPositionsListener = ItemPositionsListener.create();
+  final DraggableScrollableController _draggableScrollableController = DraggableScrollableController();
   final FocusNode _messageFocusNode = FocusNode();
 
   late final ModuleMessages _moduleMessages;
@@ -149,16 +148,12 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
     _bottomSheetHeightMin = _screenHeight * 0.35;
     _bottomSheetHeightMax = _screenHeight;
 
-    attachmentPicker = _attachmentPicker(context, this);
+    attachmentPicker = _attachmentPicker(context, this, _scrollControllerAttachment);
 
     return WillPopScope(
       onWillPop: () async {
         if (_showAttachment) {
-          if(_bottomSheetHeight > _bottomSheetHeightMin) {
-            _doAttachmentPickerMin();
-          }else {
-            _doAttachmentPickerClose();
-          }
+          _doAttachmentPickerClose();
           return false;
         }
         if (widget.onBackPressed != null) {
@@ -214,109 +209,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                   child: Column(
                     children: [
                       Expanded(
-                        child: _isLoading
-                            ? const WidgetLoader()
-                            : Stack(
-                          alignment: AlignmentDirectional.topCenter,
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.symmetric(vertical: 0),
-                              child: _listMessages.isNotEmpty ? GestureDetector(
-                                  onTap: () {
-                                    closeKeyboard(context);
-                                    _doAttachmentPickerClose();
-                                  },
-                                  child: ScrollConfiguration(
-                                    behavior: const ScrollBehavior().copyWith(overscroll: false),
-                                    child: ScrollablePositionedList.builder(
-                                      itemScrollController: _itemScrollController,
-                                      itemPositionsListener: _itemPositionsListener,
-                                      itemCount: _listMessages.length,
-                                      // physics: const ScrollPhysicsBouncingFast(),
-                                      reverse: true,
-                                      itemBuilder: (context, index) {
-                                        _itemKeys[index] = GlobalKey();
-                                        final message = _listMessages[index];
-                                        final isLast = index == 0;
-                                        final messageNext = index > 0 ? _listMessages[index - 1] : DataMessage.empty();
-                                        final messagePrevious = index < _listMessages.length - 1 ? _listMessages[index + 1] : DataMessage.empty();
-                                        final isPreviousSame = messagePrevious.senderId == message.senderId;
-                                        final isNextSame = messageNext.senderId == message.senderId;
-                                        final isPreviousDate = messagePrevious.isSameDate(message);
-                                        final isPreviousSameDateTime = isPreviousSame && messagePrevious.isSameDateTime(message);
-                                        final isNextSameTime = isNextSame && messageNext.isSameTime(message);
-                                        return Column(
-                                          key: _itemKeys[index],
-                                          children: [
-                                            if(!isPreviousDate) widgetChatroomMessageDatePin(context, message.timestamp, index),
-                                            message.isMe
-                                                ? buildMyMessageBubble(context, index, this, message, _listMessages, isLast, isPreviousSameDateTime, isNextSameTime, isPreviousSameDateTime, isNextSameTime, _screenWidth,
-                                                    (){
-                                                  _replyMessage = message;
-                                                  _messageFocusNode.requestFocus();
-                                                }, (index){
-                                                  _itemScrollController.scrollTo(index: 20,alignment: 0.5,duration: const Duration(seconds: 1));
-                                                })
-                                                : buildOtherMessageBubble(context, index, this, message, _listMessages, isLast, isPreviousSame, isNextSame, isPreviousSameDateTime, isNextSameTime, _screenWidth,
-                                                    (){
-                                                  _replyMessage = message;
-                                                  _messageFocusNode.requestFocus();
-                                                }, (index){
-                                                  _itemScrollController.scrollTo(index: 20,alignment: 0.5,duration: const Duration(seconds: 1));
-                                                }),
-                                          ],
-                                        );
-                                      },
-                                    ),
-                                  )
-                              )
-                                  : widgetChatroomEmpty(context),
-                            ),
-                            Visibility(
-                              visible: _isLoadMore,
-                              child: Container(
-                                width: 12,
-                                height: 12,
-                                margin: const EdgeInsets.only(top: 2),
-                                child: const CircularProgressIndicator(
-                                  color: Color(0xFF6A79FF),
-                                  strokeWidth: 2,
-                                ),
-                              ),
-                            ),
-                            Visibility(
-                              visible: !_isHideNotice,
-                              child: AnimatedOpacity(
-                                opacity: !_isHideNotice && _dataNotice.notice.isNotEmpty ? 1.0 : 0.0,
-                                duration: const Duration(milliseconds: 500),
-                                onEnd: () {
-                                  setState(() {
-                                    _isHideNotice = true;
-                                  });
-                                },
-                                child: WidgetChatroomNoticePin(_dataNotice, _isExpandNotice,
-                                    onToggle:() {
-                                      setState(() {
-                                        _isExpandNotice = !_isExpandNotice;
-                                        closeKeyboard(context);
-                                      });
-                                    },
-                                    onHide:() {
-                                      setState(() {
-                                        _isHideNotice = true;
-                                        dbStore.setNoticeHide(_dataNotice, _isHideNotice);
-                                      });
-                                    }
-                                ),
-                              ),
-                            ),
-                            AnimatedOpacity(
-                              opacity: _showDateContainer ? 1.0 : 0.0,
-                              duration: const Duration(milliseconds: 500),
-                              child: widgetChatroomDatePin(context, _currentDate),
-                            ),
-                          ],
-                        ),
+                        child: _buildMessageBox(),
                       ),
                       Visibility(
                         visible: _showAttachment,
@@ -332,54 +225,193 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                       ),
                       _buildMessageInput(),
                       AnimatedContainer(
-                        duration: const Duration(milliseconds: 500),
+                        duration: const Duration(milliseconds: 0),
                         curve: Curves.easeOut,
-                        height: _bottomSheetHeight > _bottomSheetHeightMin ? _bottomSheetHeightMin : _bottomSheetHeight,
+                        height: _bottomSheetHeight >= _bottomSheetHeightMin ? _bottomSheetHeightMin - 14 : _bottomSheetHeight,
                       ),
                     ],
                   ),
                 ),
               ),
               Visibility(
-                visible:  _showAttachment && _bottomSheetHeight > _bottomSheetHeightMin,
+                visible:  _showAttachment && _bottomSheetHeight > _bottomSheetHeightMin + 60,
                 child: Container(
-                  color: Colors.black.withOpacity(0.4),
+                  color: Colors.black.withOpacity(0.4 * (_bottomSheetHeight / _bottomSheetHeightMax)),
+                  child: GestureDetector(
+                    onTap: () {
+                      if(_bottomSheetHeight > _bottomSheetHeightMin) {
+                        _doAttachmentPickerClose();
+                      }
+                    },
+                  ),
                 ),
               ),
               AnimatedContainer(
-                duration: const Duration(milliseconds: 500),
+                duration: const Duration(milliseconds: 0),
                 curve: Curves.easeOut,
-                height: _bottomSheetHeight,
+                height: _showAttachment ? _screenHeight : 0,
                 alignment: Alignment.bottomCenter,
-                child: Scaffold(
-                  backgroundColor: Colors.transparent,
-                  body: Stack(
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            if( _bottomSheetHeight > _bottomSheetHeightMin) {
-                              _doAttachmentPickerMin();
-                            }else {
-                              _doAttachmentPickerClose();
-                            }
-                          });
+                child: Stack(
+                  children: [
+                    NotificationListener<DraggableScrollableNotification>(
+                      onNotification: (DraggableScrollableNotification dSNotification) {
+                        setState(() {
+                          _bottomSheetHeight = _bottomSheetHeightMax * dSNotification.extent;
+                        });
+                        return true;
+                      },
+                      child: DraggableScrollableSheet(
+                        initialChildSize: _bottomSheetHeightMin / _screenHeight,
+                        minChildSize: _bottomSheetHeightMin / _screenHeight,
+                        maxChildSize: (_bottomSheetHeightMax - 60) / _screenHeight,
+                        expand: true,
+                        snap: true,
+                        controller: _draggableScrollableController,
+                        builder: (BuildContext context, ScrollController scrollController) {
+                          return Scaffold(
+                            backgroundColor: Colors.transparent,
+                            body: Stack(
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    _doAttachmentPickerClose();
+                                  },
+                                ),
+                                Container(
+                                    color: Colors.white,
+                                    child: _attachmentPicker(context, this, scrollController)
+                                ),
+                                Visibility(
+                                    visible: _filesImages.isEmpty,
+                                    child: const Center(
+                                      child: SizedBox(
+                                        width: 30,
+                                        height: 30,
+                                        child: CircularProgressIndicator(
+                                          color: Color(0xFF6A79FF),
+                                          strokeWidth: 3,
+                                        ),
+                                      ),
+                                    )
+                                ),
+                              ],
+                            ),
+                          );
                         },
                       ),
-                      Container(
-                          height: double.infinity,
-                          margin: EdgeInsets.only(top: _bottomSheetHeight > _bottomSheetHeightMin ? 60 : 0),
-                          color: Colors.white,
-                          child: attachmentPicker
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ],
           ),
         );
       }),
+    );
+  }
+
+  Widget _buildMessageBox() {
+    return _isLoading
+        ? const WidgetLoader()
+        : Stack(
+      alignment: AlignmentDirectional.topCenter,
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(vertical: 0),
+          child: _listMessages.isNotEmpty ? GestureDetector(
+              onTap: () {
+                closeKeyboard(context);
+              },
+              child: ScrollConfiguration(
+                behavior: const ScrollBehavior().copyWith(overscroll: false),
+                child: ScrollablePositionedList.builder(
+                  itemScrollController: _itemScrollController,
+                  itemPositionsListener: _itemPositionsListener,
+                  itemCount: _listMessages.length,
+                  // physics: const ScrollPhysicsBouncingFast(),
+                  reverse: true,
+                  itemBuilder: (context, index) {
+                    _itemKeys[index] = GlobalKey();
+                    final message = _listMessages[index];
+                    final isLast = index == 0;
+                    final messageNext = index > 0 ? _listMessages[index - 1] : DataMessage.empty();
+                    final messagePrevious = index < _listMessages.length - 1 ? _listMessages[index + 1] : DataMessage.empty();
+                    final isPreviousSame = messagePrevious.senderId == message.senderId;
+                    final isNextSame = messageNext.senderId == message.senderId;
+                    final isPreviousDate = messagePrevious.isSameDate(message);
+                    final isPreviousSameDateTime = isPreviousSame && messagePrevious.isSameDateTime(message);
+                    final isNextSameTime = isNextSame && messageNext.isSameTime(message);
+                    return Column(
+                      key: _itemKeys[index],
+                      children: [
+                        if(!isPreviousDate) widgetChatroomMessageDatePin(context, message.timestamp, index),
+                        message.isMe
+                            ? buildMyMessageBubble(context, index, this, message, _listMessages, isLast, isPreviousSameDateTime, isNextSameTime, isPreviousSameDateTime, isNextSameTime, _screenWidth,
+                                (){
+                              _replyMessage = message;
+                              _messageFocusNode.requestFocus();
+                            }, (index){
+                              _itemScrollController.scrollTo(index: 20,alignment: 0.5,duration: const Duration(seconds: 1));
+                            })
+                            : buildOtherMessageBubble(context, index, this, message, _listMessages, isLast, isPreviousSame, isNextSame, isPreviousSameDateTime, isNextSameTime, _screenWidth,
+                                (){
+                              _replyMessage = message;
+                              _messageFocusNode.requestFocus();
+                            }, (index){
+                              _itemScrollController.scrollTo(index: 20,alignment: 0.5,duration: const Duration(seconds: 1));
+                            }),
+                      ],
+                    );
+                  },
+                ),
+              )
+          )
+              : widgetChatroomEmpty(context),
+        ),
+        Visibility(
+          visible: _isLoadMore,
+          child: Container(
+            width: 12,
+            height: 12,
+            margin: const EdgeInsets.only(top: 2),
+            child: const CircularProgressIndicator(
+              color: Color(0xFF6A79FF),
+              strokeWidth: 2,
+            ),
+          ),
+        ),
+        Visibility(
+          visible: !_isHideNotice,
+          child: AnimatedOpacity(
+            opacity: !_isHideNotice && _dataNotice.notice.isNotEmpty ? 1.0 : 0.0,
+            duration: const Duration(milliseconds: 500),
+            onEnd: () {
+              setState(() {
+                _isHideNotice = true;
+              });
+            },
+            child: WidgetChatroomNoticePin(_dataNotice, _isExpandNotice,
+                onToggle:() {
+                  setState(() {
+                    _isExpandNotice = !_isExpandNotice;
+                    closeKeyboard(context);
+                  });
+                },
+                onHide:() {
+                  setState(() {
+                    _isHideNotice = true;
+                    dbStore.setNoticeHide(_dataNotice, _isHideNotice);
+                  });
+                }
+            ),
+          ),
+        ),
+        AnimatedOpacity(
+          opacity: _showDateContainer ? 1.0 : 0.0,
+          duration: const Duration(milliseconds: 500),
+          child: widgetChatroomDatePin(context, _currentDate),
+        ),
+      ],
     );
   }
 
@@ -407,11 +439,12 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                       if (_showAttachment) {
                         _doAttachmentPickerClose();
                         _deselectPickedFiles(false);
+                        // showKeyboard(context, _messageFocusNode);
                       } else {
                         _doAttachmentPickerMin();
                         _doLoadMedia(true);
+                        closeKeyboard(context);
                       }
-                      closeKeyboard(context);
                     });
                   },
                   child: Padding(
@@ -467,7 +500,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                     ),
                   ),
                 ),
-              )
+              ),
             ],
           ),
         ],
@@ -475,7 +508,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
     );
   }
 
-  Widget _attachmentPicker(BuildContext context, State<StatefulWidget> state) {
+  Widget _attachmentPicker(BuildContext context, State<StatefulWidget> state, ScrollController scrollController) {
     return Container(
       height: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -484,11 +517,11 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
         onVerticalDragUpdate: _doVerticalDragUpdate,
         onTap: () {
           if (_bottomSheetHeight <= _bottomSheetHeightMin) {
-            _doAttachmentPickerFull();
+            // _doAttachmentPickerFull();
           } else {
-            _doAttachmentPickerMin();
+            // _doAttachmentPickerMin();
           }
-          closeKeyboard(context);
+          // closeKeyboard(context);
         },
         child: Column(
           children: [
@@ -506,11 +539,9 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                 ),
               ),
             ),
-            const SizedBox(
-              height: 10,
-            ),
+            const SizedBox(height: 10,),
             Visibility(
-              visible: _showAttachment && _bottomSheetHeight > _bottomSheetHeightMin,
+              visible: _showAttachment && _bottomSheetHeight > (_bottomSheetHeightMax - 65),
               child: AppBar(
                 backgroundColor: Colors.white,
                 title: Text(
@@ -563,7 +594,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                                     fontWeight: FontWeight.w400,
                                     height: 0,
                                     letterSpacing: -0.32,
-                                  )
+                                  ),
                               ),
                             ),
                           ),
@@ -624,7 +655,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                                   fontWeight: FontWeight.w400,
                                   height: 0,
                                   letterSpacing: -0.32,
-                                )
+                                ),
                             ),
                           ),
                         ),
@@ -669,15 +700,14 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                                 fontWeight: FontWeight.w500,
                                 height: 0,
                                 letterSpacing: -0.32,
-                              )),
+                              )
+                          ),
                         ],
                       ),
                     ),
                   ),
                 ),
-                const SizedBox(
-                  width: 4,
-                ),
+                const SizedBox(width: 4,),
                 Expanded(
                   child: Container(
                     width: double.infinity,
@@ -711,7 +741,8 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                                 fontWeight: FontWeight.w500,
                                 height: 0,
                                 letterSpacing: -0.32,
-                              )),
+                              )
+                          ),
                         ],
                       ),
                     ),
@@ -719,118 +750,108 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                 ),
               ],
             ),
-            const SizedBox(
-              height: 12,
-            ),
+            const SizedBox(height: 12,),
             Expanded(
-              child: _filesImages.isEmpty
-                  ? const Center(
-                child: SizedBox(
-                  width: 30,
-                  height: 30,
-                  child: CircularProgressIndicator(
-                    color: Color(0xFF6A79FF),
-                    strokeWidth: 3,
+              child: ScrollConfiguration(
+                behavior: const ScrollBehavior().copyWith(overscroll: false),
+                child: GridView.builder(
+                  controller: scrollController,
+                  physics: const ClampingScrollPhysics(),
+                  padding: const EdgeInsets.only(bottom: 24),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: isTablet(context) ? 6 : 3,
+                    crossAxisSpacing: 5,
+                    mainAxisSpacing: 5,
+                    childAspectRatio: 1,
                   ),
-                ),
-              )
-                  : GridView.builder(
-                controller: _scrollControllerAttachment,
-                physics: const ClampingScrollPhysics(),
-                padding: const EdgeInsets.only(bottom: 24),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: isTablet(context) ? 6 : 3,
-                  crossAxisSpacing: 5,
-                  mainAxisSpacing: 5,
-                  childAspectRatio: 1,
-                ),
-                itemCount: _filesImages.length,
-                itemBuilder: (context, index) {
-                  var fileImage = _filesImages[index];
-                  return Container(
-                    clipBehavior: Clip.antiAlias,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: InkWell(
-                      onTap: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) {
-                          return ScreenPhotoView(images: _filesImages, initialIndex: index, isSelectMode: true,
-                          onSelect: (bool isSelected, index, FileItem fileItem) {
-                            _doCheckEnableButtonFile();
-                          },);
-                        }));
-                      },
-                      onLongPress: () {
-                        state.setState(() {
-                          if(!fileImage.isSelected) {
-                            fileImage.isSelected = true;
-                            fileImage.timeSelected = DateTime.now().millisecondsSinceEpoch;
-                          }else {
-                            fileImage.isSelected = false;
-                            fileImage.timeSelected = 0;
-                          }
-                          closeKeyboard(context);
-                        });
-                        _doCheckEnableButtonFile();
-                      },
-                      child: Stack(
-                        children: [
-                          Image.file(
-                            fileImage.getPreviewFile(),
-                            width: double.infinity,
-                            height: double.infinity,
-                            fit: BoxFit.cover,
-                          ),
-                          Positioned(
-                            top: 3,
-                            right: 4,
-                            child: Visibility(
-                              visible: _selectMode,
-                              child: GestureDetector(
-                                onTap: () {
-                                  state.setState(() {
-                                    if(!fileImage.isSelected) {
-                                      fileImage.isSelected = true;
-                                      fileImage.timeSelected = DateTime.now().millisecondsSinceEpoch;
-                                    }else {
-                                      fileImage.isSelected = false;
-                                      fileImage.timeSelected = 0;
-                                    }
-                                    _doCheckEnableButtonFile();
-                                    closeKeyboard(context);
-                                  });
-                                },
-                                child: Container(
-                                  width: 26,
-                                  height: 26,
-                                  decoration: BoxDecoration(
-                                    color: fileImage.isSelected
-                                        ? colorPrimaryBlue
-                                        : colorMainGrey200
-                                        .withAlpha(150),
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
+                  itemCount: _filesImages.length,
+                  itemBuilder: (context, index) {
+                    var fileImage = _filesImages[index];
+                    return Container(
+                      clipBehavior: Clip.antiAlias,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: InkWell(
+                        onTap: () {
+                          Navigator.push(context, MaterialPageRoute(builder: (context) {
+                            return ScreenPhotoView(images: _filesImages, initialIndex: index, isSelectMode: true,
+                              onSelect: (bool isSelected, index, FileItem fileItem) {
+                                _doCheckEnableButtonFile();
+                              },);
+                          }));
+                        },
+                        onLongPress: () {
+                          state.setState(() {
+                            if(!fileImage.isSelected) {
+                              fileImage.isSelected = true;
+                              fileImage.timeSelected = DateTime.now().millisecondsSinceEpoch;
+                            }else {
+                              fileImage.isSelected = false;
+                              fileImage.timeSelected = 0;
+                            }
+                            closeKeyboard(context);
+                          });
+                          _doCheckEnableButtonFile();
+                        },
+                        child: Stack(
+                          children: [
+                            Image.file(
+                              fileImage.getPreviewFile(),
+                              width: double.infinity,
+                              height: double.infinity,
+                              fit: BoxFit.cover,
+                            ),
+                            Positioned(
+                              top: 3,
+                              right: 4,
+                              child: Visibility(
+                                visible: _selectMode,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    state.setState(() {
+                                      if(!fileImage.isSelected) {
+                                        fileImage.isSelected = true;
+                                        fileImage.timeSelected = DateTime.now().millisecondsSinceEpoch;
+                                      }else {
+                                        fileImage.isSelected = false;
+                                        fileImage.timeSelected = 0;
+                                      }
+                                      _doCheckEnableButtonFile();
+                                      closeKeyboard(context);
+                                    });
+                                  },
+                                  child: Container(
+                                    width: 26,
+                                    height: 26,
+                                    decoration: BoxDecoration(
                                       color: fileImage.isSelected
                                           ? colorPrimaryBlue
-                                          : const Color(0xFFE3E3E3),
-                                      width: 1,
+                                          : colorMainGrey200
+                                          .withAlpha(150),
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                        color: fileImage.isSelected
+                                            ? colorPrimaryBlue
+                                            : const Color(0xFFE3E3E3),
+                                        width: 1,
+                                      ),
                                     ),
+                                    child: fileImage.isSelected
+                                        ? const Icon(Icons.check,
+                                        size: 16, color: Colors.white)
+                                        : Container(),
                                   ),
-                                  child: fileImage.isSelected
-                                      ? const Icon(Icons.check,
-                                      size: 16, color: Colors.white)
-                                      : Container(),
                                 ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               ),
             ),
           ],
@@ -986,6 +1007,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
 
       myMessage1 = await _moduleMessages.sendMessageImages(_filesImages);
       myMessage1.isSending = false;
+      _doDeselectPickedImages();
 
       for (int i = 0; i < _listMessages.length; i++) {
         DataMessage myMessage = _listMessages[i];
@@ -1021,6 +1043,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
       });
 
       myMessages = await _moduleMessages.sendMessageMedia(_filesMedia);
+      _doDeselectPickedMedia();
 
       for (int j = 0; j < _listMessages.length; j++) {
         DataMessage myMessage = _listMessages[j];
@@ -1216,6 +1239,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
     setState(() {
       _bottomSheetHeight = _bottomSheetHeightMin;
     });
+    _draggableScrollableController.reset();
   }
 
   void _doAttachmentPickerClose() {
@@ -1244,7 +1268,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
       }else {
         if (_bottomSheetHeight < _bottomSheetHeightMin) {
           _doAttachmentPickerClose();
-      }else {
+        }else {
           _doAttachmentPickerMin();
         }
       }

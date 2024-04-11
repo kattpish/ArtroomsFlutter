@@ -81,7 +81,15 @@ Widget buildImageAttachments(
                         doOpenPhotoView(context, listImages, initialIndex: initialIndex);
                       }
                     },
-                    child: FadeInImage.assetNetwork(
+                    child: message.isSending && message.hasImagesThumb(index)
+                        ?
+                    Image.file(
+                      message.getImagesThumb(index),
+                      width: double.infinity,
+                      height: double.infinity,
+                      fit: BoxFit.cover,
+                    )
+                        : FadeInImage.assetNetwork(
                       placeholder:
                       'assets/images/chats/placeholder_photo.png',
                       image: attachment,
@@ -132,8 +140,8 @@ Widget buildImageAttachments(
                       BoxConstraints(maxWidth: screenWidth * 0.55),
                       child: Center(
                         child: Container(
-                          width: 30,
-                          height: 30,
+                          width: 20,
+                          height: 20,
                           alignment: Alignment.topRight,
                           child: const CircularProgressIndicator(
                             color: Color(0xFF6A79FF),

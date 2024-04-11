@@ -56,7 +56,7 @@ Widget attachmentSelected(BuildContext context, List<FileItem> filesImages, {req
                         ),
                       ),
                       child: Image.file(
-                        fileItem.file,
+                        fileItem.getPreviewFile(),
                         width: double.infinity,
                         height: double.infinity,
                         fit: BoxFit.cover,

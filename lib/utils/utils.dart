@@ -106,6 +106,10 @@ void showSnackBar(BuildContext context, String message) {
   ScaffoldMessenger.of(context).showSnackBar(snackBar);
 }
 
+void showKeyboard(BuildContext context, FocusNode focusNode) {
+  FocusScope.of(context).requestFocus(focusNode);
+}
+
 void closeKeyboard(BuildContext context) {
   FocusScope.of(context).requestFocus(FocusNode());
 }
