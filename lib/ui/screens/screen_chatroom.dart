@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:artrooms/beans/bean_notice.dart';
+import 'package:artrooms/listeners/scroll_noglow_behavior.dart';
 import 'package:artrooms/modules/module_notices.dart';
 import 'package:artrooms/ui/screens/screen_photo_view.dart';
 import 'package:artrooms/ui/widgets/widget_loader.dart';
@@ -225,45 +226,48 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                                     closeKeyboard(context);
                                     _doAttachmentPickerClose();
                                   },
-                                  child: ScrollablePositionedList.builder(
-                                    itemScrollController: _itemScrollController,
-                                    itemPositionsListener: _itemPositionsListener,
-                                    itemCount: _listMessages.length,
-                                    physics: const ScrollPhysicsBouncingFast(),
-                                    reverse: true,
-                                    itemBuilder: (context, index) {
-                                      _itemKeys[index] = GlobalKey();
-                                      final message = _listMessages[index];
-                                      final isLast = index == 0;
-                                      final messageNext = index > 0 ? _listMessages[index - 1] : DataMessage.empty();
-                                      final messagePrevious = index < _listMessages.length - 1 ? _listMessages[index + 1] : DataMessage.empty();
-                                      final isPreviousSame = messagePrevious.senderId == message.senderId;
-                                      final isNextSame = messageNext.senderId == message.senderId;
-                                      final isPreviousDate = messagePrevious.isSameDate(message);
-                                      final isPreviousSameDateTime = isPreviousSame && messagePrevious.isSameDateTime(message);
-                                      final isNextSameTime = isNextSame && messageNext.isSameTime(message);
-                                      return Column(
-                                        key: _itemKeys[index],
-                                        children: [
-                                          if(!isPreviousDate) widgetChatroomMessageDatePin(context, message.timestamp, index),
-                                          message.isMe
-                                                ? buildMyMessageBubble(context, index, this, message, _listMessages, isLast, isPreviousSameDateTime, isNextSameTime, isPreviousSameDateTime, isNextSameTime, _screenWidth,
-                                                    (){
-                                                  _replyMessage = message;
-                                                  _messageFocusNode.requestFocus();
-                                                }, (index){
-                                                  _itemScrollController.scrollTo(index: 20,alignment: 0.5,duration: const Duration(seconds: 1));
-                                                })
-                                                : buildOtherMessageBubble(context, index, this, message, _listMessages, isLast, isPreviousSame, isNextSame, isPreviousSameDateTime, isNextSameTime, _screenWidth,
-                                                    (){
-                                                  _replyMessage = message;
-                                                  _messageFocusNode.requestFocus();
-                                                }, (index){
-                                                  _itemScrollController.scrollTo(index: 20,alignment: 0.5,duration: const Duration(seconds: 1));
-                                                }),
-                                        ],
-                                      );
-                                    },
+                                  child: ScrollConfiguration(
+                                    behavior: const ScrollBehavior().copyWith(overscroll: false),
+                                    child: ScrollablePositionedList.builder(
+                                      itemScrollController: _itemScrollController,
+                                      itemPositionsListener: _itemPositionsListener,
+                                      itemCount: _listMessages.length,
+                                      // physics: const ScrollPhysicsBouncingFast(),
+                                      reverse: true,
+                                      itemBuilder: (context, index) {
+                                        _itemKeys[index] = GlobalKey();
+                                        final message = _listMessages[index];
+                                        final isLast = index == 0;
+                                        final messageNext = index > 0 ? _listMessages[index - 1] : DataMessage.empty();
+                                        final messagePrevious = index < _listMessages.length - 1 ? _listMessages[index + 1] : DataMessage.empty();
+                                        final isPreviousSame = messagePrevious.senderId == message.senderId;
+                                        final isNextSame = messageNext.senderId == message.senderId;
+                                        final isPreviousDate = messagePrevious.isSameDate(message);
+                                        final isPreviousSameDateTime = isPreviousSame && messagePrevious.isSameDateTime(message);
+                                        final isNextSameTime = isNextSame && messageNext.isSameTime(message);
+                                        return Column(
+                                          key: _itemKeys[index],
+                                          children: [
+                                            if(!isPreviousDate) widgetChatroomMessageDatePin(context, message.timestamp, index),
+                                            message.isMe
+                                                  ? buildMyMessageBubble(context, index, this, message, _listMessages, isLast, isPreviousSameDateTime, isNextSameTime, isPreviousSameDateTime, isNextSameTime, _screenWidth,
+                                                      (){
+                                                    _replyMessage = message;
+                                                    _messageFocusNode.requestFocus();
+                                                  }, (index){
+                                                    _itemScrollController.scrollTo(index: 20,alignment: 0.5,duration: const Duration(seconds: 1));
+                                                  })
+                                                  : buildOtherMessageBubble(context, index, this, message, _listMessages, isLast, isPreviousSame, isNextSame, isPreviousSameDateTime, isNextSameTime, _screenWidth,
+                                                      (){
+                                                    _replyMessage = message;
+                                                    _messageFocusNode.requestFocus();
+                                                  }, (index){
+                                                    _itemScrollController.scrollTo(index: 20,alignment: 0.5,duration: const Duration(seconds: 1));
+                                                  }),
+                                          ],
+                                        );
+                                      },
+                                    ),
                                   )
                               )
                                   : widgetChatroomEmpty(context),

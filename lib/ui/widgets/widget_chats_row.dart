@@ -24,7 +24,7 @@ Slidable widgetChatRow(BuildContext context, int index, DataChat dataChat, {
               onClickOption1();
               final controller = Slidable.of(context);
               await controller?.close(
-                duration: const Duration(milliseconds: 1500)
+                  duration: const Duration(milliseconds: 1000)
               );
             },
             backgroundColor: dataChat.isNotification ? colorMainGrey200 : colorMainGrey300,
@@ -34,7 +34,7 @@ Slidable widgetChatRow(BuildContext context, int index, DataChat dataChat, {
                 width: 24,
                 height: 24,
               color: dataChat.isNotification ? colorPrimaryPurple : Colors.white,
-            )
+            ),
         ),
         CustomSlidableAction(
           flex: 1,
@@ -98,7 +98,7 @@ Slidable widgetChatRow(BuildContext context, int index, DataChat dataChat, {
                     color: colorPrimaryBlue,
                     shape:  BoxShape.circle,
                   ),
-                  child:const Icon(Icons.star, size:10, color: Colors.white,),)
+                  child: const Icon(Icons.star, size:10, color: Colors.white,),)
             ),
           ),
         ],

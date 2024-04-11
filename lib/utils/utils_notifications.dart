@@ -21,9 +21,12 @@ Future<void> showNotificationMessage(BuildContext context, DataChat dataChat, Da
   if(!dataChat.isNotification) return;
   if(!dbStore.isNotificationMessage()) return;
   if(!message.isNew()) return;
+
   notifyState(dataChat);
 
-  return showNotification(context, dataChat.id.hashCode, dataChat.name, message.getSummary());
+  if(false) {
+    return showNotification(context, dataChat.id.hashCode, dataChat.name, message.getSummary());
+  }
 }
 
 Future<void> showNotificationDownload(BuildContext context, String filePath, String fileName) async {
