@@ -34,6 +34,7 @@ class _ScreenProfileState extends State<ScreenProfile> {
   String _name = "";
   String _nickName = "";
   MyProfile _profile = MyProfile();
+  bool _isLoadingChannelTak = false;
 
   @override
   void initState() {
@@ -255,8 +256,25 @@ class _ScreenProfileState extends State<ScreenProfile> {
                         letterSpacing: -0.32,
                       ),
                     ),
-                    onTap: () {
-                      doShowChannelTak();
+                    trailing: Visibility(
+                      visible: _isLoadingChannelTak,
+                      child: const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          color: Color(0xFF6A79FF),
+                          strokeWidth: 2,
+                        ),
+                      ),
+                    ),
+                    onTap: () async {
+                      setState(() {
+                        _isLoadingChannelTak = true;
+                      });
+                      await doShowChannelTak();
+                      setState(() {
+                        _isLoadingChannelTak = false;
+                      });
                     },
                   ),
                 ),

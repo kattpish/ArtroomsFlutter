@@ -295,7 +295,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                                           strokeWidth: 3,
                                         ),
                                       ),
-                                    )
+                                    ),
                                 ),
                               ],
                             ),
