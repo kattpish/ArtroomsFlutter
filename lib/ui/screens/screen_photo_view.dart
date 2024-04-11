@@ -65,23 +65,26 @@ class _ScreenPhotoView extends State<ScreenPhotoView> {
                       Center(
                         child: Stack(
                           children: [
-                            PageView.builder(
-                              controller: _pageController,
-                              itemCount: widget.images.length,
-                              physics: const ScrollPhysicsBouncingNormal(),
-                              onPageChanged: (int index) {
-                                setState(() {
-                                  currentIndex = index;
-                                });
-                              },
-                              itemBuilder: (context, index) {
-                                FileItem fileItem = widget.images[index];
-                                return Transform.rotate(
-                                    angle: rotationAngleDegrees * math.pi / 180,
-                                    alignment: FractionalOffset.center,
-                                    child: photoView(context, fileItem)
-                                );
-                              },
+                            ScrollConfiguration(
+                              behavior: const ScrollBehavior().copyWith(overscroll: false),
+                              child: PageView.builder(
+                                controller: _pageController,
+                                itemCount: widget.images.length,
+                                // physics: const ScrollPhysicsBouncingNormal(),
+                                onPageChanged: (int index) {
+                                  setState(() {
+                                    currentIndex = index;
+                                  });
+                                },
+                                itemBuilder: (context, index) {
+                                  FileItem fileItem = widget.images[index];
+                                  return Transform.rotate(
+                                      angle: rotationAngleDegrees * math.pi / 180,
+                                      alignment: FractionalOffset.center,
+                                      child: photoView(context, fileItem)
+                                  );
+                                },
+                              ),
                             ),
                           ],
                         ),
