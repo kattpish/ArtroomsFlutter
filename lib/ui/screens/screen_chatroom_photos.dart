@@ -155,7 +155,7 @@ class _ScreenChatroomPhotosState extends State<ScreenChatroomPhotos> {
                               fontWeight: FontWeight.w400,
                               height: 0,
                               letterSpacing: -0.32,
-                            )
+                            ),
                         ),
                       ),
                     ),
@@ -202,61 +202,64 @@ class _ScreenChatroomPhotosState extends State<ScreenChatroomPhotos> {
                   ? const WidgetLoader()
                   : _attachmentsImages.isEmpty
                   ? widgetChatroomPhotosEmpty(context)
-                  : GridView.builder(
+                  : ScrollConfiguration(
+                behavior: scrollBehavior,
+                    child: GridView.builder(
                 controller: _scrollController,
-                physics: const ScrollPhysicsBouncing(),
+                // physics: const ScrollPhysicsBouncing(),
                 padding: const EdgeInsets.only(bottom: 32),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: isTablet(context) ? 6 : 3,
-                  crossAxisSpacing: 1,
-                  mainAxisSpacing: 1,
-                  childAspectRatio: 1,
+                    crossAxisCount: isTablet(context) ? 6 : 3,
+                    crossAxisSpacing: 1,
+                    mainAxisSpacing: 1,
+                    childAspectRatio: 1,
                 ),
                 itemCount: _attachmentsImages.length + (_isLoadingMore ? 1 : 0),
                 itemBuilder: (context, index) {
 
-                  if (index == _attachmentsImages.length) {
-                    return const Center(
-                      child: SizedBox(
-                          width: 36,
-                          height: 36,
-                          child: CircularProgressIndicator(
-                            color: Color(0xFF6A79FF),
-                            strokeWidth: 4,
-                          )
-                      ),
-                    );
-                  }
+                    if (index == _attachmentsImages.length) {
+                      return const Center(
+                        child: SizedBox(
+                            width: 36,
+                            height: 36,
+                            child: CircularProgressIndicator(
+                              color: Color(0xFF6A79FF),
+                              strokeWidth: 4,
+                            )
+                        ),
+                      );
+                    }
 
-                  DataMessage attachmentImage = _attachmentsImages[index];
-                  return widgetChatroomPhotosCard(context, attachmentImage, _selectMode,
-                      onView: ()  async {
-                        setState(() {
-                          _isViewing = true;
-                        });
-                        List<FileItem> listImages = toFileItems(_attachmentsImages);
-                        await doOpenPhotoView(context, listImages, initialIndex: index);
-                        setState(() {
-                          _isViewing = false;
-                        });
-                      },
-                      onSelect: () {
-                        setState(() {
-                          if(!attachmentImage.isDownloading) {
-                            if(!attachmentImage.isSelected) {
-                              attachmentImage.isSelected = true;
-                              attachmentImage.timeSelected = DateTime.now().millisecondsSinceEpoch;
-                            }else {
-                              attachmentImage.isSelected = false;
-                              attachmentImage.timeSelected = 0;
+                    DataMessage attachmentImage = _attachmentsImages[index];
+                    return widgetChatroomPhotosCard(context, attachmentImage, _selectMode,
+                        onView: ()  async {
+                          setState(() {
+                            _isViewing = true;
+                          });
+                          List<FileItem> listImages = toFileItems(_attachmentsImages);
+                          await doOpenPhotoView(context, listImages, initialIndex: index);
+                          setState(() {
+                            _isViewing = false;
+                          });
+                        },
+                        onSelect: () {
+                          setState(() {
+                            if(!attachmentImage.isDownloading) {
+                              if(!attachmentImage.isSelected) {
+                                attachmentImage.isSelected = true;
+                                attachmentImage.timeSelected = DateTime.now().millisecondsSinceEpoch;
+                              }else {
+                                attachmentImage.isSelected = false;
+                                attachmentImage.timeSelected = 0;
+                              }
+                              _checkEnableButton();
                             }
-                            _checkEnableButton();
-                          }
-                        });
-                      }
-                  );
+                          });
+                        }
+                    );
                 },
               ),
+                  ),
             ),
           ),
           bottomNavigationBar: SafeArea(

@@ -34,6 +34,7 @@ class _ScreenProfileState extends State<ScreenProfile> {
   String _name = "";
   String _nickName = "";
   MyProfile _profile = MyProfile();
+  bool _isLoadingChannelTak = false;
 
   @override
   void initState() {
@@ -94,228 +95,111 @@ class _ScreenProfileState extends State<ScreenProfile> {
       ),
       backgroundColor: Colors.white,
       body: WidgetUiNotify(
-        child: SingleChildScrollView(
-          physics: const ScrollPhysicsBouncing(),
-          child: Column(
-            children: [
-              const SizedBox(height: 20),
-              Row(
-                children: [
-                  const SizedBox(width: 12),
-                  Container(
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                    ),
-                    clipBehavior: Clip.antiAlias,
-                    child: CircleAvatar(
-                      radius: 32,
-                      backgroundColor: Colors.transparent,
-                      child: FadeInImage.assetNetwork(
-                        placeholder: 'assets/images/profile/placeholder_photo.png',
-                        image: _profile.profileImg,
-                        fit: BoxFit.cover,
-                        height: 64,
-                        width: 64,
-                        fadeInDuration: const Duration(milliseconds: 100),
-                        fadeOutDuration: const Duration(milliseconds: 100),
-                        imageErrorBuilder: (context, error, stackTrace) {
-                          return Image.asset(
-                            'assets/images/profile/placeholder_photo.png',
-                            fit: BoxFit.cover,
-                          );
-                        },
+        child: ScrollConfiguration(
+          behavior: scrollBehavior,
+          child: SingleChildScrollView(
+            // physics: const ScrollPhysicsBouncing(),
+            child: Column(
+              children: [
+                const SizedBox(height: 20),
+                Row(
+                  children: [
+                    const SizedBox(width: 12),
+                    Container(
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
                       ),
-                    ),
-                  ),
-                  const SizedBox(width: 14),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        _name,
-                        style: const TextStyle(
-                          color: Color(0xFF111111),
-                          fontSize: 20,
-                          fontFamily: 'SUIT',
-                          fontWeight: FontWeight.w800,
-                          height: 0,
-                          letterSpacing: -0.40,
+                      clipBehavior: Clip.antiAlias,
+                      child: CircleAvatar(
+                        radius: 32,
+                        backgroundColor: Colors.transparent,
+                        child: FadeInImage.assetNetwork(
+                          placeholder: 'assets/images/profile/placeholder_photo.png',
+                          image: _profile.profileImg,
+                          fit: BoxFit.cover,
+                          height: 64,
+                          width: 64,
+                          fadeInDuration: const Duration(milliseconds: 100),
+                          fadeOutDuration: const Duration(milliseconds: 100),
+                          imageErrorBuilder: (context, error, stackTrace) {
+                            return Image.asset(
+                              'assets/images/profile/placeholder_photo.png',
+                              fit: BoxFit.cover,
+                            );
+                          },
                         ),
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        _nickName,
-                        style: const TextStyle(
-                          color: Color(0xFF565656),
-                          fontSize: 14,
-                          fontFamily: 'SUIT',
-                          fontWeight: FontWeight.w600,
-                          height: 0,
-                          letterSpacing: -0.28,
+                    ),
+                    const SizedBox(width: 14),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          _name,
+                          style: const TextStyle(
+                            color: Color(0xFF111111),
+                            fontSize: 20,
+                            fontFamily: 'SUIT',
+                            fontWeight: FontWeight.w800,
+                            height: 0,
+                            letterSpacing: -0.40,
+                          ),
                         ),
+                        const SizedBox(height: 4),
+                        Text(
+                          _nickName,
+                          style: const TextStyle(
+                            color: Color(0xFF565656),
+                            fontSize: 14,
+                            fontFamily: 'SUIT',
+                            fontWeight: FontWeight.w600,
+                            height: 0,
+                            letterSpacing: -0.28,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      elevation: 0,
+                      minimumSize: const Size(double.infinity, 48),
+                      backgroundColor: colorMainGrey150,
+                      foregroundColor: colorMainGrey700,
+                      padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 10),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
                       ),
-                    ],
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    elevation: 0,
-                    minimumSize: const Size(double.infinity, 48),
-                    backgroundColor: colorMainGrey150,
-                    foregroundColor: colorMainGrey700,
-                    padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 10),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
                     ),
-                  ),
-                  child: const Text(
-                    '프로필 수정',
-                    style: TextStyle(
-                      color: Color(0xFF565656),
-                      fontSize: 14,
-                      fontFamily: 'SUIT',
-                      fontWeight: FontWeight.w400,
-                      height: 0,
-                      letterSpacing: -0.28,
+                    child: const Text(
+                      '프로필 수정',
+                      style: TextStyle(
+                        color: Color(0xFF565656),
+                        fontSize: 14,
+                        fontFamily: 'SUIT',
+                        fontWeight: FontWeight.w400,
+                        height: 0,
+                        letterSpacing: -0.28,
+                      ),
                     ),
-                  ),
-                  onPressed: () async {
-                    await Navigator.push(context, MaterialPageRoute(builder: (context) {
-                      return const ScreenProfileEdit();
-                    }));
-                    _doFetchUserProfile();
-                  },
-                ),
-              ),
-              const SizedBox(height: 28),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: ListTile(
-                  title: const Text(
-                    '알림 및 소리',
-                    style: TextStyle(
-                      color: Color(0xFF1F1F1F),
-                      fontSize: 16,
-                      fontFamily: 'SUIT',
-                      fontWeight: FontWeight.w500,
-                      height: 0,
-                      letterSpacing: -0.32,
-                    ),
-                  ),
-                  onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) {
-                      return const ScreenNotificationsSounds();
-                    }));
-                  },
-                ),
-              ),
-              const Divider(
-                thickness: 1,
-                color: colorMainGrey150,
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: ListTile(
-                  title: const Text(
-                    '지원하기',
-                    style: TextStyle(
-                      color: Color(0xFF1F1F1F),
-                      fontSize: 16,
-                      fontFamily: 'SUIT',
-                      fontWeight: FontWeight.w500,
-                      height: 0,
-                      letterSpacing: -0.32,
-                    ),
-                  ),
-                  onTap: () {
-                    launchInBrowser(Uri(scheme: 'mailto', path: 'artrooms@artrooms.com', queryParameters: {
-                      'subject': '아트룸즈] 아티스트 지원',
-                      'body': '이름:\n작가명(한글):\n작가명(영문):\n휴대전화번호:\n레퍼런스 링크:',
-                    },));
-                  },
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: ListTile(
-                  title: const Text(
-                    '고객센터',
-                    style: TextStyle(
-                      color: Color(0xFF1F1F1F),
-                      fontSize: 16,
-                      fontFamily: 'SUIT',
-                      fontWeight: FontWeight.w500,
-                      height: 0,
-                      letterSpacing: -0.32,
-                    ),
-                  ),
-                  onTap: () {
-                    doShowChannelTak();
-                  },
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: ListTile(
-                  title: const Text(
-                    '약관 및 정책',
-                    style: TextStyle(
-                      color: Color(0xFF1F1F1F),
-                      fontSize: 16,
-                      fontFamily: 'SUIT',
-                      fontWeight: FontWeight.w500,
-                      height: 0,
-                      letterSpacing: -0.32,
-                    ),
-                  ),
-                  onTap: () {
-                    launchInBrowser(Uri(scheme: 'https', host: 'artrooms.com', path: 'policy/service'));
-                  },
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: ListTile(
-                  title: const Text(
-                    '버전정보',
-                    style: TextStyle(
-                      color: Color(0xFF1F1F1F),
-                      fontSize: 16,
-                      fontFamily: 'SUIT',
-                      fontWeight: FontWeight.w500,
-                      height: 0,
-                      letterSpacing: -0.32,
-                    ),
-                  ),
-                  onTap: () {
-
-                  },
-                  trailing: const Text(
-                    'v.24.01.01',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Color(0xFF6A79FF),
-                      fontFamily: 'SUIT',
-                      fontWeight: FontWeight.w600,
-                      height: 0,
-                      letterSpacing: -0.28,
-                    ),
+                    onPressed: () async {
+                      await Navigator.push(context, MaterialPageRoute(builder: (context) {
+                        return const ScreenProfileEdit();
+                      }));
+                      _doFetchUserProfile();
+                    },
                   ),
                 ),
-              ),
-              const Divider(
-                thickness: 1,
-                color: colorMainGrey150,
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: ListTile(
+                const SizedBox(height: 28),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: ListTile(
                     title: const Text(
-                      '로그아웃',
+                      '알림 및 소리',
                       style: TextStyle(
                         color: Color(0xFF1F1F1F),
                         fontSize: 16,
@@ -326,19 +210,156 @@ class _ScreenProfileState extends State<ScreenProfile> {
                       ),
                     ),
                     onTap: () {
-                      DBStore().logout();
-                      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) {
-                        return const ScreenLogin(onPageEmail: "",);
+                      Navigator.push(context, MaterialPageRoute(builder: (context) {
+                        return const ScreenNotificationsSounds();
                       }));
-                    }
+                    },
+                  ),
                 ),
-              ),
-              const Divider(
-                thickness: 1,
-                color: colorMainGrey150,
-              ),
-              const SizedBox(height: 20),
-            ],
+                const Divider(
+                  thickness: 1,
+                  color: colorMainGrey150,
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: ListTile(
+                    title: const Text(
+                      '지원하기',
+                      style: TextStyle(
+                        color: Color(0xFF1F1F1F),
+                        fontSize: 16,
+                        fontFamily: 'SUIT',
+                        fontWeight: FontWeight.w500,
+                        height: 0,
+                        letterSpacing: -0.32,
+                      ),
+                    ),
+                    onTap: () {
+                      launchInBrowser(Uri(scheme: 'mailto', path: 'artrooms@artrooms.com', queryParameters: {
+                        'subject': '아트룸즈] 아티스트 지원',
+                        'body': '이름:\n작가명(한글):\n작가명(영문):\n휴대전화번호:\n레퍼런스 링크:',
+                      },));
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: ListTile(
+                    title: const Text(
+                      '고객센터',
+                      style: TextStyle(
+                        color: Color(0xFF1F1F1F),
+                        fontSize: 16,
+                        fontFamily: 'SUIT',
+                        fontWeight: FontWeight.w500,
+                        height: 0,
+                        letterSpacing: -0.32,
+                      ),
+                    ),
+                    trailing: Visibility(
+                      visible: _isLoadingChannelTak,
+                      child: const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          color: Color(0xFF6A79FF),
+                          strokeWidth: 2,
+                        ),
+                      ),
+                    ),
+                    onTap: () async {
+                      setState(() {
+                        _isLoadingChannelTak = true;
+                      });
+                      await doShowChannelTak();
+                      setState(() {
+                        _isLoadingChannelTak = false;
+                      });
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: ListTile(
+                    title: const Text(
+                      '약관 및 정책',
+                      style: TextStyle(
+                        color: Color(0xFF1F1F1F),
+                        fontSize: 16,
+                        fontFamily: 'SUIT',
+                        fontWeight: FontWeight.w500,
+                        height: 0,
+                        letterSpacing: -0.32,
+                      ),
+                    ),
+                    onTap: () {
+                      launchInBrowser(Uri(scheme: 'https', host: 'artrooms.com', path: 'policy/service'));
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: ListTile(
+                    title: const Text(
+                      '버전정보',
+                      style: TextStyle(
+                        color: Color(0xFF1F1F1F),
+                        fontSize: 16,
+                        fontFamily: 'SUIT',
+                        fontWeight: FontWeight.w500,
+                        height: 0,
+                        letterSpacing: -0.32,
+                      ),
+                    ),
+                    onTap: () {
+
+                    },
+                    trailing: const Text(
+                      'v.24.01.01',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Color(0xFF6A79FF),
+                        fontFamily: 'SUIT',
+                        fontWeight: FontWeight.w600,
+                        height: 0,
+                        letterSpacing: -0.28,
+                      ),
+                    ),
+                  ),
+                ),
+                const Divider(
+                  thickness: 1,
+                  color: colorMainGrey150,
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: ListTile(
+                      title: const Text(
+                        '로그아웃',
+                        style: TextStyle(
+                          color: Color(0xFF1F1F1F),
+                          fontSize: 16,
+                          fontFamily: 'SUIT',
+                          fontWeight: FontWeight.w500,
+                          height: 0,
+                          letterSpacing: -0.32,
+                        ),
+                      ),
+                      onTap: () {
+                        DBStore().logout();
+                        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) {
+                          return const ScreenLogin(onPageEmail: "",);
+                        }));
+                      }
+                  ),
+                ),
+                const Divider(
+                  thickness: 1,
+                  color: colorMainGrey150,
+                ),
+                const SizedBox(height: 20),
+              ],
+            ),
           ),
         ),
       ),

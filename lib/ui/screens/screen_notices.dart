@@ -107,113 +107,116 @@ class _ScreenNoticesState extends State<ScreenNotices> {
           child: SafeArea(
             child: Stack(
               children: [
-                ListView(
-                  physics: const ScrollPhysicsBouncing(),
-                  children: _notifications.map((notice) {
-                    return Card(
-                      margin: const EdgeInsets.only(bottom: 8.0),
-                      elevation: 0,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children:  [
-                          Divider(
-                            thickness: notice.id > 0 ? 1.0 : 0.0,
-                            color: notice.id > 0 ? colorMainGrey200 : Colors.transparent,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
-                            child: Row(
-                              children: [
-                                Text(
-                                  notice.getDate(),
-                                  style: const TextStyle(
-                                    color: colorPrimaryBlue,
-                                    fontSize: 14,
-                                    fontFamily: 'SUIT',
-                                    fontWeight: FontWeight.w600,
-                                    height: 0,
-                                    letterSpacing: -0.28,
-                                  ),
-                                ),
-                                Visibility(
-                                    visible: notice.noticeable,
-                                    child: Container(
-                                      padding: const EdgeInsets.all(2.0),
-                                      margin: const EdgeInsets.all(6.0),
-                                      decoration: const BoxDecoration(
-                                        color: colorPrimaryBlue,
-                                        shape:  BoxShape.circle,
-                                      ),
-                                      child:const Icon(Icons.star, size:10, color: Colors.white,),)
-                                ),
-                                Text(
-                                  notice.noticeable ? "표시된 공지" : "",
-                                  style: const TextStyle(
-                                    color: Color(0xFF7D7D7D),
-                                    fontSize: 12,
-                                    fontFamily: 'SUIT',
-                                    fontWeight: FontWeight.w400,
-                                    height: 0,
-                                    letterSpacing: -0.24,
-                                  ),
-                                )
-                              ],
+                ScrollConfiguration(
+                  behavior: scrollBehavior,
+                  child: ListView(
+                    // physics: const ScrollPhysicsBouncing(),
+                    children: _notifications.map((notice) {
+                      return Card(
+                        margin: const EdgeInsets.only(bottom: 8.0),
+                        elevation: 0,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children:  [
+                            Divider(
+                              thickness: notice.id > 0 ? 1.0 : 0.0,
+                              color: notice.id > 0 ? colorMainGrey200 : Colors.transparent,
                             ),
-                          ),
-                          const Divider(
-                            thickness: 1.0,
-                            color: colorMainGrey200,
-                          ),
-                          Container(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  notice.notice,
-                                  style: const TextStyle(
-                                    color: colorMainGrey900,
-                                    fontSize: 16,
-                                    fontFamily: 'SUIT',
-                                    fontWeight: FontWeight.w400,
-                                    letterSpacing: -0.32,
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    notice.getDate(),
+                                    style: const TextStyle(
+                                      color: colorPrimaryBlue,
+                                      fontSize: 14,
+                                      fontFamily: 'SUIT',
+                                      fontWeight: FontWeight.w600,
+                                      height: 0,
+                                      letterSpacing: -0.28,
+                                    ),
                                   ),
-                                  maxLines: 6,
-                                ),
-                                InkWell(
-                                  onTap: () {
-                                    Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                      return ScreenNoticeDetails(dataNotice: notice);
-                                    }));
-                                  },
-                                  child: Column(
-                                    children: [
-                                      const SizedBox(height: 16,),
-                                      Visibility(
-                                        visible: notice.notice.length > 200,
-                                        child: const Text(
-                                          "상세보기",
-                                          style: TextStyle(
-                                            color: colorMainGrey500,
-                                            fontSize: 14,
-                                            fontFamily: 'SUIT',
-                                            fontWeight: FontWeight.w300,
-                                            letterSpacing: -0.28,
+                                  Visibility(
+                                      visible: notice.noticeable,
+                                      child: Container(
+                                        padding: const EdgeInsets.all(2.0),
+                                        margin: const EdgeInsets.all(6.0),
+                                        decoration: const BoxDecoration(
+                                          color: colorPrimaryBlue,
+                                          shape:  BoxShape.circle,
+                                        ),
+                                        child:const Icon(Icons.star, size:10, color: Colors.white,),)
+                                  ),
+                                  Text(
+                                    notice.noticeable ? "표시된 공지" : "",
+                                    style: const TextStyle(
+                                      color: Color(0xFF7D7D7D),
+                                      fontSize: 12,
+                                      fontFamily: 'SUIT',
+                                      fontWeight: FontWeight.w400,
+                                      height: 0,
+                                      letterSpacing: -0.24,
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                            const Divider(
+                              thickness: 1.0,
+                              color: colorMainGrey200,
+                            ),
+                            Container(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    notice.notice,
+                                    style: const TextStyle(
+                                      color: colorMainGrey900,
+                                      fontSize: 16,
+                                      fontFamily: 'SUIT',
+                                      fontWeight: FontWeight.w400,
+                                      letterSpacing: -0.32,
+                                    ),
+                                    maxLines: 6,
+                                  ),
+                                  InkWell(
+                                    onTap: () {
+                                      Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                        return ScreenNoticeDetails(dataNotice: notice);
+                                      }));
+                                    },
+                                    child: Column(
+                                      children: [
+                                        const SizedBox(height: 16,),
+                                        Visibility(
+                                          visible: notice.notice.length > 200,
+                                          child: const Text(
+                                            "상세보기",
+                                            style: TextStyle(
+                                              color: colorMainGrey500,
+                                              fontSize: 14,
+                                              fontFamily: 'SUIT',
+                                              fontWeight: FontWeight.w300,
+                                              letterSpacing: -0.28,
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 8,),
-                        ],
-                      ),
-                    );
-                  }).toList(),
+                            const SizedBox(height: 8,),
+                          ],
+                        ),
+                      );
+                    }).toList(),
+                  ),
                 ),
                 Visibility(
                     visible: _isLoading,

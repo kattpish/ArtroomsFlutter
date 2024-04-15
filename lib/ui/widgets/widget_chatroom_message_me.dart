@@ -37,7 +37,6 @@ Widget buildMyMessageBubble(
           Column(
             children: [
               Container(
-                // color: Colors.red,
                 margin: const EdgeInsets.symmetric(vertical: 1.2),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
@@ -67,8 +66,7 @@ Widget buildMyMessageBubble(
                               color:
                               colorMainGrey500,
                             ),
-                            title: const Text(
-                                "답장"),
+                            title: const Text("답장"),
                             onPressed: () {
                               onReplyClick();
                             }),
@@ -79,15 +77,14 @@ Widget buildMyMessageBubble(
                               color:
                               colorMainGrey500,
                             ),
-                            title: const Text(
-                                "복사"),
+                            title: const Text("복사"),
                             onPressed:
                                 () async {
                               await Clipboard.setData(
-                                  ClipboardData(
-                                      text: message
-                                          .content));
-                            })
+                                  ClipboardData(text: message.content)
+                              );
+                            }
+                        ),
                       ],
                       blurSize: 0.0,
                       menuOffset: 10.0,
@@ -95,7 +92,8 @@ Widget buildMyMessageBubble(
                       80.0,
                       menuBoxDecoration:
                       const BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(15.0))),
+                          borderRadius: BorderRadius.all(Radius.circular(15.0))
+                      ),
                       child: Container(
                         constraints:
                         BoxConstraints(maxWidth: screenWidth * 0.55),
@@ -106,7 +104,8 @@ Widget buildMyMessageBubble(
                               topLeft: const Radius.circular(24),
                               topRight: Radius.circular(isPreviousSameDateTime ? 24 : 2),
                               bottomLeft: const Radius.circular(24),
-                              bottomRight: const Radius.circular(24)),
+                              bottomRight: const Radius.circular(24)
+                          ),
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,

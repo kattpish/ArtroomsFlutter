@@ -34,11 +34,6 @@ class DBStore {
     return userId ?? 0;
   }
 
-  String getUid() {
-    String? uid = sharedPreferences.getString("email");
-    return uid ?? "";
-  }
-
   String getEmail() {
     String? email = sharedPreferences.getString("email");
     return email ?? "";
@@ -47,6 +42,11 @@ class DBStore {
   String getName() {
     String? name = sharedPreferences.getString("name");
     return name ?? "";
+  }
+
+  String getPhoneNumber() {
+    String? phoneNumber = sharedPreferences.getString("phoneNumber");
+    return phoneNumber ?? "";
   }
 
   String getNickName() {

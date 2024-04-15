@@ -13,7 +13,6 @@ dependencies:
   flutter_slidable: ^3.0.1
   url_launcher: ^6.1.14
   sendbird_sdk: ^3.0.11
-  # sendbird_chat_sdk: ^4.2.8
   intl: 0.18.1
   http: ^0.13.3
   shared_preferences: ^2.0.15
@@ -30,9 +29,7 @@ dependencies:
   firebase_core: ^2.10.0
   channel_talk_flutter: ^2.4.0
   audioplayers: ^5.2.1
-  toast: ^0.2.9
-  rich_text_editor_controller: ^0.0.5
-  flutter_top_blocked_bouncing_scroll_physics: ^1.0.0
+  cached_network_image: ^3.3.1
 
 dev_dependencies:
   flutter_test:

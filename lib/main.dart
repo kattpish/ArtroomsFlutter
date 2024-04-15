@@ -12,7 +12,6 @@ import 'package:intl/date_symbols.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'listeners/listener_route_observer.dart';
-import 'modules/module_media.dart';
 import 'modules/module_push_notifications.dart';
 import 'modules/module_sendbird.dart';
 
@@ -20,9 +19,8 @@ import 'modules/module_sendbird.dart';
 late final SharedPreferences sharedPreferences;
 late final DBStore dbStore;
 late final ModuleSendBird moduleSendBird;
-final ListenerRouteObserver listenerRouteObserver = ListenerRouteObserver();
-ModuleMedia moduleMedia = ModuleMedia();
-ModulePushNotifications pushNotifications = ModulePushNotifications();
+late final ListenerRouteObserver listenerRouteObserver;
+late final ModulePushNotifications modulePushNotifications;
 
 Future<void> main() async {
 
@@ -30,7 +28,7 @@ Future<void> main() async {
 
   runApp(
     MaterialApp(
-      home: DBStore().isLoggedIn() ?  const ScreenChats() : const ScreenLogin(onPageEmail: ""),
+      home: DBStore().isLoggedIn() ? const ScreenChats() : const ScreenLogin(onPageEmail: ""),
       debugShowCheckedModeBanner: false,
       navigatorObservers: [listenerRouteObserver],
     ),
@@ -53,9 +51,10 @@ Future<void> init() async {
   sharedPreferences = await SharedPreferences.getInstance();
   dbStore = DBStore();
   moduleSendBird = ModuleSendBird();
-  await moduleSendBird.initSendbird();
+  listenerRouteObserver = ListenerRouteObserver();
+  modulePushNotifications = ModulePushNotifications();
 
-  pushNotifications.init();
+  await moduleSendBird.initSendbird();
 
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
   var initializationSettingsAndroid = const AndroidInitializationSettings('@drawable/icon_notification');

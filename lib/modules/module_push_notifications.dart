@@ -8,6 +8,9 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:artrooms/utils/utils_permissions.dart';
+import 'package:sendbird_sdk/constant/enums.dart';
+import 'package:sendbird_sdk/core/models/user.dart';
+import 'package:sendbird_sdk/sdk/sendbird_sdk_api.dart';
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -15,10 +18,10 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   NotificationService.showNotification(message.notification?.title ?? '', message.notification?.body ?? '');
 }
 
- class ModulePushNotifications {
+class ModulePushNotifications {
 
 
-  Future<void> init() async {
+  Future<void> init(User user) async {
 
     try {
 
@@ -43,7 +46,9 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
         }
         NotificationService.showNotification(message.notification?.title ?? '', message.notification?.body ?? '');
       });
-      // await SendbirdChat.unregisterPushTokenAll();
+
+      register(user);
+
     } catch (e) {
       if (kDebugMode) {
         print(e);
@@ -51,30 +56,45 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     }
 
   }
-  //
-  // PushTokenType _getPushTokenType() {
-  //   PushTokenType pushTokenType;
-  //   if (Platform.isAndroid) {
-  //     pushTokenType = PushTokenType.fcm;
-  //   } else if (Platform.isIOS) {
-  //     pushTokenType = PushTokenType.apns;
-  //   }else {
-  //     pushTokenType = PushTokenType.fcm;
-  //   }
-  //   return pushTokenType;
-  // }
 
-  // static Future<String> getToken() async {
-  //   String? token;
-  //   if (Platform.isAndroid) {
-  //     token = await FirebaseMessaging.instance.getToken();
-  //   } else if (Platform.isIOS) {
-  //     token = await FirebaseMessaging.instance.getAPNSToken();
-  //   }
-  //   if (kDebugMode) {
-  //     print('fcm token $token');
-  //   }
-  //   return token ?? "";
-  // }
+  Future<void> register(User user) async {
+
+    PushTokenRegistrationStatus status = await SendbirdSdk().registerPushToken(
+      type: getPushTokenType(),
+      token: await getToken(),
+      unique: true,
+    );
+
+    if (kDebugMode) {
+      print(' PushTokenRegistrationStatus -> $status');
+      print('Connected as ${user.userId}');
+    }
+
+  }
+
+  PushTokenType getPushTokenType() {
+    PushTokenType pushTokenType;
+    if (Platform.isAndroid) {
+      pushTokenType = PushTokenType.fcm;
+    } else if (Platform.isIOS) {
+      pushTokenType = PushTokenType.apns;
+    }else {
+      pushTokenType = PushTokenType.fcm;
+    }
+    return pushTokenType;
+  }
+
+  Future<String> getToken() async {
+    String? token;
+    if (Platform.isAndroid) {
+      token = await FirebaseMessaging.instance.getToken();
+    } else if (Platform.isIOS) {
+      token = await FirebaseMessaging.instance.getAPNSToken();
+    }
+    if (kDebugMode) {
+      print('fcm token $token');
+    }
+    return token ?? "";
+  }
 
 }

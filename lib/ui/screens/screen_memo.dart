@@ -117,16 +117,16 @@ class _ScreenMemoState extends State<ScreenMemo> {
               onPressed: () {
                 _doSaveMemo();
               },
-              child:const Text(
-                  '저장',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontFamily: 'SUIT',
-                    fontWeight: FontWeight.w700,
-                    height: 0,
-                    letterSpacing: -0.32,
-                  )
+              child: const Text(
+                '저장',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontFamily: 'SUIT',
+                  fontWeight: FontWeight.w700,
+                  height: 0,
+                  letterSpacing: -0.32,
+                ),
               ),
             ),
           ),

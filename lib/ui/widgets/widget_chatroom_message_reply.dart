@@ -21,19 +21,19 @@ class WidgetChatroomMessageReply extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return IntrinsicHeight(
-    child: Row(
-      children: [
-        Container(
-          color: colorPrimaryPurple,
-          width: 0,
-        ),
-        const SizedBox(width: 8),
-        Expanded(
+      child: Row(
+        children: [
+          Container(
+            color: colorPrimaryPurple,
+            width: 0,
+          ),
+          const SizedBox(width: 8),
+          Expanded(
             child: buildReplyMessage(),
-        ),
-      ],
-    ),
-  );
+          ),
+        ],
+      ),
+    );
   }
 
   Widget buildReplyMessage() {
@@ -98,17 +98,17 @@ Widget buildReply(int index, DataMessage message, bool isMe, Null Function(int i
           onReplyClick(index);
         },
         child: Container(
-            decoration: const BoxDecoration(
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(12),
-                topRight: Radius.circular(12),
-              ),
+          decoration: const BoxDecoration(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(12),
+              topRight: Radius.circular(12),
             ),
-            child: WidgetChatroomMessageFlow(
-              message: message,
-              isMe: isMe,
-              key: null,
-            ),
+          ),
+          child: WidgetChatroomMessageFlow(
+            message: message,
+            isMe: isMe,
+            key: null,
+          ),
         ),
       ),
       Container(

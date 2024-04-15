@@ -3,12 +3,14 @@ import 'package:artrooms/ui/widgets/widget_chatroom_message_attachment_file.dart
 import 'package:artrooms/ui/widgets/widget_chatroom_message_attachment_photos.dart';
 import 'package:artrooms/ui/widgets/widget_chatroom_message_reply.dart';
 import 'package:artrooms/ui/widgets/widget_chatroom_message_text.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:focused_menu/focused_menu.dart';
 import 'package:focused_menu/modals.dart';
 
 import '../../beans/bean_message.dart';
+import '../../utils/utils_media.dart';
 import '../theme/theme_colors.dart';
 
 
@@ -51,22 +53,22 @@ Widget buildOtherMessageBubble(
                   clipBehavior: Clip.antiAlias,
                   child: CircleAvatar(
                     radius: 15,
-                    backgroundColor: isPreviousSame
-                        ? Colors.transparent
-                        : colorMainGrey200,
-                    child: FadeInImage.assetNetwork(
-                      placeholder: message.isArtrooms
-                          ? 'assets/images/chats/chat_artrooms.png'
-                          : 'assets/images/chats/placeholder_photo.png',
-                      image: message.profilePictureUrl,
+                    backgroundColor: isPreviousSame ? Colors.transparent : colorMainGrey200,
+                    child: CachedNetworkImage(
+                      imageUrl: message.profilePictureUrl,
+                      cacheManager: customCacheManager,
                       fit: BoxFit.cover,
                       fadeInDuration: const Duration(milliseconds: 100),
                       fadeOutDuration: const Duration(milliseconds: 100),
-                      imageErrorBuilder: (context, error, stackTrace) {
+                      placeholder: (context, url) {
                         return Image.asset(
-                          message.isArtrooms
-                              ? 'assets/images/chats/chat_artrooms.png'
-                              : 'assets/images/chats/placeholder_photo.png',
+                          message.isArtrooms ? 'assets/images/chats/chat_artrooms.png' : 'assets/images/chats/placeholder_photo.png',
+                          fit: BoxFit.cover,
+                        );
+                      },
+                      errorWidget: (context, url, error) {
+                        return Image.asset(
+                          message.isArtrooms ? 'assets/images/chats/chat_artrooms.png' : 'assets/images/chats/placeholder_photo.png',
                           fit: BoxFit.cover,
                         );
                       },

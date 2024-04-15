@@ -13,5 +13,6 @@ Widget buildReplyForTextField(DataMessage? replyMessage, VoidCallback cancelRepl
         message: replyMessage!,
         onCancelReply: cancelReply,
         key: null,
-      ));
+      ),
+  );
 }
