@@ -155,7 +155,7 @@ class _ScreenChatroomPhotosState extends State<ScreenChatroomPhotos> {
                               fontWeight: FontWeight.w400,
                               height: 0,
                               letterSpacing: -0.32,
-                            )
+                            ),
                         ),
                       ),
                     ),

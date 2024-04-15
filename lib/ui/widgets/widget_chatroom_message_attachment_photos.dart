@@ -91,43 +91,25 @@ Widget buildImageAttachments(
                       height: double.infinity,
                       fit: BoxFit.cover,
                     )
-                        :
-
-                    CachedNetworkImage(
+                        : CachedNetworkImage(
                       imageUrl: attachment,
                       cacheManager: customCacheManager,
-                      placeholder: (context, url) {
-                        return Image.asset(
-                        'assets/images/chats/placeholder_photo.png',
-                        fit: BoxFit.cover,
-                      );
-                      },
-                      errorWidget: (context, url, error) {
-                        return Image.asset(
-                        'assets/images/chats/placeholder_photo.png',
-                        fit: BoxFit.cover,
-                      );
-                      },
                       fit: BoxFit.cover,
                       fadeInDuration: const Duration(milliseconds: 100),
                       fadeOutDuration: const Duration(milliseconds: 100),
+                      placeholder: (context, url) {
+                        return Image.asset(
+                          'assets/images/chats/placeholder_photo.png',
+                          fit: BoxFit.cover,
+                        );
+                      },
+                      errorWidget: (context, url, error) {
+                        return Image.asset(
+                          'assets/images/chats/placeholder_photo.png',
+                          fit: BoxFit.cover,
+                        );
+                      },
                     ),
-
-                    // FadeInImage.assetNetwork(
-                    //   placeholder:
-                    //   'assets/images/chats/placeholder_photo.png',
-                    //   image: attachment,
-                    //   fit: BoxFit.cover,
-                    //   fadeInDuration: const Duration(milliseconds: 100),
-                    //   fadeOutDuration: const Duration(milliseconds: 100),
-                    //   imageErrorBuilder: (context, error, stackTrace) {
-                    //     return Image.asset(
-                    //       'assets/images/chats/placeholder_photo.png',
-                    //       fit: BoxFit.cover,
-                    //     );
-                    //   },
-                    // ),
-
                   ),
                 ),
               ),

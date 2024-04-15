@@ -59,7 +59,7 @@ class DataMessage {
         senderId = baseMessage.sender?.userId ?? "",
         senderName = baseMessage.sender?.nickname ?? "",
         timestamp = baseMessage.createdAt,
-        isMe = baseMessage.sender?.userId.toString() == dbStore.getUid(),
+        isMe = baseMessage.sender?.userId.toString() == dbStore.getEmail(),
         parentMessageId = baseMessage.parentMessageId,
         data = baseMessage.data != null ? baseMessage.data! : "",
         profilePictureUrl = baseMessage.sender?.profileUrl ?? ""

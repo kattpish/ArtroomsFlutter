@@ -12,7 +12,6 @@ import 'package:intl/date_symbols.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'listeners/listener_route_observer.dart';
-import 'modules/module_media.dart';
 import 'modules/module_push_notifications.dart';
 import 'modules/module_sendbird.dart';
 
@@ -29,7 +28,7 @@ Future<void> main() async {
 
   runApp(
     MaterialApp(
-      home: DBStore().isLoggedIn() ?  const ScreenChats() : const ScreenLogin(onPageEmail: ""),
+      home: DBStore().isLoggedIn() ? const ScreenChats() : const ScreenLogin(onPageEmail: ""),
       debugShowCheckedModeBanner: false,
       navigatorObservers: [listenerRouteObserver],
     ),

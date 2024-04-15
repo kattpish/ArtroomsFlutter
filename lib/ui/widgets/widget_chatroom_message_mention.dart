@@ -18,5 +18,6 @@ Widget buildMentions({required Null Function(Member member) onCancelReply, requi
         onCancelReply: (Member member) {
           onCancelReply(member);
         },
-      ));
+      ),
+  );
 }
