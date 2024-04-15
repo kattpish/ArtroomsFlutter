@@ -71,72 +71,74 @@ class _ScreenNotificationsSoundsState extends State<ScreenNotificationsSounds> {
         ),
         backgroundColor: colorMainScreen,
         body: WidgetUiNotify(
-          child: ScrollConfiguration(
-            behavior: scrollBehavior,
-            child: SingleChildScrollView(
-              // physics: const ScrollPhysicsBouncing(),
-              child: Column(
-                children: [
-                  const SizedBox(height: 16),
-                  Column(
-                    children: _notifications.map((notification) {
-                      int index = _notifications.indexOf(notification);
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                        child: ListTile(
-                          title: Text(
-                            notification['title'],
-                            style: const TextStyle(
-                              color: Color(0xFF111111),
-                              fontSize: 16,
-                              fontFamily: 'SUIT',
-                              fontWeight: FontWeight.w400,
-                              height: 0,
-                              letterSpacing: -0.32,
+          child: StretchingOverscrollIndicator(
+            axisDirection: AxisDirection.down,
+            child: ScrollConfiguration(
+              behavior: scrollBehavior,
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    const SizedBox(height: 16),
+                    Column(
+                      children: _notifications.map((notification) {
+                        int index = _notifications.indexOf(notification);
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: ListTile(
+                            title: Text(
+                              notification['title'],
+                              style: const TextStyle(
+                                color: Color(0xFF111111),
+                                fontSize: 16,
+                                fontFamily: 'SUIT',
+                                fontWeight: FontWeight.w400,
+                                height: 0,
+                                letterSpacing: -0.32,
+                              ),
+                            ),
+                            trailing: widgetNotificationItemSwitch(notification['enabled'], index,
+                                onTap: (index, isEnabled) {
+                                  _doToggleNotification(index, isEnabled);
+                                }
                             ),
                           ),
-                          trailing: widgetNotificationItemSwitch(notification['enabled'], index,
-                              onTap: (index, isEnabled) {
-                                _doToggleNotification(index, isEnabled);
-                              }
+                        );
+                      }).toList(),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: ListTile(
+                        title: const Text(
+                          '알림음',
+                          style: TextStyle(
+                            color: Color(0xFF111111),
+                            fontSize: 16,
+                            fontFamily: 'SUIT',
+                            fontWeight: FontWeight.w400,
+                            height: 0,
+                            letterSpacing: -0.32,
                           ),
                         ),
-                      );
-                    }).toList(),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: ListTile(
-                      title: const Text(
-                        '알림음',
-                        style: TextStyle(
-                          color: Color(0xFF111111),
-                          fontSize: 16,
-                          fontFamily: 'SUIT',
-                          fontWeight: FontWeight.w400,
-                          height: 0,
-                          letterSpacing: -0.32,
-                        ),
-                      ),
-                      onTap: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) {
-                          return const ScreenNotifications();
-                        }));
-                      },
-                      trailing: const Text(
-                        '아룸 (기본)',
-                        style: TextStyle(
-                          color: colorPrimaryBlue400,
-                          fontSize: 14,
-                          fontFamily: 'SUIT',
-                          fontWeight: FontWeight.w400,
-                          height: 0,
-                          letterSpacing: -0.32,
+                        onTap: () {
+                          Navigator.push(context, MaterialPageRoute(builder: (context) {
+                            return const ScreenNotifications();
+                          }));
+                        },
+                        trailing: const Text(
+                          '아룸 (기본)',
+                          style: TextStyle(
+                            color: colorPrimaryBlue400,
+                            fontSize: 14,
+                            fontFamily: 'SUIT',
+                            fontWeight: FontWeight.w400,
+                            height: 0,
+                            letterSpacing: -0.32,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),

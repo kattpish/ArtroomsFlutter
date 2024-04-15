@@ -87,22 +87,27 @@ Widget buildAttachment(BuildContext context, State state, DataMessage message, s
               ),
             ],
           ),
-          Visibility(
-              visible: message.isSending,
-              child: Container(
-                constraints: BoxConstraints(maxWidth: screenWidth * 0.55),
-                child: Center(
-                  child: Container(
-                    width: 10,
-                    height: 10,
-                    alignment: Alignment.bottomRight,
-                    child: const CircularProgressIndicator(
-                      color: Color(0xFF6A79FF),
-                      strokeWidth: 2,
+          Center(
+            child: Visibility(
+                visible: message.isSending,
+                child: Container(
+                  constraints: BoxConstraints(maxWidth: screenWidth * 0.55, minHeight: 60),
+                  color: const Color(0xFFFFFFFF).withOpacity(0.4),
+                  child: Center(
+                    child: Container(
+                      width: 24,
+                      height: 24,
+                      alignment: Alignment.bottomRight,
+                      child: const CircularProgressIndicator(
+                        value: 50,
+                        color: Color(0xFF6A79FF),
+                        strokeWidth: 2,
+                      ),
                     ),
                   ),
                 ),
-              ))
+            ),
+          ),
         ],
       ),
     );

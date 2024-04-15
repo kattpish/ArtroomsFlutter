@@ -37,9 +37,10 @@ class _WidgetChatroomNoticePinState extends State<WidgetChatroomNoticePin> {
 
   @override
   Widget build(BuildContext context) {
+
     return AnimatedContainer(
-      height: widget.isExpandNotice ? 150 : 36,
-      duration: const Duration(milliseconds: 500),
+      height: isExpanded ? null : (widget.isExpandNotice ? 150 : 36),
+      duration: const Duration(milliseconds: 300),
       onEnd: () {
         setState(() {
           isExpanded = widget.isExpandNotice;
@@ -47,6 +48,7 @@ class _WidgetChatroomNoticePinState extends State<WidgetChatroomNoticePin> {
       },
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 14, vertical: 0),
+        padding: EdgeInsets.only(bottom: isExpanded ? 4 : 0),
         constraints: BoxConstraints(minHeight: widget.isExpandNotice ? 50 : 36),
         decoration: ShapeDecoration(
           color: Colors.white,
@@ -59,7 +61,7 @@ class _WidgetChatroomNoticePinState extends State<WidgetChatroomNoticePin> {
               blurRadius: 10,
               offset: Offset(0, 0),
               spreadRadius: 0,
-            )
+            ),
           ],
         ),
         child: InkWell(
@@ -108,7 +110,8 @@ class _WidgetChatroomNoticePinState extends State<WidgetChatroomNoticePin> {
                                 decoration: const BoxDecoration(
                                   image: DecorationImage(
                                     image: AssetImage(
-                                        "assets/images/icons/icon_notice.png"),
+                                        "assets/images/icons/icon_notice.png"
+                                    ),
                                     fit: BoxFit.fill,
                                   ),
                                 ),
@@ -126,7 +129,7 @@ class _WidgetChatroomNoticePinState extends State<WidgetChatroomNoticePin> {
                               children: [
                                 Container(
                                   constraints: BoxConstraints(minHeight: isExpanded ? 80 : 20),
-                                  alignment: widget.isExpandNotice ? Alignment.topLeft : Alignment.topLeft,
+                                  alignment: isExpanded && widget.isExpandNotice ? Alignment.topLeft : Alignment.topLeft,
                                   child: Text(
                                     widget.dataNotice.notice,
                                     style: TextStyle(
@@ -137,8 +140,8 @@ class _WidgetChatroomNoticePinState extends State<WidgetChatroomNoticePin> {
                                       height: 0,
                                       letterSpacing: -0.28,
                                     ),
-                                    maxLines: widget.isExpandNotice ? 5 : 1,
-                                    textAlign: TextAlign.center,
+                                    maxLines: isExpanded && widget.isExpandNotice ? 5 : 1,
+                                    textAlign: TextAlign.left,
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),

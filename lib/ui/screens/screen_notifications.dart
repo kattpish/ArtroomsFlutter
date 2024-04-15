@@ -75,40 +75,42 @@ class _ScreenNotificationsState extends State<ScreenNotifications> {
         ),
         backgroundColor: colorMainScreen,
         body: WidgetUiNotify(
-          child: ScrollConfiguration(
-            behavior: scrollBehavior,
-            child: SingleChildScrollView(
-              // physics: const ScrollPhysicsBouncing(),
-              child: Column(
-                children: [
-                  const SizedBox(height: 16),
-                  Column(
-                    children: _notifications.map((notification) {
-                      int index = _notifications.indexOf(notification);
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                        child: ListTile(
-                          title: Text(
-                            notification['title'],
-                            style: const TextStyle(
-                              color: Color(0xFF111111),
-                              fontSize: 16,
-                              fontFamily: 'SUIT',
-                              fontWeight: FontWeight.w400,
-                              height: 0,
-                              letterSpacing: -0.32,
+          child: StretchingOverscrollIndicator(
+            axisDirection: AxisDirection.down,
+            child: ScrollConfiguration(
+              behavior: scrollBehavior,
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    const SizedBox(height: 16),
+                    Column(
+                      children: _notifications.map((notification) {
+                        int index = _notifications.indexOf(notification);
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: ListTile(
+                            title: Text(
+                              notification['title'],
+                              style: const TextStyle(
+                                color: Color(0xFF111111),
+                                fontSize: 16,
+                                fontFamily: 'SUIT',
+                                fontWeight: FontWeight.w400,
+                                height: 0,
+                                letterSpacing: -0.32,
+                              ),
+                            ),
+                            trailing: widgetNotificationItemTick(notification, index, _notificationEnabled,
+                                onTap: (index, isEnabled) {
+                                  _doToggleNotification(index, isEnabled);
+                                }
                             ),
                           ),
-                          trailing: widgetNotificationItemTick(notification, index, _notificationEnabled,
-                              onTap: (index, isEnabled) {
-                                _doToggleNotification(index, isEnabled);
-                              }
-                          ),
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                ],
+                        );
+                      }).toList(),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
