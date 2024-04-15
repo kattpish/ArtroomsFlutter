@@ -44,11 +44,11 @@ class ScreenChatroom extends StatefulWidget {
   final VoidCallback? onBackPressed;
 
   const ScreenChatroom({
-        super.key,
-        required this.dataChat,
-        this.widthRatio = 1.0,
-        this.onBackPressed
-      });
+    super.key,
+    required this.dataChat,
+    this.widthRatio = 1.0,
+    this.onBackPressed
+  });
 
   @override
   State<StatefulWidget> createState() {
@@ -751,100 +751,103 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                 ),
               ),
             ),
-            SliverGrid(
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: isTablet(context) ? 6 : 3,
-                crossAxisSpacing: 5,
-                mainAxisSpacing: 5,
-                childAspectRatio: 1,
-              ),
-              delegate: SliverChildBuilderDelegate((BuildContext context, int index) {
-                var fileImage = _filesImages[index];
-                return Container(
-                  clipBehavior: Clip.antiAlias,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) {
-                        return ScreenPhotoView(images: _filesImages, initialIndex: index, isSelectMode: true,
-                          onSelect: (bool isSelected, index, FileItem fileItem) {
-                            _doCheckEnableButtonFile();
-                          },);
-                      }));
-                    },
-                    onLongPress: () {
-                      setState(() {
-                        if(!fileImage.isSelected) {
-                          fileImage.isSelected = true;
-                          fileImage.timeSelected = DateTime.now().millisecondsSinceEpoch;
-                        }else {
-                          fileImage.isSelected = false;
-                          fileImage.timeSelected = 0;
-                        }
-                        closeKeyboard(context);
-                      });
-                      _doCheckEnableButtonFile();
-                    },
-                    child: Stack(
-                      children: [
-                        Image.file(
-                          fileImage.getPreviewFile(),
-                          width: double.infinity,
-                          height: double.infinity,
-                          fit: BoxFit.cover,
-                        ),
-                        Positioned(
-                          top: 3,
-                          right: 4,
-                          child: Visibility(
-                            visible: _selectMode,
-                            child: GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  if(!fileImage.isSelected) {
-                                    fileImage.isSelected = true;
-                                    fileImage.timeSelected = DateTime.now().millisecondsSinceEpoch;
-                                  }else {
-                                    fileImage.isSelected = false;
-                                    fileImage.timeSelected = 0;
-                                  }
-                                  _doCheckEnableButtonFile();
-                                  closeKeyboard(context);
-                                });
-                              },
-                              child: Container(
-                                width: 26,
-                                height: 26,
-                                decoration: BoxDecoration(
-                                  color: fileImage.isSelected
-                                      ? colorPrimaryBlue
-                                      : colorMainGrey200
-                                      .withAlpha(150),
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
+            SliverPadding(
+              padding: const EdgeInsets.only(bottom: 12.0),
+              sliver: SliverGrid(
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: isTablet(context) ? 6 : 3,
+                  crossAxisSpacing: 5,
+                  mainAxisSpacing: 5,
+                  childAspectRatio: 1,
+                ),
+                delegate: SliverChildBuilderDelegate((BuildContext context, int index) {
+                  var fileImage = _filesImages[index];
+                  return Container(
+                    clipBehavior: Clip.antiAlias,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) {
+                          return ScreenPhotoView(images: _filesImages, initialIndex: index, isSelectMode: true,
+                            onSelect: (bool isSelected, index, FileItem fileItem) {
+                              _doCheckEnableButtonFile();
+                            },);
+                        }));
+                      },
+                      onLongPress: () {
+                        setState(() {
+                          if(!fileImage.isSelected) {
+                            fileImage.isSelected = true;
+                            fileImage.timeSelected = DateTime.now().millisecondsSinceEpoch;
+                          }else {
+                            fileImage.isSelected = false;
+                            fileImage.timeSelected = 0;
+                          }
+                          closeKeyboard(context);
+                        });
+                        _doCheckEnableButtonFile();
+                      },
+                      child: Stack(
+                        children: [
+                          Image.file(
+                            fileImage.getPreviewFile(),
+                            width: double.infinity,
+                            height: double.infinity,
+                            fit: BoxFit.cover,
+                          ),
+                          Positioned(
+                            top: 3,
+                            right: 4,
+                            child: Visibility(
+                              visible: _selectMode,
+                              child: GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    if(!fileImage.isSelected) {
+                                      fileImage.isSelected = true;
+                                      fileImage.timeSelected = DateTime.now().millisecondsSinceEpoch;
+                                    }else {
+                                      fileImage.isSelected = false;
+                                      fileImage.timeSelected = 0;
+                                    }
+                                    _doCheckEnableButtonFile();
+                                    closeKeyboard(context);
+                                  });
+                                },
+                                child: Container(
+                                  width: 26,
+                                  height: 26,
+                                  decoration: BoxDecoration(
                                     color: fileImage.isSelected
                                         ? colorPrimaryBlue
-                                        : const Color(0xFFE3E3E3),
-                                    width: 1,
+                                        : colorMainGrey200
+                                        .withAlpha(150),
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                      color: fileImage.isSelected
+                                          ? colorPrimaryBlue
+                                          : const Color(0xFFE3E3E3),
+                                      width: 1,
+                                    ),
                                   ),
+                                  child: fileImage.isSelected
+                                      ? const Icon(Icons.check,
+                                      size: 16, color: Colors.white)
+                                      : Container(),
                                 ),
-                                child: fileImage.isSelected
-                                    ? const Icon(Icons.check,
-                                    size: 16, color: Colors.white)
-                                    : Container(),
                               ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                );
-              },
-                childCount: _filesImages.length,
+                  );
+                },
+                  childCount: _filesImages.length,
+                ),
               ),
             ),
           ],
