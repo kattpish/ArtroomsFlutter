@@ -200,7 +200,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                   toolbarHeight: 60,
                   backgroundColor: Colors.white,
                   actions: [
-                    widgetChatroomMessageDrawerBtn(context, widget.dataChat),
+                    widgetChatroomMessageDrawerBtn(context, widget.dataChat,_moduleNotice,_dataNotice),
                   ],
                 ),
                 backgroundColor: Colors.white,

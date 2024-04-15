@@ -303,5 +303,4 @@ class ModuleProfile {
       return null;
     }
   }
-
 }

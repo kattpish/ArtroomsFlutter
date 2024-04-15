@@ -1,4 +1,5 @@
 
+import 'package:artrooms/beans/bean_chatting_artist_profile.dart';
 import 'package:artrooms/beans/bean_message.dart';
 import 'package:artrooms/beans/bean_notice.dart';
 import 'package:artrooms/modules/module_messages.dart';
@@ -25,8 +26,9 @@ import '../widgets/widget_ui_notify.dart';
 class ScreenChatroomDrawer extends StatefulWidget {
 
   final DataChat dataChat;
+  final ArtistProfile artistProfile;
 
-  const ScreenChatroomDrawer({super.key, required this.dataChat});
+  const ScreenChatroomDrawer({super.key, required this.dataChat, required this.artistProfile});
 
   @override
   State<StatefulWidget> createState() {
@@ -184,12 +186,12 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
                                   color: colorMainGrey100,
                                   borderRadius: BorderRadius.circular(16.0),
                                 ),
-                                child: const Column(
+                                child:  Column(
                                   children: [
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Text(
+                                        const Text(
                                           '주중피드백',
                                           style: TextStyle(
                                             color: colorMainGrey400,
@@ -201,8 +203,8 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
                                           ),
                                         ),
                                         Text(
-                                            '간단히 가능',
-                                            style: TextStyle(
+                                            widget.artistProfile.feedback,
+                                            style: const TextStyle(
                                               color: colorMainGrey800,
                                               fontSize: 14,
                                               fontFamily: 'SUIT',
@@ -217,7 +219,7 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Text('수업상담',
+                                        const Text('수업상담',
                                           style: TextStyle(
                                             color: colorMainGrey400,
                                             fontSize: 14,
@@ -228,8 +230,8 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
                                           ),
                                         ),
                                         Text(
-                                          '불가능',
-                                          style: TextStyle(
+                                          widget.artistProfile.classAdvice,
+                                          style: const TextStyle(
                                             color: colorMainGrey800,
                                             fontSize: 14,
                                             fontFamily: 'SUIT',
@@ -244,7 +246,7 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Text('채팅가능시간',
+                                        const Text('채팅가능시간',
                                           style: TextStyle(
                                             color: colorMainGrey400,
                                             fontSize: 14,
@@ -254,8 +256,8 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
                                             letterSpacing: -0.28,
                                           ),
                                         ),
-                                        Text('월 화 수',
-                                          style: TextStyle(
+                                        Text(widget.artistProfile.ableTime,
+                                          style: const TextStyle(
                                             color: colorMainGrey800,
                                             fontSize: 14,
                                             fontFamily: 'SUIT',
@@ -266,11 +268,11 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
                                         ),
                                       ],
                                     ),
-                                    SizedBox(height: 8),
-                                    Row(
+                                    const SizedBox(height: 8),
+                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Text('평균응답시간',
+                                        const Text('평균응답시간',
                                           style: TextStyle(
                                             color: colorMainGrey400,
                                             fontSize: 14,
@@ -280,8 +282,8 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
                                             letterSpacing: -0.28,
                                           ),
                                         ),
-                                        Text(' 11시~20시',
-                                          style: TextStyle(
+                                        Text(widget.artistProfile.replyTime,
+                                          style: const TextStyle(
                                             color: colorMainGrey800,
                                             fontSize: 14,
                                             fontFamily: 'SUIT',
@@ -292,11 +294,11 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
                                         ),
                                       ],
                                     ),
-                                    SizedBox(height: 8),
+                                    const SizedBox(height: 8),
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Text('평균응답시간',
+                                        const Text('평균응답시간',
                                           style: TextStyle(
                                             color: colorMainGrey400,
                                             fontSize: 14,
@@ -306,8 +308,8 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
                                             letterSpacing: -0.28,
                                           ),
                                         ),
-                                        Text('하루 이내',
-                                          style: TextStyle(
+                                        Text(widget.artistProfile.replyTime,
+                                          style: const TextStyle(
                                             color: colorMainGrey800,
                                             fontSize: 14,
                                             fontFamily: 'SUIT',
