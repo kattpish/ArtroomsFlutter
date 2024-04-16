@@ -16,14 +16,14 @@ class Memo {
     this.artistId = 0,
     this.adminId = 0,
   });
-
+  // senderName = baseMessage.sender?.nickname ?? "",
   factory Memo.fromJson(Map<String, dynamic> json) {
     return Memo(
       id: json['id'] as int,
       url: json['url'] as String,
       memo: json['memo'] as String,
-      artistId: json['artistId'] as int,
-      adminId: json['adminId'] as int,
+      artistId: json['artistId'] ?? 0,
+      adminId: json['adminId'] ?? 0,
     );
   }
 

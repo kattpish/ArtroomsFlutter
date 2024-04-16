@@ -1,7 +1,9 @@
 
 import 'package:artrooms/beans/bean_chatting_artist_profile.dart';
+import 'package:artrooms/beans/bean_memo.dart';
 import 'package:artrooms/beans/bean_message.dart';
 import 'package:artrooms/beans/bean_notice.dart';
+import 'package:artrooms/modules/module_memo.dart';
 import 'package:artrooms/modules/module_messages.dart';
 import 'package:artrooms/modules/module_notices.dart';
 import 'package:artrooms/ui/screens/screen_chatroom_files.dart';
@@ -27,8 +29,9 @@ class ScreenChatroomDrawer extends StatefulWidget {
 
   final DataChat dataChat;
   final ArtistProfile artistProfile;
+  final Memo memo;
 
-  const ScreenChatroomDrawer({super.key, required this.dataChat, required this.artistProfile});
+  const ScreenChatroomDrawer({super.key, required this.dataChat, required this.artistProfile, required this.memo});
 
   @override
   State<StatefulWidget> createState() {
@@ -300,7 +303,9 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
                                       Row(
                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
-                                          const Text('평균응답시간',
+                                          const Text(''
+                                              ''
+                                              '',
                                             style: TextStyle(
                                               color: colorMainGrey400,
                                               fontSize: 14,
@@ -365,7 +370,7 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
                                   child: TextFormField(
                                     controller: _memoController,
                                     decoration: InputDecoration(
-                                      hintText: '메모가 없습니다.',
+                                      hintText: widget.memo.memo,
                                       border: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(8.0),
                                         borderSide: BorderSide.none,

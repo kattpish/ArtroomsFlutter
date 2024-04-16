@@ -2,6 +2,7 @@
 import 'package:artrooms/beans/bean_chat.dart';
 import 'package:artrooms/beans/bean_chatting_artist_profile.dart';
 import 'package:artrooms/beans/bean_notice.dart';
+import 'package:artrooms/modules/module_memo.dart';
 import 'package:artrooms/modules/module_notices.dart';
 import 'package:artrooms/modules/module_profile.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +11,8 @@ import '../../test_screen.dart';
 import '../screens/screen_chatroom_drawer.dart';
 
 
-Widget widgetChatroomMessageDrawerBtn(BuildContext context, DataChat dataChat,ModuleNotice moduleNotice,DataNotice dataNotice ) {
+Widget widgetChatroomMessageDrawerBtn(BuildContext context, DataChat dataChat,
+    ModuleNotice moduleNotice,DataNotice dataNotice,ModuleMemo moduleMemo ) {
   return Container(
     width: 80,
     height: 80,
@@ -31,11 +33,13 @@ Widget widgetChatroomMessageDrawerBtn(BuildContext context, DataChat dataChat,Mo
           )),
       onTap: () async{
         final artistProfile = await moduleNotice.getProfileInfo(artistId: dataNotice.artistId);
+        final memo = await moduleMemo.getMemo(url: dataNotice.url);
         Navigator.push(context,
           MaterialPageRoute(builder: (context) {
             return ScreenChatroomDrawer(
               dataChat: dataChat,
               artistProfile: artistProfile,
+              memo:memo,
             );
           }),
         );
