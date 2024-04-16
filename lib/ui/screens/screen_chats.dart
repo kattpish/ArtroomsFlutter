@@ -163,50 +163,50 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver  
                           child: LayoutBuilder(
                             builder: (context, constraints) {
                               return SlidableAutoCloseBehavior(
-                                child: ScrollConfiguration(
-                                  behavior: scrollBehavior,
-                                  child: ListView.builder(
-                                    // physics: const ScrollPhysicsBouncing(),
-                                    shrinkWrap: true,
-                                    itemCount: _listChats.length,
-                                    itemBuilder: (context, index) {
-                                      DataChat dataChat = _listChats[index];
-                                      return Container(
-                                        key: Key(_listChats[index].id),
-                                        child: widgetChatRow(context, index, dataChat,
-                                          onClickOption1: () {
-                                            _doToggleNotification(context, dataChat);
-                                          },
-                                          onClickOption2: () {
-                                            widgetChatsExit(context, moduleSendBird, dataChat,
-                                                onExit: () {
-                                                  setState(() {
-                                                    moduleSendBird.leaveChannel(dataChat.id);
-                                                    _listChats.remove(dataChat);
-                                                    Navigator.of(context).pop();
+                                child: StretchingOverscrollIndicator(
+                                  axisDirection: AxisDirection.down,
+                                  child: ScrollConfiguration(
+                                    behavior: scrollBehavior,
+                                    child: ListView.builder(
+                                      shrinkWrap: true,
+                                      itemCount: _listChats.length,
+                                      itemBuilder: (context, index) {
+                                        DataChat dataChat = _listChats[index];
+                                        return Container(
+                                          key: Key(_listChats[index].id),
+                                          child: widgetChatRow(context, index, dataChat,
+                                            onClickOption1: () {
+                                              _doToggleNotification(context, dataChat);
+                                            },
+                                            onClickOption2: () {
+                                              widgetChatsExit(context, moduleSendBird, dataChat,
+                                                  onExit: () {
+                                                    setState(() {
+                                                      moduleSendBird.leaveChannel(dataChat.id);
+                                                      _listChats.remove(dataChat);
+                                                      Navigator.of(context).pop();
+                                                    });
                                                   });
-                                                });
-                                          },
-                                          onSelectChat: () {
-                                            _doSelectChat(context, dataChat);
-                                          },
-                                        ),
-                                      );
-                                    },
+                                            },
+                                            onSelectChat: () {
+                                              _doSelectChat(context, dataChat);
+                                            },
+                                          ),
+                                        );
+                                      },
+                                    ),
                                   ),
                                 ),
                               );
                             },
-                          )
+                          ),
                       ),
                     ],
                   ),
-                  Visibility(
-                    child: widgetChatMessagePin(context, this,
-                        onSelectChat: () {
-                          _doSelectChat(context, dataChatPin);
-                        }
-                    ),
+                  widgetChatMessagePin(context, this,
+                      onSelectChat: () {
+                        _doSelectChat(context, dataChatPin);
+                      }
                   ),
                 ],
               ),
@@ -241,7 +241,7 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver  
               ),
             ),
           ),
-        )
+        ),
       ],
     );
   }

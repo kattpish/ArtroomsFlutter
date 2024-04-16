@@ -143,14 +143,15 @@ Widget buildImageAttachments(
                   if(message.isSending)
                     Container(
                       height: heights,
-                      constraints:
-                      BoxConstraints(maxWidth: screenWidth * 0.55),
+                      constraints: BoxConstraints(maxWidth: screenWidth * 0.55),
+                      color: const Color(0xFFFFFFFF).withOpacity(0.8),
                       child: Center(
                         child: Container(
-                          width: 20,
-                          height: 20,
+                          width: 24,
+                          height: 24,
                           alignment: Alignment.topRight,
                           child: const CircularProgressIndicator(
+                            value: 50,
                             color: Color(0xFF6A79FF),
                             strokeWidth: 2,
                           ),
