@@ -142,44 +142,24 @@ class ModuleMemo{
   }
 
   Future<Map<String, dynamic>?> updateProfileMemo({
-    required int userId,
-    required int profileImgId,
+    required String url,
+    required String memo,
   }) async {
     DBStore dbStore = DBStore();
 
     const String mutation = '''
-      mutation UpdateUser(\$id: Int, \$updateStudentInput: UpdateStudentInput, \$updateUserInput: UpdateUserInput) {
-        updateUser(
-          id: \$id
+      mutation UpdateChattingMemo(\$updateChattingMemoId: Int, \$updateChattingMemoInput: UpdateChattingMemoInput) {
+        updateChattingMemo(
+          id: \$updateChattingMemoId
           updateUserInput: \$updateUserInput
           updateStudentInput: \$updateStudentInput
         ) {
-          ... on User {
-            id
-            type
-            email
-            student {
-              nickname
-              name
-              id
-              phoneNumber
-              acceptMarketing
-              certificationPhone
-              point {
-                id
-                point
-                __typename
-              }
-              __typename
-            }
-            profileImgId
-            profileImg {
-              accessUrl
-              __typename
-            }
-            socialImg
-            __typename
-          }
+          ... on ChattingMemo {
+                id  
+                memo      
+                url      
+                __typename   
+           }
           ... on Error {
             status
             message
@@ -197,13 +177,13 @@ class ModuleMemo{
         'Authorization': dbStore.getAccessToken(),
       },
       body: jsonEncode({
-        'operationName': 'UpdateUser',
+        'operationName': 'UpdateChattingMemo',
         'variables': {
-          'id': userId,
-          'updateUserInput': {
-            'id': userId,
-            'profileImgId': profileImgId,
-          },
+        "updateChattingMemoId": null,
+        "updateChattingMemoInput": {
+        "memo": memo,
+        "url": url,
+        "adminId": 17
         },
         'query': mutation,
       }),
