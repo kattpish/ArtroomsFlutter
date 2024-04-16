@@ -353,7 +353,7 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
                                   ),
                                   onTap: () async {
                                     await Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                      return ScreenMemo(dataChat: widget.dataChat,);
+                                      return ScreenMemo(dataChat: widget.dataChat,memo: widget.memo);
                                     }));
                                     _doLoadMemo();
                                   },

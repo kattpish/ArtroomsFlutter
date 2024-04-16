@@ -1,4 +1,6 @@
 
+import 'package:artrooms/beans/bean_memo.dart';
+import 'package:artrooms/modules/module_memo.dart';
 import 'package:artrooms/ui/theme/theme_colors.dart';
 import 'package:flutter/material.dart';
 
@@ -11,8 +13,9 @@ import '../widgets/widget_ui_notify.dart';
 class ScreenMemo extends StatefulWidget {
 
   final DataChat dataChat;
+  final Memo memo;
 
-  const ScreenMemo({super.key, required this.dataChat});
+  const ScreenMemo({super.key, required this.dataChat, required this.memo});
 
   @override
   State<StatefulWidget> createState() {
@@ -29,7 +32,7 @@ class _ScreenMemoState extends State<ScreenMemo> {
   @override
   void initState() {
     super.initState();
-    _memoController.text = dbStore.getMemo(widget.dataChat);
+    _memoController.text = widget.memo.memo;
     _isButtonEnabled = _memoController.text.isNotEmpty;
     _memoController.addListener(_doCheckEnableButton);
   }
@@ -143,9 +146,11 @@ class _ScreenMemoState extends State<ScreenMemo> {
     }
   }
 
-  void _doSaveMemo() {
+  void _doSaveMemo() async{
     if(_isButtonEnabled) {
-      dbStore.saveMemo(widget.dataChat, _memoController.text);
+      ModuleMemo memo = ModuleMemo();
+       var result = await memo.updateProfileMemo(chattingMemoId: widget.memo.id, url: widget.memo.url, memo: _memoController.text);
+      // dbStore.saveMemo(widget.dataChat, _memoController.text);
       Navigator.pop(context);
     }
   }

@@ -70,8 +70,7 @@ class ModuleMemo{
   Future<Memo?> updateProfileMemo({
     required int chattingMemoId,
     required String url,
-    required String memo,
-    required int userId,
+    required String memo
   }) async {
     DBStore dbStore = DBStore();
 
@@ -79,8 +78,7 @@ class ModuleMemo{
       mutation updateChattingMemo(\$updateChattingMemoId: Int, \$updateChattingMemoInput: UpdateChattingMemoInput) {
         updateChattingMemo(
           id: \$updateChattingMemoId
-          updateUserInput: \$updateUserInput
-          updateStudentInput: \$updateStudentInput
+          updateChattingMemoInput: \$updateChattingMemoInput
         ) {
           ... on ChattingMemo {
                 id  
@@ -105,16 +103,17 @@ class ModuleMemo{
          'Authorization': dbStore.getAccessToken(),
        },
        body: jsonEncode({
-         'operationName': 'UpdateChattingMemo',
+         'operationName': 'updateChattingMemo',
          'variables': {
            "updateChattingMemoId": chattingMemoId,
            "updateChattingMemoInput": {
              "memo": memo,
              "url": url,
-             "userId": userId
+             "userId": dbStore.getUserId()
+              }
            },
            'query': mutation,
-         }}),
+         }),
      );
      if (response.statusCode == 200) {
        Map<String, dynamic> responseData = jsonDecode(response.body);
