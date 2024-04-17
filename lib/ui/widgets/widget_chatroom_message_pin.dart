@@ -78,7 +78,8 @@ Widget widgetChatMessagePin(BuildContext context, State state, {void Function()?
                                 decoration: const BoxDecoration(
                                   image: DecorationImage(
                                     image: AssetImage(
-                                        "assets/images/icons/icon_chat.png"),
+                                        "assets/images/icons/icon_chat.png"
+                                    ),
                                     fit: BoxFit.fill,
                                   ),
                                 ),

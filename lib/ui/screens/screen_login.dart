@@ -54,8 +54,6 @@ class _ScreenLoginState extends State<ScreenLogin> {
       return;
     }
 
-    // _emailController.text = "artrooms@test.com";
-    // _passwordController.text = "1234";
   }
 
   @override

@@ -5,6 +5,7 @@ import 'package:artrooms/main.dart';
 import 'package:artrooms/ui/screens/screen_chatroom.dart';
 import 'package:artrooms/ui/screens/screen_login.dart';
 import 'package:artrooms/ui/screens/screen_profile.dart';
+import 'package:artrooms/utils/utils.dart';
 import 'package:artrooms/utils/utils_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -17,6 +18,7 @@ import '../../utils/utils_permissions.dart';
 import '../../utils/utils_screen.dart';
 import '../theme/theme_colors.dart';
 import '../widgets/widget_chatroom_message_pin.dart';
+import '../widgets/widget_chats_empty.dart';
 import '../widgets/widget_chats_exit.dart';
 import '../widgets/widget_chats_row.dart';
 import '../widgets/widget_loader.dart';
@@ -38,6 +40,7 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver  
 
   bool _isLoading = false;
   bool _isSearching = false;
+  bool _autofocus = false;
   final List<DataChat> _listChats = [];
   final List<DataChat> _listChatsAll = [];
   final TextEditingController _searchController = TextEditingController();
@@ -119,6 +122,10 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver  
                           color: colorMainGrey250
                       ),
                       onPressed: () {
+                        setState(() {
+                          _autofocus = false;
+                        });
+                        closeKeyboard(context);
                         Navigator.push(context, MaterialPageRoute(builder: (context) {
                           return const ScreenProfile();
                         }));
@@ -139,6 +146,7 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver  
                           padding: const EdgeInsets.symmetric(horizontal: 16.0),
                           child: TextField(
                             controller: _searchController,
+                            autofocus: _autofocus,
                             decoration: InputDecoration(
                               hintText: '',
                               suffixIcon: const Icon(
@@ -154,52 +162,58 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver  
                               fillColor: Colors.grey[200],
                               contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
                             ),
-                            onChanged: (value) {},
+                            onChanged: (value) {
+                              setState(() {
+                                _autofocus = true;
+                              });
+                            },
                           ),
                         ),
                       ),
                       const SizedBox(height: 10),
                       Expanded(
-                          child: LayoutBuilder(
-                            builder: (context, constraints) {
-                              return SlidableAutoCloseBehavior(
-                                child: StretchingOverscrollIndicator(
-                                  axisDirection: AxisDirection.down,
-                                  child: ScrollConfiguration(
-                                    behavior: scrollBehavior,
-                                    child: ListView.builder(
-                                      shrinkWrap: true,
-                                      itemCount: _listChats.length,
-                                      itemBuilder: (context, index) {
-                                        DataChat dataChat = _listChats[index];
-                                        return Container(
-                                          key: Key(_listChats[index].id),
-                                          child: widgetChatRow(context, index, dataChat,
-                                            onClickOption1: () {
-                                              _doToggleNotification(context, dataChat);
-                                            },
-                                            onClickOption2: () {
-                                              widgetChatsExit(context, moduleSendBird, dataChat,
-                                                  onExit: () {
-                                                    setState(() {
-                                                      moduleSendBird.leaveChannel(dataChat.id);
-                                                      _listChats.remove(dataChat);
-                                                      Navigator.of(context).pop();
-                                                    });
+                        child: (_listChats.isNotEmpty || _isSearching)
+                            ? LayoutBuilder(
+                          builder: (context, constraints) {
+                            return SlidableAutoCloseBehavior(
+                              child: StretchingOverscrollIndicator(
+                                axisDirection: AxisDirection.down,
+                                child: ScrollConfiguration(
+                                  behavior: scrollBehavior,
+                                  child: ListView.builder(
+                                    shrinkWrap: true,
+                                    itemCount: _listChats.length,
+                                    itemBuilder: (context, index) {
+                                      DataChat dataChat = _listChats[index];
+                                      return Container(
+                                        key: Key(_listChats[index].id),
+                                        child: widgetChatRow(context, index, dataChat,
+                                          onClickOption1: () {
+                                            _doToggleNotification(context, dataChat);
+                                          },
+                                          onClickOption2: () {
+                                            widgetChatsExit(context, moduleSendBird, dataChat,
+                                                onExit: (context) {
+                                                  setState(() {
+                                                    moduleSendBird.leaveChannel(dataChat.id);
+                                                    _listChats.remove(dataChat);
+                                                    Navigator.of(context).pop();
                                                   });
-                                            },
-                                            onSelectChat: () {
-                                              _doSelectChat(context, dataChat);
-                                            },
-                                          ),
-                                        );
-                                      },
-                                    ),
+                                                });
+                                          },
+                                          onSelectChat: () {
+                                            _doSelectChat(context, dataChat);
+                                          },
+                                        ),
+                                      );
+                                    },
                                   ),
                                 ),
-                              );
-                            },
-                          ),
+                              ),
+                            );
+                          },
+                        )
+                            : widgetChatsEmpty(context),
                       ),
                     ],
                   ),
@@ -254,6 +268,11 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver  
   }
 
   void _doSelectChat(BuildContext context, DataChat dataChat) {
+
+    setState(() {
+      _autofocus = false;
+    });
+    closeKeyboard(context);
 
     _chatModule.markMessageAsRead(dataChat);
     setState(() {

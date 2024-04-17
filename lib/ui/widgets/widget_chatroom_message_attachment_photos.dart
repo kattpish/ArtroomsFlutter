@@ -51,7 +51,7 @@ Widget buildImageAttachments(
       heights += height;
 
       rows.add(Container(
-        margin: const EdgeInsets.only(bottom: 2),
+        margin: const EdgeInsets.only(top: 1, bottom: 1),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: List.generate(itemsInRow, (index) {
@@ -63,8 +63,7 @@ Widget buildImageAttachments(
                 height: height,
                 margin: EdgeInsets.only(right: isLast ? 0 : 2),
                 child: Container(
-                  width: (screenWidth * 0.55) /
-                      (message.attachmentImages.length > 3 ? 3 : message.attachmentImages.length),
+                  width: (screenWidth * 0.55) / (message.attachmentImages.length > 3 ? 3 : message.attachmentImages.length),
                   decoration: const BoxDecoration(
                     color: colorMainGrey200,
                   ),
@@ -128,14 +127,16 @@ Widget buildImageAttachments(
         Container(
           margin: EdgeInsets.only(left: message.isMe ? 0 : 40),
           child: ClipRRect(
-            borderRadius: const BorderRadius.all(Radius.circular(24)),
+            borderRadius: const BorderRadius.all(Radius.circular(10)),
             child: Container(
               constraints: BoxConstraints(maxWidth: screenWidth * 0.55),
               alignment:
               message.isMe ? Alignment.topRight : Alignment.topLeft,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(24),
+              decoration: const ShapeDecoration(
                 color: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                ),
               ),
               child: Stack(
                 children: [
