@@ -5,6 +5,7 @@ import 'package:artrooms/main.dart';
 import 'package:artrooms/ui/screens/screen_chatroom.dart';
 import 'package:artrooms/ui/screens/screen_login.dart';
 import 'package:artrooms/ui/screens/screen_profile.dart';
+import 'package:artrooms/utils/utils.dart';
 import 'package:artrooms/utils/utils_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -39,6 +40,7 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver  
 
   bool _isLoading = false;
   bool _isSearching = false;
+  bool _autofocus = false;
   final List<DataChat> _listChats = [];
   final List<DataChat> _listChatsAll = [];
   final TextEditingController _searchController = TextEditingController();
@@ -120,6 +122,10 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver  
                           color: colorMainGrey250
                       ),
                       onPressed: () {
+                        setState(() {
+                          _autofocus = false;
+                        });
+                        closeKeyboard(context);
                         Navigator.push(context, MaterialPageRoute(builder: (context) {
                           return const ScreenProfile();
                         }));
@@ -140,7 +146,7 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver  
                           padding: const EdgeInsets.symmetric(horizontal: 16.0),
                           child: TextField(
                             controller: _searchController,
-                            autofocus: true,
+                            autofocus: _autofocus,
                             decoration: InputDecoration(
                               hintText: '',
                               suffixIcon: const Icon(
@@ -156,7 +162,11 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver  
                               fillColor: Colors.grey[200],
                               contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
                             ),
-                            onChanged: (value) {},
+                            onChanged: (value) {
+                              setState(() {
+                                _autofocus = true;
+                              });
+                            },
                           ),
                         ),
                       ),
@@ -258,6 +268,11 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver  
   }
 
   void _doSelectChat(BuildContext context, DataChat dataChat) {
+
+    setState(() {
+      _autofocus = false;
+    });
+    closeKeyboard(context);
 
     _chatModule.markMessageAsRead(dataChat);
     setState(() {
