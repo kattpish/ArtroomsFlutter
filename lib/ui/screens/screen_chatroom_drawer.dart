@@ -29,9 +29,9 @@ class ScreenChatroomDrawer extends StatefulWidget {
 
   final DataChat dataChat;
   final ArtistProfile artistProfile;
-  final Memo memo;
+  final Memo memoData;
 
-  const ScreenChatroomDrawer({super.key, required this.dataChat, required this.artistProfile, required this.memo});
+  const ScreenChatroomDrawer({super.key, required this.dataChat, required this.artistProfile, required this.memoData});
 
   @override
   State<StatefulWidget> createState() {
@@ -41,7 +41,7 @@ class ScreenChatroomDrawer extends StatefulWidget {
 }
 
 class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
-
+  late Memo memo = widget.memoData;
   bool _isLoading = true;
   DataNotice _dataNotice = DataNotice();
   final ModuleNotice moduleNotice = ModuleNotice();
@@ -353,7 +353,12 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
                                   ),
                                   onTap: () async {
                                     await Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                      return ScreenMemo(dataChat: widget.dataChat,memo: widget.memo);
+                                      return ScreenMemo(dataChat: widget.dataChat,memo: memo,onUpdateMemo: (memo){
+                                        print('updating called');
+                                        setState(() {
+                                          this.memo = memo;
+                                        });
+                                      },);
                                     }));
                                     _doLoadMemo();
                                   },
@@ -370,7 +375,7 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
                                   child: TextFormField(
                                     controller: _memoController,
                                     decoration: InputDecoration(
-                                      hintText: widget.memo.memo,
+                                      hintText: memo.memo,
                                       border: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(8.0),
                                         borderSide: BorderSide.none,

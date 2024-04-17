@@ -14,8 +14,9 @@ class ScreenMemo extends StatefulWidget {
 
   final DataChat dataChat;
   final Memo memo;
+  final void Function(Memo) onUpdateMemo;
 
-  const ScreenMemo({super.key, required this.dataChat, required this.memo});
+  const ScreenMemo({super.key, required this.dataChat, required this.memo, required this.onUpdateMemo});
 
   @override
   State<StatefulWidget> createState() {
@@ -151,6 +152,7 @@ class _ScreenMemoState extends State<ScreenMemo> {
       ModuleMemo memo = ModuleMemo();
        var result = await memo.updateProfileMemo(chattingMemoId: widget.memo.id, url: widget.memo.url, memo: _memoController.text);
       // dbStore.saveMemo(widget.dataChat, _memoController.text);
+      widget.onUpdateMemo(result!);
       Navigator.pop(context);
     }
   }

@@ -39,7 +39,7 @@ Widget widgetChatroomMessageDrawerBtn(BuildContext context, DataChat dataChat,
             return ScreenChatroomDrawer(
               dataChat: dataChat,
               artistProfile: artistProfile,
-              memo:memo,
+              memoData:memo,
             );
           }),
         );
