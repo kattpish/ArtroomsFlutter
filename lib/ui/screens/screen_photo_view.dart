@@ -64,25 +64,27 @@ class _ScreenPhotoView extends State<ScreenPhotoView> {
                       Center(
                         child: Stack(
                           children: [
-                            ScrollConfiguration(
-                              behavior: scrollBehavior,
-                              child: PageView.builder(
-                                controller: _pageController,
-                                itemCount: widget.images.length,
-                                // // physics: const ScrollPhysicsBouncingNormal(),
-                                onPageChanged: (int index) {
-                                  setState(() {
-                                    currentIndex = index;
-                                  });
-                                },
-                                itemBuilder: (context, index) {
-                                  FileItem fileItem = widget.images[index];
-                                  return Transform.rotate(
-                                      angle: rotationAngleDegrees * math.pi / 180,
-                                      alignment: FractionalOffset.center,
-                                      child: photoView(context, fileItem)
-                                  );
-                                },
+                            StretchingOverscrollIndicator(
+                              axisDirection: AxisDirection.right,
+                              child: ScrollConfiguration(
+                                behavior: scrollBehavior,
+                                child: PageView.builder(
+                                  controller: _pageController,
+                                  itemCount: widget.images.length,
+                                  onPageChanged: (int index) {
+                                    setState(() {
+                                      currentIndex = index;
+                                    });
+                                  },
+                                  itemBuilder: (context, index) {
+                                    FileItem fileItem = widget.images[index];
+                                    return Transform.rotate(
+                                        angle: rotationAngleDegrees * math.pi / 180,
+                                        alignment: FractionalOffset.center,
+                                        child: photoView(context, fileItem)
+                                    );
+                                  },
+                                ),
                               ),
                             ),
                           ],

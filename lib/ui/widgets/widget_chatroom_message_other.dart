@@ -34,7 +34,8 @@ Widget buildOtherMessageBubble(
         left: 16,
         right: 16,
         top: 0,
-        bottom: isLast ? 9 : (isNextSame ? 0 : 9)),
+        bottom: isLast ? 9 : (isNextSame && isNextSameTime ? 0 : 9)
+    ),
     child: Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -43,7 +44,7 @@ Widget buildOtherMessageBubble(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if(!isPreviousSame)
+            if(!isPreviousSame || !isPreviousSameDateTime)
               InkWell(
                 onTap: () {},
                 child: Container(
@@ -75,19 +76,20 @@ Widget buildOtherMessageBubble(
                     ),
                   ),
                 ),
-              ),
+              ) else const SizedBox(width: 34),
             const SizedBox(width: 6),
             Row(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Container(
                   margin: EdgeInsets.only(
-                      left: isPreviousSame ? 34 : 4,
-                      top: isPreviousSame ? 0 : 16),
+                      left: isPreviousSame && isPreviousSameDateTime ? 0 : 4,
+                      top: isPreviousSame & isPreviousSameDateTime ? 0 : 16
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      if(!isPreviousSame)
+                      if(!isPreviousSame || !isPreviousSameDateTime)
                         SizedBox(
                           child: Text(
                             message.getName(),
@@ -116,8 +118,7 @@ Widget buildOtherMessageBubble(
                                   color:
                                   colorMainGrey500,
                                 ),
-                                title: const Text(
-                                    "답장"),
+                                title: const Text("답장"),
                                 onPressed: () {
                                   onReplyClick();
                                 }),
@@ -128,14 +129,10 @@ Widget buildOtherMessageBubble(
                                   color:
                                   colorMainGrey500,
                                 ),
-                                title: const Text(
-                                    "복사"),
-                                onPressed:
-                                    () async {
+                                title: const Text("복사"),
+                                onPressed: () async {
                                   await Clipboard.setData(
-                                      ClipboardData(
-                                          text: message
-                                              .content));
+                                      ClipboardData(text: message.content));
                                 })
                           ],
                           blurSize: 0.0,
@@ -144,20 +141,17 @@ Widget buildOtherMessageBubble(
                           80.0,
                           menuBoxDecoration:
                           const BoxDecoration(
-                              borderRadius: BorderRadius
-                                  .all(Radius
-                                  .circular(
-                                  15.0))),
+                              borderRadius: BorderRadius.all(Radius.circular(15.0))),
                           child: Container(
                             constraints: const BoxConstraints(
-                                minHeight: 40, minWidth: 46),
+                                minHeight: 40, minWidth: 46
+                            ),
                             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                             alignment: Alignment.centerLeft,
                             decoration: BoxDecoration(
                               color: colorMainGrey200,
                               borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(
-                                    isPreviousSameDateTime ? 20 : 2),
+                                topLeft: Radius.circular(isPreviousSameDateTime ? 20 : 2),
                                 topRight: const Radius.circular(20),
                                 bottomLeft: const Radius.circular(20),
                                 bottomRight: const Radius.circular(20),

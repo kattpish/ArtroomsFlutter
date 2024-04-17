@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import '../theme/theme_colors.dart';
 
 
-void widgetChatsExit(BuildContext context, ModuleSendBird moduleSendBird, DataChat dataChat, {required Null Function() onExit}) {
+void widgetChatsExit(BuildContext context, ModuleSendBird moduleSendBird, DataChat dataChat, {required Null Function(BuildContext context) onExit}) {
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -56,7 +56,7 @@ void widgetChatsExit(BuildContext context, ModuleSendBird moduleSendBird, DataCh
               const SizedBox(height: 50),
               ElevatedButton(
                 onPressed: () {
-                  onExit();
+                  onExit(context);
                 },
                 style: ElevatedButton.styleFrom(
                   foregroundColor: colorPrimaryBlue,
