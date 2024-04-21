@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:artrooms/beans/bean_notice.dart';
+import 'package:artrooms/modules/module_memo.dart';
 import 'package:artrooms/modules/module_notices.dart';
 import 'package:artrooms/ui/screens/screen_photo_view.dart';
 import 'package:artrooms/ui/widgets/widget_loader.dart';
@@ -76,6 +77,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
 
   late final ModuleMessages _moduleMessages;
   final ModuleNotice _moduleNotice = ModuleNotice();
+  final ModuleMemo _moduleMemo = ModuleMemo();
   DataNotice _dataNotice = DataNotice();
   final ModuleMedia _moduleMedia = ModuleMedia();
 
@@ -194,7 +196,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                   toolbarHeight: _appBarHeight,
                   backgroundColor: Colors.white,
                   actions: [
-                    widgetChatroomMessageDrawerBtn(context, widget.dataChat),
+                    widgetChatroomMessageDrawerBtn(context, widget.dataChat,_moduleNotice,_dataNotice,_moduleMemo),
                   ],
                 ),
                 backgroundColor: Colors.white,

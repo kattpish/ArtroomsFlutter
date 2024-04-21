@@ -1,6 +1,7 @@
 
 import 'dart:async';
 import 'dart:convert';
+import 'package:artrooms/beans/bean_chatting_artist_profile.dart';
 import 'package:artrooms/data/module_datastore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
@@ -44,7 +45,7 @@ class ModuleNotice {
 
     List<dynamic> noticesJson = [];
 
-    final Uri uri = Uri.parse(apiUrlGraphQL);
+    final Uri uri = Uri.parse(apiUrlGraphQLTest);
 
     final response = await http.post(
       uri,
@@ -53,12 +54,12 @@ class ModuleNotice {
         'Authorization': 'Bearer ${dbStore.getAccessToken()}',
       },
       body: jsonEncode({
-        "operationName": "SearchChattingNotice",
+        "operationName": "searchChattingNotice",
         "variables": {
           "url": channelUrl,
         },
         "query": """
-          query SearchChattingNotice(\$url: String!) {
+           query searchChattingNotice(\$url: String!) {
             searchChattingNotice(url: \$url) {
               ... on ChattingNoticeList {
                 data {
@@ -99,5 +100,54 @@ class ModuleNotice {
 
     return noticesJson;
   }
+  Future<ArtistProfile> getProfileInfo({required int artistId}) async {
+    Map<String, dynamic> body = {
+      "operationName": "searchChattingArtistProfile",
+      "variables": {"artistId": artistId},
+      "query": """
+       query searchChattingArtistProfile (\$artistId: Int!){
+    searchChattingArtistProfile(artistId: \$artistId) {
+        ... on ChattingArtistProfile {
+            id
+            feedback
+            classAdvice
+            ableDay
+            ableTime
+            replyTime
+            artistId
+        }
+    }
+}
+      """,
+    };
 
+    try {
+
+      final response = await http.post(
+        Uri.parse(apiUrlGraphQLTest),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: json.encode(body),
+      );
+
+      final responseData = json.decode(response.body);
+
+      if (kDebugMode) {
+        print('response of profile $responseData');
+      }
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseData = jsonDecode(response.body);
+        return ArtistProfile.fromJson(responseData['data']['searchChattingArtistProfile']);
+      } else {
+        if (kDebugMode) {
+          print('Error updating profile picture: ${response.body}');
+        }
+        return ArtistProfile();
+      }
+    } catch (e) {
+      print('error ${e}');
+      return ArtistProfile();
+    }
+  }
 }
