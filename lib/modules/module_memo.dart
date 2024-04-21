@@ -40,7 +40,7 @@ class ModuleMemo{
     try {
 
       final response = await http.post(
-        Uri.parse(apiUrlGraphQLTest),
+        Uri.parse(apiUrlGraphQL),
         headers: {
           "Content-Type": "application/json",
         },
@@ -97,7 +97,7 @@ class ModuleMemo{
     ''';
    try{
      var response = await http.post(
-       Uri.parse(apiUrlGraphQLTest),
+       Uri.parse(apiUrlGraphQL),
        headers: {
          'Content-Type': 'application/json',
          'Authorization': dbStore.getAccessToken(),

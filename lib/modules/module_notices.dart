@@ -45,7 +45,7 @@ class ModuleNotice {
 
     List<dynamic> noticesJson = [];
 
-    final Uri uri = Uri.parse(apiUrlGraphQLTest);
+    final Uri uri = Uri.parse(apiUrlGraphQL);
 
     final response = await http.post(
       uri,
@@ -124,7 +124,7 @@ class ModuleNotice {
     try {
 
       final response = await http.post(
-        Uri.parse(apiUrlGraphQLTest),
+        Uri.parse(apiUrlGraphQL),
         headers: {
           "Content-Type": "application/json",
         },
