@@ -32,7 +32,7 @@ Widget widgetChatroomMessageDrawerBtn(BuildContext context, DataChat dataChat,
             height: 24,
           )),
       onTap: () async{
-        final artistProfile = await moduleNotice.getProfileInfo(artistId: dataNotice.artistId);
+        final artistProfile = await moduleNotice.getArtistProfileInfo(artistId: dataNotice.artistId);
         final memo = await moduleMemo.getMemo(url: dataNotice.url);
         Navigator.push(context,
           MaterialPageRoute(builder: (context) {
