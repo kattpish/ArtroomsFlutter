@@ -354,15 +354,15 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                                   (){
                                 _replyMessage = message;
                                 _messageFocusNode.requestFocus();
-                              }, (index){
-                                _itemScrollController.scrollTo(index: 20,alignment: 0.5,duration: const Duration(seconds: 1));
+                              }, ( index){
+                                _itemScrollController.scrollTo(index: _getMessageIndex(index),alignment: 0.5,duration: const Duration(seconds: 1));
                               })
                               : buildOtherMessageBubble(context, index, this, message, _listMessages, isLast, isPreviousSame, isNextSame, isPreviousSameDateTime, isNextSameTime, _screenWidth,
                                   (){
                                 _replyMessage = message;
                                 _messageFocusNode.requestFocus();
                               }, (index){
-                                _itemScrollController.scrollTo(index: 20,alignment: 0.5,duration: const Duration(seconds: 1));
+                                _itemScrollController.scrollTo(index: _getMessageIndex(index),alignment: 0.5,duration: const Duration(seconds: 1));
                               }),
                         ],
                       );
@@ -1315,6 +1315,16 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
     }
 
     _doLoadMessages();
+  }
+
+  int _getMessageIndex(int id){
+    int result = 0;
+    for(int i = 0; i<_listMessages.length; i++){
+      if(_listMessages[i].index == id){
+        return i;
+      }
+    }
+    return result;
   }
 
 }
