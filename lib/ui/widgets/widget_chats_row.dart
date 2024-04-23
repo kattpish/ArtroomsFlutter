@@ -23,9 +23,7 @@ Slidable widgetChatRow(BuildContext context, int index, DataChat dataChat, {
           onPressed: (context) async {
             onClickOption1();
             final controller = Slidable.of(context);
-            await controller?.close(
-                duration: const Duration(milliseconds: 300)
-            );
+            await controller?.close(duration: const Duration(milliseconds: 300));
           },
           backgroundColor: dataChat.isNotification ? colorMainGrey200 : colorMainGrey300,
           foregroundColor: Colors.white,
@@ -41,9 +39,7 @@ Slidable widgetChatRow(BuildContext context, int index, DataChat dataChat, {
           autoClose: false,
           onPressed: (context) async {
             final controller = Slidable.of(context);
-            await controller?.close(
-                duration: const Duration(milliseconds: 300)
-            );
+            controller?.close(duration: const Duration(milliseconds: 300));
             onClickOption2();
           },
           backgroundColor: colorPrimaryBlue,
@@ -100,7 +96,8 @@ Slidable widgetChatRow(BuildContext context, int index, DataChat dataChat, {
                       color: colorPrimaryBlue,
                       shape:  BoxShape.circle,
                     ),
-                    child: const Icon(Icons.star, size:10, color: Colors.white,),)
+                    child: const Icon(Icons.star, size:10, color: Colors.white,),
+                  ),
               ),
             ),
           ],

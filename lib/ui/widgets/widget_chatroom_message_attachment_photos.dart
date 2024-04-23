@@ -51,139 +51,144 @@ Widget buildImageAttachments(
 
       heights += height;
 
-      rows.add(Container(
-        margin: EdgeInsets.only(top: i > 0 ? 2 : 0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: List.generate(itemsInRow, (index) {
-            String attachment = message.attachmentImages[itemsPlaced];
-            bool isLast = index == itemsInRow - 1;
-            itemsPlaced++;
-            return Expanded(
-              child: Container(
-                height: height,
-                margin: EdgeInsets.only(right: isLast ? 0 : 2),
-                child: Container(
-                  width: (screenWidth * 0.55) / (message.attachmentImages.length > 3 ? 3 : message.attachmentImages.length),
-                  decoration: const BoxDecoration(
-                    color: colorMainGrey200,
-                  ),
-                  child: InkWell(
-                    splashColor: Colors.transparent,
-                    highlightColor: Colors.transparent,
-                    onTap: () {
-                      if (!message.isSending) {
-                        List<FileItem> listImages = toFileItems(listMessages);
-                        int initialIndex = 0;
-                        for (int i = 0; i < listImages.length; i++) {
-                          FileItem fileItem = listImages[i];
-                          if(fileItem.url == attachment) {
-                            initialIndex = i;
-                            break;
+      rows.add(
+          Container(
+            margin: EdgeInsets.only(top: i > 0 ? 2 : 0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(itemsInRow, (index) {
+                String attachment = message.attachmentImages[itemsPlaced];
+                bool isLast = index == itemsInRow - 1;
+                itemsPlaced++;
+                return Expanded(
+                  child: Container(
+                    height: height,
+                    margin: EdgeInsets.only(right: isLast ? 0 : 2),
+                    child: Container(
+                      width: (screenWidth * 0.55) / (message.attachmentImages.length > 3 ? 3 : message.attachmentImages.length),
+                      decoration: const BoxDecoration(
+                        color: colorMainGrey200,
+                      ),
+                      child: InkWell(
+                        splashColor: Colors.transparent,
+                        highlightColor: Colors.transparent,
+                        onTap: () {
+                          if (!message.isSending) {
+                            List<FileItem> listImages = toFileItems(listMessages);
+                            int initialIndex = 0;
+                            for (int i = 0; i < listImages.length; i++) {
+                              FileItem fileItem = listImages[i];
+                              if(fileItem.url == attachment) {
+                                initialIndex = i;
+                                break;
+                              }
+                            }
+                            doOpenPhotoView(context, listImages, initialIndex: initialIndex);
                           }
-                        }
-                        doOpenPhotoView(context, listImages, initialIndex: initialIndex);
-                      }
-                    },
-                    child: message.isSending && message.hasImagesThumb(index)
-                        ?
-                    Image.file(
-                      message.getImagesThumb(index),
-                      width: double.infinity,
-                      height: double.infinity,
-                      fit: BoxFit.cover,
-                    )
-                        : CachedNetworkImage(
-                      imageUrl: attachment,
-                      cacheManager: customCacheManager,
-                      fit: BoxFit.cover,
-                      fadeInDuration: const Duration(milliseconds: 100),
-                      fadeOutDuration: const Duration(milliseconds: 100),
-                      placeholder: (context, url) {
-                        return Image.asset(
-                          'assets/images/chats/placeholder_photo.png',
+                        },
+                        child: message.isSending && message.hasImagesThumb(index)
+                            ?
+                        Image.file(
+                          message.getImagesThumb(index),
+                          width: double.infinity,
+                          height: double.infinity,
                           fit: BoxFit.cover,
-                        );
-                      },
-                      errorWidget: (context, url, error) {
-                        return Image.asset(
-                          'assets/images/chats/placeholder_photo.png',
+                        )
+                            : CachedNetworkImage(
+                          imageUrl: attachment,
+                          cacheManager: customCacheManager,
                           fit: BoxFit.cover,
-                        );
-                      },
+                          fadeInDuration: const Duration(milliseconds: 100),
+                          fadeOutDuration: const Duration(milliseconds: 100),
+                          placeholder: (context, url) {
+                            return Image.asset(
+                              'assets/images/chats/placeholder_photo.png',
+                              fit: BoxFit.cover,
+                            );
+                          },
+                          errorWidget: (context, url, error) {
+                            return Image.asset(
+                              'assets/images/chats/placeholder_photo.png',
+                              fit: BoxFit.cover,
+                            );
+                          },
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              ),
-            );
-          }),
-        ),
-      ));
+                );
+              }),
+            ),
+          )
+      );
 
       i++;
     }
 
-    return Row(
-      textDirection: message.isMe ? TextDirection.rtl : TextDirection.ltr,
-      mainAxisAlignment:
-      message.isMe ? MainAxisAlignment.start : MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        Container(
-          margin: EdgeInsets.only(left: message.isMe ? 0 : 40),
-          child: ClipRRect(
-            borderRadius: const BorderRadius.all(Radius.circular(10)),
-            child: Container(
-              constraints: BoxConstraints(maxWidth: screenWidth * 0.55),
-              alignment:
-              message.isMe ? Alignment.topRight : Alignment.topLeft,
-              decoration: const ShapeDecoration(
-                color: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(10)),
+    return Container(
+      margin: const EdgeInsets.only(bottom: 1),
+      child: Row(
+        textDirection: message.isMe ? TextDirection.rtl : TextDirection.ltr,
+        mainAxisAlignment:
+        message.isMe ? MainAxisAlignment.start : MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Container(
+            margin: EdgeInsets.only(left: message.isMe ? 0 : 40),
+            child: ClipRRect(
+              borderRadius: const BorderRadius.all(Radius.circular(10)),
+              child: Container(
+                constraints: BoxConstraints(maxWidth: screenWidth * 0.55),
+                alignment:
+                message.isMe ? Alignment.topRight : Alignment.topLeft,
+                decoration: const ShapeDecoration(
+                  color: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                  ),
                 ),
-              ),
-              child: Stack(
-                children: [
-                  Column(children: rows),
-                  if(message.isSending)
-                    Container(
-                      height: heights,
-                      constraints: BoxConstraints(maxWidth: screenWidth * 0.55),
-                      color: const Color(0xFFFFFFFF).withOpacity(0.8),
-                      child: Center(
-                        child: Container(
-                          width: 24,
-                          height: 24,
-                          alignment: Alignment.topRight,
-                          child: const CircularProgressIndicator(
-                            value: 50,
-                            color: Color(0xFF6A79FF),
-                            strokeWidth: 2,
+                child: Stack(
+                  children: [
+                    Column(children: rows),
+                    if(message.isSending)
+                      Container(
+                        height: heights,
+                        constraints: BoxConstraints(maxWidth: screenWidth * 0.55),
+                        color: const Color(0xFFFFFFFF).withOpacity(0.8),
+                        child: Center(
+                          child: Container(
+                            width: 24,
+                            height: 24,
+                            alignment: Alignment.topRight,
+                            child: const CircularProgressIndicator(
+                              value: 50,
+                              color: Color(0xFF6A79FF),
+                              strokeWidth: 2,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
-        ),
-        const SizedBox(width: 6),
-        Text(
-          message.getTime(),
-          style: const TextStyle(
-            color: colorMainGrey300,
-            fontSize: 10,
-            fontFamily: 'Pretendard',
-            fontWeight: FontWeight.w400,
-            height: 0.15,
-            letterSpacing: -0.20,
+          const SizedBox(width: 6),
+          Text(
+            message.getTime(),
+            style: const TextStyle(
+              color: colorMainGrey300,
+              fontSize: 10,
+              fontFamily: 'Pretendard',
+              fontWeight: FontWeight.w400,
+              height: 0.15,
+              letterSpacing: -0.20,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-        ),
-      ],
+        ],
+      ),
     );
   } else {
     return const SizedBox.shrink();
