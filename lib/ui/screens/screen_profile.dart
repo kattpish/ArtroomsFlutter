@@ -3,6 +3,7 @@ import 'package:artrooms/ui/screens/screen_channel_talk.dart';
 import 'package:artrooms/ui/screens/screen_login.dart';
 import 'package:artrooms/ui/screens/screen_notifications_sounds.dart';
 import 'package:artrooms/ui/screens/screen_profile_edit.dart';
+import 'package:artrooms/ui/widgets/widget_profile_logout_dialog.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -370,10 +371,14 @@ class _ScreenProfileState extends State<ScreenProfile> {
                             ),
                           ),
                           onTap: () {
-                            DBStore().logout();
-                            Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) {
-                              return const ScreenLogin(onPageEmail: "",);
-                            }));
+                            widgetProfileLogoutDialog(context,
+                                onLogout: () {
+                                  DBStore().logout();
+                                  Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) {
+                                    return const ScreenLogin(onPageEmail: "",);
+                                  }));
+                                }
+                            );
                           }
                       ),
                     ),

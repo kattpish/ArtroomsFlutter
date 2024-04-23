@@ -3,7 +3,6 @@ import 'package:artrooms/beans/bean_chatting_artist_profile.dart';
 import 'package:artrooms/beans/bean_memo.dart';
 import 'package:artrooms/beans/bean_message.dart';
 import 'package:artrooms/beans/bean_notice.dart';
-import 'package:artrooms/modules/module_memo.dart';
 import 'package:artrooms/modules/module_messages.dart';
 import 'package:artrooms/modules/module_notices.dart';
 import 'package:artrooms/ui/screens/screen_chatroom_files.dart';
@@ -275,7 +274,7 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
                                           ),
                                         ],
                                       ),
-                                      SizedBox(height: 8),
+                                      const SizedBox(height: 8),
                                       Row(
                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
@@ -356,7 +355,6 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
                                   onTap: () async {
                                     await Navigator.push(context, MaterialPageRoute(builder: (context) {
                                       return ScreenMemo(dataChat: widget.dataChat,memo: memo,onUpdateMemo: (memo){
-                                        print('updating called');
                                         setState(() {
                                           this.memo = memo;
                                         });
@@ -643,7 +641,6 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
 
   void _doLoadAttachments() async {
     List<DataMessage> attachmentsImages = await _moduleMessages.fetchAttachmentsImages();
-
     setState(() {
       _listAttachmentsImages = attachmentsImages;
     });

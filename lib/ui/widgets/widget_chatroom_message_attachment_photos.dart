@@ -25,6 +25,7 @@ Widget buildImageAttachments(
 
     double heights = 0;
 
+    int i = 0;
     while (itemsPlaced < itemCount) {
       int itemsInRow;
 
@@ -51,7 +52,7 @@ Widget buildImageAttachments(
       heights += height;
 
       rows.add(Container(
-        margin: const EdgeInsets.only(top: 1, bottom: 1),
+        margin: EdgeInsets.only(top: i > 0 ? 2 : 0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: List.generate(itemsInRow, (index) {
@@ -118,6 +119,8 @@ Widget buildImageAttachments(
           }),
         ),
       ));
+
+      i++;
     }
 
     return Row(
