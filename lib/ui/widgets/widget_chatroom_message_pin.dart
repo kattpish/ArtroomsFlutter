@@ -29,6 +29,8 @@ Widget widgetChatMessagePin(BuildContext context, State state, {void Function()?
           ],
         ),
         child: InkWell(
+          splashColor: Colors.transparent,
+          highlightColor: Colors.transparent,
           onTap: () {
             if(onSelectChat != null) {
               onSelectChat();

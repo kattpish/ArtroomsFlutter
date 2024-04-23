@@ -68,6 +68,8 @@ Widget buildImageAttachments(
                     color: colorMainGrey200,
                   ),
                   child: InkWell(
+                    splashColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
                     onTap: () {
                       if (!message.isSending) {
                         List<FileItem> listImages = toFileItems(listMessages);

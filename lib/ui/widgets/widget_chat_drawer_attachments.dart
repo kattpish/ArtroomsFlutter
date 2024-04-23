@@ -26,6 +26,8 @@ Widget widgetChatDrawerAttachments(BuildContext context, List<DataMessage> listA
             Container(
               margin: const EdgeInsets.only(right: 4),
               child: InkWell(
+                splashColor: Colors.transparent,
+                highlightColor: Colors.transparent,
                 onTap: () {
                   doOpenPhotoView(context, listImages, initialIndex: fileItem.index);
                 },

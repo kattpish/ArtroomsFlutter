@@ -96,6 +96,8 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
                 shape: BoxShape.circle
             ),
             child: InkWell(
+              splashColor: Colors.transparent,
+              highlightColor: Colors.transparent,
               child: const Icon(
                 Icons.close,
                 color: Colors.white,

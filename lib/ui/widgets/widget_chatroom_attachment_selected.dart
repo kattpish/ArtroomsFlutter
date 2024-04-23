@@ -39,6 +39,8 @@ Widget attachmentSelected(BuildContext context, List<FileItem> filesImages, {req
             Container(
               margin: const EdgeInsets.only(right: 4, top: 4, bottom: 4),
               child: InkWell(
+                splashColor: Colors.transparent,
+                highlightColor: Colors.transparent,
                 onTap: () {
                   doOpenPhotoView(context, filesImages, initialIndex: fileItem.index);
                 },

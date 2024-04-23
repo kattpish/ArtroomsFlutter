@@ -20,6 +20,8 @@ Widget widgetChatroomMessageDrawerBtn(BuildContext context, DataChat dataChat,
       shape: BoxShape.circle,
     ),
     child: InkWell(
+      splashColor: Colors.transparent,
+      highlightColor: Colors.transparent,
       child: Container(
           padding: const EdgeInsets.all(16.0),
           alignment: Alignment.centerRight,

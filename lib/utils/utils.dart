@@ -135,9 +135,9 @@ List<TextSpan> replacePattern(String original, Color color, Color colorMention, 
               style: TextStyle(
                 color: color,
                 fontSize: 15.8,
-                letterSpacing: 1.2,
-              )
-          )
+                letterSpacing: -0.2,
+              ),
+          ),
       );
       spans.add(
           TextSpan(
@@ -145,14 +145,19 @@ List<TextSpan> replacePattern(String original, Color color, Color colorMention, 
               style: TextStyle(
                 color: colorMention,
                 fontSize: 15.8,
-                letterSpacing: 1.2,
-              )
-          )
+                letterSpacing: -0.2,
+              ),
+          ),
       );
       lastMatchIndex = match.end;
     }
 
-    spans.add(TextSpan(text: original.substring(lastMatchIndex, original.length), style: TextStyle(color: color)));
+    spans.add(
+        TextSpan(
+            text: original.substring(lastMatchIndex, original.length),
+            style: TextStyle(color: color),
+        ),
+    );
 
   }else {
 
@@ -163,8 +168,8 @@ List<TextSpan> replacePattern(String original, Color color, Color colorMention, 
               color: color,
               fontSize: 15.8,
               letterSpacing: 1.2,
-            )
-        )
+            ),
+        ),
     );
 
   }

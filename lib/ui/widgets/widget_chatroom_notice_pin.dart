@@ -39,7 +39,7 @@ class _WidgetChatroomNoticePinState extends State<WidgetChatroomNoticePin> {
   Widget build(BuildContext context) {
 
     return AnimatedContainer(
-      height: isExpanded ? null : (widget.isExpandNotice ? 150 : 36),
+      height: isExpanded ? null : (widget.isExpandNotice ? 150 : 44),
       duration: const Duration(milliseconds: 200),
       onEnd: () {
         setState(() {
@@ -48,8 +48,8 @@ class _WidgetChatroomNoticePinState extends State<WidgetChatroomNoticePin> {
       },
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 14, vertical: 0),
-        padding: EdgeInsets.only(bottom: isExpanded ? 4 : 0),
-        constraints: BoxConstraints(minHeight: widget.isExpandNotice ? 50 : 36),
+        padding: EdgeInsets.only(top: isExpanded ? 4 : 4, bottom: isExpanded ? 4 : 0,),
+        constraints: BoxConstraints(minHeight: widget.isExpandNotice ? 50 : 44),
         decoration: ShapeDecoration(
           color: Colors.white,
           shape: RoundedRectangleBorder(
@@ -58,13 +58,15 @@ class _WidgetChatroomNoticePinState extends State<WidgetChatroomNoticePin> {
           shadows: const [
             BoxShadow(
               color: Color(0x19000000),
-              blurRadius: 10,
+              blurRadius: 18,
               offset: Offset(0, 0),
               spreadRadius: 0,
             ),
           ],
         ),
         child: InkWell(
+          splashColor: Colors.transparent,
+          highlightColor: Colors.transparent,
           onTap: () {
             widget.onToggle();
             setState(() {
@@ -138,7 +140,7 @@ class _WidgetChatroomNoticePinState extends State<WidgetChatroomNoticePin> {
                                         widget.dataNotice.notice,
                                         style: TextStyle(
                                           color: const Color(0xFF3A3A3A),
-                                          fontSize: isExpanded ? (isTablet(context) ? 17 : 15) : (isTablet(context) ? 15 : 14),
+                                          fontSize: isExpanded ? (isTablet(context) ? 17 : 14) : (isTablet(context) ? 17 : 14),
                                           fontFamily: 'Pretendard',
                                           fontWeight: FontWeight.w400,
                                           height: 0,

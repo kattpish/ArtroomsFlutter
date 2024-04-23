@@ -10,6 +10,8 @@ Widget widgetChatroomFilesCard(BuildContext context, DataMessage attachmentFile,
     elevation: 0,
     color: Colors.white,
     child: InkWell(
+      splashColor: Colors.transparent,
+      highlightColor: Colors.transparent,
       onTap: () {
         onSelect();
       },

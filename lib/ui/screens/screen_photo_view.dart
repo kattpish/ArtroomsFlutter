@@ -1,6 +1,4 @@
 
-import 'dart:math' as math;
-
 import 'package:artrooms/beans/bean_file.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
@@ -39,7 +37,6 @@ class _ScreenPhotoView extends State<ScreenPhotoView> {
   bool isDownloading = false;
   late int currentIndex;
   late PageController _pageController;
-  double rotationAngleDegrees = 0;
 
   @override
   void initState() {
@@ -78,11 +75,7 @@ class _ScreenPhotoView extends State<ScreenPhotoView> {
                                   },
                                   itemBuilder: (context, index) {
                                     FileItem fileItem = widget.images[index];
-                                    return Transform.rotate(
-                                        angle: rotationAngleDegrees * math.pi / 180,
-                                        alignment: FractionalOffset.center,
-                                        child: photoView(context, fileItem)
-                                    );
+                                    return photoView(context, fileItem);
                                   },
                                 ),
                               ),
@@ -91,21 +84,13 @@ class _ScreenPhotoView extends State<ScreenPhotoView> {
                         ),
                       ),
                       Positioned(
-                        bottom: 18,
-                        right: 18,
-                        child: IconButton(
-                          icon: const Icon(Icons.flip_camera_android, color: colorMainGrey250),
-                          onPressed: () {
-                            rotateImage();
-                          },
-                        ),
-                      ),
-                      Positioned(
-                        top: 18,
-                        left: 18,
+                        top: 0,
+                        left: 0,
                         child: Visibility(
                           visible: widget.isSelectMode,
-                          child: GestureDetector(
+                          child: InkWell(
+                            splashColor: Colors.transparent,
+                            highlightColor: Colors.transparent,
                             onTap: () {
                               setState(() {
                                 if(!widget.images[currentIndex].isSelected) {
@@ -122,6 +107,7 @@ class _ScreenPhotoView extends State<ScreenPhotoView> {
                             child: Container(
                               width: 26,
                               height: 26,
+                              margin: const EdgeInsets.only(top: 18.0, right: 18, left: 18, bottom: 18),
                               decoration: BoxDecoration(
                                 color: widget.images[currentIndex].isSelected ? colorPrimaryBlue : colorMainGrey200.withAlpha(150),
                                 shape: BoxShape.circle,
@@ -246,14 +232,6 @@ class _ScreenPhotoView extends State<ScreenPhotoView> {
         );
       },
     );
-  }
-
-  void rotateImage() {
-    setState(() {
-      rotationAngleDegrees += 90; // Rotate 90 degrees
-      // Normalize angle to be within 0-360 degrees
-      rotationAngleDegrees %= 360;
-    });
   }
 
 }

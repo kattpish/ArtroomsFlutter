@@ -297,6 +297,58 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                                     ),
                                   ),
                                 ),
+                                AnimatedPositioned(
+                                  duration: const Duration(milliseconds: 500),
+                                  curve: Curves.easeInOut,
+                                  right: 16,
+                                  bottom: _selectedImages > 0 && (_showAttachment && _bottomSheetHeight > (_bottomSheetHeightMax - _appBarHeight - 5)) ? 16 : -100,
+                                  child: InkWell(
+                                    splashColor: Colors.transparent,
+                                    highlightColor: Colors.transparent,
+                                    onTap: () {
+                                      _doSendMessageImages();
+                                    },
+                                    child: Container(
+                                      height: 40,
+                                      constraints: const BoxConstraints(minWidth: 106),
+                                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                                      decoration: ShapeDecoration(
+                                        color: const Color(0xFF5667FF),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(20),
+                                        ),
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.all(2.0),
+                                            child: Image.asset(
+                                              'assets/images/icons/icon_send.png',
+                                              width: 24,
+                                              height: 24,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 4),
+                                          const Text(
+                                            '보내기',
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 16,
+                                              fontFamily: 'SUIT',
+                                              fontWeight: FontWeight.w500,
+                                              letterSpacing: -0.32,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
                               ],
                             ),
                           );
@@ -489,6 +541,8 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
               Container(
                 padding: const EdgeInsets.all(0.0),
                 child: InkWell(
+                  splashColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
                   onTap: () {
                     _doSendMessage();
                   },
@@ -588,8 +642,11 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                                   margin: const EdgeInsets.only(left: 8.0),
                                   child: Center(
                                     child: InkWell(
+                                      splashColor: Colors.transparent,
+                                      highlightColor: Colors.transparent,
                                       onTap: () {
-                                        _deselectPickedFiles(true);
+                                        _doDeselectPickedImages();
+                                        _doAttachmentPickerMin();
                                       },
                                       child: Container(
                                         padding: const EdgeInsets.all(8.0),
@@ -619,6 +676,8 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                                 margin: const EdgeInsets.only(right: 8.0),
                                 child: Center(
                                   child: InkWell(
+                                    splashColor: Colors.transparent,
+                                    highlightColor: Colors.transparent,
                                     onTap: () {
                                       _doDeselectPickedImages();
                                     },
@@ -647,6 +706,8 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                                 margin: const EdgeInsets.only(left: 8.0),
                                 child: Center(
                                   child: InkWell(
+                                    splashColor: Colors.transparent,
+                                    highlightColor: Colors.transparent,
                                     onTap: () {
                                       setState(() {
                                         _selectMode = true;
@@ -780,6 +841,8 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: InkWell(
+                        splashColor: Colors.transparent,
+                        highlightColor: Colors.transparent,
                         onTap: () {
                           Navigator.push(context, MaterialPageRoute(builder: (context) {
                             return ScreenPhotoView(images: _filesImages, initialIndex: index, isSelectMode: true,
@@ -810,11 +873,13 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                               fit: BoxFit.cover,
                             ),
                             Positioned(
-                              top: 3,
-                              right: 4,
+                              top: 0,
+                              right: 0,
                               child: Visibility(
                                 visible: _selectMode,
-                                child: GestureDetector(
+                                child: InkWell(
+                                  splashColor: Colors.transparent,
+                                  highlightColor: Colors.transparent,
                                   onTap: () {
                                     setState(() {
                                       if(!fileImage.isSelected) {
@@ -831,6 +896,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                                   child: Container(
                                     width: 26,
                                     height: 26,
+                                    margin: const EdgeInsets.only(top: 8.0, right: 8, left: 16, bottom: 16),
                                     decoration: BoxDecoration(
                                       color: fileImage.isSelected
                                           ? colorPrimaryBlue
@@ -900,8 +966,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
 
     }).catchError((e) {
 
-    }
-    ).whenComplete(() {
+    }).whenComplete(() {
       if(mounted) {
         setState(() {
           _isLoading = false;

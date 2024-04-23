@@ -45,6 +45,8 @@ class WidgetChatroomMentionUser extends StatelessWidget {
             return Container(
               margin: const EdgeInsets.only(bottom: 8),
               child: InkWell(
+                splashColor: Colors.transparent,
+                highlightColor: Colors.transparent,
                 onTap: () {
                   onCancelReply(memberList[index]);
                 },

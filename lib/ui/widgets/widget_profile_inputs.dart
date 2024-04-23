@@ -146,6 +146,8 @@ Widget widgetProfileInput2({
                     ),
                   ),
                   child: InkWell(
+                    splashColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
                     onTap: onTap,
                     child: Container(
                       alignment: Alignment.center,
