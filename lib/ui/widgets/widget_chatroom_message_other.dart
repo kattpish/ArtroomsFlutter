@@ -1,13 +1,13 @@
 
+import 'package:artrooms/beans/bean_focusedMenuItem.dart';
 import 'package:artrooms/ui/widgets/widget_chatroom_message_attachment_file.dart';
 import 'package:artrooms/ui/widgets/widget_chatroom_message_attachment_photos.dart';
 import 'package:artrooms/ui/widgets/widget_chatroom_message_reply.dart';
 import 'package:artrooms/ui/widgets/widget_chatroom_message_text.dart';
+import 'package:artrooms/ui/widgets/widget_focused_menu_holder.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:focused_menu/focused_menu.dart';
-import 'package:focused_menu/modals.dart';
 
 import '../../beans/bean_message.dart';
 import '../../utils/utils_media.dart';

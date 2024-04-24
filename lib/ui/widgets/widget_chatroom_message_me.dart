@@ -1,12 +1,13 @@
 
+import 'package:artrooms/beans/bean_focusedMenuItem.dart';
 import 'package:artrooms/ui/widgets/widget_chatroom_message_attachment_file.dart';
 import 'package:artrooms/ui/widgets/widget_chatroom_message_attachment_photos.dart';
 import 'package:artrooms/ui/widgets/widget_chatroom_message_reply.dart';
 import 'package:artrooms/ui/widgets/widget_chatroom_message_text.dart';
+import 'package:artrooms/ui/widgets/widget_focused_menu_holder.dart';
+import 'package:artrooms/ui/widgets/wigdet_focus_hover.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:focused_menu/focused_menu.dart';
-import 'package:focused_menu/modals.dart';
 
 import '../../beans/bean_message.dart';
 import '../theme/theme_colors.dart';
@@ -60,12 +61,7 @@ Widget buildMyMessageBubble(
                       menuWidth: screenWidth / 2,
                       menuItems: [
                         FocusedMenuItem(
-                            trailingIcon:
-                            const Icon(
-                              Icons.reply,
-                              color:
-                              colorMainGrey500,
-                            ),
+                            trailingIcon: const ImageIcon(AssetImage('assets/images/icons/icon_reply.png')),
                             title: const Text("답장"),
                             onPressed: () {
                               onReplyClick();
@@ -87,12 +83,14 @@ Widget buildMyMessageBubble(
                         ),
                       ],
                       blurSize: 0.0,
+                      blurBackgroundColor: Colors.transparent,
                       menuOffset: 10.0,
                       bottomOffsetHeight:
                       80.0,
                       menuBoxDecoration:
                       const BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(15.0))
+                         color: colorMainGrey150,
+                          borderRadius: BorderRadius.all(Radius.circular(20.0))
                       ),
                       child: Container(
                         constraints:
