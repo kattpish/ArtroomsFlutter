@@ -67,12 +67,7 @@ Widget buildMyMessageBubble(
                               onReplyClick();
                             }),
                         FocusedMenuItem(
-                            trailingIcon:
-                            const Icon(
-                              Icons.copy,
-                              color:
-                              colorMainGrey500,
-                            ),
+                            trailingIcon: const ImageIcon(AssetImage('assets/images/icons/icon_copy.png')),
                             title: const Text("복사"),
                             onPressed:
                                 () async {
