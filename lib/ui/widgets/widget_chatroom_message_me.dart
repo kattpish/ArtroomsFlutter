@@ -47,7 +47,7 @@ Widget buildMyMessageBubble(
                       Text(
                         message.getTime(),
                         style: const TextStyle(
-                          color: colorMainGrey300,
+                          color: colorMainGrey150,
                           fontSize: 10,
                           fontFamily: 'Pretendard',
                           fontWeight: FontWeight.w400,
@@ -78,15 +78,10 @@ Widget buildMyMessageBubble(
                         ),
                       ],
                       blurSize: 0.0,
-                      blurBackgroundColor: Colors.transparent,
                       menuOffset: 10.0,
+                      blurBackgroundColor: Colors.transparent,
                       bottomOffsetHeight:
                       80.0,
-                      menuBoxDecoration:
-                      const BoxDecoration(
-                         color: colorMainGrey150,
-                          borderRadius: BorderRadius.all(Radius.circular(20.0))
-                      ),
                       child: Container(
                         constraints:
                         BoxConstraints(maxWidth: screenWidth * 0.55),

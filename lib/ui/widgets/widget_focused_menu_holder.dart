@@ -169,11 +169,9 @@ class _FocusedMenuDetailsState extends State<FocusedMenuDetails> {
                 child: Container(
                   width: maxMenuWidth,
                   height: menuHeight,
-                  decoration: widget.menuBoxDecoration ??
-                      BoxDecoration(
-                          color: Colors.grey.shade200,
-                          borderRadius: const BorderRadius.all(Radius.circular(15.0)),
-                          boxShadow: [const BoxShadow(color: Colors.black38, blurRadius: 10, spreadRadius: 1)]),
+                  decoration: const BoxDecoration(
+                          color: colorMainGrey150,
+                          borderRadius: BorderRadius.all(Radius.circular(15.0)),),
                   child: ClipRRect(
                     borderRadius: const BorderRadius.all(Radius.circular(15.0)),
                     child: ListView.builder(
@@ -189,12 +187,7 @@ class _FocusedMenuDetailsState extends State<FocusedMenuDetails> {
                               item.onPressed();
 
                             },
-                            child: MouseRegion(
-                              onEnter: (event) => onEnter(true),
-                              onExit: (event) => onEnter(false),
-                              onHover: (evemt) => onEnter(true),
-                              cursor: SystemMouseCursors.click,
-                              child: Container(
+                            child:  Container(
                                   alignment: Alignment.center,
                                   margin: const EdgeInsets.only(bottom: 1),
                                   color: item.backgroundColor ?? Colors.white,
@@ -213,7 +206,7 @@ class _FocusedMenuDetailsState extends State<FocusedMenuDetails> {
                                       ],
                                     ),
                                   )),
-                            ));
+                            );
                         if (widget.animateMenu) {
                           return TweenAnimationBuilder(
                               builder: (context, dynamic value, child) {
@@ -236,6 +229,7 @@ class _FocusedMenuDetailsState extends State<FocusedMenuDetails> {
               ),
             ),
             Positioned(top: widget.childOffset.dy, left: widget.childOffset.dx, child: AbsorbPointer(absorbing: true, child: Container(
+              color: Colors.red,
                 width: widget.childSize!.width,
                 height: widget.childSize!.height,
                 child: widget.child))),
