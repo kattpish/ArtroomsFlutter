@@ -3,6 +3,7 @@ import 'dart:ui';
 
 
 const colorPrimaryBlue = Color(0xFF6A79FF);
+const colorPrimaryBlue800 = Color(0xFF3549FF);
 const colorPrimaryBlue400 = Color(0xFF6A79FF);
 const colorPrimaryPurple = Color(0xFFA29BFD);
 

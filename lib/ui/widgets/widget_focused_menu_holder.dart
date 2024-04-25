@@ -18,24 +18,27 @@ class FocusedMenuHolder extends StatefulWidget {
   final Color? blurBackgroundColor;
   final double? bottomOffsetHeight;
   final double? menuOffset;
+  final Color activeColor;
+
   /// Open with tap insted of long press.
   final bool openWithTap;
 
   const FocusedMenuHolder(
       {Key? key,
-        required this.child,
-        required this.onPressed,
-        required this.menuItems,
-        this.duration,
-        this.menuBoxDecoration,
-        this.menuItemExtent,
-        this.animateMenuItems,
-        this.blurSize,
-        this.blurBackgroundColor,
-        this.menuWidth,
-        this.bottomOffsetHeight,
-        this.menuOffset,
-        this.openWithTap = false})
+      required this.child,
+      required this.onPressed,
+      required this.menuItems,
+      this.duration,
+      this.menuBoxDecoration,
+      this.menuItemExtent,
+      this.animateMenuItems,
+      this.blurSize,
+      this.blurBackgroundColor,
+      this.menuWidth,
+      this.bottomOffsetHeight,
+      this.menuOffset,
+      this.openWithTap = false,
+        required this.activeColor,})
       : super(key: key);
 
   @override
@@ -47,8 +50,9 @@ class _FocusedMenuHolderState extends State<FocusedMenuHolder> {
   Offset childOffset = Offset(0, 0);
   Size? childSize;
 
-  getOffset(){
-    RenderBox renderBox = containerKey.currentContext!.findRenderObject() as RenderBox;
+  getOffset() {
+    RenderBox renderBox =
+        containerKey.currentContext!.findRenderObject() as RenderBox;
     Size size = renderBox.size;
     Offset offset = renderBox.localToGlobal(Offset.zero);
     setState(() {
@@ -98,6 +102,7 @@ class _FocusedMenuHolderState extends State<FocusedMenuHolder> {
                     animateMenu: widget.animateMenuItems ?? true,
                     bottomOffsetHeight: widget.bottomOffsetHeight ?? 0,
                     menuOffset: widget.menuOffset ?? 0,
+                    activeColor: widget.activeColor,
                   ));
             },
             fullscreenDialog: true,
@@ -118,9 +123,23 @@ class FocusedMenuDetails extends StatefulWidget {
   final Color? blurBackgroundColor;
   final double? bottomOffsetHeight;
   final double? menuOffset;
+  final Color activeColor;
 
   const FocusedMenuDetails(
-      {Key? key, required this.menuItems, required this.child, required this.childOffset, required this.childSize,required this.menuBoxDecoration, required this.itemExtent,required this.animateMenu,required this.blurSize,required this.blurBackgroundColor,required this.menuWidth, this.bottomOffsetHeight, this.menuOffset})
+      {Key? key,
+      required this.menuItems,
+      required this.child,
+      required this.childOffset,
+      required this.childSize,
+      required this.menuBoxDecoration,
+      required this.itemExtent,
+      required this.animateMenu,
+      required this.blurSize,
+      required this.blurBackgroundColor,
+      required this.menuWidth,
+      this.bottomOffsetHeight,
+      this.menuOffset, required this.activeColor,
+      })
       : super(key: key);
 
   @override
@@ -129,6 +148,7 @@ class FocusedMenuDetails extends StatefulWidget {
 
 class _FocusedMenuDetailsState extends State<FocusedMenuDetails> {
   bool isHovered = false;
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -136,10 +156,17 @@ class _FocusedMenuDetailsState extends State<FocusedMenuDetails> {
     final maxMenuHeight = size.height * 0.45;
     final listHeight = widget.menuItems.length * (widget.itemExtent ?? 50.0);
 
-    final maxMenuWidth = widget.menuWidth??(size.width * 0.70);
+    final maxMenuWidth = widget.menuWidth ?? (size.width * 0.70);
     final menuHeight = listHeight < maxMenuHeight ? listHeight : maxMenuHeight;
-    final leftOffset = (widget.childOffset.dx+maxMenuWidth ) < size.width ? widget.childOffset.dx: (widget.childOffset.dx-maxMenuWidth+widget.childSize!.width);
-    final topOffset = (widget.childOffset.dy + menuHeight + widget.childSize!.height) < size.height - widget.bottomOffsetHeight! ? widget.childOffset.dy + widget.childSize!.height + widget.menuOffset! : widget.childOffset.dy - menuHeight - widget.menuOffset!;
+    final leftOffset = (widget.childOffset.dx + maxMenuWidth) < size.width
+        ? widget.childOffset.dx
+        : (widget.childOffset.dx - maxMenuWidth + widget.childSize!.width);
+    final topOffset = (widget.childOffset.dy +
+                menuHeight +
+                widget.childSize!.height) <
+            size.height - widget.bottomOffsetHeight!
+        ? widget.childOffset.dy + widget.childSize!.height + widget.menuOffset!
+        : widget.childOffset.dy - menuHeight - widget.menuOffset!;
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: Container(
@@ -170,8 +197,9 @@ class _FocusedMenuDetailsState extends State<FocusedMenuDetails> {
                   width: maxMenuWidth,
                   height: menuHeight,
                   decoration: const BoxDecoration(
-                          color: colorMainGrey150,
-                          borderRadius: BorderRadius.all(Radius.circular(15.0)),),
+                    color: colorMainGrey150,
+                    borderRadius: BorderRadius.all(Radius.circular(15.0)),
+                  ),
                   child: ClipRRect(
                     borderRadius: const BorderRadius.all(Radius.circular(15.0)),
                     child: ListView.builder(
@@ -181,32 +209,32 @@ class _FocusedMenuDetailsState extends State<FocusedMenuDetails> {
                       itemBuilder: (context, index) {
                         FocusedMenuItem item = widget.menuItems[index];
                         Widget listItem = GestureDetector(
-                            onTap:
-                                () {
-                              Navigator.pop(context);
-                              item.onPressed();
-
-                            },
-                            child:  Container(
-                                  alignment: Alignment.center,
-                                  margin: const EdgeInsets.only(bottom: 1),
-                                  color: item.backgroundColor ?? Colors.white,
-                                  height: widget.itemExtent ?? 50.0,
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 14),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: <Widget>[
-                                        item.title,
-                                        SizedBox(
-                                          width: 20,
-                                          height: 20,
-                                          child:item.trailingIcon!,)
-
-                                      ],
-                                    ),
-                                  )),
-                            );
+                          onTap: () {
+                            Navigator.pop(context);
+                            item.onPressed();
+                          },
+                          child: Container(
+                              alignment: Alignment.center,
+                              margin: const EdgeInsets.only(bottom: 1),
+                              color: item.backgroundColor ?? Colors.white,
+                              height: widget.itemExtent ?? 50.0,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 8.0, horizontal: 14),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    item.title,
+                                    SizedBox(
+                                      width: 20,
+                                      height: 20,
+                                      child: item.trailingIcon!,
+                                    )
+                                  ],
+                                ),
+                              )),
+                        );
                         if (widget.animateMenu) {
                           return TweenAnimationBuilder(
                               builder: (context, dynamic value, child) {
@@ -228,11 +256,24 @@ class _FocusedMenuDetailsState extends State<FocusedMenuDetails> {
                 ),
               ),
             ),
-            Positioned(top: widget.childOffset.dy, left: widget.childOffset.dx, child: AbsorbPointer(absorbing: true, child: Container(
-              color: Colors.red,
-                width: widget.childSize!.width,
-                height: widget.childSize!.height,
-                child: widget.child))),
+            Positioned(
+                top: widget.childOffset.dy,
+                left: widget.childOffset.dx,
+                child: AbsorbPointer(
+                    absorbing: true,
+                    child: Container(
+                        decoration: BoxDecoration(
+                          color: widget.activeColor,
+                          borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(24),
+                              topRight: Radius.circular(2),
+                              bottomLeft: Radius.circular(24),
+                              bottomRight: Radius.circular(24)
+                          ),
+                        ),
+                        width: widget.childSize!.width,
+                        height: widget.childSize!.height,
+                        child: widget.child))),
           ],
         ),
       ),
@@ -241,8 +282,8 @@ class _FocusedMenuDetailsState extends State<FocusedMenuDetails> {
 
   onEnter(bool hover) {
     print('hovering......$hover');
-   setState(() {
-     isHovered = hover;
-   });
+    setState(() {
+      isHovered = hover;
+    });
   }
 }

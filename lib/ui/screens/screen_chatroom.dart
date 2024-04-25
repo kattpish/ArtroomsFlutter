@@ -5,6 +5,8 @@ import 'package:artrooms/beans/bean_notice.dart';
 import 'package:artrooms/modules/module_memo.dart';
 import 'package:artrooms/modules/module_notices.dart';
 import 'package:artrooms/ui/screens/screen_photo_view.dart';
+import 'package:artrooms/ui/widgets/widget_chatroom_message_me_.dart';
+import 'package:artrooms/ui/widgets/widget_chatroom_message_other_.dart';
 import 'package:artrooms/ui/widgets/widget_loader.dart';
 import 'package:artrooms/utils/utils_notifications.dart';
 import 'package:flutter/material.dart';
@@ -350,18 +352,21 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                         children: [
                           if(!isPreviousDate) widgetChatroomMessageDatePin(context, message.timestamp, index),
                           message.isMe
-                              ? buildMyMessageBubble(context, index, this, message, _listMessages, isLast, isPreviousSameDateTime, isNextSameTime, isPreviousSameDateTime, isNextSameTime, _screenWidth,
-                                  (){
+                              ? ChatroomMessageMe(index: index, state: this, message: message, listMessages:_listMessages, isLast: isLast, isPreviousSame: isPreviousSame,
+                              isNextSame: isNextSame, isPreviousSameDateTime: isPreviousSameDateTime, isNextSameTime: isNextSameTime, screenWidth: _screenWidth,
+                              onReplyClick:(){
                                 _replyMessage = message;
                                 _messageFocusNode.requestFocus();
-                              }, ( index){
+                              }, onReplySelect:( index){
                                 _itemScrollController.scrollTo(index: _getMessageIndex(index),alignment: 0.5,duration: const Duration(seconds: 1));
                               })
-                              : buildOtherMessageBubble(context, index, this, message, _listMessages, isLast, isPreviousSame, isNextSame, isPreviousSameDateTime, isNextSameTime, _screenWidth,
-                                  (){
+                              : ChatroomMessageOther(index:index, state: this, message: message,listMessages: _listMessages, isLast: isLast, isPreviousSame: isPreviousSame,
+                              isNextSame: isNextSame, isPreviousSameDateTime: isPreviousSameDateTime, isNextSameTime: isNextSameTime, screenWidth: _screenWidth,
+                              onReplyClick: (){
                                 _replyMessage = message;
                                 _messageFocusNode.requestFocus();
-                              }, (index){
+                              },
+                              onReplySelect:(index){
                                 _itemScrollController.scrollTo(index: _getMessageIndex(index),alignment: 0.5,duration: const Duration(seconds: 1));
                               }),
                         ],

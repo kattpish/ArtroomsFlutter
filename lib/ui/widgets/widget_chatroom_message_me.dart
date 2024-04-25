@@ -82,6 +82,7 @@ Widget buildMyMessageBubble(
                       blurBackgroundColor: Colors.transparent,
                       bottomOffsetHeight:
                       80.0,
+                      activeColor: colorPrimaryBlue400,
                       child: Container(
                         constraints:
                         BoxConstraints(maxWidth: screenWidth * 0.55),

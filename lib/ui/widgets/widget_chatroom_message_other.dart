@@ -133,6 +133,7 @@ Widget buildOtherMessageBubble(
                           blurBackgroundColor: Colors.transparent,
                           bottomOffsetHeight:
                           80.0,
+                          activeColor: colorPrimaryBlue400,
                           child: Container(
                             constraints: const BoxConstraints(
                                 minHeight: 40, minWidth: 46
