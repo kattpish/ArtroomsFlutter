@@ -118,67 +118,70 @@ class ChatroomMessageAttachmentPhoto extends StatelessWidget {
         ));
       }
 
-      return Row(
-        textDirection: message.isMe ? TextDirection.rtl : TextDirection.ltr,
-        mainAxisAlignment:
-        message.isMe ? MainAxisAlignment.start : MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          Container(
-            margin: EdgeInsets.only(left: message.isMe ? 0 : 40),
-            child: ClipRRect(
-              borderRadius: const BorderRadius.all(Radius.circular(10)),
-              child: Container(
-                constraints: BoxConstraints(maxWidth: screenWidth * 0.55),
-                alignment:
-                message.isMe ? Alignment.topRight : Alignment.topLeft,
-                decoration: const ShapeDecoration(
-                  color: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
+      return Container(
+        margin: const EdgeInsets.only(bottom: 8),
+        child: Row(
+          textDirection: message.isMe ? TextDirection.rtl : TextDirection.ltr,
+          mainAxisAlignment:
+          message.isMe ? MainAxisAlignment.start : MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Container(
+              margin: EdgeInsets.only(left: message.isMe ? 0 : 40, bottom: 20),
+              child: ClipRRect(
+                borderRadius: const BorderRadius.all(Radius.circular(10)),
+                child: Container(
+                  constraints: BoxConstraints(maxWidth: screenWidth * 0.55),
+                  alignment:
+                  message.isMe ? Alignment.topRight : Alignment.topLeft,
+                  decoration: const ShapeDecoration(
+                    color: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                    ),
                   ),
-                ),
-                child: Stack(
-                  children: [
-                    Column(children: rows),
-                    if(message.isSending)
-                      Container(
-                        height: heights,
-                        constraints: BoxConstraints(maxWidth: screenWidth * 0.55),
-                        color: const Color(0xFFFFFFFF).withOpacity(0.8),
-                        child: Center(
-                          child: Container(
-                            width: 24,
-                            height: 24,
-                            alignment: Alignment.topRight,
-                            child: const CircularProgressIndicator(
-                              value: 50,
-                              color: Color(0xFF6A79FF),
-                              strokeWidth: 2,
+                  child: Stack(
+                    children: [
+                      Column(children: rows),
+                      if(message.isSending)
+                        Container(
+                          height: heights,
+                          constraints: BoxConstraints(maxWidth: screenWidth * 0.55),
+                          color: const Color(0xFFFFFFFF).withOpacity(0.8),
+                          child: Center(
+                            child: Container(
+                              width: 24,
+                              height: 24,
+                              alignment: Alignment.topRight,
+                              child: const CircularProgressIndicator(
+                                value: 50,
+                                color: Color(0xFF6A79FF),
+                                strokeWidth: 2,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-          const SizedBox(width: 6),
-          Text(
-            message.getTime(),
-            style: const TextStyle(
-              color: colorMainGrey300,
-              fontSize: 10,
-              fontFamily: 'Pretendard',
-              fontWeight: FontWeight.w400,
-              height: 0.15,
-              letterSpacing: -0.20,
+            const SizedBox(width: 6),
+            Text(
+              message.getTime(),
+              style: const TextStyle(
+                color: colorMainGrey300,
+                fontSize: 10,
+                fontFamily: 'Pretendard',
+                fontWeight: FontWeight.w400,
+                height: 0.15,
+                letterSpacing: -0.20,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ],
+          ],
+        ),
       );
     } else {
       return const SizedBox.shrink();

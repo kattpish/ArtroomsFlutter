@@ -126,7 +126,7 @@ Widget buildImageAttachments(
     }
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 1),
+      margin: const EdgeInsets.only(bottom: 8),
       child: Row(
         textDirection: message.isMe ? TextDirection.rtl : TextDirection.ltr,
         mainAxisAlignment:
