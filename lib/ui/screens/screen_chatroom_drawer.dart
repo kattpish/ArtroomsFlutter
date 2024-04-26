@@ -207,7 +207,7 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
                                             ),
                                           ),
                                           Text(
-                                              _artistProfile.feedback,
+                                              _artistProfile.feedback.isNotEmpty ? _artistProfile.feedback : '-',
                                               style: const TextStyle(
                                                 color: colorMainGrey800,
                                                 fontSize: 14,
@@ -234,7 +234,7 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
                                             ),
                                           ),
                                           Text(
-                                            _artistProfile.classAdvice,
+                                            _artistProfile.classAdvice.isNotEmpty ? _artistProfile.classAdvice : '-',
                                             style: const TextStyle(
                                               color: colorMainGrey800,
                                               fontSize: 14,
@@ -246,7 +246,7 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
                                           ),
                                         ],
                                       ),
-                                      SizedBox(height: 8),
+                                      const SizedBox(height: 8),
                                       Row(
                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
@@ -260,7 +260,8 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
                                               letterSpacing: -0.28,
                                             ),
                                           ),
-                                          Text(_artistProfile.ableTime,
+                                          Text(
+                                            _artistProfile.ableTime.isNotEmpty ? _artistProfile.ableTime : '-',
                                             style: const TextStyle(
                                               color: colorMainGrey800,
                                               fontSize: 14,
@@ -286,7 +287,8 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
                                               letterSpacing: -0.28,
                                             ),
                                           ),
-                                          Text(_artistProfile.ableDay,
+                                          Text(
+                                            _artistProfile.ableDay.isNotEmpty ? _artistProfile.ableDay : '-',
                                             style: const TextStyle(
                                               color: colorMainGrey800,
                                               fontSize: 14,
@@ -314,7 +316,8 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
                                               letterSpacing: -0.28,
                                             ),
                                           ),
-                                          Text(_artistProfile.replyTime,
+                                          Text(
+                                            _artistProfile.replyTime.isNotEmpty ? _artistProfile.replyTime : '-',
                                             style: const TextStyle(
                                               color: colorMainGrey800,
                                               fontSize: 14,
@@ -353,7 +356,6 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
                                   onTap: () async {
                                     await Navigator.push(context, MaterialPageRoute(builder: (context) {
                                       return ScreenMemo(dataChat: widget.dataChat,memo: _memo,onUpdateMemo: (memo){
-                                        print('updating called');
                                         setState(() {
                                           _memo = memo;
                                         });
