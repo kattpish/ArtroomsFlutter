@@ -213,7 +213,6 @@ class DataMessage {
 }
 
 class ParentMessage {
-
   int messageId;
   String content;
   String senderId;

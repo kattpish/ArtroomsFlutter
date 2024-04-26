@@ -12,7 +12,7 @@ import 'package:artrooms/ui/screens/screen_memo.dart';
 import 'package:artrooms/ui/screens/screen_notices.dart';
 import 'package:flutter/material.dart';
 import 'package:sendbird_sdk/core/models/user.dart';
-
+import 'package:artrooms/modules/module_profile.dart';
 import '../../beans/bean_chat.dart';
 import '../../listeners/scroll_bouncing_physics.dart';
 import '../../main.dart';
@@ -27,10 +27,8 @@ import '../widgets/widget_ui_notify.dart';
 class ScreenChatroomDrawer extends StatefulWidget {
 
   final DataChat dataChat;
-  final ArtistProfile artistProfile;
-  final Memo memoData;
 
-  const ScreenChatroomDrawer({super.key, required this.dataChat, required this.artistProfile, required this.memoData});
+  const ScreenChatroomDrawer({super.key, required this.dataChat,});
 
   @override
   State<StatefulWidget> createState() {
@@ -40,7 +38,7 @@ class ScreenChatroomDrawer extends StatefulWidget {
 }
 
 class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
-  late Memo memo = widget.memoData;
+  final ModuleMemo _moduleMemo = ModuleMemo();
   bool _isLoading = true;
   DataNotice _dataNotice = DataNotice();
   final ModuleNotice moduleNotice = ModuleNotice();
@@ -50,7 +48,8 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
   List<User> _listMembers = [];
   List<DataMessage> _listAttachmentsImages = [];
   late final ModuleMessages _moduleMessages;
-
+   ArtistProfile _artistProfile = ArtistProfile();
+   Memo _memo = Memo();
   @override
   void initState() {
     super.initState();
@@ -208,7 +207,7 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
                                             ),
                                           ),
                                           Text(
-                                              widget.artistProfile.feedback,
+                                              _artistProfile.feedback,
                                               style: const TextStyle(
                                                 color: colorMainGrey800,
                                                 fontSize: 14,
@@ -220,7 +219,7 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
                                           ),
                                         ],
                                       ),
-                                      SizedBox(height: 8),
+                                      const SizedBox(height: 8),
                                       Row(
                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
@@ -235,7 +234,7 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
                                             ),
                                           ),
                                           Text(
-                                            widget.artistProfile.classAdvice,
+                                            _artistProfile.classAdvice,
                                             style: const TextStyle(
                                               color: colorMainGrey800,
                                               fontSize: 14,
@@ -261,7 +260,7 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
                                               letterSpacing: -0.28,
                                             ),
                                           ),
-                                          Text(widget.artistProfile.ableTime,
+                                          Text(_artistProfile.ableTime,
                                             style: const TextStyle(
                                               color: colorMainGrey800,
                                               fontSize: 14,
@@ -287,7 +286,7 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
                                               letterSpacing: -0.28,
                                             ),
                                           ),
-                                          Text(widget.artistProfile.ableDay,
+                                          Text(_artistProfile.ableDay,
                                             style: const TextStyle(
                                               color: colorMainGrey800,
                                               fontSize: 14,
@@ -315,7 +314,7 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
                                               letterSpacing: -0.28,
                                             ),
                                           ),
-                                          Text(widget.artistProfile.replyTime,
+                                          Text(_artistProfile.replyTime,
                                             style: const TextStyle(
                                               color: colorMainGrey800,
                                               fontSize: 14,
@@ -353,9 +352,10 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
                                   ),
                                   onTap: () async {
                                     await Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                      return ScreenMemo(dataChat: widget.dataChat,memo: memo,onUpdateMemo: (memo){
+                                      return ScreenMemo(dataChat: widget.dataChat,memo: _memo,onUpdateMemo: (memo){
+                                        print('updating called');
                                         setState(() {
-                                          this.memo = memo;
+                                          _memo = memo;
                                         });
                                       },);
                                     }));
@@ -374,7 +374,7 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
                                   child: TextFormField(
                                     controller: _memoController,
                                     decoration: InputDecoration(
-                                      hintText: memo.memo,
+                                      hintText: _memo.memo,
                                       border: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(8.0),
                                         borderSide: BorderSide.none,
@@ -622,11 +622,7 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
     }).catchError((e) {
 
     }).whenComplete(() {
-
-      setState(() {
-        _isLoading = false;
-      });
-
+      _loadMemoAndArtistProfile();
     });
 
   }
@@ -658,5 +654,11 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
       dataChat.isNotification = dbStore.isNotificationChat(dataChat);
     });
   }
-
+  void _loadMemoAndArtistProfile() async{
+    _artistProfile = await moduleNotice.getArtistProfileInfo(artistId: _dataNotice.artistId);
+    _memo = await _moduleMemo.getMemo(url: _dataNotice.url);
+    setState(() {
+      _isLoading = false;
+    });
+  }
 }

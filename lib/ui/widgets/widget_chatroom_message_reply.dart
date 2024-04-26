@@ -97,7 +97,9 @@ Widget buildReply(int index, DataMessage message, bool isMe, Null Function(int i
         splashColor: Colors.transparent,
         highlightColor: Colors.transparent,
         onTap: (){
-          onReplyClick(index);
+          ParentMessage? parent = _getParentMessage(message.data);
+          print('index selected ${parent!.messageId}',);
+          onReplyClick(parent.messageId);
         },
         child: Container(
           decoration: const BoxDecoration(
@@ -137,5 +139,15 @@ bool _doParseReplyMessage(String json) {
     return false;
   } catch (_) {
     return false;
+  }
+}
+
+ParentMessage? _getParentMessage(String json) {
+  try {
+    ParentMessage parentMessage =
+    ParentMessage.fromJson(const JsonDecoder().convert(json));
+    return parentMessage;
+  } catch (_) {
+    return null;
   }
 }

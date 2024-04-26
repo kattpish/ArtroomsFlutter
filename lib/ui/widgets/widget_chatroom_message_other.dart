@@ -1,13 +1,13 @@
 
+import 'package:artrooms/beans/bean_focusedMenuItem.dart';
 import 'package:artrooms/ui/widgets/widget_chatroom_message_attachment_file.dart';
 import 'package:artrooms/ui/widgets/widget_chatroom_message_attachment_photos.dart';
 import 'package:artrooms/ui/widgets/widget_chatroom_message_reply.dart';
 import 'package:artrooms/ui/widgets/widget_chatroom_message_text.dart';
+import 'package:artrooms/ui/widgets/widget_focused_menu_holder.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:focused_menu/focused_menu.dart';
-import 'package:focused_menu/modals.dart';
 
 import '../../beans/bean_message.dart';
 import '../../utils/utils_media.dart';
@@ -114,36 +114,28 @@ Widget buildOtherMessageBubble(
                           menuWidth: screenWidth / 2,
                           menuItems: [
                             FocusedMenuItem(
-                                trailingIcon:
-                                const Icon(
-                                  Icons.reply,
-                                  color:
-                                  colorMainGrey500,
-                                ),
+                                trailingIcon: const ImageIcon(AssetImage('assets/images/icons/icon_reply.png')),
                                 title: const Text("답장"),
                                 onPressed: () {
                                   onReplyClick();
                                 }),
                             FocusedMenuItem(
-                                trailingIcon:
-                                const Icon(
-                                  Icons.copy,
-                                  color:
-                                  colorMainGrey500,
-                                ),
+                                trailingIcon: const ImageIcon(AssetImage('assets/images/icons/icon_copy.png')),
                                 title: const Text("복사"),
-                                onPressed: () async {
+                                onPressed:
+                                    () async {
                                   await Clipboard.setData(
-                                      ClipboardData(text: message.content));
-                                })
+                                      ClipboardData(text: message.content)
+                                  );
+                                }
+                            ),
                           ],
                           blurSize: 0.0,
                           menuOffset: 10.0,
+                          blurBackgroundColor: Colors.transparent,
                           bottomOffsetHeight:
                           80.0,
-                          menuBoxDecoration:
-                          const BoxDecoration(
-                              borderRadius: BorderRadius.all(Radius.circular(15.0))),
+                          activeColor: colorPrimaryBlue400,
                           child: Container(
                             constraints: const BoxConstraints(
                                 minHeight: 40, minWidth: 46
@@ -151,7 +143,7 @@ Widget buildOtherMessageBubble(
                             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                             alignment: Alignment.centerLeft,
                             decoration: BoxDecoration(
-                              color: colorMainGrey200,
+                              color: colorMainGrey100,
                               borderRadius: BorderRadius.only(
                                 topLeft: Radius.circular(isPreviousSameDateTime ? 20 : 2),
                                 topRight: const Radius.circular(20),
