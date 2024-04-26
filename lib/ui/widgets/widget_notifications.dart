@@ -1,14 +1,18 @@
 
+import 'package:artrooms/ui/widgets/widget_ui_notify.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/cupertino.dart';
 
 
-Widget widgetNotificationItemTick(Map<String, dynamic> notification, int index, String notificationEnabled, {required Null Function(dynamic index, dynamic isEnabled) onTap}) {
+Widget widgetNotificationItemTick(String notification, int index, String notificationEnabled, {required Null Function(dynamic index, dynamic isEnabled) onTap}) {
 
-  bool isEnabled = notification['title'] == notificationEnabled;
+  bool isEnabled = notification == notificationEnabled;
 
   return GestureDetector(
     onTap: () {
       onTap(index, !isEnabled);
+      audioPlayer ??= AudioPlayer();
+      audioPlayer?.play(AssetSource('sounds/$notification.mp3'));
     },
     child: Image.asset(
       isEnabled ? 'assets/images/icons/icon_tick_on.png' : 'assets/images/icons/icon_tick_off.png',
