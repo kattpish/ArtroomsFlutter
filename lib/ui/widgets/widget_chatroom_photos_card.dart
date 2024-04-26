@@ -9,6 +9,8 @@ Widget widgetChatroomPhotosCard(BuildContext context, DataMessage attachmentImag
   return Container(
     color: Colors.white,
     child: InkWell(
+      splashColor: Colors.transparent,
+      highlightColor: Colors.transparent,
       onTap: () {
         onView();
       },
@@ -33,8 +35,8 @@ Widget widgetChatroomPhotosCard(BuildContext context, DataMessage attachmentImag
             },
           ),
           Positioned(
-            top: 3,
-            right: 4,
+            top: 0,
+            right: 0,
             child: Column(
               children: [
                 Visibility(
@@ -65,12 +67,15 @@ Widget widgetChatroomPhotosCard(BuildContext context, DataMessage attachmentImag
                 Visibility(
                   visible: !attachmentImage.isDownloading && selectMode,
                   child: InkWell(
+                    splashColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
                     onTap: () {
                       onSelect();
                     },
                     child: Container(
                       width: 26,
                       height: 26,
+                      margin: const EdgeInsets.only(top: 8.0, right: 8, left: 16, bottom: 16),
                       decoration: BoxDecoration(
                         color: attachmentImage.isSelected ? colorPrimaryBlue : colorMainGrey200.withAlpha(150),
                         shape: BoxShape.circle,

@@ -56,6 +56,7 @@ void widgetChatsExit(BuildContext context, ModuleSendBird moduleSendBird, DataCh
               const SizedBox(height: 50),
               ElevatedButton(
                 onPressed: () {
+                  Navigator.of(context).pop();
                   onExit(context);
                 },
                 style: ElevatedButton.styleFrom(

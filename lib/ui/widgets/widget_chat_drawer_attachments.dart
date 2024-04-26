@@ -17,7 +17,6 @@ Widget widgetChatDrawerAttachments(BuildContext context, List<DataMessage> listA
   return ScrollConfiguration(
     behavior: scrollBehavior,
     child: SingleChildScrollView(
-      // physics: const ScrollPhysicsBouncing(),
       scrollDirection: Axis.horizontal,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -26,6 +25,8 @@ Widget widgetChatDrawerAttachments(BuildContext context, List<DataMessage> listA
             Container(
               margin: const EdgeInsets.only(right: 4),
               child: InkWell(
+                splashColor: Colors.transparent,
+                highlightColor: Colors.transparent,
                 onTap: () {
                   doOpenPhotoView(context, listImages, initialIndex: fileItem.index);
                 },

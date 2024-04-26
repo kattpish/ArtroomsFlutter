@@ -8,7 +8,6 @@ Widget widgetLoginRestTabId(BuildContext context, TextEditingController nameCont
   return ScrollConfiguration(
     behavior: scrollBehavior,
     child: SingleChildScrollView(
-      // physics: const ScrollPhysicsBouncing(),
       child: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
@@ -54,7 +53,7 @@ Widget widgetLoginRestTabId(BuildContext context, TextEditingController nameCont
             Container(
               decoration: BoxDecoration(
                 color: const Color(0xFFF5F5F5),
-                borderRadius: BorderRadius.circular(8.0),
+                borderRadius: BorderRadius.circular(10.0),
                 border: Border.all(color: const Color(0xFFE7E7E7), width: 1.0,),
               ),
               child: TextField(
@@ -73,7 +72,7 @@ Widget widgetLoginRestTabId(BuildContext context, TextEditingController nameCont
                   filled: true,
                   fillColor: Colors.white,
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12.0),
+                    borderRadius: BorderRadius.circular(10.0),
                     borderSide: BorderSide.none,
                   ),
                 ),

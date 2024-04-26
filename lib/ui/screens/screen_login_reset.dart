@@ -136,51 +136,53 @@ class _ScreenLoginResetState extends State<ScreenLoginReset> with SingleTickerPr
                       ],
                     ),
                   ),
-                  Container(
-                    width: MediaQuery.of(context).size.width,
-                    height: 44,
-                    margin: const EdgeInsets.symmetric(vertical: 10.0),
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        _doSubmit(context);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.white,
-                        backgroundColor: _isButtonDisabled ? colorPrimaryBlue.withAlpha(100) : colorPrimaryBlue,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30.0),
-                        ),
-                        padding: const EdgeInsets.symmetric(vertical: 8.0),
-                        elevation: 0,
-                        textStyle: const TextStyle(fontSize: 18),
-                        fixedSize: const Size.fromHeight(60),
-                      ),
-                      child:  _isLoading
-                          ? const SizedBox(
-                        width: 24,
-                        height: 24,
-                        child: CircularProgressIndicator(
-                          color: Color(0xFFFFFFFF),
-                          strokeWidth: 3,
-                        ),
-                      )
-                          : const Text(
-                          '인증메일 전송',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontFamily: 'SUIT',
-                            fontWeight: FontWeight.w700,
-                            height: 0,
-                            letterSpacing: -0.32,
-                          )
-                      ),
-                    ),
-                  )
                 ],
               );
             },
+          ),
+        ),
+        bottomNavigationBar: SafeArea(
+          child: Container(
+            width: MediaQuery.of(context).size.width,
+            height: 44,
+            margin: const EdgeInsets.symmetric(vertical: 10.0),
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: ElevatedButton(
+              onPressed: () {
+                _doSubmit(context);
+              },
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: _isButtonDisabled ? colorPrimaryBlue.withAlpha(100) : colorPrimaryBlue,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                ),
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                elevation: 0,
+                textStyle: const TextStyle(fontSize: 18),
+                fixedSize: const Size.fromHeight(60),
+              ),
+              child:  _isLoading
+                  ? const SizedBox(
+                width: 24,
+                height: 24,
+                child: CircularProgressIndicator(
+                  color: Color(0xFFFFFFFF),
+                  strokeWidth: 3,
+                ),
+              )
+                  : const Text(
+                  '인증메일 전송',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontFamily: 'SUIT',
+                    fontWeight: FontWeight.w700,
+                    height: 0,
+                    letterSpacing: -0.32,
+                  )
+              ),
+            ),
           ),
         ),
       ),

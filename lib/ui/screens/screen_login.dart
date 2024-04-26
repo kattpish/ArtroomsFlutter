@@ -1,6 +1,5 @@
 
 import 'package:artrooms/data/module_datastore.dart';
-import 'package:artrooms/ui/screens/screen_channel_talk.dart';
 import 'package:artrooms/ui/screens/screen_chats.dart';
 import 'package:artrooms/ui/screens/screen_login_reset.dart';
 import 'package:artrooms/utils/utils_screen.dart';
@@ -92,7 +91,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
                                 margin: EdgeInsets.symmetric(horizontal: isTablet(context) ? 50.0 : 20.0),
                                 child: Column(
                                   children: <Widget>[
-                                    SizedBox(height: MediaQuery.of(context).size.height / 6),
+                                    SizedBox(height: MediaQuery.of(context).size.height / 8),
                                     Column(
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       children: <Widget>[
@@ -153,7 +152,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
                                             },
                                             style: const TextStyle(
                                               color: colorPrimaryBlue,
-                                              fontSize: 14,
+                                              fontSize: 16,
                                               fontFamily: 'SUIT',
                                               fontWeight: FontWeight.w300,
                                               height: 0,
@@ -163,7 +162,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
                                               hintText: '아이디(이메일)',
                                               hintStyle: TextStyle(
                                                 color: Color(0xFFBFBFBF),
-                                                fontSize: 15,
+                                                fontSize: 14,
                                                 fontFamily: 'Pretendard',
                                                 fontWeight: FontWeight.w400,
                                                 height: 0,
@@ -195,7 +194,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
                                             obscureText: true,
                                             style: const TextStyle(
                                               color: colorPrimaryBlue,
-                                              fontSize: 14,
+                                              fontSize: 16,
                                               fontFamily: 'SUIT',
                                               fontWeight: FontWeight.w300,
                                               height: 0,
@@ -205,7 +204,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
                                               hintText: '비밀번호',
                                               hintStyle: TextStyle(
                                                 color: Color(0xFFBFBFBF),
-                                                fontSize: 15,
+                                                fontSize: 14,
                                                 fontFamily: 'Pretendard',
                                                 fontWeight: FontWeight.w400,
                                                 height: 0,

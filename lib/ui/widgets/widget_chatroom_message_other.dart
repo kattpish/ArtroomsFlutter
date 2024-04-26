@@ -46,6 +46,8 @@ Widget buildOtherMessageBubble(
           children: [
             if(!isPreviousSame || !isPreviousSameDateTime)
               InkWell(
+                splashColor: Colors.transparent,
+                highlightColor: Colors.transparent,
                 onTap: () {},
                 child: Container(
                   decoration: const BoxDecoration(

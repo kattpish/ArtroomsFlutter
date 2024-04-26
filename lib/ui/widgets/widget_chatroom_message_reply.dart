@@ -94,6 +94,8 @@ Widget buildReply(int index, DataMessage message, bool isMe, Null Function(int i
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       InkWell(
+        splashColor: Colors.transparent,
+        highlightColor: Colors.transparent,
         onTap: (){
           ParentMessage? parent = _getParentMessage(message.data);
           print('index selected ${parent!.messageId}',);

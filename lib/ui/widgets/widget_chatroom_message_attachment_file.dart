@@ -49,6 +49,8 @@ Widget buildAttachment(BuildContext context, State state, DataMessage message, s
                 ),
               ),
               InkWell(
+                splashColor: Colors.transparent,
+                highlightColor: Colors.transparent,
                 onTap: () async {
 
                   state.setState(() {

@@ -3,7 +3,6 @@ import 'package:artrooms/beans/bean_chatting_artist_profile.dart';
 import 'package:artrooms/beans/bean_memo.dart';
 import 'package:artrooms/beans/bean_message.dart';
 import 'package:artrooms/beans/bean_notice.dart';
-import 'package:artrooms/modules/module_memo.dart';
 import 'package:artrooms/modules/module_messages.dart';
 import 'package:artrooms/modules/module_notices.dart';
 import 'package:artrooms/ui/screens/screen_chatroom_files.dart';
@@ -13,10 +12,10 @@ import 'package:artrooms/ui/screens/screen_memo.dart';
 import 'package:artrooms/ui/screens/screen_notices.dart';
 import 'package:flutter/material.dart';
 import 'package:sendbird_sdk/core/models/user.dart';
-import 'package:artrooms/modules/module_profile.dart';
 import '../../beans/bean_chat.dart';
 import '../../listeners/scroll_bouncing_physics.dart';
 import '../../main.dart';
+import '../../modules/module_memo.dart';
 import '../theme/theme_colors.dart';
 import '../widgets/widget_chat_drawer_attachments.dart';
 import '../widgets/widget_chat_drawer_exit.dart';
@@ -49,8 +48,8 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
   List<User> _listMembers = [];
   List<DataMessage> _listAttachmentsImages = [];
   late final ModuleMessages _moduleMessages;
-   ArtistProfile _artistProfile = ArtistProfile();
-   Memo _memo = Memo();
+  ArtistProfile _artistProfile = ArtistProfile();
+  Memo _memo = Memo();
   @override
   void initState() {
     super.initState();
@@ -88,13 +87,15 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
           Container(
             height: 24.0,
             width: 24.0,
-            margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            margin: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
             padding: const EdgeInsets.all(4.0),
             decoration: const BoxDecoration(
                 color: colorMainGrey200,
                 shape: BoxShape.circle
             ),
             child: InkWell(
+              splashColor: Colors.transparent,
+              highlightColor: Colors.transparent,
               child: const Icon(
                 Icons.close,
                 color: Colors.white,
@@ -119,7 +120,6 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
                     child: ScrollConfiguration(
                       behavior: scrollBehavior,
                       child: SingleChildScrollView(
-                        // physics: const ScrollPhysicsBouncing(),
                         child: Column(
                           children: [
                             const SizedBox(height: 16),
@@ -219,7 +219,7 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
                                           ),
                                         ],
                                       ),
-                                      SizedBox(height: 8),
+                                      const SizedBox(height: 8),
                                       Row(
                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
@@ -272,7 +272,7 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
                                           ),
                                         ],
                                       ),
-                                      SizedBox(height: 8),
+                                      const SizedBox(height: 8),
                                       Row(
                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
@@ -298,7 +298,7 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
                                           ),
                                         ],
                                       ),
-                                      SizedBox(height: 8),
+                                      const SizedBox(height: 8),
                                       Row(
                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
@@ -557,7 +557,7 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
                     ),
                   ),
                   Container(
-                    margin: const EdgeInsets.only(bottom: 16),
+                    margin: const EdgeInsets.only(bottom: 16, left: 4, right: 4),
                     child: Column(
                       children: [
                         const Divider(
@@ -568,7 +568,7 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             IconButton(
-                                icon: Image.asset('assets/images/icons/icon_forward.png', width: 24, height: 24, color: const Color(0xFFD9D9D9),),
+                                icon: Image.asset('assets/images/icons/icon_forward.png', width: 24, height: 24, color: const Color(0xFF6A79FF),),
                                 onPressed: () {
                                   widgetChatDrawerExit(context, moduleSendBird, widget.dataChat,
                                       onExit: () {
@@ -580,7 +580,7 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
                             IconButton(
                                 icon: Image.asset('assets/images/icons/icon_bell.png',
                                   width: 24, height: 24,
-                                  color: widget.dataChat.isNotification ? const Color(0xFF6A79FF) : const Color(0xFFD9D9D9),
+                                  color: widget.dataChat.isNotification ? const Color(0xFF6A79FF) : const Color(0xFF6A79FF),
                                 ),
                                 onPressed: () {
                                   _doToggleNotification(context, widget.dataChat);
@@ -636,7 +636,6 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
 
   void _doLoadAttachments() async {
     List<DataMessage> attachmentsImages = await _moduleMessages.fetchAttachmentsImages();
-
     setState(() {
       _listAttachmentsImages = attachmentsImages;
     });

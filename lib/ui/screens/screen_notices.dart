@@ -185,6 +185,8 @@ class _ScreenNoticesState extends State<ScreenNotices> {
                                       maxLines: 6,
                                     ),
                                     InkWell(
+                                      splashColor: Colors.transparent,
+                                      highlightColor: Colors.transparent,
                                       onTap: () {
                                         Navigator.push(context, MaterialPageRoute(builder: (context) {
                                           return ScreenNoticeDetails(dataNotice: notice);

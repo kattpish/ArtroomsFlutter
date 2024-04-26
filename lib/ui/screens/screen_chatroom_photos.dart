@@ -110,6 +110,8 @@ class _ScreenChatroomPhotosState extends State<ScreenChatroomPhotos> {
                     margin: const EdgeInsets.only(left: 8.0),
                     child: Center(
                       child: InkWell(
+                        splashColor: Colors.transparent,
+                        highlightColor: Colors.transparent,
                         onTap: () {
                           _doDeselectAllPhotos(true);
                         },
@@ -141,6 +143,8 @@ class _ScreenChatroomPhotosState extends State<ScreenChatroomPhotos> {
                   margin: const EdgeInsets.only(right: 8.0),
                   child: Center(
                     child: InkWell(
+                      splashColor: Colors.transparent,
+                      highlightColor: Colors.transparent,
                       onTap: () {
                         _doDeselectAllPhotos(false);
                       },
@@ -169,6 +173,8 @@ class _ScreenChatroomPhotosState extends State<ScreenChatroomPhotos> {
                   margin: const EdgeInsets.only(left: 8.0),
                   child: Center(
                     child: InkWell(
+                      splashColor: Colors.transparent,
+                      highlightColor: Colors.transparent,
                       onTap: () {
                         setState(() {
                           _selectMode = true;
@@ -208,7 +214,6 @@ class _ScreenChatroomPhotosState extends State<ScreenChatroomPhotos> {
                 behavior: scrollBehavior,
                       child: GridView.builder(
                 controller: _scrollController,
-                // physics: const ScrollPhysicsBouncing(),
                 padding: const EdgeInsets.only(bottom: 32),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: isTablet(context) ? 6 : 3,
