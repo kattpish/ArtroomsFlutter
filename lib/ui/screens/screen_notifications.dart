@@ -1,4 +1,4 @@
-
+import 'package:artrooms/utils/utils_media.dart';
 import 'package:flutter/material.dart';
 
 import '../../data/module_datastore.dart';
@@ -8,27 +8,24 @@ import '../theme/theme_colors.dart';
 import '../widgets/widget_notifications.dart';
 import '../widgets/widget_ui_notify.dart';
 
-
 class ScreenNotifications extends StatefulWidget {
-
   const ScreenNotifications({super.key});
 
   @override
   State<StatefulWidget> createState() {
     return _ScreenNotificationsState();
   }
-
 }
 
 class _ScreenNotificationsState extends State<ScreenNotifications> {
-
+  List<String> _tunes = [];
   late String _notificationEnabled;
   late final List<Map<String, dynamic>> _notifications;
 
   @override
   void initState() {
     super.initState();
-
+    setTunes();
     _notificationEnabled = dbStore.getNotificationValue();
 
     _notifications = [
@@ -36,7 +33,6 @@ class _ScreenNotificationsState extends State<ScreenNotifications> {
       {"title": "알림음"},
       {"title": "알림음 2"},
     ];
-
   }
 
   @override
@@ -84,13 +80,13 @@ class _ScreenNotificationsState extends State<ScreenNotifications> {
                   children: [
                     const SizedBox(height: 16),
                     Column(
-                      children: _notifications.map((notification) {
-                        int index = _notifications.indexOf(notification);
+                      children: _tunes.map((tune) {
+                        int index = _tunes.indexOf(tune);
                         return Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 8.0),
                           child: ListTile(
                             title: Text(
-                              notification['title'],
+                              tune,
                               style: const TextStyle(
                                 color: Color(0xFF111111),
                                 fontSize: 16,
@@ -100,11 +96,11 @@ class _ScreenNotificationsState extends State<ScreenNotifications> {
                                 letterSpacing: -0.32,
                               ),
                             ),
-                            trailing: widgetNotificationItemTick(notification, index, _notificationEnabled,
+                            trailing: widgetNotificationItemTick(
+                                tune, index, _notificationEnabled,
                                 onTap: (index, isEnabled) {
-                                  _doToggleNotification(index, isEnabled);
-                                }
-                            ),
+                              _doToggleNotification(index, isEnabled);
+                            }),
                           ),
                         );
                       }).toList(),
@@ -120,10 +116,19 @@ class _ScreenNotificationsState extends State<ScreenNotifications> {
   }
 
   void _doToggleNotification(int index, bool value) {
-    dbStore.setNotificationValue(_notifications[index]['title']);
+    // dbStore.setNotificationValue(_notifications[index]['title']);
+    dbStore.setNotificationValue(_tunes[index]);
     setState(() {
-      _notificationEnabled = _notifications[index]["title"];
+      // _notificationEnabled = _notifications[index]["title"];
+      _notificationEnabled = _tunes[index];
     });
   }
 
+  Future<void> setTunes() async {
+    List<String> tunes = await getAllTunes();
+    setState(() {
+      _tunes = tunes;
+    });
+
+  }
 }
