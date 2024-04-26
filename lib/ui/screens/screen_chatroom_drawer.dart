@@ -12,10 +12,10 @@ import 'package:artrooms/ui/screens/screen_memo.dart';
 import 'package:artrooms/ui/screens/screen_notices.dart';
 import 'package:flutter/material.dart';
 import 'package:sendbird_sdk/core/models/user.dart';
-import 'package:artrooms/modules/module_profile.dart';
 import '../../beans/bean_chat.dart';
 import '../../listeners/scroll_bouncing_physics.dart';
 import '../../main.dart';
+import '../../modules/module_memo.dart';
 import '../theme/theme_colors.dart';
 import '../widgets/widget_chat_drawer_attachments.dart';
 import '../widgets/widget_chat_drawer_exit.dart';
@@ -48,8 +48,8 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
   List<User> _listMembers = [];
   List<DataMessage> _listAttachmentsImages = [];
   late final ModuleMessages _moduleMessages;
-   ArtistProfile _artistProfile = ArtistProfile();
-   Memo _memo = Memo();
+  ArtistProfile _artistProfile = ArtistProfile();
+  Memo _memo = Memo();
   @override
   void initState() {
     super.initState();
