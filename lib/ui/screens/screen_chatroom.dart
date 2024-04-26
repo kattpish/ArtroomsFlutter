@@ -192,7 +192,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                     ),
                   ),
                   centerTitle: true,
-                  elevation: 0.2,
+                  elevation: 0.0,
                   toolbarHeight: _appBarHeight,
                   backgroundColor: Colors.white,
                   actions: [

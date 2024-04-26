@@ -214,7 +214,6 @@ class _ScreenChatroomPhotosState extends State<ScreenChatroomPhotos> {
                 behavior: scrollBehavior,
                       child: GridView.builder(
                 controller: _scrollController,
-                // physics: const ScrollPhysicsBouncing(),
                 padding: const EdgeInsets.only(bottom: 32),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: isTablet(context) ? 6 : 3,

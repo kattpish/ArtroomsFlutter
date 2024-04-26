@@ -39,7 +39,6 @@ class WidgetChatroomMentionUser extends StatelessWidget {
       child: ListView.builder(
           itemCount: memberList.length,
           shrinkWrap: true,
-          // physics: const ScrollPhysicsBouncing(),
           itemBuilder: (context,index) {
             Member member = memberList[index];
             return Container(

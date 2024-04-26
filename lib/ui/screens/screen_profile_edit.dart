@@ -104,7 +104,6 @@ class _ScreenProfileEditState extends State<ScreenProfileEdit> {
                 child: ScrollConfiguration(
                   behavior: scrollBehavior,
                   child: SingleChildScrollView(
-                    // physics: const ScrollPhysicsBouncing(),
                     padding: const EdgeInsets.all(16.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,

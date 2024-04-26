@@ -8,7 +8,6 @@ Widget widgetLoginRestTabId(BuildContext context, TextEditingController nameCont
   return ScrollConfiguration(
     behavior: scrollBehavior,
     child: SingleChildScrollView(
-      // physics: const ScrollPhysicsBouncing(),
       child: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(

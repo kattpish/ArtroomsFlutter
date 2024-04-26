@@ -88,7 +88,7 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
           Container(
             height: 24.0,
             width: 24.0,
-            margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            margin: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
             padding: const EdgeInsets.all(4.0),
             decoration: const BoxDecoration(
                 color: colorMainGrey200,
@@ -121,7 +121,6 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
                     child: ScrollConfiguration(
                       behavior: scrollBehavior,
                       child: SingleChildScrollView(
-                        // physics: const ScrollPhysicsBouncing(),
                         child: Column(
                           children: [
                             const SizedBox(height: 16),
@@ -300,7 +299,7 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
                                           ),
                                         ],
                                       ),
-                                      SizedBox(height: 8),
+                                      const SizedBox(height: 8),
                                       Row(
                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
@@ -558,7 +557,7 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
                     ),
                   ),
                   Container(
-                    margin: const EdgeInsets.only(bottom: 16),
+                    margin: const EdgeInsets.only(bottom: 16, left: 4, right: 4),
                     child: Column(
                       children: [
                         const Divider(
@@ -569,7 +568,7 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             IconButton(
-                                icon: Image.asset('assets/images/icons/icon_forward.png', width: 24, height: 24, color: const Color(0xFFD9D9D9),),
+                                icon: Image.asset('assets/images/icons/icon_forward.png', width: 24, height: 24, color: const Color(0xFF6A79FF),),
                                 onPressed: () {
                                   widgetChatDrawerExit(context, moduleSendBird, widget.dataChat,
                                       onExit: () {
@@ -581,7 +580,7 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
                             IconButton(
                                 icon: Image.asset('assets/images/icons/icon_bell.png',
                                   width: 24, height: 24,
-                                  color: widget.dataChat.isNotification ? const Color(0xFF6A79FF) : const Color(0xFFD9D9D9),
+                                  color: widget.dataChat.isNotification ? const Color(0xFF6A79FF) : const Color(0xFF6A79FF),
                                 ),
                                 onPressed: () {
                                   _doToggleNotification(context, widget.dataChat);

@@ -17,7 +17,6 @@ Widget widgetChatDrawerAttachments(BuildContext context, List<DataMessage> listA
   return ScrollConfiguration(
     behavior: scrollBehavior,
     child: SingleChildScrollView(
-      // physics: const ScrollPhysicsBouncing(),
       scrollDirection: Axis.horizontal,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
