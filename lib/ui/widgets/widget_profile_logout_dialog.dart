@@ -42,12 +42,12 @@ void widgetProfileLogoutDialog(BuildContext context, {required Null Function() o
               ),
               const SizedBox(height: 20),
               const Text(
-                '로그 아웃',
+                '로그아웃',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 15),
               const Text(
-                '정말로 계정을 로그아웃하시겠습니까?',
+                '정말로 로그아웃 하시겠어요?',
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 16),
               ),
@@ -66,7 +66,7 @@ void widgetProfileLogoutDialog(BuildContext context, {required Null Function() o
                   minimumSize: const Size(double.infinity, 50),
                 ),
                 child: const Text(
-                  '확인',
+                  '로그아웃',
                   style: TextStyle(
                       fontSize: 18,
                       color: Colors.white

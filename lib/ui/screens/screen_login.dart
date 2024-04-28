@@ -155,7 +155,6 @@ class _ScreenLoginState extends State<ScreenLogin> {
                                               fontSize: 16,
                                               fontFamily: 'SUIT',
                                               fontWeight: FontWeight.w300,
-                                              height: 0,
                                               letterSpacing: -0.28,
                                             ),
                                             decoration: const InputDecoration(
@@ -165,7 +164,6 @@ class _ScreenLoginState extends State<ScreenLogin> {
                                                 fontSize: 14,
                                                 fontFamily: 'Pretendard',
                                                 fontWeight: FontWeight.w400,
-                                                height: 0,
                                                 letterSpacing: -0.30,
                                               ),
                                               border: InputBorder.none,
@@ -197,7 +195,6 @@ class _ScreenLoginState extends State<ScreenLogin> {
                                               fontSize: 16,
                                               fontFamily: 'SUIT',
                                               fontWeight: FontWeight.w300,
-                                              height: 0,
                                               letterSpacing: -0.28,
                                             ),
                                             decoration: const InputDecoration(
@@ -207,7 +204,6 @@ class _ScreenLoginState extends State<ScreenLogin> {
                                                 fontSize: 14,
                                                 fontFamily: 'Pretendard',
                                                 fontWeight: FontWeight.w400,
-                                                height: 0,
                                                 letterSpacing: -0.30,
                                               ),
                                               border: InputBorder.none,

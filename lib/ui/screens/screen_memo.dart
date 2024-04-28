@@ -13,10 +13,10 @@ import '../widgets/widget_ui_notify.dart';
 class ScreenMemo extends StatefulWidget {
 
   final DataChat dataChat;
-  final Memo memo;
-  final void Function(Memo) onUpdateMemo;
+  final DataMemo dataMemo;
+  final void Function(DataMemo) onUpdateMemo;
 
-  const ScreenMemo({super.key, required this.dataChat, required this.memo, required this.onUpdateMemo});
+  const ScreenMemo({super.key, required this.dataChat, required this.dataMemo, required this.onUpdateMemo});
 
   @override
   State<StatefulWidget> createState() {
@@ -27,13 +27,15 @@ class ScreenMemo extends StatefulWidget {
 
 class _ScreenMemoState extends State<ScreenMemo> {
 
+  bool _isSaving = false;
   bool _isButtonEnabled = true;
   final TextEditingController _memoController = TextEditingController();
+  final ModuleMemo _moduleMemo = ModuleMemo();
 
   @override
   void initState() {
     super.initState();
-    _memoController.text = widget.memo.memo;
+    _memoController.text = widget.dataMemo.memo;
     _isButtonEnabled = _memoController.text.isNotEmpty;
     _memoController.addListener(_doCheckEnableButton);
   }
@@ -95,6 +97,7 @@ class _ScreenMemoState extends State<ScreenMemo> {
                 maxLines: null,
                 keyboardType: TextInputType.multiline,
                 textInputAction: TextInputAction.newline,
+                textCapitalization: TextCapitalization.sentences,
                 style: const TextStyle(
                   color: colorMainGrey900,
                   fontSize: 16,
@@ -121,7 +124,16 @@ class _ScreenMemoState extends State<ScreenMemo> {
               onPressed: () {
                 _doSaveMemo();
               },
-              child: const Text(
+              child: _isSaving
+                  ? const SizedBox(
+                width: 24,
+                height: 24,
+                child: CircularProgressIndicator(
+                  color: Color(0xFFFFFFFF),
+                  strokeWidth: 3,
+                ),
+              )
+                  : const Text(
                 '저장',
                 style: TextStyle(
                   color: Colors.white,
@@ -149,11 +161,24 @@ class _ScreenMemoState extends State<ScreenMemo> {
 
   void _doSaveMemo() async{
     if(_isButtonEnabled) {
-      ModuleMemo memo = ModuleMemo();
-       var result = await memo.updateProfileMemo(chattingMemoId: widget.memo.id, url: widget.memo.url, memo: _memoController.text);
-      // dbStore.saveMemo(widget.dataChat, _memoController.text);
-      widget.onUpdateMemo(result!);
-      Navigator.pop(context);
+      setState(() {
+        _isSaving = true;
+      });
+
+      bool isUpdated = await _moduleMemo.updateProfileMemo(dataMemo: widget.dataMemo, memo: _memoController.text);
+      if(isUpdated) {
+        widget.dataMemo.memo = _memoController.text;
+        widget.onUpdateMemo(widget.dataMemo);
+        showSnackBar(context, "메모 업데이트 성공");
+      }else {
+        showSnackBar(context, "메모를 업데이트하지 못했습니다.");
+      }
+
+      dbStore.saveMemo(widget.dataChat, _memoController.text);
+
+      setState(() {
+        _isSaving = false;
+      });
     }
   }
 

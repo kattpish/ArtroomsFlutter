@@ -35,14 +35,38 @@ class ScreenPhotoView extends StatefulWidget {
 class _ScreenPhotoView extends State<ScreenPhotoView> {
 
   bool isDownloading = false;
+  bool _isZoomed = false;
+  double _initialScale = 0;
   late int currentIndex;
   late PageController _pageController;
+  late PhotoViewController _photoViewController;
 
   @override
   void initState() {
     super.initState();
     currentIndex = widget.initialIndex;
     _pageController = PageController(initialPage: currentIndex);
+
+    _photoViewController = PhotoViewController()
+      ..outputStateStream.listen((state) {
+        if(_initialScale == 0) {
+          _initialScale = state.scale ?? 0;
+        }
+        bool isZoomed = (state.scale ?? 0) > _initialScale ? true : false;
+        if(_isZoomed != isZoomed) {
+          setState(() {
+            _isZoomed = isZoomed;
+          });
+        }
+      });
+
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    _photoViewController.dispose();
+    super.dispose();
   }
 
   @override
@@ -68,9 +92,13 @@ class _ScreenPhotoView extends State<ScreenPhotoView> {
                                 child: PageView.builder(
                                   controller: _pageController,
                                   itemCount: widget.images.length,
+                                  pageSnapping: true,
+                                  physics: _isZoomed ? const NeverScrollableScrollPhysics() : const AlwaysScrollableScrollPhysics(),
                                   onPageChanged: (int index) {
                                     setState(() {
                                       currentIndex = index;
+                                      _initialScale = 0;
+                                      _isZoomed = false;
                                     });
                                   },
                                   itemBuilder: (context, index) {
@@ -213,7 +241,11 @@ class _ScreenPhotoView extends State<ScreenPhotoView> {
     }
 
     return PhotoView(
+      controller: _photoViewController,
       imageProvider: imageProvider,
+      minScale: PhotoViewComputedScale.contained,
+      maxScale: PhotoViewComputedScale.covered * 2,
+      enableRotation: true,
       backgroundDecoration: BoxDecoration(
         color: Colors.black.withOpacity(0.5),
       ),

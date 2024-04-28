@@ -31,9 +31,7 @@ import '../widgets/widget_chatroom_empty.dart';
 import '../widgets/widget_chatroom_message_date_pin.dart';
 import '../widgets/widget_chatroom_message_drawer_btn.dart';
 import '../widgets/widget_chatroom_message_input.dart';
-import '../widgets/widget_chatroom_message_me.dart';
 import '../widgets/widget_chatroom_message_mention.dart';
-import '../widgets/widget_chatroom_message_other.dart';
 import '../widgets/widget_chatroom_message_reply_textfield.dart';
 import '../widgets/widget_chatroom_notice_pin.dart';
 import '../widgets/widget_media.dart';
@@ -287,14 +285,19 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                                   ),
                                 ),
                                 Visibility(
-                                  visible: _filesImages.isEmpty,
-                                  child: const Center(
-                                    child: SizedBox(
-                                      width: 30,
-                                      height: 30,
-                                      child: CircularProgressIndicator(
-                                        color: Color(0xFF6A79FF),
-                                        strokeWidth: 3,
+                                  visible: _selectedImages > 0,
+                                  child: Positioned.fill(
+                                    top: _bottomSheetHeightMax - 250,
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        gradient: LinearGradient(
+                                          begin: Alignment.bottomCenter,
+                                          end: Alignment.topCenter,
+                                          colors: [
+                                            Colors.black.withOpacity(0.8),
+                                            Colors.transparent,
+                                          ],
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -347,6 +350,19 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                                             ),
                                           ),
                                         ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Visibility(
+                                  visible: _filesImages.isEmpty,
+                                  child: const Center(
+                                    child: SizedBox(
+                                      width: 30,
+                                      height: 30,
+                                      child: CircularProgressIndicator(
+                                        color: Color(0xFF6A79FF),
+                                        strokeWidth: 3,
                                       ),
                                     ),
                                   ),

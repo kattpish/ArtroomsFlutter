@@ -38,9 +38,8 @@ class ScreenChatroomDrawer extends StatefulWidget {
 }
 
 class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
-  final ModuleMemo _moduleMemo = ModuleMemo();
+
   bool _isLoading = true;
-  DataNotice _dataNotice = DataNotice();
   final ModuleNotice moduleNotice = ModuleNotice();
   final TextEditingController _memoController = TextEditingController();
   final TextEditingController _noticeController = TextEditingController();
@@ -49,7 +48,10 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
   List<DataMessage> _listAttachmentsImages = [];
   late final ModuleMessages _moduleMessages;
   ArtistProfile _artistProfile = ArtistProfile();
-  Memo _memo = Memo();
+  DataMemo _dataMemo = DataMemo();
+  final ModuleMemo _moduleMemo = ModuleMemo();
+  DataNotice _dataNotice = DataNotice();
+
   @override
   void initState() {
     super.initState();
@@ -176,7 +178,7 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
                                         height: 0,
                                         letterSpacing: -0.28,
                                       ),
-                                    )
+                                    ),
                                   ],
                                 )
                               ],
@@ -355,13 +357,13 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
                                   ),
                                   onTap: () async {
                                     await Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                      return ScreenMemo(dataChat: widget.dataChat,memo: _memo,onUpdateMemo: (memo){
+                                      return ScreenMemo(dataChat: widget.dataChat, dataMemo: _dataMemo, onUpdateMemo: (memo) {
                                         setState(() {
-                                          _memo = memo;
+                                          _dataMemo = memo;
                                         });
+                                        _doLoadMemo();
                                       },);
                                     }));
-                                    _doLoadMemo();
                                   },
                                 ),
                                 Container(
@@ -376,7 +378,7 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
                                   child: TextFormField(
                                     controller: _memoController,
                                     decoration: InputDecoration(
-                                      hintText: _memo.memo,
+                                      hintText: _dataMemo.memo,
                                       border: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(8.0),
                                         borderSide: BorderSide.none,
@@ -395,7 +397,6 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
                                       fontFamily: 'SUIT',
                                       fontWeight: FontWeight.w300,
                                       letterSpacing: -0.32,
-
                                     ),
                                   ),
                                 )
@@ -609,6 +610,7 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
   void _doLoadMemo() {
     setState(() {
       _memoController.text = dbStore.getMemo(widget.dataChat).replaceAll("\n\n", "");
+      _dataMemo.memo = _memoController.text;
     });
   }
 
@@ -656,11 +658,16 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
       dataChat.isNotification = dbStore.isNotificationChat(dataChat);
     });
   }
+
   void _loadMemoAndArtistProfile() async{
     _artistProfile = await moduleNotice.getArtistProfileInfo(artistId: _dataNotice.artistId);
-    _memo = await _moduleMemo.getMemo(url: _dataNotice.url);
+    DataMemo? dataMemo = await _moduleMemo.getMemo(url: _dataNotice.url);
+    if(dataMemo != null) {
+      _dataMemo = dataMemo;
+    }
     setState(() {
       _isLoading = false;
     });
   }
+
 }

@@ -10,7 +10,7 @@ import '../api/api.dart';
 
 class ModuleMemo {
 
-  Future<Memo> getMemo({required String url}) async {
+  Future<DataMemo?> getMemo({required String url}) async {
     int id = dbStore.getUserId();
     Map<String, dynamic> body = {
       "operationName": "searchChattingMemo",
@@ -48,31 +48,30 @@ class ModuleMemo {
       final responseData = json.decode(response.body);
 
       if (kDebugMode) {
-        print('response of profile $responseData');
+        print('response of profile Memo $responseData');
       }
       if (response.statusCode == 200) {
         final Map<String, dynamic> responseData = jsonDecode(response.body);
         if (kDebugMode) {
           print('Get Memo: ${responseData}');
         }
-        return Memo.fromJson(responseData['data']['searchChattingMemo']);
+        return DataMemo.fromJson(responseData['data']['searchChattingMemo']);
       } else {
         if (kDebugMode) {
           print('Error getting Memo: ${response.body}');
         }
-        return Memo();
+        return null;
       }
     } catch (e) {
       if (kDebugMode) {
         print('error ${e}');
       }
-      return Memo();
+      return null;
     }
   }
 
-  Future<Memo> updateProfileMemo({
-    required int chattingMemoId,
-    required String url,
+  Future<bool> updateProfileMemo({
+    required DataMemo dataMemo,
     required String memo
   }) async {
 
@@ -97,6 +96,7 @@ class ModuleMemo {
         }
       }
     ''';
+
     try{
       var response = await http.post(
         Uri.parse(apiUrlGraphQL),
@@ -107,10 +107,10 @@ class ModuleMemo {
         body: jsonEncode({
           'operationName': 'updateChattingMemo',
           'variables': {
-            "updateChattingMemoId": chattingMemoId,
+            "updateChattingMemoId": dataMemo.id,
             "updateChattingMemoInput": {
               "memo": memo,
-              "url": url,
+              "url": dataMemo.url,
               "userId": dbStore.getUserId()
             }
           },
@@ -120,12 +120,11 @@ class ModuleMemo {
 
       if (response.statusCode == 200) {
         Map<String, dynamic> responseData = jsonDecode(response.body);
-        return Memo.fromJson(responseData['data']['updateChattingMemo']);
+        return true;
       } else {
         if (kDebugMode) {
-          print('Error updating profile picture: ${response.body}');
+          print('Error updating profile memo: ${response.body}');
         }
-        return Memo();
       }
 
     }catch(e){
@@ -134,7 +133,7 @@ class ModuleMemo {
       }
     }
 
-    return Memo();
+    return false;
   }
 
 }

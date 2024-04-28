@@ -64,7 +64,6 @@ Widget widgetLoginRestTabPassword(BuildContext context, TextEditingController em
                   fontSize: 16,
                   fontFamily: 'SUIT',
                   fontWeight: FontWeight.w400,
-                  height: 0,
                   letterSpacing: -0.32,
                 ),
               ),
