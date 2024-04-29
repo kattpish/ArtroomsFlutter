@@ -1,6 +1,5 @@
 library focused_menu;
 
-import 'dart:ui';
 import 'package:artrooms/beans/bean_focusedMenuItem.dart';
 import 'package:artrooms/ui/theme/theme_colors.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +19,6 @@ class FocusedMenuHolder extends StatefulWidget {
   final double? menuOffset;
   final Color activeColor;
 
-  /// Open with tap insted of long press.
   final bool openWithTap;
 
   const FocusedMenuHolder(
@@ -47,7 +45,7 @@ class FocusedMenuHolder extends StatefulWidget {
 
 class _FocusedMenuHolderState extends State<FocusedMenuHolder> {
   GlobalKey containerKey = GlobalKey();
-  Offset childOffset = Offset(0, 0);
+  Offset childOffset = const Offset(0, 0);
   Size? childSize;
 
   getOffset() {
@@ -56,7 +54,7 @@ class _FocusedMenuHolderState extends State<FocusedMenuHolder> {
     Size size = renderBox.size;
     Offset offset = renderBox.localToGlobal(Offset.zero);
     setState(() {
-      this.childOffset = Offset(offset.dx, offset.dy);
+      childOffset = Offset(offset.dx, offset.dy);
       childSize = size;
     });
   }
@@ -92,7 +90,6 @@ class _FocusedMenuHolderState extends State<FocusedMenuHolder> {
                   child: FocusedMenuDetails(
                     itemExtent: widget.menuItemExtent,
                     menuBoxDecoration: widget.menuBoxDecoration,
-                    child: widget.child,
                     childOffset: childOffset,
                     childSize: childSize,
                     menuItems: widget.menuItems,
@@ -103,6 +100,7 @@ class _FocusedMenuHolderState extends State<FocusedMenuHolder> {
                     bottomOffsetHeight: widget.bottomOffsetHeight ?? 0,
                     menuOffset: widget.menuOffset ?? 0,
                     activeColor: widget.activeColor,
+                    child: widget.child,
                   ));
             },
             fullscreenDialog: true,
@@ -169,43 +167,47 @@ class _FocusedMenuDetailsState extends State<FocusedMenuDetails> {
         : widget.childOffset.dy - menuHeight - widget.menuOffset!;
     return Scaffold(
       backgroundColor: Colors.transparent,
-      body: Container(
-        child: Stack(
-          fit: StackFit.expand,
-          children: <Widget>[
-            GestureDetector(
-                onTap: () {
-                  Navigator.pop(context);
-                },
-                child: Container(
-                  color: (Colors.transparent).withOpacity(0),
-                )),
-            Positioned(
-              top: topOffset,
-              left: leftOffset,
-              child: TweenAnimationBuilder(
-                duration: Duration(milliseconds: 200),
-                builder: (BuildContext context, dynamic value, Widget? child) {
-                  return Transform.scale(
-                    scale: value,
-                    alignment: Alignment.center,
-                    child: child,
-                  );
-                },
-                tween: Tween(begin: 0.0, end: 1.0),
+      body: Stack(
+        fit: StackFit.expand,
+        children: <Widget>[
+          GestureDetector(
+              onTap: () {
+                Navigator.pop(context);
+              },
+              child: Container(
+                color: (Colors.transparent).withOpacity(0),
+              )),
+          Positioned(
+            top: topOffset,
+            left: leftOffset,
+            child: TweenAnimationBuilder(
+              duration: const Duration(milliseconds: 200),
+              builder: (BuildContext context, dynamic value, Widget? child) {
+                return Transform.scale(
+                  scale: value,
+                  alignment: Alignment.center,
+                  child: child,
+                );
+              },
+              tween: Tween(begin: 0.0, end: 1.0),
+              child: Card(
+                elevation: 10,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
                 child: Container(
                   width: maxMenuWidth,
                   height: menuHeight,
                   decoration: const BoxDecoration(
                     color: colorMainGrey150,
-                    borderRadius: BorderRadius.all(Radius.circular(15.0)),
+                    borderRadius: BorderRadius.all(Radius.circular(12.0)),
                   ),
                   child: ClipRRect(
-                    borderRadius: const BorderRadius.all(Radius.circular(15.0)),
+                    borderRadius: const BorderRadius.all(Radius.circular(12.0)),
                     child: ListView.builder(
                       itemCount: widget.menuItems.length,
                       padding: EdgeInsets.zero,
-                      physics: BouncingScrollPhysics(),
+                      physics: const BouncingScrollPhysics(),
                       itemBuilder: (context, index) {
                         FocusedMenuItem item = widget.menuItems[index];
                         Widget listItem = GestureDetector(
@@ -256,32 +258,33 @@ class _FocusedMenuDetailsState extends State<FocusedMenuDetails> {
                 ),
               ),
             ),
-            Positioned(
-                top: widget.childOffset.dy,
-                left: widget.childOffset.dx,
-                child: AbsorbPointer(
-                    absorbing: true,
-                    child: Container(
-                        decoration: BoxDecoration(
-                          color: widget.activeColor,
-                          borderRadius: const BorderRadius.only(
-                              topLeft: Radius.circular(24),
-                              topRight: Radius.circular(2),
-                              bottomLeft: Radius.circular(24),
-                              bottomRight: Radius.circular(24)
-                          ),
+          ),
+          Positioned(
+              top: widget.childOffset.dy,
+              left: widget.childOffset.dx,
+              child: AbsorbPointer(
+                  absorbing: true,
+                  child: Container(
+                      decoration: BoxDecoration(
+                        color: widget.activeColor,
+                        borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(24),
+                            topRight: Radius.circular(2),
+                            bottomLeft: Radius.circular(24),
+                            bottomRight: Radius.circular(24)
                         ),
-                        width: widget.childSize!.width,
-                        height: widget.childSize!.height,
-                        child: widget.child))),
-          ],
-        ),
+                      ),
+                      width: widget.childSize!.width,
+                      height: widget.childSize!.height,
+                      child: widget.child)
+              )
+          ),
+        ],
       ),
     );
   }
 
   onEnter(bool hover) {
-    print('hovering......$hover');
     setState(() {
       isHovered = hover;
     });

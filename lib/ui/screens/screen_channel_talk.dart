@@ -15,7 +15,7 @@ Future<void> initChannelTak() async {
     mobileNumber: dbStore.getPhoneNumber(),
     trackDefaultEvent: false,
     hidePopup: false,
-    language: 'korean',
+    language: 'french',
   );
 
 }
