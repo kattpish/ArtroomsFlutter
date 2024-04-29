@@ -106,7 +106,7 @@ class DBStore {
   }
 
   String getNotificationValue() {
-    String? notification = getString("NOTIFICATION", defaultValue: "아룸 (기본)");
+    String? notification = getString("NOTIFICATION", defaultValue: "영롱한 띠링");
     return notification;
   }
 

@@ -1,6 +1,7 @@
 
 import 'dart:async';
 
+import 'package:artrooms/main.dart';
 import 'package:artrooms/ui/widgets/widget_chatroom_message_pin.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/cupertino.dart';
@@ -35,8 +36,10 @@ void notifyState(DataChat dataChat) {
       timer.cancel();
     }
 
+    String notification = dbStore.getNotificationValue();
+
     audioPlayer ??= AudioPlayer();
-    audioPlayer?.play(AssetSource('sounds/notification_chat.mp3'));
+    audioPlayer?.play(AssetSource('sounds/$notification.mp3'));
 
     _timer = Timer(const Duration(seconds: 5), () {
       notifyState(DataChat.empty());

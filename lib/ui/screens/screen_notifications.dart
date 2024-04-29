@@ -20,19 +20,12 @@ class ScreenNotifications extends StatefulWidget {
 class _ScreenNotificationsState extends State<ScreenNotifications> {
   List<String> _tunes = [];
   late String _notificationEnabled;
-  late final List<Map<String, dynamic>> _notifications;
 
   @override
   void initState() {
     super.initState();
     setTunes();
     _notificationEnabled = dbStore.getNotificationValue();
-
-    _notifications = [
-      {"title": "아룸 (기본)"},
-      {"title": "알림음"},
-      {"title": "알림음 2"},
-    ];
   }
 
   @override
@@ -116,10 +109,8 @@ class _ScreenNotificationsState extends State<ScreenNotifications> {
   }
 
   void _doToggleNotification(int index, bool value) {
-    // dbStore.setNotificationValue(_notifications[index]['title']);
     dbStore.setNotificationValue(_tunes[index]);
     setState(() {
-      // _notificationEnabled = _notifications[index]["title"];
       _notificationEnabled = _tunes[index];
     });
   }
@@ -129,6 +120,6 @@ class _ScreenNotificationsState extends State<ScreenNotifications> {
     setState(() {
       _tunes = tunes;
     });
-
   }
+
 }
