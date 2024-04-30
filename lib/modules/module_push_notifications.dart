@@ -21,7 +21,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 class ModulePushNotifications {
 
 
-  Future<void> init(User user) async {
+  Future<void> init() async {
 
     try {
 
@@ -47,7 +47,7 @@ class ModulePushNotifications {
         NotificationService.showNotification(message.notification?.title ?? '', message.notification?.body ?? '');
       });
 
-      register(user);
+      register();
 
     } catch (e) {
       if (kDebugMode) {
@@ -57,7 +57,7 @@ class ModulePushNotifications {
 
   }
 
-  Future<void> register(User user) async {
+  Future<void> register() async {
 
     PushTokenRegistrationStatus status = await SendbirdSdk().registerPushToken(
       type: getPushTokenType(),
@@ -67,7 +67,6 @@ class ModulePushNotifications {
 
     if (kDebugMode) {
       print(' PushTokenRegistrationStatus -> $status');
-      print('Connected as ${user.userId}');
     }
 
   }

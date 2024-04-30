@@ -375,7 +375,7 @@ class _ScreenProfileState extends State<ScreenProfile> {
                                 onLogout: () {
                                   DBStore().logout();
                                   Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) {
-                                    return const ScreenLogin(onPageEmail: "",);
+                                    return const ScreenLogin();
                                   }));
                                 }
                             );

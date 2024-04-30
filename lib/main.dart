@@ -24,19 +24,21 @@ late final ModulePushNotifications modulePushNotifications;
 
 Future<void> main() async {
 
-  await init();
+  await init1();
 
   runApp(
     MaterialApp(
-      home: DBStore().isLoggedIn() ? const ScreenChats() : const ScreenLogin(onPageEmail: ""),
+      home: DBStore().isLoggedIn() ? const ScreenChats() : const ScreenLogin(),
       debugShowCheckedModeBanner: false,
       navigatorObservers: [listenerRouteObserver],
     ),
   );
 
+  await init2();
+
 }
 
-Future<void> init() async {
+Future<void> init1() async {
 
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -52,9 +54,15 @@ Future<void> init() async {
   dbStore = DBStore();
   moduleSendBird = ModuleSendBird();
   listenerRouteObserver = ListenerRouteObserver();
-  modulePushNotifications = ModulePushNotifications();
 
   await moduleSendBird.initSendbird();
+
+}
+
+Future<void> init2() async {
+
+  modulePushNotifications = ModulePushNotifications();
+  modulePushNotifications.init();
 
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
   var initializationSettingsAndroid = const AndroidInitializationSettings('@drawable/icon_notification');

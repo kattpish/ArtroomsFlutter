@@ -261,7 +261,7 @@ class _ScreenLoginResetState extends State<ScreenLoginReset> with SingleTickerPr
           await Future.delayed(const Duration(milliseconds: 2000), (){
             Navigator.of(context).pop();
             Navigator.push(context, MaterialPageRoute(builder: (context) {
-              return const ScreenLogin(onPageEmail: "",);
+              return const ScreenLogin();
             }));
           });
 
@@ -305,7 +305,7 @@ class _ScreenLoginResetState extends State<ScreenLoginReset> with SingleTickerPr
           showSnackBar(context, "id: ${message.split("|")[0]}");
           Navigator.of(context).pop();
           Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return const ScreenLogin(onPageEmail: "",);
+            return const ScreenLogin();
           }));
 
         } else {

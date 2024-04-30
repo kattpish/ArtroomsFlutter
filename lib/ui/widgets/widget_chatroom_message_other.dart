@@ -14,28 +14,30 @@ import '../../utils/utils_media.dart';
 import '../theme/theme_colors.dart';
 
 
-Widget buildOtherMessageBubble(
-    BuildContext context,
-    int index,
-    State state,
-    DataMessage message,
-    List<DataMessage> listMessages,
-    bool isLast,
-    bool isPreviousSame,
-    bool isNextSame,
-    bool isPreviousSameDateTime,
-    bool isNextSameTime,
-    double screenWidth,
-    Null Function() onReplyClick,
-    Null Function(int index) onReplySelect
-    ) {
+Widget chatroomMessageOther({
+  required BuildContext context,
+  required int index,
+  required State state,
+  required DataMessage message,
+  required List<DataMessage> listMessages,
+  required bool isLast,
+  required bool isPreviousSame,
+  required bool isNextSame,
+  required bool isPreviousSameDateTime,
+  required bool isNextSameTime,
+  required double screenWidth,
+  required Null Function() onReplyClick,
+  required Null Function(int index) onReplySelect
+}) {
+
+  Color activeColor = colorMainGrey200;
+
   return Container(
     margin: EdgeInsets.only(
         left: 16,
         right: 16,
         top: 0,
-        bottom: isLast ? 9 : (isNextSame && isNextSameTime ? 0 : 9)
-    ),
+        bottom: isLast ? 9 : (isNextSame && isNextSameTime ? 0 : 9)),
     child: Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -44,10 +46,8 @@ Widget buildOtherMessageBubble(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if(!isPreviousSame || !isPreviousSameDateTime)
+            if (!isPreviousSame || !isPreviousSameDateTime)
               InkWell(
-                splashColor: Colors.transparent,
-                highlightColor: Colors.transparent,
                 onTap: () {},
                 child: Container(
                   decoration: const BoxDecoration(
@@ -56,7 +56,9 @@ Widget buildOtherMessageBubble(
                   clipBehavior: Clip.antiAlias,
                   child: CircleAvatar(
                     radius: 15,
-                    backgroundColor: isPreviousSame ? Colors.transparent : colorMainGrey200,
+                    backgroundColor: isPreviousSame
+                        ? Colors.transparent
+                        : colorMainGrey200,
                     child: CachedNetworkImage(
                       imageUrl: message.profilePictureUrl,
                       cacheManager: customCacheManager,
@@ -65,20 +67,26 @@ Widget buildOtherMessageBubble(
                       fadeOutDuration: const Duration(milliseconds: 100),
                       placeholder: (context, url) {
                         return Image.asset(
-                          message.isArtrooms ? 'assets/images/chats/chat_artrooms.png' : 'assets/images/chats/placeholder_photo.png',
+                          message.isArtrooms
+                              ? 'assets/images/chats/chat_artrooms.png'
+                              : 'assets/images/chats/placeholder_photo.png',
                           fit: BoxFit.cover,
                         );
                       },
                       errorWidget: (context, url, error) {
                         return Image.asset(
-                          message.isArtrooms ? 'assets/images/chats/chat_artrooms.png' : 'assets/images/chats/placeholder_photo.png',
+                          message.isArtrooms
+                              ? 'assets/images/chats/chat_artrooms.png'
+                              : 'assets/images/chats/placeholder_photo.png',
                           fit: BoxFit.cover,
                         );
                       },
                     ),
                   ),
                 ),
-              ) else const SizedBox(width: 34),
+              )
+            else
+              const SizedBox(width: 34),
             const SizedBox(width: 6),
             Row(
               crossAxisAlignment: CrossAxisAlignment.end,
@@ -86,12 +94,11 @@ Widget buildOtherMessageBubble(
                 Container(
                   margin: EdgeInsets.only(
                       left: isPreviousSame && isPreviousSameDateTime ? 0 : 4,
-                      top: isPreviousSame & isPreviousSameDateTime ? 0 : 16
-                  ),
+                      top: isPreviousSame & isPreviousSameDateTime ? 0 : 16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      if(!isPreviousSame || !isPreviousSameDateTime)
+                      if (!isPreviousSame || !isPreviousSameDateTime)
                         SizedBox(
                           child: Text(
                             message.getName(),
@@ -108,79 +115,93 @@ Widget buildOtherMessageBubble(
                           ),
                         ),
                       const SizedBox(height: 8),
-                      if(message.content.isNotEmpty)
-                        FocusedMenuHolder(
-                          onPressed: () {},
-                          menuWidth: screenWidth / 2,
-                          menuItems: [
-                            FocusedMenuItem(
-                                trailingIcon: const ImageIcon(AssetImage('assets/images/icons/icon_reply.png')),
-                                title: const Text("답장"),
-                                onPressed: () {
-                                  onReplyClick();
-                                }),
-                            FocusedMenuItem(
-                                trailingIcon: const ImageIcon(AssetImage('assets/images/icons/icon_copy.png')),
-                                title: const Text("복사"),
-                                onPressed:
-                                    () async {
-                                  await Clipboard.setData(
-                                      ClipboardData(text: message.content)
-                                  );
-                                }
-                            ),
-                          ],
-                          blurSize: 0.0,
-                          menuOffset: 10.0,
-                          blurBackgroundColor: Colors.transparent,
-                          bottomOffsetHeight:
-                          80.0,
-                          activeColor: colorPrimaryBlue400,
-                          child: Container(
-                            constraints: const BoxConstraints(
-                                minHeight: 40, minWidth: 46
-                            ),
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                            alignment: Alignment.centerLeft,
-                            decoration: BoxDecoration(
-                              color: colorMainGrey100,
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(isPreviousSameDateTime ? 20 : 2),
-                                topRight: const Radius.circular(20),
-                                bottomLeft: const Radius.circular(20),
-                                bottomRight: const Radius.circular(20),
-                              ),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.only(bottom: 2),
-                                  constraints: BoxConstraints(
-                                    maxWidth: screenWidth * 0.55,
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      buildReply(index,message, false, (index){
-                                        onReplySelect(index);
-                                      }),
-                                      WidgetChatroomMessageText(
-                                        message: message.content,
-                                        color: const Color(0xFF1F1F1F),
-                                        colorMention: const Color(0xFF6385FF),
-                                      ),
-                                    ],
-                                  ),
+                      if (message.content.isNotEmpty)
+                        Container(
+                          decoration: BoxDecoration(
+                            color: activeColor,
+                            borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(isPreviousSameDateTime ? 24 : 2),
+                                topRight: const Radius.circular(24),
+                                bottomLeft: const Radius.circular(24),
+                                bottomRight: const Radius.circular(24)),
+                          ),
+                          child: FocusedMenuHolder(
+                            onPressed: () {},
+                            menuWidth: screenWidth / 2,
+                            menuItems: [
+                              FocusedMenuItem(
+                                  trailingIcon: const ImageIcon(AssetImage(
+                                      'assets/images/icons/icon_reply.png')),
+                                  title: const Text("답장"),
+                                  onPressed: () {
+                                    onReplyClick();
+                                  }),
+                              FocusedMenuItem(
+                                  trailingIcon: const ImageIcon(AssetImage(
+                                      'assets/images/icons/icon_copy.png')),
+                                  title: const Text("복사"),
+                                  onPressed: () async {
+                                    await Clipboard.setData(
+                                        ClipboardData(text: message.content));
+                                  })
+                            ],
+                            blurSize: 0.0,
+                            menuOffset: 10.0,
+                            bottomOffsetHeight: 80.0,
+                            menuBoxDecoration: const BoxDecoration(
+                                borderRadius:
+                                BorderRadius.all(Radius.circular(15.0))),
+                            activeColor: colorMainGrey400,
+                            child: Container(
+                              constraints: const BoxConstraints(
+                                  minHeight: 40, minWidth: 46),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 12),
+                              alignment: Alignment.centerLeft,
+                              decoration: BoxDecoration(
+                                color: Colors.transparent,
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(isPreviousSameDateTime ? 20 : 2),
+                                  topRight: const Radius.circular(20),
+                                  bottomLeft: const Radius.circular(20),
+                                  bottomRight: const Radius.circular(20),
                                 ),
-                              ],
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.only(bottom: 2),
+                                    constraints: BoxConstraints(
+                                      maxWidth: screenWidth * 0.55,
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                      CrossAxisAlignment.start,
+                                      children: [
+                                        buildReply(index, message, false,
+                                                (index) {
+                                              onReplySelect(index);
+                                            }),
+                                        WidgetChatroomMessageText(
+                                          message: message.content,
+                                          color: const Color(0xFF1F1F1F),
+                                          colorMention: const Color(0xFF6385FF),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
                     ],
                   ),
                 ),
-                if(((isPreviousSameDateTime && !isNextSameTime) || (!isPreviousSameDateTime && !isNextSameTime)) && message.content.isNotEmpty)
+                if (((isPreviousSameDateTime && !isNextSameTime) ||
+                    (!isPreviousSameDateTime && !isNextSameTime)) &&
+                    message.content.isNotEmpty)
                   Text(
                     message.getTime(),
                     style: const TextStyle(
@@ -201,11 +222,17 @@ Widget buildOtherMessageBubble(
         Container(
           alignment: Alignment.topLeft,
           margin: const EdgeInsets.only(left: 38),
-          child: buildAttachment(context, state, message, screenWidth,),
+          child: buildAttachment(
+            context,
+            state,
+            message,
+            screenWidth,
+          ),
         ),
         Container(
           alignment: Alignment.topLeft,
-          child: buildImageAttachments(context, message, listMessages, screenWidth),
+          child: buildImageAttachments(
+              context, message, listMessages, screenWidth),
         ),
       ],
     ),

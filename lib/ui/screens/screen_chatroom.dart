@@ -31,7 +31,9 @@ import '../widgets/widget_chatroom_empty.dart';
 import '../widgets/widget_chatroom_message_date_pin.dart';
 import '../widgets/widget_chatroom_message_drawer_btn.dart';
 import '../widgets/widget_chatroom_message_input.dart';
+import '../widgets/widget_chatroom_message_me.dart';
 import '../widgets/widget_chatroom_message_mention.dart';
+import '../widgets/widget_chatroom_message_other.dart';
 import '../widgets/widget_chatroom_message_reply_textfield.dart';
 import '../widgets/widget_chatroom_notice_pin.dart';
 import '../widgets/widget_media.dart';
@@ -404,6 +406,8 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                     itemPositionsListener: _itemPositionsListener,
                     itemCount: _listMessages.length,
                     reverse: true,
+                    shrinkWrap: true,
+                    minCacheExtent: 200,
                     itemBuilder: (context, index) {
                       _itemKeys[index] = GlobalKey();
                       final message = _listMessages[index];
@@ -420,7 +424,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                         children: [
                           if(!isPreviousDate) widgetChatroomMessageDatePin(context, message.timestamp, index),
                           message.isMe
-                              ? ChatroomMessageMe(index: index, state: this, message: message, listMessages:_listMessages, isLast: isLast, isPreviousSame: isPreviousSame,
+                              ? chatroomMessageMe(context: context, index: index, state: this, message: message, listMessages:_listMessages, isLast: isLast, isPreviousSame: isPreviousSame,
                               isNextSame: isNextSame, isPreviousSameDateTime: isPreviousSameDateTime, isNextSameTime: isNextSameTime, screenWidth: _screenWidth,
                               onReplyClick:(){
                                 _replyMessage = message;
@@ -428,7 +432,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                               }, onReplySelect:( index){
                                 _itemScrollController.scrollTo(index: _getMessageIndex(index),alignment: 0.5,duration: const Duration(seconds: 1));
                               })
-                              : ChatroomMessageOther(index:index, state: this, message: message,listMessages: _listMessages, isLast: isLast, isPreviousSame: isPreviousSame,
+                              : chatroomMessageOther(context: context, index:index, state: this, message: message,listMessages: _listMessages, isLast: isLast, isPreviousSame: isPreviousSame,
                               isNextSame: isNextSame, isPreviousSameDateTime: isPreviousSameDateTime, isNextSameTime: isNextSameTime, screenWidth: _screenWidth,
                               onReplyClick: (){
                                 _replyMessage = message;

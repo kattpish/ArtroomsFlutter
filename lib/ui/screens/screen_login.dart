@@ -18,7 +18,7 @@ import '../theme/theme_colors.dart';
 class ScreenLogin extends StatefulWidget {
 
   final String onPageEmail;
-  const ScreenLogin({super.key, required this.onPageEmail});
+  const ScreenLogin({super.key, this.onPageEmail=""});
 
   @override
   State<StatefulWidget> createState() {

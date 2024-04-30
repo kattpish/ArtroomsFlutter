@@ -46,7 +46,7 @@ class ChatroomMessageOther extends StatefulWidget {
 }
 
 class _ChatroomMessageOtherState extends State<ChatroomMessageOther> {
-  Color activeColor= colorMainGrey200;
+  Color activeColor = colorMainGrey200;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -137,9 +137,8 @@ class _ChatroomMessageOtherState extends State<ChatroomMessageOther> {
                             decoration: BoxDecoration(
                               color: activeColor,
                               borderRadius: BorderRadius.only(
-                                  topLeft: const Radius.circular(24),
-                                  topRight: Radius.circular(
-                                      widget.isPreviousSameDateTime ? 24 : 2),
+                                  topLeft: Radius.circular(widget.isPreviousSameDateTime ? 24 : 2),
+                                  topRight: const Radius.circular(24),
                                   bottomLeft: const Radius.circular(24),
                                   bottomRight: const Radius.circular(24)),
                             ),
@@ -179,8 +178,7 @@ class _ChatroomMessageOtherState extends State<ChatroomMessageOther> {
                                 decoration: BoxDecoration(
                                   color: Colors.transparent,
                                   borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(
-                                        widget.isPreviousSameDateTime ? 20 : 2),
+                                    topLeft: Radius.circular(widget.isPreviousSameDateTime ? 20 : 2),
                                     topRight: const Radius.circular(20),
                                     bottomLeft: const Radius.circular(20),
                                     bottomRight: const Radius.circular(20),
@@ -256,11 +254,5 @@ class _ChatroomMessageOtherState extends State<ChatroomMessageOther> {
         ],
       ),
     );
-  }
-
-  void isActive(){
-    setState(() {
-      activeColor = colorMainGrey600;
-    });
   }
 }

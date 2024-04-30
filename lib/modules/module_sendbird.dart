@@ -26,6 +26,8 @@ import '../main.dart';
 
 class ModuleSendBird {
 
+  late final User user;
+
   Future<void> initSendbird() async {
 
     try {
@@ -37,9 +39,7 @@ class ModuleSendBird {
           apiToken: "39ac9b8e2125ad49035c7bd9c105ccc9d4dc7ba4"
       );
 
-      final User user = await SendbirdSdk().connect(email);
-
-      modulePushNotifications.init(user);
+      user = await SendbirdSdk().connect(email);
 
     } catch (e) {
       if (kDebugMode) {

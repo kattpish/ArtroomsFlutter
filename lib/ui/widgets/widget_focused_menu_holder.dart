@@ -82,7 +82,7 @@ class _FocusedMenuHolderState extends State<FocusedMenuHolder> {
     await Navigator.push(
         context,
         PageRouteBuilder(
-            transitionDuration: widget.duration ?? Duration(milliseconds: 100),
+            transitionDuration: widget.duration ?? const Duration(milliseconds: 100),
             pageBuilder: (context, animation, secondaryAnimation) {
               animation = Tween(begin: 0.0, end: 1.0).animate(animation);
               return FadeTransition(
