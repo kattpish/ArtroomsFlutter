@@ -37,7 +37,8 @@ Widget chatroomMessageOther({
         left: 16,
         right: 16,
         top: 0,
-        bottom: isLast ? 9 : (isNextSame && isNextSameTime ? 0 : 9)),
+        bottom: isLast ? 9 : (isNextSame && isNextSameTime ? 0 : 9)
+    ),
     child: Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,

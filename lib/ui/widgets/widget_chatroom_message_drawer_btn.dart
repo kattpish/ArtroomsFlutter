@@ -1,13 +1,10 @@
 
 import 'package:artrooms/beans/bean_chat.dart';
-import 'package:artrooms/beans/bean_chatting_artist_profile.dart';
 import 'package:artrooms/beans/bean_notice.dart';
 import 'package:artrooms/modules/module_memo.dart';
 import 'package:artrooms/modules/module_notices.dart';
-import 'package:artrooms/modules/module_profile.dart';
 import 'package:flutter/material.dart';
 
-import '../../test_screen.dart';
 import '../screens/screen_chatroom_drawer.dart';
 
 

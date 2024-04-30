@@ -50,8 +50,7 @@ class _ChatroomMessageMeState extends State<ChatroomMessageMe> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(
-          left: 16, right: 16, top: 0, bottom: widget.isLast ? 9 : 0),
+      margin: EdgeInsets.only(left: 16, right: 16, top: 0, bottom: widget.isLast ? 9 : 0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [

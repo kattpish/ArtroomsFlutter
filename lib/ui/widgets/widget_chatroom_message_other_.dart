@@ -54,7 +54,8 @@ class _ChatroomMessageOtherState extends State<ChatroomMessageOther> {
           left: 16,
           right: 16,
           top: 0,
-          bottom: widget.isLast ? 9 : (widget.isNextSame && widget.isNextSameTime ? 0 : 9)),
+          bottom: widget.isLast ? 9 : (widget.isNextSame && widget.isNextSameTime ? 0 : 9)
+      ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
