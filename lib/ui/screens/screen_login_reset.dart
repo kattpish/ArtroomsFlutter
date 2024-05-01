@@ -60,128 +60,125 @@ class _ScreenLoginResetState extends State<ScreenLoginReset> with SingleTickerPr
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Home',
-      home: Scaffold(
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back_ios,
+            color: colorMainGrey250,
+            size: 20,
+          ),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+        title: const Text(
+          '아이디 · 비밀번호 찾기',
+          style: TextStyle(
+            color: Color(0xFF1F1F1F),
+            fontSize: 18,
+            fontFamily: 'SUIT',
+            fontWeight: FontWeight.w700,
+            height: 0,
+            letterSpacing: -0.36,
+          ),
+        ),
+        centerTitle: true,
+        elevation: 0.2,
+        toolbarHeight: 60,
         backgroundColor: Colors.white,
-        appBar: AppBar(
-          leading: IconButton(
-            icon: const Icon(
-              Icons.arrow_back_ios,
-              color: colorMainGrey250,
-              size: 20,
-            ),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
+        bottom: TabBar(
+          controller: _tabController,
+          labelColor: const Color(0xFF1F1F1F),
+          unselectedLabelColor: const Color(0xFF979797),
+          indicatorColor: colorPrimaryBlue,
+          indicatorWeight: 2.0,
+          labelStyle: const TextStyle(
+            color: Color(0xFF1F1F1F),
+            fontSize: 18,
+            fontFamily: 'SUIT',
+            fontWeight: FontWeight.w500,
+            height: 0,
+            letterSpacing: -0.36,
           ),
-          title: const Text(
-            '아이디 · 비밀번호 찾기',
-            style: TextStyle(
-              color: Color(0xFF1F1F1F),
-              fontSize: 18,
-              fontFamily: 'SUIT',
-              fontWeight: FontWeight.w700,
-              height: 0,
-              letterSpacing: -0.36,
+          tabs: const [
+            Tab(
+              text: '아이디',
             ),
-          ),
-          centerTitle: true,
-          elevation: 0.2,
-          toolbarHeight: 60,
-          backgroundColor: Colors.white,
-          bottom: TabBar(
-            controller: _tabController,
-            labelColor: const Color(0xFF1F1F1F),
-            unselectedLabelColor: const Color(0xFF979797),
-            indicatorColor: colorPrimaryBlue,
-            indicatorWeight: 2.0,
-            labelStyle: const TextStyle(
-              color: Color(0xFF1F1F1F),
-              fontSize: 18,
-              fontFamily: 'SUIT',
-              fontWeight: FontWeight.w500,
-              height: 0,
-              letterSpacing: -0.36,
+            Tab(
+                text: '비밀번호'
             ),
-            tabs: const [
-              Tab(
-                text: '아이디',
-              ),
-              Tab(
-                  text: '비밀번호'
-              ),
-            ],
-          ),
+          ],
         ),
-        body: SafeArea(
-          child: Builder(
-            builder: (context) {
-              return Column(
-                children: [
-                  Expanded(
-                    child: TabBarView(
-                      controller: _tabController,
-                      children: [
-                        widgetLoginRestTabId(context, _nameController, _phoneController, _nameFocus, _phoneFocus,
-                            onSubmitted:() {
-                              _doSubmit(context);
-                            }
-                        ),
-                        widgetLoginRestTabPassword(context, _emailController,
-                            onSubmitted:() {
-                              _doSubmit(context);
-                            }
-                        ),
-                      ],
-                    ),
+      ),
+      body: SafeArea(
+        child: Builder(
+          builder: (context) {
+            return Column(
+              children: [
+                Expanded(
+                  child: TabBarView(
+                    controller: _tabController,
+                    children: [
+                      widgetLoginRestTabId(context, _nameController, _phoneController, _nameFocus, _phoneFocus,
+                          onSubmitted:() {
+                            _doSubmit(context);
+                          }
+                      ),
+                      widgetLoginRestTabPassword(context, _emailController,
+                          onSubmitted:() {
+                            _doSubmit(context);
+                          }
+                      ),
+                    ],
                   ),
-                ],
-              );
-            },
-          ),
+                ),
+              ],
+            );
+          },
         ),
-        bottomNavigationBar: SafeArea(
-          child: Container(
-            width: MediaQuery.of(context).size.width,
-            height: 44,
-            margin: const EdgeInsets.symmetric(vertical: 10.0),
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: ElevatedButton(
-              onPressed: () {
-                _doSubmit(context);
-              },
-              style: ElevatedButton.styleFrom(
-                foregroundColor: Colors.white,
-                backgroundColor: _isButtonDisabled ? colorPrimaryBlue.withAlpha(100) : colorPrimaryBlue,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30.0),
-                ),
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                elevation: 0,
-                textStyle: const TextStyle(fontSize: 18),
-                fixedSize: const Size.fromHeight(60),
+      ),
+      bottomNavigationBar: SafeArea(
+        child: Container(
+          width: MediaQuery.of(context).size.width,
+          height: 44,
+          margin: const EdgeInsets.symmetric(vertical: 10.0),
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: ElevatedButton(
+            onPressed: () {
+              _doSubmit(context);
+            },
+            style: ElevatedButton.styleFrom(
+              foregroundColor: Colors.white,
+              backgroundColor: _isButtonDisabled ? colorPrimaryBlue.withAlpha(100) : colorPrimaryBlue,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30.0),
               ),
-              child:  _isLoading
-                  ? const SizedBox(
-                width: 24,
-                height: 24,
-                child: CircularProgressIndicator(
-                  color: Color(0xFFFFFFFF),
-                  strokeWidth: 3,
-                ),
-              )
-                  : const Text(
-                  '인증메일 전송',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontFamily: 'SUIT',
-                    fontWeight: FontWeight.w700,
-                    height: 0,
-                    letterSpacing: -0.32,
-                  )
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              elevation: 0,
+              textStyle: const TextStyle(fontSize: 18),
+              fixedSize: const Size.fromHeight(60),
+            ),
+            child:  _isLoading
+                ? const SizedBox(
+              width: 24,
+              height: 24,
+              child: CircularProgressIndicator(
+                color: Color(0xFFFFFFFF),
+                strokeWidth: 3,
               ),
+            )
+                : const Text(
+                '인증메일 전송',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontFamily: 'SUIT',
+                  fontWeight: FontWeight.w700,
+                  height: 0,
+                  letterSpacing: -0.32,
+                )
             ),
           ),
         ),

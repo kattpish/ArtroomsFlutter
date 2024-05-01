@@ -1,12 +1,11 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:isolate';
 
 import 'package:artrooms/beans/bean_notice.dart';
 import 'package:artrooms/modules/module_memo.dart';
 import 'package:artrooms/modules/module_notices.dart';
 import 'package:artrooms/ui/screens/screen_photo_view.dart';
-import 'package:artrooms/ui/widgets/widget_chatroom_message_me_.dart';
-import 'package:artrooms/ui/widgets/widget_chatroom_message_other_.dart';
 import 'package:artrooms/ui/widgets/widget_loader.dart';
 import 'package:artrooms/utils/utils_notifications.dart';
 import 'package:flutter/material.dart';
@@ -91,7 +90,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
   double _screenHeight = 0;
   final double _appBarHeight = 60;
 
-  late Timer _timerRefresh;
+  late ReceivePort receivePort;
   Timer? _timerScroll;
   int _currentDate = 0;
   int _firstVisibleItemIndex = -1;
@@ -119,9 +118,8 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
     _doLoadMessages();
     _doLoadNotice();
 
-    _timerRefresh = Timer.periodic(Duration(seconds: timeSecRefreshChat), (timer) {
-      _doLoadMessagesNew();
-    });
+    receivePort = ReceivePort();
+    startIsolate();
 
     _messageFocusNode.addListener(() {
       if (_messageFocusNode.hasFocus) {
@@ -136,7 +134,8 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
     _moduleMessages.removeChannelEventHandler();
     _messageController.dispose();
     _timerScroll?.cancel();
-    _timerRefresh.cancel();
+    receivePort.close();
+    removeState(this);
     super.dispose();
   }
 
@@ -1016,6 +1015,21 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
     });
   }
 
+  void startIsolate() async {
+    await Isolate.spawn(timerEntryPoint, receivePort.sendPort);
+    receivePort.listen((data) {
+      if (data == 'loadMessages') {
+        _doLoadMessagesNew();
+      }
+    });
+  }
+
+  static void timerEntryPoint(SendPort sendPort) {
+    Timer.periodic(Duration(seconds: timeSecRefreshChat), (timer) {
+      sendPort.send('loadMessages');
+    });
+  }
+
   void _doLoadNotice() {
     _moduleNotice.getNotices(widget.dataChat.id).then((List<DataNotice> listNotices) {
       setState(() {
@@ -1400,6 +1414,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
         setState(() {
           _showDateContainer = false;
         });
+        _timerScroll?.cancel();
       });
 
     }

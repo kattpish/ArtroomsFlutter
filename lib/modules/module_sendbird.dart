@@ -22,24 +22,35 @@ import 'package:sendbird_sdk/query/group_channel_list_query.dart';
 import 'package:sendbird_sdk/sdk/sendbird_sdk_api.dart';
 
 import '../main.dart';
+import 'module_push_notifications.dart';
 
 
 class ModuleSendBird {
 
   late final User user;
+  bool _isInitialized = false;
 
   Future<void> initSendbird() async {
 
     try {
 
-      final String email = dbStore.getEmail();
+      if(!_isInitialized) {
 
-      SendbirdSdk(
-          appId: "01CFFFE8-F1B8-4BB4-A576-952ABDC8D08A",
-          apiToken: "39ac9b8e2125ad49035c7bd9c105ccc9d4dc7ba4"
-      );
+        final String email = dbStore.getEmail();
 
-      user = await SendbirdSdk().connect(email);
+        SendbirdSdk(
+            appId: "01CFFFE8-F1B8-4BB4-A576-952ABDC8D08A",
+            apiToken: "39ac9b8e2125ad49035c7bd9c105ccc9d4dc7ba4"
+        );
+
+        user = await SendbirdSdk().connect(email);
+
+        ModulePushNotifications modulePushNotifications = ModulePushNotifications();
+        modulePushNotifications.init();
+
+      }
+
+      _isInitialized = true;
 
     } catch (e) {
       if (kDebugMode) {
@@ -47,6 +58,10 @@ class ModuleSendBird {
       }
     }
 
+  }
+
+  bool isInitialized() {
+    return _isInitialized;
   }
 
   Future<void> joinChannel(id) async {
@@ -146,6 +161,7 @@ class ModuleSendBird {
   }
 
   Future<List<BaseMessage>> loadMessages(GroupChannel groupChannel, int? earliestMessageTimestamp) async {
+
     Completer<List<BaseMessage>> completer = Completer<List<BaseMessage>>();
 
       try {
@@ -214,6 +230,7 @@ class ModuleSendBird {
 
 
   Future<FileMessage> sendMessageFile(GroupChannel groupChannel, File file) async {
+
     Completer<FileMessage> completer = Completer();
 
     String fileName = path.basename(Uri.parse(file.path).path);

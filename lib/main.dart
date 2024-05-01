@@ -9,18 +9,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:intl/date_symbol_data_custom.dart';
 import 'package:intl/date_symbols.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sendbird_sdk/sdk/sendbird_sdk_api.dart';
 
-import 'listeners/listener_route_observer.dart';
-import 'modules/module_push_notifications.dart';
 import 'modules/module_sendbird.dart';
 
 
-late final SharedPreferences sharedPreferences;
 late final DBStore dbStore;
 late final ModuleSendBird moduleSendBird;
-late final ListenerRouteObserver listenerRouteObserver;
-late final ModulePushNotifications modulePushNotifications;
 
 Future<void> main() async {
 
@@ -28,9 +23,8 @@ Future<void> main() async {
 
   runApp(
     MaterialApp(
-      home: DBStore().isLoggedIn() ? const ScreenChats() : const ScreenLogin(),
-      debugShowCheckedModeBanner: false,
-      navigatorObservers: [listenerRouteObserver],
+      home: dbStore.isLoggedIn() ? const ScreenChats() : const ScreenLogin(),
+      locale: const Locale("ko_KR"),
     ),
   );
 
@@ -50,19 +44,14 @@ Future<void> init1() async {
     patterns: {},
   );
 
-  sharedPreferences = await SharedPreferences.getInstance();
   dbStore = DBStore();
-  moduleSendBird = ModuleSendBird();
-  listenerRouteObserver = ListenerRouteObserver();
-
-  await moduleSendBird.initSendbird();
+  await dbStore.init();
 
 }
 
 Future<void> init2() async {
 
-  modulePushNotifications = ModulePushNotifications();
-  modulePushNotifications.init();
+  moduleSendBird = ModuleSendBird();
 
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
   var initializationSettingsAndroid = const AndroidInitializationSettings('@drawable/icon_notification');

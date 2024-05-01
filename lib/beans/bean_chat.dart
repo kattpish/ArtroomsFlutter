@@ -1,5 +1,5 @@
 
-import 'package:artrooms/data/module_datastore.dart';
+import 'package:artrooms/main.dart';
 import 'package:sendbird_sdk/sendbird_sdk.dart';
 import '../utils/utils.dart';
 import '../utils/utils_notifications.dart';
@@ -69,7 +69,7 @@ class DataChat {
       }
     }
 
-    dataChat.isNotification = DBStore().isNotificationChat(dataChat);
+    dataChat.isNotification = dbStore.isNotificationChat(dataChat);
 
     return dataChat;
   }

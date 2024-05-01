@@ -66,16 +66,16 @@ class _ScreenPhotoView extends State<ScreenPhotoView> {
   void dispose() {
     _pageController.dispose();
     _photoViewController.dispose();
+    removeState(this);
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        backgroundColor: Colors.black.withOpacity(0.5),
-        body: WidgetUiNotify(
-          child: Builder(
+    return Scaffold(
+      backgroundColor: Colors.black.withOpacity(0.5),
+      body: WidgetUiNotify(
+        child: Builder(
             builder: (_) {
               return SafeArea(
                 child: Container(
@@ -225,7 +225,6 @@ class _ScreenPhotoView extends State<ScreenPhotoView> {
                 ),
               );
             }
-          ),
         ),
       ),
     );

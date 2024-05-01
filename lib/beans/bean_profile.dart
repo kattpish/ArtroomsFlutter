@@ -1,12 +1,12 @@
 
-import '../data/module_datastore.dart';
+import '../main.dart';
 
 
 class MyProfile {
 
-  String name = DBStore().getName();
-  String nickName = DBStore().getNickName();
-  String profileImg = DBStore().getProfileImg();
+  String name = dbStore.getName();
+  String nickName = dbStore.getNickName();
+  String profileImg = dbStore.getProfileImg();
 
   MyProfile({
     name,

@@ -1,5 +1,6 @@
 
 import 'dart:async';
+import 'dart:isolate';
 
 import 'package:artrooms/main.dart';
 import 'package:artrooms/ui/screens/screen_chatroom.dart';
@@ -13,7 +14,6 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import '../../beans/bean_chat.dart';
 import '../../listeners/scroll_bouncing_physics.dart';
 import '../../modules/module_chats.dart';
-import '../../data/module_datastore.dart';
 import '../../utils/utils_permissions.dart';
 import '../../utils/utils_screen.dart';
 import '../theme/theme_colors.dart';
@@ -38,18 +38,19 @@ class ScreenChats extends StatefulWidget {
 
 class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver  {
 
-  bool _isLoading = false;
+  bool _isLoading = true;
   bool _isSearching = false;
   bool _autofocus = false;
   final List<DataChat> _listChats = [];
   final List<DataChat> _listChatsAll = [];
   final TextEditingController _searchController = TextEditingController();
-  late Timer _timer;
 
   String _selectChatId = "";
   bool _isLoadingChatroom = false;
   final Map<String, ScreenChatroom> _listScreenChatrooms = {};
   final ModuleChat _chatModule = ModuleChat();
+
+  late ReceivePort receivePort;
 
   @override
   void initState() {
@@ -57,18 +58,19 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver  
 
     addState(this);
 
-    if(!DBStore().isLoggedIn()) {
+    if(!dbStore.isLoggedIn()) {
       Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) {
         return const ScreenLogin();
       }));
       return;
     }
+
     requestPermissions(context);
 
     _doLoadChats();
-    _timer = Timer.periodic(Duration(seconds: timeSecRefreshChat), (timer) {
-      _doLoadChats();
-    });
+
+    receivePort = ReceivePort();
+    startIsolate();
 
     _searchController.addListener(() {
       _doSearchChats(_searchController.text, true);
@@ -77,16 +79,9 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver  
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
-      _doLoadChats();
-    }
-  }
-
-  @override
   void dispose() {
+    _searchController.dispose();
     removeState(this);
-    _timer.cancel();
     super.dispose();
   }
 
@@ -96,134 +91,131 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver  
       children: [
         Expanded(
           flex: 38,
-          child: MaterialApp(
-            title: 'Chats',
-            home: Scaffold(
-              backgroundColor: Colors.white,
-              appBar: AppBar(
-                title: const Text(
-                  '채팅',
-                  style: TextStyle(
-                    color: colorMainGrey900,
-                    fontSize: 20,
-                    fontFamily: 'SUIT',
-                    fontWeight: FontWeight.w700,
-                    height: 0,
-                    letterSpacing: -0.40,
-                  ),
+          child: Scaffold(
+            backgroundColor: Colors.white,
+            appBar: AppBar(
+              title: const Text(
+                '채팅',
+                style: TextStyle(
+                  color: colorMainGrey900,
+                  fontSize: 20,
+                  fontFamily: 'SUIT',
+                  fontWeight: FontWeight.w700,
+                  height: 0,
+                  letterSpacing: -0.40,
                 ),
-                backgroundColor: Colors.white,
-                toolbarHeight: 60,
-                elevation: 0,
-                actions: [
-                  IconButton(
-                      icon: const Icon(
-                          Icons.more_vert,
-                          color: colorMainGrey250
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          _autofocus = false;
-                        });
-                        closeKeyboard(context);
-                        Navigator.push(context, MaterialPageRoute(builder: (context) {
-                          return const ScreenProfile();
-                        }));
-                      }
-                  ),
-                ],
               ),
-              body: Stack(
-                children: [
-                  _isLoading && _listChats.isEmpty
-                      ? const WidgetLoader()
-                      : Column(
-                    children: [
-                      Visibility(
-                        visible: _isSearching || _listChats.isNotEmpty || _searchController.text.isNotEmpty,
-                        child: Container(
-                          height: 44,
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                          child: TextField(
-                            controller: _searchController,
-                            autofocus: _autofocus,
-                            decoration: InputDecoration(
-                              hintText: '',
-                              suffixIcon: const Icon(
-                                  Icons.search,
-                                  size: 30,
-                                  color: colorMainGrey300
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(30),
-                                borderSide: BorderSide.none,
-                              ),
-                              filled: true,
-                              fillColor: Colors.grey[200],
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
+              backgroundColor: Colors.white,
+              toolbarHeight: 60,
+              elevation: 0,
+              actions: [
+                IconButton(
+                    icon: const Icon(
+                        Icons.more_vert,
+                        color: colorMainGrey250
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _autofocus = false;
+                      });
+                      closeKeyboard(context);
+                      Navigator.push(context, MaterialPageRoute(builder: (context) {
+                        return const ScreenProfile();
+                      }));
+                    }
+                ),
+              ],
+            ),
+            body: Stack(
+              children: [
+                _isLoading && _listChats.isEmpty
+                    ? const WidgetLoader()
+                    : Column(
+                  children: [
+                    Visibility(
+                      visible: _isSearching || _listChats.isNotEmpty || _searchController.text.isNotEmpty,
+                      child: Container(
+                        height: 44,
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: TextField(
+                          controller: _searchController,
+                          autofocus: _autofocus,
+                          decoration: InputDecoration(
+                            hintText: '',
+                            suffixIcon: const Icon(
+                                Icons.search,
+                                size: 30,
+                                color: colorMainGrey300
                             ),
-                            onChanged: (value) {
-                              setState(() {
-                                _autofocus = true;
-                              });
-                            },
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30),
+                              borderSide: BorderSide.none,
+                            ),
+                            filled: true,
+                            fillColor: Colors.grey[200],
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
                           ),
+                          onChanged: (value) {
+                            setState(() {
+                              _autofocus = true;
+                            });
+                          },
                         ),
                       ),
-                      const SizedBox(height: 10),
-                      Expanded(
-                        child: (_listChats.isNotEmpty || _isSearching)
-                            ? LayoutBuilder(
-                          builder: (context, constraints) {
-                            return SlidableAutoCloseBehavior(
-                              child: StretchingOverscrollIndicator(
-                                axisDirection: AxisDirection.down,
-                                child: ScrollConfiguration(
-                                  behavior: scrollBehavior,
-                                  child: ListView.builder(
-                                    shrinkWrap: true,
-                                    itemCount: _listChats.length,
-                                    itemBuilder: (context, index) {
-                                      DataChat dataChat = _listChats[index];
-                                      return Container(
-                                        key: Key(_listChats[index].id),
-                                        child: widgetChatRow(context, index, dataChat,
-                                          onClickOption1: () {
-                                            _doToggleNotification(context, dataChat);
-                                          },
-                                          onClickOption2: () {
-                                            widgetChatsExit(context, moduleSendBird, dataChat,
-                                                onExit: (context) {
-                                                  setState(() {
-                                                    moduleSendBird.leaveChannel(dataChat.id);
-                                                    _listChats.remove(dataChat);
-                                                    Navigator.of(context).pop();
-                                                  });
+                    ),
+                    const SizedBox(height: 10),
+                    Expanded(
+                      child: (_listChats.isNotEmpty || _isSearching)
+                          ? LayoutBuilder(
+                        builder: (context, constraints) {
+                          return SlidableAutoCloseBehavior(
+                            child: StretchingOverscrollIndicator(
+                              axisDirection: AxisDirection.down,
+                              child: ScrollConfiguration(
+                                behavior: scrollBehavior,
+                                child: ListView.builder(
+                                  shrinkWrap: true,
+                                  itemCount: _listChats.length,
+                                  itemBuilder: (context, index) {
+                                    DataChat dataChat = _listChats[index];
+                                    return Container(
+                                      key: Key(_listChats[index].id),
+                                      child: widgetChatRow(context, index, dataChat,
+                                        onClickOption1: () {
+                                          _doToggleNotification(context, dataChat);
+                                        },
+                                        onClickOption2: () {
+                                          widgetChatsExit(context, dataChat,
+                                              onExit: (context) {
+                                                setState(() {
+                                                  moduleSendBird.leaveChannel(dataChat.id);
+                                                  _listChats.remove(dataChat);
+                                                  Navigator.of(context).pop();
                                                 });
-                                          },
-                                          onSelectChat: () {
-                                            _doSelectChat(context, dataChat);
-                                          },
-                                        ),
-                                      );
-                                    },
-                                  ),
+                                              });
+                                        },
+                                        onSelectChat: () {
+                                          _doSelectChat(context, dataChat);
+                                        },
+                                      ),
+                                    );
+                                  },
                                 ),
                               ),
-                            );
-                          },
-                        )
-                            : widgetChatsEmpty(context),
-                      ),
-                    ],
-                  ),
-                  widgetChatMessagePin(context, this,
-                      onSelectChat: () {
-                        _doSelectChat(context, dataChatPin);
-                      }
-                  ),
-                ],
-              ),
+                            ),
+                          );
+                        },
+                      )
+                          : widgetChatsEmpty(context),
+                    ),
+                  ],
+                ),
+                widgetChatMessagePin(context, this,
+                    onSelectChat: () {
+                      _doSelectChat(context, dataChatPin);
+                    }
+                ),
+              ],
             ),
           ),
         ),
@@ -324,7 +316,11 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver  
 
   Future<void> _doLoadChats() async {
 
-    if(_isLoading) return;
+    if(!moduleSendBird.isInitialized()) {
+      await moduleSendBird.initSendbird();
+    }else if(_isLoading) {
+      return;
+    }
 
     setState(() {
       if(_searchController.text.isEmpty) {
@@ -369,6 +365,21 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver  
 
     });
 
+  }
+
+  void startIsolate() async {
+    await Isolate.spawn(timerEntryPoint, receivePort.sendPort);
+    receivePort.listen((data) {
+      if (data == 'loadChats') {
+        _doLoadChats();
+      }
+    });
+  }
+
+  static void timerEntryPoint(SendPort sendPort) {
+    Timer.periodic(Duration(seconds: timeSecRefreshChat), (timer) {
+      sendPort.send('loadChats');
+    });
   }
 
   void _doSearchChats(String query, bool showLoader) {

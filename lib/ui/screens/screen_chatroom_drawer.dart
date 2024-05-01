@@ -64,6 +64,7 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
 
   @override
   void dispose() {
+    removeState(this);
     super.dispose();
   }
 
@@ -573,7 +574,7 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
                             IconButton(
                                 icon: Image.asset('assets/images/icons/icon_forward.png', width: 24, height: 24, color: const Color(0xFF6A79FF),),
                                 onPressed: () {
-                                  widgetChatDrawerExit(context, moduleSendBird, widget.dataChat,
+                                  widgetChatDrawerExit(context, widget.dataChat,
                                       onExit: () {
                                         _doExitChat();
                                       }

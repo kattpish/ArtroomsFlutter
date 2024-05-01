@@ -71,7 +71,7 @@ class ModuleMessages {
       await initChannel();
     }
 
-    await moduleSendBird.loadMessages(_groupChannel, isMore ? _earliestMessageTimestamp : null).then((List<BaseMessage> baseMessages) {
+    await moduleSendBird.loadMessages(_groupChannel, _earliestMessageTimestamp).then((List<BaseMessage> baseMessages) {
 
       for(BaseMessage baseMessage in baseMessages) {
         final DataMessage myMessage = DataMessage.fromBaseMessage(baseMessage);

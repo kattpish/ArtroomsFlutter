@@ -55,6 +55,7 @@ class _ScreenChatroomFilesState extends State<ScreenChatroomFiles> {
   void dispose() {
     _scrollController.removeListener(_doLoadAttachmentsFilesMore);
     _scrollController.dispose();
+    removeState(this);
     super.dispose();
   }
 
@@ -64,114 +65,111 @@ class _ScreenChatroomFilesState extends State<ScreenChatroomFiles> {
     _crossAxisCount = isTablet(context) ? 4 : 2;
     _screenWidth = MediaQuery.of(context).size.width;
 
-    return MaterialApp(
-      title: 'Chatroom Files',
-      home: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.white,
-          title: const Text(
-            '파일',
-            style: TextStyle(
-              color: colorMainGrey900,
-              fontSize: 19,
-              fontFamily: 'SUIT',
-              fontWeight: FontWeight.w700,
-              height: 0,
-              letterSpacing: -0.38,
-            ),
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        title: const Text(
+          '파일',
+          style: TextStyle(
+            color: colorMainGrey900,
+            fontSize: 19,
+            fontFamily: 'SUIT',
+            fontWeight: FontWeight.w700,
+            height: 0,
+            letterSpacing: -0.38,
           ),
-          toolbarHeight: 60,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios, color: colorMainGrey250),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-          titleSpacing: 0,
-          leadingWidth: 46,
-          elevation: 0.2,
         ),
-        backgroundColor: colorMainScreen,
-        body: WidgetUiNotify(
-          child: SafeArea(
-            child: _isLoading
-                ? const WidgetLoader()
-                : _attachmentsMedia.isEmpty
-                ? widgetChatroomFilesEmpty(context)
-                : StretchingOverscrollIndicator(
-              axisDirection: AxisDirection.down,
-                  child: ScrollConfiguration(
+        toolbarHeight: 60,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios, color: colorMainGrey250),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+        titleSpacing: 0,
+        leadingWidth: 46,
+        elevation: 0.2,
+      ),
+      backgroundColor: colorMainScreen,
+      body: WidgetUiNotify(
+        child: SafeArea(
+          child: _isLoading
+              ? const WidgetLoader()
+              : _attachmentsMedia.isEmpty
+              ? widgetChatroomFilesEmpty(context)
+              : StretchingOverscrollIndicator(
+            axisDirection: AxisDirection.down,
+            child: ScrollConfiguration(
               behavior: scrollBehavior,
-                    child: GridView.builder(
-              controller: _scrollController,
-              padding: const EdgeInsets.only(left: 16, top: 12, right: 16, bottom: 32),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: _crossAxisCount,
-                    crossAxisSpacing: _crossAxisSpacing,
-                    mainAxisSpacing: _mainAxisSpacing,
-                    childAspectRatio: (_screenWidth / _crossAxisCount - _crossAxisSpacing) / (200),
-              ),
-              itemCount: _attachmentsMedia.length + (_isLoadingMore ? 1 : 0),
-              itemBuilder: (context, index) {
-
-                    if (index == _attachmentsMedia.length) {
-                      return const Center(
-                        child: SizedBox(
-                            width: 36,
-                            height: 36,
-                            child: CircularProgressIndicator(
-                              color: Color(0xFF6A79FF),
-                              strokeWidth: 4,
-                            )
-                        ),
-                      );
-                    }
-
-                    DataMessage attachmentFile = _attachmentsMedia[index];
-                    return widgetChatroomFilesCard(context, attachmentFile,
-                        onSelect: () {
-                          setState(() {
-                            if(!attachmentFile.isDownloading) {
-                              if(!attachmentFile.isSelected) {
-                                attachmentFile.isSelected = true;
-                                attachmentFile.timeSelected = DateTime.now().millisecondsSinceEpoch;
-                              }else {
-                                attachmentFile.isSelected = false;
-                                attachmentFile.timeSelected = 0;
-                              }
-                              _checkEnableButton();
-                            }
-                          });
-                        }
-                    );
-              },
-            ),
-                  ),
+              child: GridView.builder(
+                controller: _scrollController,
+                padding: const EdgeInsets.only(left: 16, top: 12, right: 16, bottom: 32),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: _crossAxisCount,
+                  crossAxisSpacing: _crossAxisSpacing,
+                  mainAxisSpacing: _mainAxisSpacing,
+                  childAspectRatio: (_screenWidth / _crossAxisCount - _crossAxisSpacing) / (200),
                 ),
+                itemCount: _attachmentsMedia.length + (_isLoadingMore ? 1 : 0),
+                itemBuilder: (context, index) {
+
+                  if (index == _attachmentsMedia.length) {
+                    return const Center(
+                      child: SizedBox(
+                          width: 36,
+                          height: 36,
+                          child: CircularProgressIndicator(
+                            color: Color(0xFF6A79FF),
+                            strokeWidth: 4,
+                          )
+                      ),
+                    );
+                  }
+
+                  DataMessage attachmentFile = _attachmentsMedia[index];
+                  return widgetChatroomFilesCard(context, attachmentFile,
+                      onSelect: () {
+                        setState(() {
+                          if(!attachmentFile.isDownloading) {
+                            if(!attachmentFile.isSelected) {
+                              attachmentFile.isSelected = true;
+                              attachmentFile.timeSelected = DateTime.now().millisecondsSinceEpoch;
+                            }else {
+                              attachmentFile.isSelected = false;
+                              attachmentFile.timeSelected = 0;
+                            }
+                            _checkEnableButton();
+                          }
+                        });
+                      }
+                  );
+                },
+              ),
+            ),
           ),
         ),
-        bottomNavigationBar: SafeArea(
-          child: Container(
-            height: 44,
-            margin: const EdgeInsets.only(left: 16.0, right: 16.0, top: 16, bottom: 16),
-            decoration: BoxDecoration(color: _isButtonFileDisabled ? colorPrimaryBlue400.withAlpha(100) : colorPrimaryBlue,
-              borderRadius: BorderRadius.circular(30),
-            ),
-            child: TextButton(
-              onPressed: () {
-                _doSelectFiles();
-              },
-              child:const Text(
-                  '저장',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontFamily: 'SUIT',
-                    fontWeight: FontWeight.w700,
-                    height: 0,
-                    letterSpacing: -0.32,
-                  )
-              ),
+      ),
+      bottomNavigationBar: SafeArea(
+        child: Container(
+          height: 44,
+          margin: const EdgeInsets.only(left: 16.0, right: 16.0, top: 16, bottom: 16),
+          decoration: BoxDecoration(color: _isButtonFileDisabled ? colorPrimaryBlue400.withAlpha(100) : colorPrimaryBlue,
+            borderRadius: BorderRadius.circular(30),
+          ),
+          child: TextButton(
+            onPressed: () {
+              _doSelectFiles();
+            },
+            child:const Text(
+                '저장',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontFamily: 'SUIT',
+                  fontWeight: FontWeight.w700,
+                  height: 0,
+                  letterSpacing: -0.32,
+                )
             ),
           ),
         ),

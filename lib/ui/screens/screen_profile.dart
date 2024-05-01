@@ -8,7 +8,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../beans/bean_profile.dart';
-import '../../data/module_datastore.dart';
 import '../../listeners/scroll_bouncing_physics.dart';
 import '../../main.dart';
 import '../../modules/module_profile.dart';
@@ -40,7 +39,6 @@ class _ScreenProfileState extends State<ScreenProfile> {
   @override
   void initState() {
     super.initState();
-
     _name = _profile.name;
     _nickName = _profile.nickName;
     _doFetchUserProfile();
@@ -48,6 +46,7 @@ class _ScreenProfileState extends State<ScreenProfile> {
 
   @override
   void dispose() {
+    removeState(this);
     super.dispose();
   }
 
@@ -373,7 +372,7 @@ class _ScreenProfileState extends State<ScreenProfile> {
                           onTap: () {
                             widgetProfileLogoutDialog(context,
                                 onLogout: () {
-                                  DBStore().logout();
+                                  dbStore.logout();
                                   Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) {
                                     return const ScreenLogin();
                                   }));

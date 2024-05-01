@@ -1,11 +1,18 @@
 
 import 'package:artrooms/beans/bean_chat.dart';
 import 'package:artrooms/beans/bean_notice.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../main.dart';
 
 
 class DBStore {
+
+  late final SharedPreferences sharedPreferences;
+
+  Future<void> init() async {
+    sharedPreferences = await SharedPreferences.getInstance();
+  }
 
   String getString(String key, {String defaultValue = ""}) {
     String? string = sharedPreferences.getString(key);

@@ -43,6 +43,7 @@ class _ScreenMemoState extends State<ScreenMemo> {
   @override
   void dispose() {
     _memoController.dispose();
+    removeState(this);
     super.dispose();
   }
 

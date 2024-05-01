@@ -9,7 +9,7 @@ import '../main.dart';
 import '../ui/widgets/widget_ui_notify.dart';
 
 
-int timeSecRefreshChat = 10;
+int timeSecRefreshChat = 30;
 
 Future<void> showNotificationChat(BuildContext context, DataChat dataChat) async {
   if(dataChat.unreadMessages == 0) return;

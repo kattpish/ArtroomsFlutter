@@ -55,6 +55,7 @@ class _ScreenChatroomPhotosState extends State<ScreenChatroomPhotos> {
   void dispose() {
     _scrollController.removeListener(_doLoadAttachmentsImagesMore);
     _scrollController.dispose();
+    removeState(this);
     super.dispose();
   }
 
@@ -70,104 +71,39 @@ class _ScreenChatroomPhotosState extends State<ScreenChatroomPhotos> {
         }
         return true;
       },
-      child: MaterialApp(
-        title: 'Photos',
-        home: Scaffold(
-          appBar: AppBar(
-            backgroundColor: Colors.white,
-            title: Text(
-              !_selectMode ? '이미지' : "$_selected개 선택",
-              style: const TextStyle(
-                fontSize: 18,
-                color: colorMainGrey900,
-                fontFamily: 'SUIT',
-                fontWeight: FontWeight.w700,
-                height: 0,
-                letterSpacing: -0.36,
-              ),
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          title: Text(
+            !_selectMode ? '이미지' : "$_selected개 선택",
+            style: const TextStyle(
+              fontSize: 18,
+              color: colorMainGrey900,
+              fontFamily: 'SUIT',
+              fontWeight: FontWeight.w700,
+              height: 0,
+              letterSpacing: -0.36,
             ),
-            toolbarHeight: 60,
-            centerTitle: _selectMode,
-            leading: Row(
-              children: [
-                Visibility(
-                  visible: !_selectMode,
-                  child: IconButton(
-                    icon: const Icon(
-                      Icons.arrow_back_ios,
-                      color: colorMainGrey250,
-                      size: 20,
-                    ),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ),
-                Visibility(
-                  visible: _selectMode,
-                  child: Container(
-                    height: double.infinity,
-                    margin: const EdgeInsets.only(left: 8.0),
-                    child: Center(
-                      child: InkWell(
-                        splashColor: Colors.transparent,
-                        highlightColor: Colors.transparent,
-                        onTap: () {
-                          _doDeselectAllPhotos(true);
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.all(8.0),
-                          child: const Text(
-                              '취소',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: colorMainGrey600,
-                                fontFamily: 'SUIT',
-                                fontWeight: FontWeight.w400,
-                                height: 0,
-                                letterSpacing: -0.32,
-                              )
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            actions: [
-              Visibility(
-                visible: _selectMode,
-                child: Container(
-                  height: double.infinity,
-                  margin: const EdgeInsets.only(right: 8.0),
-                  child: Center(
-                    child: InkWell(
-                      splashColor: Colors.transparent,
-                      highlightColor: Colors.transparent,
-                      onTap: () {
-                        _doDeselectAllPhotos(false);
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.all(8.0),
-                        child: const Text(
-                            '선택 해제',
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: colorMainGrey600,
-                              fontFamily: 'SUIT',
-                              fontWeight: FontWeight.w400,
-                              height: 0,
-                              letterSpacing: -0.32,
-                            ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+          ),
+          toolbarHeight: 60,
+          centerTitle: _selectMode,
+          leading: Row(
+            children: [
               Visibility(
                 visible: !_selectMode,
+                child: IconButton(
+                  icon: const Icon(
+                    Icons.arrow_back_ios,
+                    color: colorMainGrey250,
+                    size: 20,
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ),
+              Visibility(
+                visible: _selectMode,
                 child: Container(
                   height: double.infinity,
                   margin: const EdgeInsets.only(left: 8.0),
@@ -176,14 +112,12 @@ class _ScreenChatroomPhotosState extends State<ScreenChatroomPhotos> {
                       splashColor: Colors.transparent,
                       highlightColor: Colors.transparent,
                       onTap: () {
-                        setState(() {
-                          _selectMode = true;
-                        });
+                        _doDeselectAllPhotos(true);
                       },
                       child: Container(
                         padding: const EdgeInsets.all(8.0),
                         child: const Text(
-                            '선택',
+                            '취소',
                             style: TextStyle(
                               fontSize: 16,
                               color: colorMainGrey600,
@@ -199,99 +133,163 @@ class _ScreenChatroomPhotosState extends State<ScreenChatroomPhotos> {
                 ),
               ),
             ],
-            elevation: 0.2,
           ),
-          backgroundColor: colorMainScreen,
-          body: WidgetUiNotify(
-            child: SafeArea(
-              child: _isLoading
-                  ? const WidgetLoader()
-                  : _attachmentsImages.isEmpty
-                  ? widgetChatroomPhotosEmpty(context)
-                  : StretchingOverscrollIndicator(
-                axisDirection: AxisDirection.down,
-                    child: ScrollConfiguration(
-                behavior: scrollBehavior,
-                      child: GridView.builder(
-                controller: _scrollController,
-                padding: const EdgeInsets.only(bottom: 32),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: isTablet(context) ? 6 : 3,
-                      crossAxisSpacing: 1,
-                      mainAxisSpacing: 1,
-                      childAspectRatio: 1,
-                ),
-                itemCount: _attachmentsImages.length + (_isLoadingMore ? 1 : 0),
-                itemBuilder: (context, index) {
-
-                      if (index == _attachmentsImages.length) {
-                        return const Center(
-                          child: SizedBox(
-                              width: 36,
-                              height: 36,
-                              child: CircularProgressIndicator(
-                                color: Color(0xFF6A79FF),
-                                strokeWidth: 4,
-                              )
-                          ),
-                        );
-                      }
-
-                      DataMessage attachmentImage = _attachmentsImages[index];
-                      return widgetChatroomPhotosCard(context, attachmentImage, _selectMode,
-                          onView: ()  async {
-                            setState(() {
-                              _isViewing = true;
-                            });
-                            List<FileItem> listImages = toFileItems(_attachmentsImages);
-                            await doOpenPhotoView(context, listImages, initialIndex: index);
-                            setState(() {
-                              _isViewing = false;
-                            });
-                          },
-                          onSelect: () {
-                            setState(() {
-                              if(!attachmentImage.isDownloading) {
-                                if(!attachmentImage.isSelected) {
-                                  attachmentImage.isSelected = true;
-                                  attachmentImage.timeSelected = DateTime.now().millisecondsSinceEpoch;
-                                }else {
-                                  attachmentImage.isSelected = false;
-                                  attachmentImage.timeSelected = 0;
-                                }
-                                _checkEnableButton();
-                              }
-                            });
-                          }
-                      );
-                },
-              ),
+          actions: [
+            Visibility(
+              visible: _selectMode,
+              child: Container(
+                height: double.infinity,
+                margin: const EdgeInsets.only(right: 8.0),
+                child: Center(
+                  child: InkWell(
+                    splashColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
+                    onTap: () {
+                      _doDeselectAllPhotos(false);
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(8.0),
+                      child: const Text(
+                        '선택 해제',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: colorMainGrey600,
+                          fontFamily: 'SUIT',
+                          fontWeight: FontWeight.w400,
+                          height: 0,
+                          letterSpacing: -0.32,
+                        ),
+                      ),
                     ),
                   ),
+                ),
+              ),
+            ),
+            Visibility(
+              visible: !_selectMode,
+              child: Container(
+                height: double.infinity,
+                margin: const EdgeInsets.only(left: 8.0),
+                child: Center(
+                  child: InkWell(
+                    splashColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
+                    onTap: () {
+                      setState(() {
+                        _selectMode = true;
+                      });
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(8.0),
+                      child: const Text(
+                          '선택',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: colorMainGrey600,
+                            fontFamily: 'SUIT',
+                            fontWeight: FontWeight.w400,
+                            height: 0,
+                            letterSpacing: -0.32,
+                          )
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+          elevation: 0.2,
+        ),
+        backgroundColor: colorMainScreen,
+        body: WidgetUiNotify(
+          child: SafeArea(
+            child: _isLoading
+                ? const WidgetLoader()
+                : _attachmentsImages.isEmpty
+                ? widgetChatroomPhotosEmpty(context)
+                : StretchingOverscrollIndicator(
+              axisDirection: AxisDirection.down,
+              child: ScrollConfiguration(
+                behavior: scrollBehavior,
+                child: GridView.builder(
+                  controller: _scrollController,
+                  padding: const EdgeInsets.only(bottom: 32),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: isTablet(context) ? 6 : 3,
+                    crossAxisSpacing: 1,
+                    mainAxisSpacing: 1,
+                    childAspectRatio: 1,
+                  ),
+                  itemCount: _attachmentsImages.length + (_isLoadingMore ? 1 : 0),
+                  itemBuilder: (context, index) {
+
+                    if (index == _attachmentsImages.length) {
+                      return const Center(
+                        child: SizedBox(
+                            width: 36,
+                            height: 36,
+                            child: CircularProgressIndicator(
+                              color: Color(0xFF6A79FF),
+                              strokeWidth: 4,
+                            )
+                        ),
+                      );
+                    }
+
+                    DataMessage attachmentImage = _attachmentsImages[index];
+                    return widgetChatroomPhotosCard(context, attachmentImage, _selectMode,
+                        onView: ()  async {
+                          setState(() {
+                            _isViewing = true;
+                          });
+                          List<FileItem> listImages = toFileItems(_attachmentsImages);
+                          await doOpenPhotoView(context, listImages, initialIndex: index);
+                          setState(() {
+                            _isViewing = false;
+                          });
+                        },
+                        onSelect: () {
+                          setState(() {
+                            if(!attachmentImage.isDownloading) {
+                              if(!attachmentImage.isSelected) {
+                                attachmentImage.isSelected = true;
+                                attachmentImage.timeSelected = DateTime.now().millisecondsSinceEpoch;
+                              }else {
+                                attachmentImage.isSelected = false;
+                                attachmentImage.timeSelected = 0;
+                              }
+                              _checkEnableButton();
+                            }
+                          });
+                        }
+                    );
+                  },
+                ),
+              ),
             ),
           ),
-          bottomNavigationBar: SafeArea(
-            child: Container(
-              height: 44,
-              margin: const EdgeInsets.only(left: 16.0, right: 16.0, top: 16, bottom: 16),
-              decoration: BoxDecoration(color: _isButtonDisabled ? colorPrimaryBlue400.withAlpha(100) : colorPrimaryBlue,
-                borderRadius: BorderRadius.circular(30),
-              ),
-              child: TextButton(
-                onPressed: () {
-                  _doSelectPhotos();
-                },
-                child:const Text(
-                    '저장',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontFamily: 'SUIT',
-                      fontWeight: FontWeight.w700,
-                      height: 0,
-                      letterSpacing: -0.32,
-                    )
-                ),
+        ),
+        bottomNavigationBar: SafeArea(
+          child: Container(
+            height: 44,
+            margin: const EdgeInsets.only(left: 16.0, right: 16.0, top: 16, bottom: 16),
+            decoration: BoxDecoration(color: _isButtonDisabled ? colorPrimaryBlue400.withAlpha(100) : colorPrimaryBlue,
+              borderRadius: BorderRadius.circular(30),
+            ),
+            child: TextButton(
+              onPressed: () {
+                _doSelectPhotos();
+              },
+              child:const Text(
+                  '저장',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontFamily: 'SUIT',
+                    fontWeight: FontWeight.w700,
+                    height: 0,
+                    letterSpacing: -0.32,
+                  )
               ),
             ),
           ),

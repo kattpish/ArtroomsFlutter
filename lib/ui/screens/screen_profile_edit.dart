@@ -56,11 +56,17 @@ class _ScreenProfileEditState extends State<ScreenProfileEdit> {
 
   @override
   void dispose() {
+    _nameFocus.dispose();
+    _nicknameFocus.dispose();
+    _emailFocus.dispose();
+    _phoneFocus.dispose();
+    _passwordFocus.dispose();
     _nameController.dispose();
     _nicknameController.dispose();
     _emailController.dispose();
     _phoneController.dispose();
     _passwordController.dispose();
+    removeState(this);
     super.dispose();
   }
 

@@ -6,15 +6,12 @@ import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 
 import '../api/api.dart';
-import '../data/module_datastore.dart';
 import '../main.dart';
 
 
 class ModuleProfile {
 
   Future<Map<String, dynamic>?> getMyProfile() async {
-
-    DBStore dbStore = DBStore();
 
     const String query = '''
       query WhoAmI {
@@ -101,8 +98,6 @@ class ModuleProfile {
     bool certificationPhone = false,
   }) async {
 
-    DBStore dbStore = DBStore();
-
     const String mutation = '''
       mutation UpdateUser(\$updateUserId: Int, \$updateStudentInput: UpdateStudentInput) {
         updateUser(
@@ -182,7 +177,6 @@ class ModuleProfile {
     required int userId,
     required int profileImgId,
   }) async {
-    DBStore dbStore = DBStore();
 
     const String mutation = '''
       mutation UpdateUser(\$id: Int, \$updateStudentInput: UpdateStudentInput, \$updateUserInput: UpdateUserInput) {
