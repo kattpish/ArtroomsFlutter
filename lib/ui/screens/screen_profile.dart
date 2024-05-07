@@ -65,6 +65,7 @@ class _ScreenProfileState extends State<ScreenProfile> {
             letterSpacing: -0.36,
           ),
         ),
+        leading: const SizedBox.shrink(),
         toolbarHeight: 60,
         leadingWidth: 0,
         actions: [

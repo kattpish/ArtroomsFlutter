@@ -187,11 +187,11 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver  
                                         onClickOption2: () {
                                           widgetChatsExit(context, dataChat,
                                               onExit: (context) {
+                                                moduleSendBird.leaveChannel(dataChat.id);
                                                 setState(() {
-                                                  moduleSendBird.leaveChannel(dataChat.id);
                                                   _listChats.remove(dataChat);
-                                                  Navigator.of(context).pop();
                                                 });
+                                                Navigator.of(context).pop();
                                               });
                                         },
                                         onSelectChat: () {
@@ -384,11 +384,11 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver  
 
   void _doSearchChats(String query, bool showLoader) {
 
-    setState(() {
-      if(showLoader && query.isNotEmpty) {
+    if(showLoader && query.isNotEmpty) {
+      setState(() {
         _isSearching = true;
-      }
-    });
+      });
+    }
 
     Future.delayed(const Duration(milliseconds: 100), () {
 

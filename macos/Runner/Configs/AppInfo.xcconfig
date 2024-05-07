@@ -8,7 +8,7 @@
 PRODUCT_NAME = artrooms
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = com.artrooms.artrooms
+PRODUCT_BUNDLE_IDENTIFIER = com.artrooms
 
 // The copyright displayed in application information
 PRODUCT_COPYRIGHT = Copyright © 2024 com.artrooms. All rights reserved.

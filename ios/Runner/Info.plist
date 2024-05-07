@@ -17,11 +17,11 @@
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleShortVersionString</key>
-    <string>$(FLUTTER_BUILD_NAME)</string>
+    <string>1.0.0</string>
     <key>CFBundleSignature</key>
     <string>????</string>
     <key>CFBundleVersion</key>
-    <string>$(FLUTTER_BUILD_NUMBER)</string>
+    <string>100</string>
     <key>LSRequiresIPhoneOS</key>
     <true/>
     <key>UILaunchStoryboardName</key>
@@ -48,22 +48,17 @@
     <key>UIApplicationSupportsIndirectInputEvents</key>
     <true/>
     <key>NSAppTransportSecurity</key>
-
-    <key>NSCameraUsageDescription</key>
-    <string>Accessing to camera in order to provide better user experience</string>
-
-    <key>NSMicrophoneUsageDescription</key>
-    <string>Accessing to microphone to record voice for video</string>
-
-    <key>NSPhotoLibraryAddUsageDescription</key>
-    <string>Accessing to photo library in order to save photos</string>
-
-    <key>NSPhotoLibraryUsageDescription</key>
-    <string>Accessing to photo library in order to provide better user experience</string>
-
     <dict>
         <key>NSAllowsArbitraryLoads</key>
         <true/>
     </dict>
+    <key>NSCameraUsageDescription</key>
+    <string>Accessing to camera in order to provide better user experience</string>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>Accessing to microphone to record voice for video</string>
+    <key>NSPhotoLibraryAddUsageDescription</key>
+    <string>Accessing to photo library in order to save photos</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>Accessing to photo library in order to provide better user experience</string>
 </dict>
 </plist>

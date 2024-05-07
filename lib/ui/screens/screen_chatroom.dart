@@ -110,7 +110,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
   void initState() {
     super.initState();
     _messageController.addListener(_doCheckEnableButton);
-    _itemPositionsListener.itemPositions.addListener(_doHandleScroll);
+    // _itemPositionsListener.itemPositions.addListener(_doHandleScroll);
     _moduleMessages = ModuleMessages(widget.dataChat.id);
 
     _moduleMessages.init(this);
@@ -770,11 +770,9 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                                 borderRadius: BorderRadius.circular(30),
                               ),
                               child: TextButton(
-                                onPressed: () {
-                                  setState(() async {
-                                    closeKeyboard(context);
-                                    await _doProcessCameraResult();
-                                  });
+                                onPressed: () async {
+                                  closeKeyboard(context);
+                                  await _doProcessCameraResult();
                                 },
                                 child: const Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -811,11 +809,9 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                                 borderRadius: BorderRadius.circular(30),
                               ),
                               child: TextButton(
-                                onPressed: () {
-                                  setState(() async {
-                                    closeKeyboard(context);
-                                    await _doProcessPickedFiles();
-                                  });
+                                onPressed: () async {
+                                  closeKeyboard(context);
+                                  await _doProcessPickedFiles();
                                 },
                                 child: const Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -1399,23 +1395,27 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
 
     _firstVisibleItemIndex = firstVisibleItemIndex;
 
-    if (_timerScroll?.isActive ?? false) _timerScroll?.cancel();
-
     if(_listMessages.isNotEmpty) {
 
-      DataMessage firstVisibleMessage = _listMessages[firstVisibleItemIndex];
+      if(!_showDateContainer) {
 
-      setState(() {
-        _showDateContainer = true;
-        _currentDate = firstVisibleMessage.timestamp;
-      });
+        DataMessage firstVisibleMessage = _listMessages[firstVisibleItemIndex];
 
-      _timerScroll = Timer(const Duration(milliseconds: 500), () {
         setState(() {
-          _showDateContainer = false;
+          _showDateContainer = true;
+          _currentDate = firstVisibleMessage.timestamp;
         });
-        _timerScroll?.cancel();
-      });
+
+        if (_timerScroll?.isActive ?? false) _timerScroll?.cancel();
+
+        _timerScroll = Timer(const Duration(milliseconds: 500), () {
+          setState(() {
+            _showDateContainer = false;
+          });
+          _timerScroll?.cancel();
+        });
+
+      }
 
     }
 

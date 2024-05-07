@@ -59,7 +59,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '803137882974',
     projectId: 'artooms',
     storageBucket: 'artooms.appspot.com',
-    iosBundleId: 'com.artrooms.artrooms',
+    iosBundleId: 'com.artrooms',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
@@ -68,7 +68,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '803137882974',
     projectId: 'artooms',
     storageBucket: 'artooms.appspot.com',
-    iosBundleId: 'com.artrooms.artrooms.RunnerTests',
+    iosBundleId: 'com.artrooms.RunnerTests',
   );
 
 }
