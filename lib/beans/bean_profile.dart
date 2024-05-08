@@ -15,10 +15,11 @@ class MyProfile {
   });
 
   static MyProfile fromProfileMap(Map<String, dynamic> profileMap) {
+    dynamic profileImg = profileMap["profileImg"];
     return MyProfile(
         name: profileMap["name"],
         nickName: profileMap["nickName"],
-        profileImg: profileMap["profileImg"]["accessUrl"],
+        profileImg: profileImg != null ? profileMap["profileImg"] : "",
     );
   }
 

@@ -9,6 +9,7 @@ import 'package:artrooms/ui/screens/screen_photo_view.dart';
 import 'package:artrooms/ui/widgets/widget_loader.dart';
 import 'package:artrooms/utils/utils_notifications.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_keyboard_size/flutter_keyboard_size.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:sendbird_sdk/core/channel/base/base_channel.dart';
 import 'package:sendbird_sdk/core/message/base_message.dart';
@@ -84,11 +85,12 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
 
   bool _showAttachment = false;
   double _bottomSheetHeight = 0;
-  double _bottomSheetHeightMin = 0;
+  double _bottomSheetHeightMin = dbStore.getKeyboardHeight();
   double _bottomSheetHeightMax = 0;
   double _screenWidth = 0;
   double _screenHeight = 0;
   final double _appBarHeight = 60;
+  final List<double> _bottomSheetHeightMins = [];
 
   late ReceivePort receivePort;
   Timer? _timerScroll;
@@ -136,16 +138,23 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
     _timerScroll?.cancel();
     receivePort.close();
     removeState(this);
+    dbStore.saveKeyboardHeight(_bottomSheetHeightMin);
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
 
-    _screenWidth = MediaQuery.of(context).size.width * widget.widthRatio;
-    _screenHeight = MediaQuery.of(context).size.height;
-    _bottomSheetHeightMin = _screenHeight * 0.35;
-    _bottomSheetHeightMax = _screenHeight;
+    if(_screenWidth == 0 || _screenHeight == 0) {
+      _screenWidth = MediaQuery.of(context).size.width * widget.widthRatio;
+      _screenHeight = MediaQuery.of(context).size.height;
+    }
+    if(_bottomSheetHeightMin == 0) {
+      _bottomSheetHeightMin = _screenHeight * 0.35;
+    }
+    if(_bottomSheetHeightMax == 0) {
+      _bottomSheetHeightMax = _screenHeight;
+    }
 
     return WillPopScope(
       onWillPop: () async {
@@ -165,68 +174,80 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
           child: Stack(
             alignment: Alignment.bottomCenter,
             children: [
-              Scaffold(
-                appBar: AppBar(
-                  leading: IconButton(
-                    icon: const Icon(
-                      Icons.arrow_back_ios,
-                      color: colorMainGrey250,
-                      size: 20,
+              KeyboardSizeProvider(
+                child: Scaffold(
+                  appBar: AppBar(
+                    leading: IconButton(
+                      icon: const Icon(
+                        Icons.arrow_back_ios,
+                        color: colorMainGrey250,
+                        size: 20,
+                      ),
+                      onPressed: () {
+                        if (widget.onBackPressed != null) {
+                          widget.onBackPressed!.call();
+                        } else {
+                          Navigator.of(context).pop();
+                        }
+                      },
                     ),
-                    onPressed: () {
-                      if (widget.onBackPressed != null) {
-                        widget.onBackPressed!.call();
-                      } else {
-                        Navigator.of(context).pop();
-                      }
-                    },
-                  ),
-                  title: Text(
-                    widget.dataChat.name,
-                    style: const TextStyle(
-                      color: colorMainGrey900,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 18,
-                      fontFamily: 'SUIT',
-                      height: 0,
-                      letterSpacing: -0.36,
+                    title: Text(
+                      widget.dataChat.name,
+                      style: const TextStyle(
+                        color: colorMainGrey900,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 18,
+                        fontFamily: 'SUIT',
+                        height: 0,
+                        letterSpacing: -0.36,
+                      ),
                     ),
-                  ),
-                  centerTitle: true,
-                  elevation: 0.0,
-                  toolbarHeight: _appBarHeight,
-                  backgroundColor: Colors.white,
-                  actions: [
-                    widgetChatroomMessageDrawerBtn(context, widget.dataChat,_moduleNotice,_dataNotice,_moduleMemo),
-                  ],
-                ),
-                backgroundColor: Colors.white,
-                body: WidgetUiNotify(
-                  dataChat: widget.dataChat,
-                  child: Column(
-                    children: [
-                      Expanded(
-                        child: _buildMessageBox(),
-                      ),
-                      Visibility(
-                        visible: _showAttachment,
-                        child: attachmentSelected(context, _filesImages,
-                            onRemove:(FileItem fileItem) {
-                              setState(() {
-                                fileItem.isSelected = false;
-                                fileItem.timeSelected = 0;
-                              });
-                              closeKeyboard(context);
-                            }
-                        ),
-                      ),
-                      _buildMessageInput(),
-                      AnimatedContainer(
-                        duration: const Duration(milliseconds: 0),
-                        curve: Curves.easeOut,
-                        height: _bottomSheetHeight >= _bottomSheetHeightMin ? _bottomSheetHeightMin - 14 : _bottomSheetHeight,
-                      ),
+                    centerTitle: true,
+                    elevation: 0.0,
+                    toolbarHeight: _appBarHeight,
+                    backgroundColor: Colors.white,
+                    actions: [
+                      widgetChatroomMessageDrawerBtn(context, widget.dataChat,_moduleNotice,_dataNotice,_moduleMemo),
                     ],
+                  ),
+                  backgroundColor: Colors.white,
+                  body: WidgetUiNotify(
+                    dataChat: widget.dataChat,
+                    child: Consumer<ScreenHeight>(
+                        builder: (context, res, child) {
+                          if(res.isOpen) {
+                            _bottomSheetHeightMins.add(res.keyboardHeight);
+                            _bottomSheetHeightMin = _bottomSheetHeightMins.reduce((value, element) => element > value ? element : value);
+                          }else {
+                            _bottomSheetHeightMins.clear();
+                          }
+                        return Column(
+                          children: [
+                            Expanded(
+                              child: _buildMessageBox(),
+                            ),
+                            Visibility(
+                              visible: _showAttachment,
+                              child: attachmentSelected(context, _filesImages,
+                                  onRemove:(FileItem fileItem) {
+                                    setState(() {
+                                      fileItem.isSelected = false;
+                                      fileItem.timeSelected = 0;
+                                    });
+                                    closeKeyboard(context);
+                                  }
+                              ),
+                            ),
+                            _buildMessageInput(),
+                            AnimatedContainer(
+                              duration: const Duration(milliseconds: 0),
+                              curve: Curves.easeOut,
+                              height: _bottomSheetHeight >= _bottomSheetHeightMin ? _bottomSheetHeightMin - 14 : _bottomSheetHeight,
+                            ),
+                          ],
+                        );
+                      }
+                    ),
                   ),
                 ),
               ),

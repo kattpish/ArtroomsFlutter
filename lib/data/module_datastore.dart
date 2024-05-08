@@ -19,6 +19,11 @@ class DBStore {
     return string ?? defaultValue;
   }
 
+  double getDouble(String key, double defaultValue) {
+    double? doubleValue = sharedPreferences.getDouble(key);
+    return doubleValue ?? defaultValue;
+  }
+
   bool getBool(String key, bool defaultValue) {
     bool? boolValue = sharedPreferences.getBool(key);
     return boolValue ?? defaultValue;
@@ -26,6 +31,10 @@ class DBStore {
 
   void setString(String key, String value) {
     sharedPreferences.setString(key, value);
+  }
+
+  void setDouble(String key, double value) {
+    sharedPreferences.setDouble(key, value);
   }
 
   void setBool(String key, bool value) {
@@ -140,6 +149,14 @@ class DBStore {
 
   bool isNoticeHide(DataNotice dataNotice) {
     return getBool("NOTICE-${dataNotice.id}", false);
+  }
+
+  void saveKeyboardHeight(double keyboardHeight) {
+    setDouble("keyboardHeight", keyboardHeight);
+  }
+
+  double getKeyboardHeight() {
+    return getDouble("keyboardHeight", 0);
   }
 
   Future<void> logout() async {

@@ -20,7 +20,7 @@
         android:name="com.artrooms.MainApplication"
         android:label="Artrooms"
         android:icon="@mipmap/ic_launcher"
-        android:roundIcon="@drawable/logo_splash"
+        android:roundIcon="@drawable/logo_splash_en"
         android:requestLegacyExternalStorage="true">
 
         <activity

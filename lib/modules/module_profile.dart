@@ -85,7 +85,9 @@ class ModuleProfile {
       var data = jsonDecode(response.body);
       return data['data']['whoAmI'] as Map<String, dynamic>?;
     } else {
-      print('Error fetching profile: ${response.body}');
+      if (kDebugMode) {
+        print('Error fetching profile: ${response.body}');
+      }
       return null;
     }
   }

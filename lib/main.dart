@@ -9,7 +9,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:intl/date_symbol_data_custom.dart';
 import 'package:intl/date_symbols.dart';
-import 'package:sendbird_sdk/sdk/sendbird_sdk_api.dart';
 
 import 'modules/module_sendbird.dart';
 

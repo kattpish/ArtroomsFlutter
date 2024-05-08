@@ -313,32 +313,41 @@ class _ScreenProfileEditState extends State<ScreenProfileEdit> {
 
   void _doLoadUserProfile() async {
 
-    Map<String, dynamic>? profileMap = await _userModule.getMyProfile();
-    if (profileMap != null) {
+    try {
+      Map<String, dynamic>? profileMap = await _userModule.getMyProfile();
+      if (profileMap != null) {
+        dbStore.saveProfile(profileMap);
 
-      dbStore.saveProfile(profileMap);
+        setState(() {
+          _profile = MyProfile.fromProfileMap(profileMap);
+        });
 
-      setState(() {
-        _profile = MyProfile.fromProfileMap(profileMap);
-      });
+        Map<String, dynamic> student = profileMap["student"];
 
-      Map<String, dynamic> student = profileMap["student"];
+        setState(() {
+          _emailController.text = profileMap["email"];
+          _nameController.text = student["name"];
+          _nicknameController.text = student["nickname"];
+          _phoneController.text = student["phoneNumber"];
+          _passwordController.text = "**********";
+        });
 
-      setState(() {
-        _emailController.text = profileMap["email"];
-        _nameController.text = student["name"];
-        _nicknameController.text = student["nickname"];
-        _phoneController.text = student["phoneNumber"];
-        _passwordController.text = "**********";
-      });
-
-      setState(() {
-        _isLoading = false;
-      });
-
-    } else {
-      print("Failed to fetch user profile.");
+      } else {
+        if (kDebugMode) {
+          showSnackBar(context, "문제가 발생했습니다.");
+        }
+      }
+    }catch(e) {
+      if (kDebugMode) {
+        print("Failed to fetch user profile. $e");
+      }
+      showSnackBar(context, "문제가 발생했습니다.");
     }
+
+    setState(() {
+      _isLoading = false;
+    });
+
   }
 
   Future<void> _doUpdateProfile(BuildContext context) async {
