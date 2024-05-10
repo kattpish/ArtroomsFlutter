@@ -9,6 +9,7 @@ void widgetProfileLogoutDialog(BuildContext context, {required Null Function() o
     context: context,
     builder: (BuildContext context) {
       return Dialog(
+        backgroundColor: Colors.white,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20.0),
         ),
