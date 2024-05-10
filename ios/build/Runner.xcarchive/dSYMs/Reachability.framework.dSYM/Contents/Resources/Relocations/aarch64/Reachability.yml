@@ -1,0 +1,53 @@
+---
+triple:          'arm64-apple-darwin'
+binary-path:     '/Users/alain-niyonema/Library/Developer/Xcode/DerivedData/Runner-aoulumlbdocatzekozbokcpbwpjn/Build/Intermediates.noindex/ArchiveIntermediates/Runner/IntermediateBuildFilesPath/UninstalledProducts/iphoneos/Reachability.framework/Reachability'
+relocations:
+  - { offsetInCU: 0x34, offset: 0x54317, size: 0x8, addend: 0x0, symName: _ReachabilityVersionString, symObjAddr: 0x0, symBinAddr: 0x53C0, symSize: 0x0 }
+  - { offsetInCU: 0x69, offset: 0x5434C, size: 0x8, addend: 0x0, symName: _ReachabilityVersionNumber, symObjAddr: 0x30, symBinAddr: 0x53F0, symSize: 0x0 }
+  - { offsetInCU: 0x27, offset: 0x54389, size: 0x8, addend: 0x0, symName: '+[Reachability reachabilityWithHostName:]', symObjAddr: 0x0, symBinAddr: 0x4000, symSize: 0xC }
+  - { offsetInCU: 0x41, offset: 0x543A3, size: 0x8, addend: 0x0, symName: _kReachabilityChangedNotification, symObjAddr: 0xE18, symBinAddr: 0x80E8, symSize: 0x0 }
+  - { offsetInCU: 0x2BE, offset: 0x54620, size: 0x8, addend: 0x0, symName: '+[Reachability reachabilityWithHostName:]', symObjAddr: 0x0, symBinAddr: 0x4000, symSize: 0xC }
+  - { offsetInCU: 0x2FF, offset: 0x54661, size: 0x8, addend: 0x0, symName: '+[Reachability reachabilityWithHostname:]', symObjAddr: 0xC, symBinAddr: 0x400C, symSize: 0x4C }
+  - { offsetInCU: 0x3A7, offset: 0x54709, size: 0x8, addend: 0x0, symName: '+[Reachability reachabilityWithAddress:]', symObjAddr: 0x58, symBinAddr: 0x4058, symSize: 0x48 }
+  - { offsetInCU: 0x447, offset: 0x547A9, size: 0x8, addend: 0x0, symName: '+[Reachability reachabilityForInternetConnection]', symObjAddr: 0xA0, symBinAddr: 0x40A0, symSize: 0x60 }
+  - { offsetInCU: 0x48D, offset: 0x547EF, size: 0x8, addend: 0x0, symName: '+[Reachability reachabilityForLocalWiFi]', symObjAddr: 0x100, symBinAddr: 0x4100, symSize: 0x68 }
+  - { offsetInCU: 0x4ED, offset: 0x5484F, size: 0x8, addend: 0x0, symName: '+[Reachability reachabilityWithURL:]', symObjAddr: 0x168, symBinAddr: 0x4168, symSize: 0x190 }
+  - { offsetInCU: 0x5C4, offset: 0x54926, size: 0x8, addend: 0x0, symName: '+[Reachability isIpAddress:]', symObjAddr: 0x2F8, symBinAddr: 0x42F8, symSize: 0x34 }
+  - { offsetInCU: 0x648, offset: 0x549AA, size: 0x8, addend: 0x0, symName: '-[Reachability initWithReachabilityRef:]', symObjAddr: 0x32C, symBinAddr: 0x432C, symSize: 0x8C }
+  - { offsetInCU: 0x6BC, offset: 0x54A1E, size: 0x8, addend: 0x0, symName: '-[Reachability dealloc]', symObjAddr: 0x3B8, symBinAddr: 0x43B8, symSize: 0x98 }
+  - { offsetInCU: 0x70C, offset: 0x54A6E, size: 0x8, addend: 0x0, symName: '-[Reachability startNotifier]', symObjAddr: 0x450, symBinAddr: 0x4450, symSize: 0x114 }
+  - { offsetInCU: 0x7E1, offset: 0x54B43, size: 0x8, addend: 0x0, symName: _TMReachabilityCallback, symObjAddr: 0x564, symBinAddr: 0x4564, symSize: 0x50 }
+  - { offsetInCU: 0x830, offset: 0x54B92, size: 0x8, addend: 0x0, symName: '-[Reachability stopNotifier]', symObjAddr: 0x5B4, symBinAddr: 0x45B4, symSize: 0x44 }
+  - { offsetInCU: 0x894, offset: 0x54BF6, size: 0x8, addend: 0x0, symName: '-[Reachability isReachableWithFlags:]', symObjAddr: 0x5F8, symBinAddr: 0x45F8, symSize: 0x3C }
+  - { offsetInCU: 0x8EE, offset: 0x54C50, size: 0x8, addend: 0x0, symName: '-[Reachability isReachable]', symObjAddr: 0x634, symBinAddr: 0x4634, symSize: 0x40 }
+  - { offsetInCU: 0x96A, offset: 0x54CCC, size: 0x8, addend: 0x0, symName: '-[Reachability isReachableViaWWAN]', symObjAddr: 0x674, symBinAddr: 0x4674, symSize: 0x4C }
+  - { offsetInCU: 0x9C9, offset: 0x54D2B, size: 0x8, addend: 0x0, symName: '-[Reachability isReachableViaWiFi]', symObjAddr: 0x6C0, symBinAddr: 0x46C0, symSize: 0x40 }
+  - { offsetInCU: 0xA28, offset: 0x54D8A, size: 0x8, addend: 0x0, symName: '-[Reachability isConnectionRequired]', symObjAddr: 0x700, symBinAddr: 0x4700, symSize: 0x4 }
+  - { offsetInCU: 0xA5E, offset: 0x54DC0, size: 0x8, addend: 0x0, symName: '-[Reachability connectionRequired]', symObjAddr: 0x704, symBinAddr: 0x4704, symSize: 0x38 }
+  - { offsetInCU: 0xABD, offset: 0x54E1F, size: 0x8, addend: 0x0, symName: '-[Reachability isConnectionOnDemand]', symObjAddr: 0x73C, symBinAddr: 0x473C, symSize: 0x3C }
+  - { offsetInCU: 0xB1C, offset: 0x54E7E, size: 0x8, addend: 0x0, symName: '-[Reachability isInterventionRequired]', symObjAddr: 0x778, symBinAddr: 0x4778, symSize: 0x38 }
+  - { offsetInCU: 0xB7B, offset: 0x54EDD, size: 0x8, addend: 0x0, symName: '-[Reachability currentReachabilityStatus]', symObjAddr: 0x7B0, symBinAddr: 0x47B0, symSize: 0x40 }
+  - { offsetInCU: 0xBB3, offset: 0x54F15, size: 0x8, addend: 0x0, symName: '-[Reachability reachabilityFlags]', symObjAddr: 0x7F0, symBinAddr: 0x47F0, symSize: 0x34 }
+  - { offsetInCU: 0xC12, offset: 0x54F74, size: 0x8, addend: 0x0, symName: '-[Reachability currentReachabilityString]', symObjAddr: 0x824, symBinAddr: 0x4824, symSize: 0xB4 }
+  - { offsetInCU: 0xC75, offset: 0x54FD7, size: 0x8, addend: 0x0, symName: '-[Reachability currentReachabilityFlags]', symObjAddr: 0x8D8, symBinAddr: 0x48D8, symSize: 0xB8 }
+  - { offsetInCU: 0xCCE, offset: 0x55030, size: 0x8, addend: 0x0, symName: '-[Reachability reachabilityChanged:]', symObjAddr: 0x990, symBinAddr: 0x4990, symSize: 0x134 }
+  - { offsetInCU: 0xD71, offset: 0x550D3, size: 0x8, addend: 0x0, symName: '___36-[Reachability reachabilityChanged:]_block_invoke', symObjAddr: 0xAC4, symBinAddr: 0x4AC4, symSize: 0x48 }
+  - { offsetInCU: 0xDB3, offset: 0x55115, size: 0x8, addend: 0x0, symName: ___copy_helper_block_e8_32s, symObjAddr: 0xB0C, symBinAddr: 0x4B0C, symSize: 0x8 }
+  - { offsetInCU: 0xDDA, offset: 0x5513C, size: 0x8, addend: 0x0, symName: ___destroy_helper_block_e8_32s, symObjAddr: 0xB14, symBinAddr: 0x4B14, symSize: 0x8 }
+  - { offsetInCU: 0xDF9, offset: 0x5515B, size: 0x8, addend: 0x0, symName: '-[Reachability description]', symObjAddr: 0xB1C, symBinAddr: 0x4B1C, symSize: 0x94 }
+  - { offsetInCU: 0xE6C, offset: 0x551CE, size: 0x8, addend: 0x0, symName: '-[Reachability reachableBlock]', symObjAddr: 0xBB0, symBinAddr: 0x4BB0, symSize: 0x8 }
+  - { offsetInCU: 0xEA3, offset: 0x55205, size: 0x8, addend: 0x0, symName: '-[Reachability setReachableBlock:]', symObjAddr: 0xBB8, symBinAddr: 0x4BB8, symSize: 0x8 }
+  - { offsetInCU: 0xEE2, offset: 0x55244, size: 0x8, addend: 0x0, symName: '-[Reachability unreachableBlock]', symObjAddr: 0xBC0, symBinAddr: 0x4BC0, symSize: 0x8 }
+  - { offsetInCU: 0xF19, offset: 0x5527B, size: 0x8, addend: 0x0, symName: '-[Reachability setUnreachableBlock:]', symObjAddr: 0xBC8, symBinAddr: 0x4BC8, symSize: 0x8 }
+  - { offsetInCU: 0xF58, offset: 0x552BA, size: 0x8, addend: 0x0, symName: '-[Reachability reachabilityBlock]', symObjAddr: 0xBD0, symBinAddr: 0x4BD0, symSize: 0x8 }
+  - { offsetInCU: 0xF8F, offset: 0x552F1, size: 0x8, addend: 0x0, symName: '-[Reachability setReachabilityBlock:]', symObjAddr: 0xBD8, symBinAddr: 0x4BD8, symSize: 0x8 }
+  - { offsetInCU: 0xFCE, offset: 0x55330, size: 0x8, addend: 0x0, symName: '-[Reachability reachableOnWWAN]', symObjAddr: 0xBE0, symBinAddr: 0x4BE0, symSize: 0x8 }
+  - { offsetInCU: 0x1005, offset: 0x55367, size: 0x8, addend: 0x0, symName: '-[Reachability setReachableOnWWAN:]', symObjAddr: 0xBE8, symBinAddr: 0x4BE8, symSize: 0x8 }
+  - { offsetInCU: 0x1040, offset: 0x553A2, size: 0x8, addend: 0x0, symName: '-[Reachability reachabilityRef]', symObjAddr: 0xBF0, symBinAddr: 0x4BF0, symSize: 0x8 }
+  - { offsetInCU: 0x1077, offset: 0x553D9, size: 0x8, addend: 0x0, symName: '-[Reachability setReachabilityRef:]', symObjAddr: 0xBF8, symBinAddr: 0x4BF8, symSize: 0x8 }
+  - { offsetInCU: 0x10B4, offset: 0x55416, size: 0x8, addend: 0x0, symName: '-[Reachability reachabilitySerialQueue]', symObjAddr: 0xC00, symBinAddr: 0x4C00, symSize: 0x8 }
+  - { offsetInCU: 0x10EB, offset: 0x5544D, size: 0x8, addend: 0x0, symName: '-[Reachability setReachabilitySerialQueue:]', symObjAddr: 0xC08, symBinAddr: 0x4C08, symSize: 0xC }
+  - { offsetInCU: 0x112C, offset: 0x5548E, size: 0x8, addend: 0x0, symName: '-[Reachability reachabilityObject]', symObjAddr: 0xC14, symBinAddr: 0x4C14, symSize: 0x8 }
+  - { offsetInCU: 0x1163, offset: 0x554C5, size: 0x8, addend: 0x0, symName: '-[Reachability setReachabilityObject:]', symObjAddr: 0xC1C, symBinAddr: 0x4C1C, symSize: 0xC }
+  - { offsetInCU: 0x11A4, offset: 0x55506, size: 0x8, addend: 0x0, symName: '-[Reachability .cxx_destruct]', symObjAddr: 0xC28, symBinAddr: 0x4C28, symSize: 0x54 }
+...

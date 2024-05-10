@@ -1,0 +1,11 @@
+---
+triple:          'arm64-apple-darwin'
+binary-path:     '/Users/alain-niyonema/Library/Developer/Xcode/DerivedData/Runner-aoulumlbdocatzekozbokcpbwpjn/Build/Intermediates.noindex/ArchiveIntermediates/Runner/IntermediateBuildFilesPath/UninstalledProducts/iphoneos/device_info.framework/device_info'
+relocations:
+  - { offsetInCU: 0x33, offset: 0x3C6C, size: 0x8, addend: 0x0, symName: _device_infoVersionString, symObjAddr: 0x0, symBinAddr: 0x4730, symSize: 0x0 }
+  - { offsetInCU: 0x67, offset: 0x3CA0, size: 0x8, addend: 0x0, symName: _device_infoVersionNumber, symObjAddr: 0x30, symBinAddr: 0x4760, symSize: 0x0 }
+  - { offsetInCU: 0x27, offset: 0x3CDC, size: 0x8, addend: 0x0, symName: '+[FLTDeviceInfoPlugin registerWithRegistrar:]', symObjAddr: 0x0, symBinAddr: 0x4000, symSize: 0xA4 }
+  - { offsetInCU: 0xB3, offset: 0x3D68, size: 0x8, addend: 0x0, symName: '+[FLTDeviceInfoPlugin registerWithRegistrar:]', symObjAddr: 0x0, symBinAddr: 0x4000, symSize: 0xA4 }
+  - { offsetInCU: 0x10C, offset: 0x3DC1, size: 0x8, addend: 0x0, symName: '-[FLTDeviceInfoPlugin handleMethodCall:result:]', symObjAddr: 0xA4, symBinAddr: 0x40A4, symSize: 0x3B8 }
+  - { offsetInCU: 0x1E2, offset: 0x3E97, size: 0x8, addend: 0x0, symName: '-[FLTDeviceInfoPlugin isDevicePhysical]', symObjAddr: 0x45C, symBinAddr: 0x445C, symSize: 0xC }
+...

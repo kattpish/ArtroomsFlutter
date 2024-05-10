@@ -1,0 +1,15 @@
+---
+triple:          'arm64-apple-darwin'
+binary-path:     '/Users/alain-niyonema/Library/Developer/Xcode/DerivedData/Runner-aoulumlbdocatzekozbokcpbwpjn/Build/Intermediates.noindex/ArchiveIntermediates/Runner/IntermediateBuildFilesPath/UninstalledProducts/iphoneos/connectivity.framework/connectivity'
+relocations:
+  - { offsetInCU: 0x33, offset: 0x58E2, size: 0x8, addend: 0x0, symName: _connectivityVersionString, symObjAddr: 0x0, symBinAddr: 0x46A0, symSize: 0x0 }
+  - { offsetInCU: 0x67, offset: 0x5916, size: 0x8, addend: 0x0, symName: _connectivityVersionNumber, symObjAddr: 0x30, symBinAddr: 0x46D0, symSize: 0x0 }
+  - { offsetInCU: 0x27, offset: 0x5952, size: 0x8, addend: 0x0, symName: '+[FLTConnectivityPlugin registerWithRegistrar:]', symObjAddr: 0x0, symBinAddr: 0x4000, symSize: 0x10C }
+  - { offsetInCU: 0x10F, offset: 0x5A3A, size: 0x8, addend: 0x0, symName: '+[FLTConnectivityPlugin registerWithRegistrar:]', symObjAddr: 0x0, symBinAddr: 0x4000, symSize: 0x10C }
+  - { offsetInCU: 0x177, offset: 0x5AA2, size: 0x8, addend: 0x0, symName: '-[FLTConnectivityPlugin statusFromReachability:]', symObjAddr: 0x10C, symBinAddr: 0x410C, symSize: 0x40 }
+  - { offsetInCU: 0x1C5, offset: 0x5AF0, size: 0x8, addend: 0x0, symName: '-[FLTConnectivityPlugin handleMethodCall:result:]', symObjAddr: 0x14C, symBinAddr: 0x414C, symSize: 0xD8 }
+  - { offsetInCU: 0x23D, offset: 0x5B68, size: 0x8, addend: 0x0, symName: '-[FLTConnectivityPlugin onReachabilityDidChange:]', symObjAddr: 0x224, symBinAddr: 0x4224, symSize: 0x70 }
+  - { offsetInCU: 0x2A3, offset: 0x5BCE, size: 0x8, addend: 0x0, symName: '-[FLTConnectivityPlugin onListenWithArguments:eventSink:]', symObjAddr: 0x294, symBinAddr: 0x4294, symSize: 0xA4 }
+  - { offsetInCU: 0x2F1, offset: 0x5C1C, size: 0x8, addend: 0x0, symName: '-[FLTConnectivityPlugin onCancelWithArguments:]', symObjAddr: 0x338, symBinAddr: 0x4338, symSize: 0x6C }
+  - { offsetInCU: 0x330, offset: 0x5C5B, size: 0x8, addend: 0x0, symName: '-[FLTConnectivityPlugin .cxx_destruct]', symObjAddr: 0x3A4, symBinAddr: 0x43A4, symSize: 0x30 }
+...

@@ -1,0 +1,287 @@
+---
+triple:          'arm64-apple-darwin'
+binary-path:     '/Users/alain-niyonema/Library/Developer/Xcode/DerivedData/Runner-aoulumlbdocatzekozbokcpbwpjn/Build/Intermediates.noindex/ArchiveIntermediates/Runner/IntermediateBuildFilesPath/UninstalledProducts/iphoneos/FirebaseCore.framework/FirebaseCore'
+relocations:
+  - { offsetInCU: 0x34, offset: 0x54E8F, size: 0x8, addend: 0x0, symName: _FirebaseCoreVersionString, symObjAddr: 0x0, symBinAddr: 0xFE08, symSize: 0x0 }
+  - { offsetInCU: 0x69, offset: 0x54EC4, size: 0x8, addend: 0x0, symName: _FirebaseCoreVersionNumber, symObjAddr: 0x30, symBinAddr: 0xFE38, symSize: 0x0 }
+  - { offsetInCU: 0x27, offset: 0x54F01, size: 0x8, addend: 0x0, symName: '+[FIRAnalyticsConfiguration sharedInstance]', symObjAddr: 0x0, symBinAddr: 0x8000, symSize: 0x40 }
+  - { offsetInCU: 0x3A, offset: 0x54F14, size: 0x8, addend: 0x0, symName: '+[FIRAnalyticsConfiguration sharedInstance]', symObjAddr: 0x0, symBinAddr: 0x8000, symSize: 0x40 }
+  - { offsetInCU: 0x64, offset: 0x54F3E, size: 0x8, addend: 0x0, symName: _sharedInstance.sharedInstance, symObjAddr: 0x2350, symBinAddr: 0x18608, symSize: 0x0 }
+  - { offsetInCU: 0x7A, offset: 0x54F54, size: 0x8, addend: 0x0, symName: _sharedInstance.onceToken, symObjAddr: 0x2358, symBinAddr: 0x18610, symSize: 0x0 }
+  - { offsetInCU: 0x14D, offset: 0x55027, size: 0x8, addend: 0x0, symName: '___43+[FIRAnalyticsConfiguration sharedInstance]_block_invoke', symObjAddr: 0x40, symBinAddr: 0x8040, symSize: 0x30 }
+  - { offsetInCU: 0x174, offset: 0x5504E, size: 0x8, addend: 0x0, symName: '-[FIRAnalyticsConfiguration postNotificationName:value:]', symObjAddr: 0x70, symBinAddr: 0x8070, symSize: 0x100 }
+  - { offsetInCU: 0x1C7, offset: 0x550A1, size: 0x8, addend: 0x0, symName: '-[FIRAnalyticsConfiguration setAnalyticsCollectionEnabled:]', symObjAddr: 0x170, symBinAddr: 0x8170, symSize: 0x8 }
+  - { offsetInCU: 0x20B, offset: 0x550E5, size: 0x8, addend: 0x0, symName: '-[FIRAnalyticsConfiguration setAnalyticsCollectionEnabled:persistSetting:]', symObjAddr: 0x178, symBinAddr: 0x8178, symSize: 0xD0 }
+  - { offsetInCU: 0x27, offset: 0x55267, size: 0x8, addend: 0x0, symName: '+[FIRApp configure]', symObjAddr: 0x0, symBinAddr: 0x8248, symSize: 0x78 }
+  - { offsetInCU: 0x79, offset: 0x552B9, size: 0x8, addend: 0x0, symName: _kFIRDefaultAppName, symObjAddr: 0x3D30, symBinAddr: 0x14188, symSize: 0x0 }
+  - { offsetInCU: 0x8F, offset: 0x552CF, size: 0x8, addend: 0x0, symName: _kFIRAppReadyToConfigureSDKNotification, symObjAddr: 0x3D38, symBinAddr: 0x14190, symSize: 0x0 }
+  - { offsetInCU: 0xA5, offset: 0x552E5, size: 0x8, addend: 0x0, symName: _kFIRAppDeleteNotification, symObjAddr: 0x3D40, symBinAddr: 0x14198, symSize: 0x0 }
+  - { offsetInCU: 0xBB, offset: 0x552FB, size: 0x8, addend: 0x0, symName: _kFIRAppIsDefaultAppKey, symObjAddr: 0x3D48, symBinAddr: 0x141A0, symSize: 0x0 }
+  - { offsetInCU: 0xD1, offset: 0x55311, size: 0x8, addend: 0x0, symName: _kFIRAppNameKey, symObjAddr: 0x3D50, symBinAddr: 0x141A8, symSize: 0x0 }
+  - { offsetInCU: 0xE7, offset: 0x55327, size: 0x8, addend: 0x0, symName: _kFIRGoogleAppIDKey, symObjAddr: 0x3D58, symBinAddr: 0x141B0, symSize: 0x0 }
+  - { offsetInCU: 0xFD, offset: 0x5533D, size: 0x8, addend: 0x0, symName: _kFIRGlobalAppDataCollectionEnabledDefaultsKeyFormat, symObjAddr: 0x3D60, symBinAddr: 0x141B8, symSize: 0x0 }
+  - { offsetInCU: 0x113, offset: 0x55353, size: 0x8, addend: 0x0, symName: _kFIRGlobalAppDataCollectionEnabledPlistKey, symObjAddr: 0x3D68, symBinAddr: 0x141C0, symSize: 0x0 }
+  - { offsetInCU: 0x129, offset: 0x55369, size: 0x8, addend: 0x0, symName: _kFIRAppDiagnosticsConfigurationTypeKey, symObjAddr: 0x3D70, symBinAddr: 0x141C8, symSize: 0x0 }
+  - { offsetInCU: 0x13F, offset: 0x5537F, size: 0x8, addend: 0x0, symName: _kFIRAppDiagnosticsErrorKey, symObjAddr: 0x3D78, symBinAddr: 0x141D0, symSize: 0x0 }
+  - { offsetInCU: 0x155, offset: 0x55395, size: 0x8, addend: 0x0, symName: _kFIRAppDiagnosticsFIRAppKey, symObjAddr: 0x3D80, symBinAddr: 0x141D8, symSize: 0x0 }
+  - { offsetInCU: 0x16B, offset: 0x553AB, size: 0x8, addend: 0x0, symName: _kFIRAppDiagnosticsSDKNameKey, symObjAddr: 0x3D88, symBinAddr: 0x141E0, symSize: 0x0 }
+  - { offsetInCU: 0x181, offset: 0x553C1, size: 0x8, addend: 0x0, symName: _kFIRAppDiagnosticsSDKVersionKey, symObjAddr: 0x3D90, symBinAddr: 0x141E8, symSize: 0x0 }
+  - { offsetInCU: 0x197, offset: 0x553D7, size: 0x8, addend: 0x0, symName: _kFIRAppDiagnosticsApplePlatformPrefix, symObjAddr: 0x3D98, symBinAddr: 0x141F0, symSize: 0x0 }
+  - { offsetInCU: 0x1AD, offset: 0x553ED, size: 0x8, addend: 0x0, symName: _FIRAuthStateDidChangeInternalNotification, symObjAddr: 0x3DA0, symBinAddr: 0x141F8, symSize: 0x0 }
+  - { offsetInCU: 0x1C3, offset: 0x55403, size: 0x8, addend: 0x0, symName: _FIRAuthStateDidChangeInternalNotificationAppKey, symObjAddr: 0x3DA8, symBinAddr: 0x14200, symSize: 0x0 }
+  - { offsetInCU: 0x1D9, offset: 0x55419, size: 0x8, addend: 0x0, symName: _FIRAuthStateDidChangeInternalNotificationTokenKey, symObjAddr: 0x3DB0, symBinAddr: 0x14208, symSize: 0x0 }
+  - { offsetInCU: 0x1EF, offset: 0x5542F, size: 0x8, addend: 0x0, symName: _FIRAuthStateDidChangeInternalNotificationUIDKey, symObjAddr: 0x3DB8, symBinAddr: 0x14210, symSize: 0x0 }
+  - { offsetInCU: 0x205, offset: 0x55445, size: 0x8, addend: 0x0, symName: _kFirebaseCoreErrorDomain, symObjAddr: 0x3DC0, symBinAddr: 0x14218, symSize: 0x0 }
+  - { offsetInCU: 0x21B, offset: 0x5545B, size: 0x8, addend: 0x0, symName: _kFirebaseCoreDefaultsSuiteName, symObjAddr: 0x3DC8, symBinAddr: 0x14220, symSize: 0x0 }
+  - { offsetInCU: 0x225, offset: 0x55465, size: 0x8, addend: 0x0, symName: '+[FIRApp applicationNameAllowedCharacters]', symObjAddr: 0xD8, symBinAddr: 0x8320, symSize: 0x40 }
+  - { offsetInCU: 0x24F, offset: 0x5548F, size: 0x8, addend: 0x0, symName: _applicationNameAllowedCharacters.applicationNameAllowedCharacters, symObjAddr: 0xD098, symBinAddr: 0x18618, symSize: 0x0 }
+  - { offsetInCU: 0x265, offset: 0x554A5, size: 0x8, addend: 0x0, symName: _applicationNameAllowedCharacters.onceToken, symObjAddr: 0xD0A0, symBinAddr: 0x18620, symSize: 0x0 }
+  - { offsetInCU: 0x2AB, offset: 0x554EB, size: 0x8, addend: 0x0, symName: '+[FIRApp configureWithName:options:]', symObjAddr: 0x174, symBinAddr: 0x83BC, symSize: 0x324 }
+  - { offsetInCU: 0x2D1, offset: 0x55511, size: 0x8, addend: 0x0, symName: '_configureWithName:options:.onceToken', symObjAddr: 0xD0B8, symBinAddr: 0x18638, symSize: 0x0 }
+  - { offsetInCU: 0x391, offset: 0x555D1, size: 0x8, addend: 0x0, symName: '+[FIRApp registerInternalLibrary:withName:withVersion:]', symObjAddr: 0x15B4, symBinAddr: 0x97FC, symSize: 0x14C }
+  - { offsetInCU: 0x3B9, offset: 0x555F9, size: 0x8, addend: 0x0, symName: '_registerInternalLibrary:withName:withVersion:.onceToken', symObjAddr: 0xD0C8, symBinAddr: 0x18648, symSize: 0x0 }
+  - { offsetInCU: 0x42B, offset: 0x5566B, size: 0x8, addend: 0x0, symName: '+[FIRApp userAgent]', symObjAddr: 0x1730, symBinAddr: 0x9978, symSize: 0x40 }
+  - { offsetInCU: 0x457, offset: 0x55697, size: 0x8, addend: 0x0, symName: _userAgent.onceToken, symObjAddr: 0xD0D0, symBinAddr: 0x18650, symSize: 0x0 }
+  - { offsetInCU: 0x46E, offset: 0x556AE, size: 0x8, addend: 0x0, symName: _userAgent._userAgent, symObjAddr: 0xD0D8, symBinAddr: 0x18658, symSize: 0x0 }
+  - { offsetInCU: 0x4BE, offset: 0x556FE, size: 0x8, addend: 0x0, symName: '+[FIRApp readDataCollectionSwitchFromPlist]', symObjAddr: 0x1FC8, symBinAddr: 0xA210, symSize: 0x40 }
+  - { offsetInCU: 0x4EA, offset: 0x5572A, size: 0x8, addend: 0x0, symName: _readDataCollectionSwitchFromPlist.collectionEnabledPlistObject, symObjAddr: 0xD0E0, symBinAddr: 0x18660, symSize: 0x0 }
+  - { offsetInCU: 0x501, offset: 0x55741, size: 0x8, addend: 0x0, symName: _readDataCollectionSwitchFromPlist.onceToken, symObjAddr: 0xD0E8, symBinAddr: 0x18668, symSize: 0x0 }
+  - { offsetInCU: 0x54D, offset: 0x5578D, size: 0x8, addend: 0x0, symName: _sRegisteredAsConfigurable, symObjAddr: 0xD0C0, symBinAddr: 0x18640, symSize: 0x0 }
+  - { offsetInCU: 0x568, offset: 0x557A8, size: 0x8, addend: 0x0, symName: _sAllApps, symObjAddr: 0xD0B0, symBinAddr: 0x18630, symSize: 0x0 }
+  - { offsetInCU: 0x583, offset: 0x557C3, size: 0x8, addend: 0x0, symName: _sDefaultApp, symObjAddr: 0xD0A8, symBinAddr: 0x18628, symSize: 0x0 }
+  - { offsetInCU: 0x812, offset: 0x55A52, size: 0x8, addend: 0x0, symName: '+[FIRApp configure]', symObjAddr: 0x0, symBinAddr: 0x8248, symSize: 0x78 }
+  - { offsetInCU: 0x851, offset: 0x55A91, size: 0x8, addend: 0x0, symName: '+[FIRApp configureWithOptions:]', symObjAddr: 0x78, symBinAddr: 0x82C0, symSize: 0x60 }
+  - { offsetInCU: 0x8DE, offset: 0x55B1E, size: 0x8, addend: 0x0, symName: '___42+[FIRApp applicationNameAllowedCharacters]_block_invoke', symObjAddr: 0x118, symBinAddr: 0x8360, symSize: 0x5C }
+  - { offsetInCU: 0x948, offset: 0x55B88, size: 0x8, addend: 0x0, symName: '___36+[FIRApp configureWithName:options:]_block_invoke', symObjAddr: 0x498, symBinAddr: 0x86E0, symSize: 0x8 }
+  - { offsetInCU: 0x987, offset: 0x55BC7, size: 0x8, addend: 0x0, symName: '+[FIRApp appWasConfiguredTwice:usingOptions:]', symObjAddr: 0x4A0, symBinAddr: 0x86E8, symSize: 0x164 }
+  - { offsetInCU: 0x9E4, offset: 0x55C24, size: 0x8, addend: 0x0, symName: '+[FIRApp defaultApp]', symObjAddr: 0x604, symBinAddr: 0x884C, symSize: 0x54 }
+  - { offsetInCU: 0xA3E, offset: 0x55C7E, size: 0x8, addend: 0x0, symName: '+[FIRApp appNamed:]', symObjAddr: 0x658, symBinAddr: 0x88A0, symSize: 0xC8 }
+  - { offsetInCU: 0xAB2, offset: 0x55CF2, size: 0x8, addend: 0x0, symName: '+[FIRApp allApps]', symObjAddr: 0x720, symBinAddr: 0x8968, symSize: 0x84 }
+  - { offsetInCU: 0xAF8, offset: 0x55D38, size: 0x8, addend: 0x0, symName: '+[FIRApp resetApps]', symObjAddr: 0x7A4, symBinAddr: 0x89EC, symSize: 0x8C }
+  - { offsetInCU: 0xB2C, offset: 0x55D6C, size: 0x8, addend: 0x0, symName: '-[FIRApp deleteApp:]', symObjAddr: 0x830, symBinAddr: 0x8A78, symSize: 0x2CC }
+  - { offsetInCU: 0xBE1, offset: 0x55E21, size: 0x8, addend: 0x0, symName: '+[FIRApp addAppToAppDictionary:]', symObjAddr: 0xAFC, symBinAddr: 0x8D44, symSize: 0xBC }
+  - { offsetInCU: 0xC22, offset: 0x55E62, size: 0x8, addend: 0x0, symName: '-[FIRApp initInstanceWithName:options:]', symObjAddr: 0xBB8, symBinAddr: 0x8E00, symSize: 0x15C }
+  - { offsetInCU: 0xC7C, offset: 0x55EBC, size: 0x8, addend: 0x0, symName: '-[FIRApp dealloc]', symObjAddr: 0xD14, symBinAddr: 0x8F5C, symSize: 0x68 }
+  - { offsetInCU: 0xCB0, offset: 0x55EF0, size: 0x8, addend: 0x0, symName: '-[FIRApp configureCore]', symObjAddr: 0xD7C, symBinAddr: 0x8FC4, symSize: 0xF0 }
+  - { offsetInCU: 0xD49, offset: 0x55F89, size: 0x8, addend: 0x0, symName: '-[FIRApp options]', symObjAddr: 0xE6C, symBinAddr: 0x90B4, symSize: 0x18 }
+  - { offsetInCU: 0xD81, offset: 0x55FC1, size: 0x8, addend: 0x0, symName: '-[FIRApp setDataCollectionDefaultEnabled:]', symObjAddr: 0xE84, symBinAddr: 0x90CC, symSize: 0x100 }
+  - { offsetInCU: 0xDD7, offset: 0x56017, size: 0x8, addend: 0x0, symName: '-[FIRApp isDataCollectionDefaultEnabled]', symObjAddr: 0xF84, symBinAddr: 0x91CC, symSize: 0x94 }
+  - { offsetInCU: 0xE31, offset: 0x56071, size: 0x8, addend: 0x0, symName: '+[FIRApp sendNotificationsToSDKs:]', symObjAddr: 0x1018, symBinAddr: 0x9260, symSize: 0x25C }
+  - { offsetInCU: 0xEB8, offset: 0x560F8, size: 0x8, addend: 0x0, symName: '+[FIRApp errorForMissingOptions]', symObjAddr: 0x1274, symBinAddr: 0x94BC, symSize: 0xD4 }
+  - { offsetInCU: 0xEFD, offset: 0x5613D, size: 0x8, addend: 0x0, symName: '+[FIRApp errorForInvalidAppID]', symObjAddr: 0x1348, symBinAddr: 0x9590, symSize: 0xD4 }
+  - { offsetInCU: 0xF42, offset: 0x56182, size: 0x8, addend: 0x0, symName: '+[FIRApp isDefaultAppConfigured]', symObjAddr: 0x141C, symBinAddr: 0x9664, symSize: 0x14 }
+  - { offsetInCU: 0xF76, offset: 0x561B6, size: 0x8, addend: 0x0, symName: '+[FIRApp registerLibrary:withVersion:]', symObjAddr: 0x1430, symBinAddr: 0x9678, symSize: 0x120 }
+  - { offsetInCU: 0xFFC, offset: 0x5623C, size: 0x8, addend: 0x0, symName: '+[FIRApp registerInternalLibrary:withName:]', symObjAddr: 0x1550, symBinAddr: 0x9798, symSize: 0x64 }
+  - { offsetInCU: 0x106C, offset: 0x562AC, size: 0x8, addend: 0x0, symName: '___55+[FIRApp registerInternalLibrary:withName:withVersion:]_block_invoke', symObjAddr: 0x1700, symBinAddr: 0x9948, symSize: 0x30 }
+  - { offsetInCU: 0x1095, offset: 0x562D5, size: 0x8, addend: 0x0, symName: '___19+[FIRApp userAgent]_block_invoke', symObjAddr: 0x1770, symBinAddr: 0x99B8, symSize: 0x68 }
+  - { offsetInCU: 0x10CC, offset: 0x5630C, size: 0x8, addend: 0x0, symName: '+[FIRApp firebaseUserAgent]', symObjAddr: 0x17D8, symBinAddr: 0x9A20, symSize: 0x44 }
+  - { offsetInCU: 0x1104, offset: 0x56344, size: 0x8, addend: 0x0, symName: '-[FIRApp checkExpectedBundleID]', symObjAddr: 0x181C, symBinAddr: 0x9A64, symSize: 0xC4 }
+  - { offsetInCU: 0x1168, offset: 0x563A8, size: 0x8, addend: 0x0, symName: '-[FIRApp isAppIDValid]', symObjAddr: 0x18E0, symBinAddr: 0x9B28, symSize: 0xC8 }
+  - { offsetInCU: 0x11F0, offset: 0x56430, size: 0x8, addend: 0x0, symName: '+[FIRApp validateAppID:]', symObjAddr: 0x19A8, symBinAddr: 0x9BF0, symSize: 0x1C0 }
+  - { offsetInCU: 0x1293, offset: 0x564D3, size: 0x8, addend: 0x0, symName: '+[FIRApp actualBundleID]', symObjAddr: 0x1B68, symBinAddr: 0x9DB0, symSize: 0x4C }
+  - { offsetInCU: 0x12C7, offset: 0x56507, size: 0x8, addend: 0x0, symName: '+[FIRApp validateAppIDFormat:withVersion:]', symObjAddr: 0x1BB4, symBinAddr: 0x9DFC, symSize: 0x19C }
+  - { offsetInCU: 0x1361, offset: 0x565A1, size: 0x8, addend: 0x0, symName: '+[FIRApp validateBundleIDHashWithinAppID:forVersion:]', symObjAddr: 0x1D50, symBinAddr: 0x9F98, symSize: 0x100 }
+  - { offsetInCU: 0x13FB, offset: 0x5663B, size: 0x8, addend: 0x0, symName: '-[FIRApp expectedBundleID]', symObjAddr: 0x1E50, symBinAddr: 0xA098, symSize: 0x8 }
+  - { offsetInCU: 0x1433, offset: 0x56673, size: 0x8, addend: 0x0, symName: '-[FIRApp clearDataCollectionSwitchFromUserDefaults]', symObjAddr: 0x1E58, symBinAddr: 0xA0A0, symSize: 0x8C }
+  - { offsetInCU: 0x1478, offset: 0x566B8, size: 0x8, addend: 0x0, symName: '+[FIRApp readDataCollectionSwitchFromUserDefaultsForApp:]', symObjAddr: 0x1EE4, symBinAddr: 0xA12C, symSize: 0xE4 }
+  - { offsetInCU: 0x14DF, offset: 0x5671F, size: 0x8, addend: 0x0, symName: '___43+[FIRApp readDataCollectionSwitchFromPlist]_block_invoke', symObjAddr: 0x2008, symBinAddr: 0xA250, symSize: 0x84 }
+  - { offsetInCU: 0x1528, offset: 0x56768, size: 0x8, addend: 0x0, symName: '+[FIRApp registerSwiftComponents]', symObjAddr: 0x208C, symBinAddr: 0xA2D4, symSize: 0x328 }
+  - { offsetInCU: 0x1635, offset: 0x56875, size: 0x8, addend: 0x0, symName: '-[FIRApp subscribeForAppDidBecomeActiveNotifications]', symObjAddr: 0x23B4, symBinAddr: 0xA5FC, symSize: 0x64 }
+  - { offsetInCU: 0x167A, offset: 0x568BA, size: 0x8, addend: 0x0, symName: '-[FIRApp appDidBecomeActive:]', symObjAddr: 0x2418, symBinAddr: 0xA660, symSize: 0x4C }
+  - { offsetInCU: 0x16BB, offset: 0x568FB, size: 0x8, addend: 0x0, symName: '-[FIRApp name]', symObjAddr: 0x2464, symBinAddr: 0xA6AC, symSize: 0x8 }
+  - { offsetInCU: 0x16F2, offset: 0x56932, size: 0x8, addend: 0x0, symName: '-[FIRApp isDefaultApp]', symObjAddr: 0x246C, symBinAddr: 0xA6B4, symSize: 0x8 }
+  - { offsetInCU: 0x1729, offset: 0x56969, size: 0x8, addend: 0x0, symName: '-[FIRApp container]', symObjAddr: 0x2474, symBinAddr: 0xA6BC, symSize: 0x8 }
+  - { offsetInCU: 0x1760, offset: 0x569A0, size: 0x8, addend: 0x0, symName: '-[FIRApp setContainer:]', symObjAddr: 0x247C, symBinAddr: 0xA6C4, symSize: 0xC }
+  - { offsetInCU: 0x17A1, offset: 0x569E1, size: 0x8, addend: 0x0, symName: '-[FIRApp heartbeatLogger]', symObjAddr: 0x2488, symBinAddr: 0xA6D0, symSize: 0xC }
+  - { offsetInCU: 0x17D8, offset: 0x56A18, size: 0x8, addend: 0x0, symName: '-[FIRApp .cxx_destruct]', symObjAddr: 0x2494, symBinAddr: 0xA6DC, symSize: 0x48 }
+  - { offsetInCU: 0x27, offset: 0x56D2B, size: 0x8, addend: 0x0, symName: '+[FIRBundleUtil relevantBundles]', symObjAddr: 0x0, symBinAddr: 0xA724, symSize: 0xD0 }
+  - { offsetInCU: 0x43, offset: 0x56D47, size: 0x8, addend: 0x0, symName: '+[FIRBundleUtil relevantBundles]', symObjAddr: 0x0, symBinAddr: 0xA724, symSize: 0xD0 }
+  - { offsetInCU: 0x7A, offset: 0x56D7E, size: 0x8, addend: 0x0, symName: '+[FIRBundleUtil optionsDictionaryPathWithResourceName:andFileType:inBundles:]', symObjAddr: 0xD0, symBinAddr: 0xA7F4, symSize: 0x154 }
+  - { offsetInCU: 0x11B, offset: 0x56E1F, size: 0x8, addend: 0x0, symName: '+[FIRBundleUtil relevantURLSchemes]', symObjAddr: 0x224, symBinAddr: 0xA948, symSize: 0x1E8 }
+  - { offsetInCU: 0x1AF, offset: 0x56EB3, size: 0x8, addend: 0x0, symName: '+[FIRBundleUtil hasBundleIdentifierPrefix:inBundles:]', symObjAddr: 0x40C, symBinAddr: 0xAB30, symSize: 0x1C0 }
+  - { offsetInCU: 0x244, offset: 0x56F48, size: 0x8, addend: 0x0, symName: '+[FIRBundleUtil bundleIdentifierByRemovingLastPartFrom:]', symObjAddr: 0x5CC, symBinAddr: 0xACF0, symSize: 0x7C }
+  - { offsetInCU: 0x27, offset: 0x57027, size: 0x8, addend: 0x0, symName: '+[FIRComponent componentWithProtocol:creationBlock:]', symObjAddr: 0x0, symBinAddr: 0xAD6C, symSize: 0x80 }
+  - { offsetInCU: 0x1E2, offset: 0x571E2, size: 0x8, addend: 0x0, symName: '+[FIRComponent componentWithProtocol:creationBlock:]', symObjAddr: 0x0, symBinAddr: 0xAD6C, symSize: 0x80 }
+  - { offsetInCU: 0x235, offset: 0x57235, size: 0x8, addend: 0x0, symName: '+[FIRComponent componentWithProtocol:instantiationTiming:dependencies:creationBlock:]', symObjAddr: 0x80, symBinAddr: 0xADEC, symSize: 0x9C }
+  - { offsetInCU: 0x2A8, offset: 0x572A8, size: 0x8, addend: 0x0, symName: '-[FIRComponent initWithProtocol:instantiationTiming:dependencies:creationBlock:]', symObjAddr: 0x11C, symBinAddr: 0xAE88, symSize: 0xE8 }
+  - { offsetInCU: 0x31F, offset: 0x5731F, size: 0x8, addend: 0x0, symName: '-[FIRComponent protocol]', symObjAddr: 0x204, symBinAddr: 0xAF70, symSize: 0x8 }
+  - { offsetInCU: 0x356, offset: 0x57356, size: 0x8, addend: 0x0, symName: '-[FIRComponent instantiationTiming]', symObjAddr: 0x20C, symBinAddr: 0xAF78, symSize: 0x8 }
+  - { offsetInCU: 0x38D, offset: 0x5738D, size: 0x8, addend: 0x0, symName: '-[FIRComponent dependencies]', symObjAddr: 0x214, symBinAddr: 0xAF80, symSize: 0x8 }
+  - { offsetInCU: 0x3C4, offset: 0x573C4, size: 0x8, addend: 0x0, symName: '-[FIRComponent creationBlock]', symObjAddr: 0x21C, symBinAddr: 0xAF88, symSize: 0x8 }
+  - { offsetInCU: 0x3FB, offset: 0x573FB, size: 0x8, addend: 0x0, symName: '-[FIRComponent .cxx_destruct]', symObjAddr: 0x224, symBinAddr: 0xAF90, symSize: 0x3C }
+  - { offsetInCU: 0x27, offset: 0x57489, size: 0x8, addend: 0x0, symName: '+[FIRComponentContainer registerAsComponentRegistrant:]', symObjAddr: 0x0, symBinAddr: 0xAFCC, symSize: 0x58 }
+  - { offsetInCU: 0x35, offset: 0x57497, size: 0x8, addend: 0x0, symName: '+[FIRComponentContainer registerAsComponentRegistrant:]', symObjAddr: 0x0, symBinAddr: 0xAFCC, symSize: 0x58 }
+  - { offsetInCU: 0x5B, offset: 0x574BD, size: 0x8, addend: 0x0, symName: '_registerAsComponentRegistrant:.onceToken', symObjAddr: 0x5490, symBinAddr: 0x18670, symSize: 0x0 }
+  - { offsetInCU: 0xBC, offset: 0x5751E, size: 0x8, addend: 0x0, symName: _sFIRComponentRegistrants, symObjAddr: 0x5498, symBinAddr: 0x18678, symSize: 0x0 }
+  - { offsetInCU: 0x272, offset: 0x576D4, size: 0x8, addend: 0x0, symName: '___55+[FIRComponentContainer registerAsComponentRegistrant:]_block_invoke', symObjAddr: 0x58, symBinAddr: 0xB024, symSize: 0x30 }
+  - { offsetInCU: 0x299, offset: 0x576FB, size: 0x8, addend: 0x0, symName: '+[FIRComponentContainer registerAsComponentRegistrant:inSet:]', symObjAddr: 0x88, symBinAddr: 0xB054, symSize: 0x8 }
+  - { offsetInCU: 0x2E6, offset: 0x57748, size: 0x8, addend: 0x0, symName: '-[FIRComponentContainer initWithApp:]', symObjAddr: 0x90, symBinAddr: 0xB05C, symSize: 0xC }
+  - { offsetInCU: 0x32B, offset: 0x5778D, size: 0x8, addend: 0x0, symName: '-[FIRComponentContainer initWithApp:registrants:]', symObjAddr: 0x9C, symBinAddr: 0xB068, symSize: 0xE0 }
+  - { offsetInCU: 0x382, offset: 0x577E4, size: 0x8, addend: 0x0, symName: '-[FIRComponentContainer populateComponentsFromRegisteredClasses:forApp:]', symObjAddr: 0x17C, symBinAddr: 0xB148, symSize: 0x360 }
+  - { offsetInCU: 0x4AB, offset: 0x5790D, size: 0x8, addend: 0x0, symName: '-[FIRComponentContainer instantiateEagerComponents]', symObjAddr: 0x4DC, symBinAddr: 0xB4A8, symSize: 0x150 }
+  - { offsetInCU: 0x508, offset: 0x5796A, size: 0x8, addend: 0x0, symName: '-[FIRComponentContainer instantiateInstanceForProtocol:withBlock:]', symObjAddr: 0x62C, symBinAddr: 0xB5F8, symSize: 0x104 }
+  - { offsetInCU: 0x5D5, offset: 0x57A37, size: 0x8, addend: 0x0, symName: '-[FIRComponentContainer __instanceForProtocol:]', symObjAddr: 0x730, symBinAddr: 0xB6FC, symSize: 0x4 }
+  - { offsetInCU: 0x618, offset: 0x57A7A, size: 0x8, addend: 0x0, symName: '-[FIRComponentContainer instanceForProtocol:]', symObjAddr: 0x734, symBinAddr: 0xB700, symSize: 0x11C }
+  - { offsetInCU: 0x6AC, offset: 0x57B0E, size: 0x8, addend: 0x0, symName: '-[FIRComponentContainer removeAllCachedInstances]', symObjAddr: 0x850, symBinAddr: 0xB81C, symSize: 0x1CC }
+  - { offsetInCU: 0x6F6, offset: 0x57B58, size: 0x8, addend: 0x0, symName: '-[FIRComponentContainer removeAllComponents]', symObjAddr: 0xA1C, symBinAddr: 0xB9E8, symSize: 0x64 }
+  - { offsetInCU: 0x729, offset: 0x57B8B, size: 0x8, addend: 0x0, symName: '-[FIRComponentContainer app]', symObjAddr: 0xA80, symBinAddr: 0xBA4C, symSize: 0x18 }
+  - { offsetInCU: 0x760, offset: 0x57BC2, size: 0x8, addend: 0x0, symName: '-[FIRComponentContainer components]', symObjAddr: 0xA98, symBinAddr: 0xBA64, symSize: 0x8 }
+  - { offsetInCU: 0x797, offset: 0x57BF9, size: 0x8, addend: 0x0, symName: '-[FIRComponentContainer setComponents:]', symObjAddr: 0xAA0, symBinAddr: 0xBA6C, symSize: 0xC }
+  - { offsetInCU: 0x7D8, offset: 0x57C3A, size: 0x8, addend: 0x0, symName: '-[FIRComponentContainer cachedInstances]', symObjAddr: 0xAAC, symBinAddr: 0xBA78, symSize: 0x8 }
+  - { offsetInCU: 0x80F, offset: 0x57C71, size: 0x8, addend: 0x0, symName: '-[FIRComponentContainer setCachedInstances:]', symObjAddr: 0xAB4, symBinAddr: 0xBA80, symSize: 0xC }
+  - { offsetInCU: 0x850, offset: 0x57CB2, size: 0x8, addend: 0x0, symName: '-[FIRComponentContainer eagerProtocolsToInstantiate]', symObjAddr: 0xAC0, symBinAddr: 0xBA8C, symSize: 0x8 }
+  - { offsetInCU: 0x887, offset: 0x57CE9, size: 0x8, addend: 0x0, symName: '-[FIRComponentContainer setEagerProtocolsToInstantiate:]', symObjAddr: 0xAC8, symBinAddr: 0xBA94, symSize: 0xC }
+  - { offsetInCU: 0x8C8, offset: 0x57D2A, size: 0x8, addend: 0x0, symName: '-[FIRComponentContainer .cxx_destruct]', symObjAddr: 0xAD4, symBinAddr: 0xBAA0, symSize: 0x44 }
+  - { offsetInCU: 0x27, offset: 0x57F3C, size: 0x8, addend: 0x0, symName: '+[FIRComponentType instanceForProtocol:inContainer:]', symObjAddr: 0x0, symBinAddr: 0xBAE4, symSize: 0x8 }
+  - { offsetInCU: 0x3C, offset: 0x57F51, size: 0x8, addend: 0x0, symName: '+[FIRComponentType instanceForProtocol:inContainer:]', symObjAddr: 0x0, symBinAddr: 0xBAE4, symSize: 0x8 }
+  - { offsetInCU: 0x27, offset: 0x5804B, size: 0x8, addend: 0x0, symName: '+[FIRConfiguration sharedInstance]', symObjAddr: 0x0, symBinAddr: 0xBAEC, symSize: 0x40 }
+  - { offsetInCU: 0x35, offset: 0x58059, size: 0x8, addend: 0x0, symName: '+[FIRConfiguration sharedInstance]', symObjAddr: 0x0, symBinAddr: 0xBAEC, symSize: 0x40 }
+  - { offsetInCU: 0x5F, offset: 0x58083, size: 0x8, addend: 0x0, symName: _sharedInstance.sharedInstance, symObjAddr: 0x2330, symBinAddr: 0x18680, symSize: 0x0 }
+  - { offsetInCU: 0x75, offset: 0x58099, size: 0x8, addend: 0x0, symName: _sharedInstance.onceToken, symObjAddr: 0x2338, symBinAddr: 0x18688, symSize: 0x0 }
+  - { offsetInCU: 0x195, offset: 0x581B9, size: 0x8, addend: 0x0, symName: '___34+[FIRConfiguration sharedInstance]_block_invoke', symObjAddr: 0x40, symBinAddr: 0xBB2C, symSize: 0x30 }
+  - { offsetInCU: 0x1BC, offset: 0x581E0, size: 0x8, addend: 0x0, symName: '-[FIRConfiguration init]', symObjAddr: 0x70, symBinAddr: 0xBB5C, symSize: 0x6C }
+  - { offsetInCU: 0x1F3, offset: 0x58217, size: 0x8, addend: 0x0, symName: '-[FIRConfiguration setLoggerLevel:]', symObjAddr: 0xDC, symBinAddr: 0xBBC8, symSize: 0x8 }
+  - { offsetInCU: 0x262, offset: 0x58286, size: 0x8, addend: 0x0, symName: '-[FIRConfiguration analyticsConfiguration]', symObjAddr: 0xE4, symBinAddr: 0xBBD0, symSize: 0x8 }
+  - { offsetInCU: 0x299, offset: 0x582BD, size: 0x8, addend: 0x0, symName: '-[FIRConfiguration setAnalyticsConfiguration:]', symObjAddr: 0xEC, symBinAddr: 0xBBD8, symSize: 0xC }
+  - { offsetInCU: 0x2DA, offset: 0x582FE, size: 0x8, addend: 0x0, symName: '-[FIRConfiguration .cxx_destruct]', symObjAddr: 0xF8, symBinAddr: 0xBBE4, symSize: 0xC }
+  - { offsetInCU: 0x27, offset: 0x58423, size: 0x8, addend: 0x0, symName: '+[FIRDependency dependencyWithProtocol:]', symObjAddr: 0x0, symBinAddr: 0xBBF0, symSize: 0x4C }
+  - { offsetInCU: 0x94, offset: 0x58490, size: 0x8, addend: 0x0, symName: '+[FIRDependency dependencyWithProtocol:]', symObjAddr: 0x0, symBinAddr: 0xBBF0, symSize: 0x4C }
+  - { offsetInCU: 0xDB, offset: 0x584D7, size: 0x8, addend: 0x0, symName: '+[FIRDependency dependencyWithProtocol:isRequired:]', symObjAddr: 0x4C, symBinAddr: 0xBC3C, symSize: 0x58 }
+  - { offsetInCU: 0x132, offset: 0x5852E, size: 0x8, addend: 0x0, symName: '-[FIRDependency initWithProtocol:isRequired:]', symObjAddr: 0xA4, symBinAddr: 0xBC94, symSize: 0x80 }
+  - { offsetInCU: 0x189, offset: 0x58585, size: 0x8, addend: 0x0, symName: '-[FIRDependency protocol]', symObjAddr: 0x124, symBinAddr: 0xBD14, symSize: 0x8 }
+  - { offsetInCU: 0x1C0, offset: 0x585BC, size: 0x8, addend: 0x0, symName: '-[FIRDependency isRequired]', symObjAddr: 0x12C, symBinAddr: 0xBD1C, symSize: 0x8 }
+  - { offsetInCU: 0x1F7, offset: 0x585F3, size: 0x8, addend: 0x0, symName: '-[FIRDependency .cxx_destruct]', symObjAddr: 0x134, symBinAddr: 0xBD24, symSize: 0xC }
+  - { offsetInCU: 0x27, offset: 0x586AA, size: 0x8, addend: 0x0, symName: '-[FIRFirebaseUserAgent init]', symObjAddr: 0x0, symBinAddr: 0xBD30, symSize: 0x68 }
+  - { offsetInCU: 0xB2, offset: 0x58735, size: 0x8, addend: 0x0, symName: '-[FIRFirebaseUserAgent init]', symObjAddr: 0x0, symBinAddr: 0xBD30, symSize: 0x68 }
+  - { offsetInCU: 0xE9, offset: 0x5876C, size: 0x8, addend: 0x0, symName: '-[FIRFirebaseUserAgent firebaseUserAgent]', symObjAddr: 0x68, symBinAddr: 0xBD98, symSize: 0x1D8 }
+  - { offsetInCU: 0x153, offset: 0x587D6, size: 0x8, addend: 0x0, symName: ___Block_byref_object_copy_, symObjAddr: 0x240, symBinAddr: 0xBF70, symSize: 0x10 }
+  - { offsetInCU: 0x178, offset: 0x587FB, size: 0x8, addend: 0x0, symName: ___Block_byref_object_dispose_, symObjAddr: 0x250, symBinAddr: 0xBF80, symSize: 0x8 }
+  - { offsetInCU: 0x197, offset: 0x5881A, size: 0x8, addend: 0x0, symName: '___41-[FIRFirebaseUserAgent firebaseUserAgent]_block_invoke', symObjAddr: 0x258, symBinAddr: 0xBF88, symSize: 0x60 }
+  - { offsetInCU: 0x1FE, offset: 0x58881, size: 0x8, addend: 0x0, symName: ___copy_helper_block_e8_32r, symObjAddr: 0x2B8, symBinAddr: 0xBFE8, symSize: 0x10 }
+  - { offsetInCU: 0x227, offset: 0x588AA, size: 0x8, addend: 0x0, symName: ___destroy_helper_block_e8_32r, symObjAddr: 0x2C8, symBinAddr: 0xBFF8, symSize: 0xC }
+  - { offsetInCU: 0x246, offset: 0x588C9, size: 0x8, addend: 0x0, symName: '-[FIRFirebaseUserAgent setValue:forComponent:]', symObjAddr: 0x2D4, symBinAddr: 0xC004, symSize: 0xB4 }
+  - { offsetInCU: 0x299, offset: 0x5891C, size: 0x8, addend: 0x0, symName: '-[FIRFirebaseUserAgent reset]', symObjAddr: 0x388, symBinAddr: 0xC0B8, symSize: 0x84 }
+  - { offsetInCU: 0x2CC, offset: 0x5894F, size: 0x8, addend: 0x0, symName: '-[FIRFirebaseUserAgent environmentComponents]', symObjAddr: 0x40C, symBinAddr: 0xC13C, symSize: 0x4C }
+  - { offsetInCU: 0x303, offset: 0x58986, size: 0x8, addend: 0x0, symName: '+[FIRFirebaseUserAgent environmentComponents]', symObjAddr: 0x458, symBinAddr: 0xC188, symSize: 0x214 }
+  - { offsetInCU: 0x386, offset: 0x58A09, size: 0x8, addend: 0x0, symName: '-[FIRFirebaseUserAgent valuesByComponent]', symObjAddr: 0x66C, symBinAddr: 0xC39C, symSize: 0x8 }
+  - { offsetInCU: 0x3BD, offset: 0x58A40, size: 0x8, addend: 0x0, symName: '-[FIRFirebaseUserAgent .cxx_destruct]', symObjAddr: 0x674, symBinAddr: 0xC3A4, symSize: 0x3C }
+  - { offsetInCU: 0x27, offset: 0x58BF0, size: 0x8, addend: 0x0, symName: _FIRHeaderValueFromHeartbeatsPayload, symObjAddr: 0x0, symBinAddr: 0xC3E0, symSize: 0x50 }
+  - { offsetInCU: 0x12D, offset: 0x58CF6, size: 0x8, addend: 0x0, symName: _FIRHeaderValueFromHeartbeatsPayload, symObjAddr: 0x0, symBinAddr: 0xC3E0, symSize: 0x50 }
+  - { offsetInCU: 0x158, offset: 0x58D21, size: 0x8, addend: 0x0, symName: '-[FIRHeartbeatLogger initWithAppID:]', symObjAddr: 0x50, symBinAddr: 0xC430, symSize: 0x70 }
+  - { offsetInCU: 0x19F, offset: 0x58D68, size: 0x8, addend: 0x0, symName: '-[FIRHeartbeatLogger initWithAppID:userAgentProvider:]', symObjAddr: 0xC0, symBinAddr: 0xC4A0, symSize: 0xE0 }
+  - { offsetInCU: 0x1F6, offset: 0x58DBF, size: 0x8, addend: 0x0, symName: '+[FIRHeartbeatLogger currentUserAgentProvider]', symObjAddr: 0x1A0, symBinAddr: 0xC580, symSize: 0xC }
+  - { offsetInCU: 0x229, offset: 0x58DF2, size: 0x8, addend: 0x0, symName: '___46+[FIRHeartbeatLogger currentUserAgentProvider]_block_invoke', symObjAddr: 0x1AC, symBinAddr: 0xC58C, symSize: 0xC }
+  - { offsetInCU: 0x254, offset: 0x58E1D, size: 0x8, addend: 0x0, symName: '-[FIRHeartbeatLogger log]', symObjAddr: 0x1B8, symBinAddr: 0xC598, symSize: 0x44 }
+  - { offsetInCU: 0x2A3, offset: 0x58E6C, size: 0x8, addend: 0x0, symName: '-[FIRHeartbeatLogger flushHeartbeatsIntoPayload]', symObjAddr: 0x1FC, symBinAddr: 0xC5DC, symSize: 0x8 }
+  - { offsetInCU: 0x2E6, offset: 0x58EAF, size: 0x8, addend: 0x0, symName: '-[FIRHeartbeatLogger heartbeatCodeForToday]', symObjAddr: 0x204, symBinAddr: 0xC5E4, symSize: 0x48 }
+  - { offsetInCU: 0x32D, offset: 0x58EF6, size: 0x8, addend: 0x0, symName: '-[FIRHeartbeatLogger heartbeatController]', symObjAddr: 0x24C, symBinAddr: 0xC62C, symSize: 0x8 }
+  - { offsetInCU: 0x364, offset: 0x58F2D, size: 0x8, addend: 0x0, symName: '-[FIRHeartbeatLogger userAgentProvider]', symObjAddr: 0x254, symBinAddr: 0xC634, symSize: 0xC }
+  - { offsetInCU: 0x39B, offset: 0x58F64, size: 0x8, addend: 0x0, symName: '-[FIRHeartbeatLogger .cxx_destruct]', symObjAddr: 0x260, symBinAddr: 0xC640, symSize: 0x30 }
+  - { offsetInCU: 0x27, offset: 0x5909E, size: 0x8, addend: 0x0, symName: _FIRLoggerInitializeASL, symObjAddr: 0x0, symBinAddr: 0xC670, symSize: 0x28 }
+  - { offsetInCU: 0x41, offset: 0x590B8, size: 0x8, addend: 0x0, symName: _kFIRLoggerCore, symObjAddr: 0x5F8, symBinAddr: 0x14378, symSize: 0x0 }
+  - { offsetInCU: 0x6C, offset: 0x590E3, size: 0x8, addend: 0x0, symName: _kFIRLoggerAnalytics, symObjAddr: 0x600, symBinAddr: 0x14380, symSize: 0x0 }
+  - { offsetInCU: 0x82, offset: 0x590F9, size: 0x8, addend: 0x0, symName: _kFIRLoggerCrash, symObjAddr: 0x608, symBinAddr: 0x14388, symSize: 0x0 }
+  - { offsetInCU: 0x98, offset: 0x5910F, size: 0x8, addend: 0x0, symName: _kFIRLoggerRemoteConfig, symObjAddr: 0x610, symBinAddr: 0x14390, symSize: 0x0 }
+  - { offsetInCU: 0xAE, offset: 0x59125, size: 0x8, addend: 0x0, symName: _kFIRDisableDebugModeApplicationArgument, symObjAddr: 0x618, symBinAddr: 0x14398, symSize: 0x0 }
+  - { offsetInCU: 0xC4, offset: 0x5913B, size: 0x8, addend: 0x0, symName: _kFIREnableDebugModeApplicationArgument, symObjAddr: 0x620, symBinAddr: 0x143A0, symSize: 0x0 }
+  - { offsetInCU: 0xDA, offset: 0x59151, size: 0x8, addend: 0x0, symName: _kFIRLoggerForceSDTERRApplicationArgument, symObjAddr: 0x628, symBinAddr: 0x143A8, symSize: 0x0 }
+  - { offsetInCU: 0xF0, offset: 0x59167, size: 0x8, addend: 0x0, symName: _kFIRPersistedDebugModeKey, symObjAddr: 0x630, symBinAddr: 0x143B0, symSize: 0x0 }
+  - { offsetInCU: 0x106, offset: 0x5917D, size: 0x8, addend: 0x0, symName: _sFIRLoggerUserDefaults, symObjAddr: 0x3F70, symBinAddr: 0x18698, symSize: 0x0 }
+  - { offsetInCU: 0x121, offset: 0x59198, size: 0x8, addend: 0x0, symName: _sFIRLoggerOnceToken, symObjAddr: 0x3F68, symBinAddr: 0x18690, symSize: 0x0 }
+  - { offsetInCU: 0x13E, offset: 0x591B5, size: 0x8, addend: 0x0, symName: _sFIRAnalyticsDebugMode, symObjAddr: 0x3F78, symBinAddr: 0x186A0, symSize: 0x0 }
+  - { offsetInCU: 0x1E9, offset: 0x59260, size: 0x8, addend: 0x0, symName: _FIRLoggerInitializeASL, symObjAddr: 0x0, symBinAddr: 0xC670, symSize: 0x28 }
+  - { offsetInCU: 0x22C, offset: 0x592A3, size: 0x8, addend: 0x0, symName: ___FIRLoggerInitializeASL_block_invoke, symObjAddr: 0x28, symBinAddr: 0xC698, symSize: 0x140 }
+  - { offsetInCU: 0x312, offset: 0x59389, size: 0x8, addend: 0x0, symName: _FIRSetAnalyticsDebugMode, symObjAddr: 0x168, symBinAddr: 0xC7D8, symSize: 0xC }
+  - { offsetInCU: 0x335, offset: 0x593AC, size: 0x8, addend: 0x0, symName: _FIRGetLoggerLevel, symObjAddr: 0x174, symBinAddr: 0xC7E4, symSize: 0x4 }
+  - { offsetInCU: 0x353, offset: 0x593CA, size: 0x8, addend: 0x0, symName: _FIRGetLoggerLevel, symObjAddr: 0x174, symBinAddr: 0xC7E4, symSize: 0x4 }
+  - { offsetInCU: 0x373, offset: 0x593EA, size: 0x8, addend: 0x0, symName: _FIRSetLoggerLevel, symObjAddr: 0x178, symBinAddr: 0xC7E8, symSize: 0x48 }
+  - { offsetInCU: 0x3E7, offset: 0x5945E, size: 0x8, addend: 0x0, symName: _FIRIsLoggableLevel, symObjAddr: 0x1C0, symBinAddr: 0xC830, symSize: 0x6C }
+  - { offsetInCU: 0x473, offset: 0x594EA, size: 0x8, addend: 0x0, symName: _FIRLogBasic, symObjAddr: 0x22C, symBinAddr: 0xC89C, symSize: 0xD8 }
+  - { offsetInCU: 0x563, offset: 0x595DA, size: 0x8, addend: 0x0, symName: _FIRLogError, symObjAddr: 0x304, symBinAddr: 0xC974, symSize: 0x38 }
+  - { offsetInCU: 0x5EF, offset: 0x59666, size: 0x8, addend: 0x0, symName: _FIRLogWarning, symObjAddr: 0x33C, symBinAddr: 0xC9AC, symSize: 0x38 }
+  - { offsetInCU: 0x67B, offset: 0x596F2, size: 0x8, addend: 0x0, symName: _FIRLogNotice, symObjAddr: 0x374, symBinAddr: 0xC9E4, symSize: 0x38 }
+  - { offsetInCU: 0x707, offset: 0x5977E, size: 0x8, addend: 0x0, symName: _FIRLogInfo, symObjAddr: 0x3AC, symBinAddr: 0xCA1C, symSize: 0x38 }
+  - { offsetInCU: 0x793, offset: 0x5980A, size: 0x8, addend: 0x0, symName: _FIRLogDebug, symObjAddr: 0x3E4, symBinAddr: 0xCA54, symSize: 0x38 }
+  - { offsetInCU: 0x81F, offset: 0x59896, size: 0x8, addend: 0x0, symName: '+[FIRLoggerWrapper logWithLevel:withService:withCode:withMessage:withArgs:]', symObjAddr: 0x41C, symBinAddr: 0xCA8C, symSize: 0x18 }
+  - { offsetInCU: 0x8D5, offset: 0x5994C, size: 0x8, addend: 0x0, symName: '+[FIRLoggerWrapper logWithLevel:service:code:message:]', symObjAddr: 0x434, symBinAddr: 0xCAA4, symSize: 0x18 }
+  - { offsetInCU: 0x27, offset: 0x59ABA, size: 0x8, addend: 0x0, symName: '+[FIROptions defaultOptions]', symObjAddr: 0x0, symBinAddr: 0xCABC, symSize: 0x74 }
+  - { offsetInCU: 0x41, offset: 0x59AD4, size: 0x8, addend: 0x0, symName: _kFIRAPIKey, symObjAddr: 0x1EF0, symBinAddr: 0x143D8, symSize: 0x0 }
+  - { offsetInCU: 0x61, offset: 0x59AF4, size: 0x8, addend: 0x0, symName: _kFIRTrackingID, symObjAddr: 0x1EF8, symBinAddr: 0x143E0, symSize: 0x0 }
+  - { offsetInCU: 0x77, offset: 0x59B0A, size: 0x8, addend: 0x0, symName: _kFIRGoogleAppID, symObjAddr: 0x1F00, symBinAddr: 0x143E8, symSize: 0x0 }
+  - { offsetInCU: 0x8D, offset: 0x59B20, size: 0x8, addend: 0x0, symName: _kFIRClientID, symObjAddr: 0x1F08, symBinAddr: 0x143F0, symSize: 0x0 }
+  - { offsetInCU: 0xA3, offset: 0x59B36, size: 0x8, addend: 0x0, symName: _kFIRGCMSenderID, symObjAddr: 0x1F10, symBinAddr: 0x143F8, symSize: 0x0 }
+  - { offsetInCU: 0xB9, offset: 0x59B4C, size: 0x8, addend: 0x0, symName: _kFIRAndroidClientID, symObjAddr: 0x1F18, symBinAddr: 0x14400, symSize: 0x0 }
+  - { offsetInCU: 0xCF, offset: 0x59B62, size: 0x8, addend: 0x0, symName: _kFIRDatabaseURL, symObjAddr: 0x1F20, symBinAddr: 0x14408, symSize: 0x0 }
+  - { offsetInCU: 0xE5, offset: 0x59B78, size: 0x8, addend: 0x0, symName: _kFIRStorageBucket, symObjAddr: 0x1F28, symBinAddr: 0x14410, symSize: 0x0 }
+  - { offsetInCU: 0xFB, offset: 0x59B8E, size: 0x8, addend: 0x0, symName: _kFIRBundleID, symObjAddr: 0x1F30, symBinAddr: 0x14418, symSize: 0x0 }
+  - { offsetInCU: 0x111, offset: 0x59BA4, size: 0x8, addend: 0x0, symName: _kFIRProjectID, symObjAddr: 0x1F38, symBinAddr: 0x14420, symSize: 0x0 }
+  - { offsetInCU: 0x127, offset: 0x59BBA, size: 0x8, addend: 0x0, symName: _kFIRIsMeasurementEnabled, symObjAddr: 0x1F40, symBinAddr: 0x14428, symSize: 0x0 }
+  - { offsetInCU: 0x13D, offset: 0x59BD0, size: 0x8, addend: 0x0, symName: _kFIRIsAnalyticsCollectionEnabled, symObjAddr: 0x1F48, symBinAddr: 0x14430, symSize: 0x0 }
+  - { offsetInCU: 0x153, offset: 0x59BE6, size: 0x8, addend: 0x0, symName: _kFIRIsAnalyticsCollectionDeactivated, symObjAddr: 0x1F50, symBinAddr: 0x14438, symSize: 0x0 }
+  - { offsetInCU: 0x169, offset: 0x59BFC, size: 0x8, addend: 0x0, symName: _kServiceInfoFileName, symObjAddr: 0x1F58, symBinAddr: 0x14440, symSize: 0x0 }
+  - { offsetInCU: 0x17F, offset: 0x59C12, size: 0x8, addend: 0x0, symName: _kServiceInfoFileType, symObjAddr: 0x1F60, symBinAddr: 0x14448, symSize: 0x0 }
+  - { offsetInCU: 0x195, offset: 0x59C28, size: 0x8, addend: 0x0, symName: _kFIRExceptionBadModification, symObjAddr: 0x1F68, symBinAddr: 0x14450, symSize: 0x0 }
+  - { offsetInCU: 0x1AB, offset: 0x59C3E, size: 0x8, addend: 0x0, symName: _sDefaultOptions, symObjAddr: 0x9CA0, symBinAddr: 0x186A8, symSize: 0x0 }
+  - { offsetInCU: 0x34F, offset: 0x59DE2, size: 0x8, addend: 0x0, symName: _sDefaultOptionsDictionary, symObjAddr: 0x9CA8, symBinAddr: 0x186B0, symSize: 0x0 }
+  - { offsetInCU: 0x359, offset: 0x59DEC, size: 0x8, addend: 0x0, symName: '-[FIROptions libraryVersionID]', symObjAddr: 0xB84, symBinAddr: 0xD640, symSize: 0x40 }
+  - { offsetInCU: 0x385, offset: 0x59E18, size: 0x8, addend: 0x0, symName: _libraryVersionID.onceToken, symObjAddr: 0x9CC0, symBinAddr: 0x186C8, symSize: 0x0 }
+  - { offsetInCU: 0x3D3, offset: 0x59E66, size: 0x8, addend: 0x0, symName: _kFIRLibraryVersionID, symObjAddr: 0x9CC8, symBinAddr: 0x186D0, symSize: 0x0 }
+  - { offsetInCU: 0x3E9, offset: 0x59E7C, size: 0x8, addend: 0x0, symName: _sDefaultOptionsOnceToken, symObjAddr: 0x9CB0, symBinAddr: 0x186B8, symSize: 0x0 }
+  - { offsetInCU: 0x3FF, offset: 0x59E92, size: 0x8, addend: 0x0, symName: _sDefaultOptionsDictionaryOnceToken, symObjAddr: 0x9CB8, symBinAddr: 0x186C0, symSize: 0x0 }
+  - { offsetInCU: 0x461, offset: 0x59EF4, size: 0x8, addend: 0x0, symName: '+[FIROptions defaultOptions]', symObjAddr: 0x0, symBinAddr: 0xCABC, symSize: 0x74 }
+  - { offsetInCU: 0x4D9, offset: 0x59F6C, size: 0x8, addend: 0x0, symName: '___28+[FIROptions defaultOptions]_block_invoke', symObjAddr: 0x74, symBinAddr: 0xCB30, symSize: 0x5C }
+  - { offsetInCU: 0x537, offset: 0x59FCA, size: 0x8, addend: 0x0, symName: '+[FIROptions defaultOptionsDictionary]', symObjAddr: 0xD0, symBinAddr: 0xCB8C, symSize: 0x40 }
+  - { offsetInCU: 0x585, offset: 0x5A018, size: 0x8, addend: 0x0, symName: '___38+[FIROptions defaultOptionsDictionary]_block_invoke', symObjAddr: 0x110, symBinAddr: 0xCBCC, symSize: 0xB4 }
+  - { offsetInCU: 0x5FD, offset: 0x5A090, size: 0x8, addend: 0x0, symName: '+[FIROptions plistFilePathWithName:]', symObjAddr: 0x1C4, symBinAddr: 0xCC80, symSize: 0xB0 }
+  - { offsetInCU: 0x66E, offset: 0x5A101, size: 0x8, addend: 0x0, symName: '+[FIROptions resetDefaultOptions]', symObjAddr: 0x274, symBinAddr: 0xCD30, symSize: 0x40 }
+  - { offsetInCU: 0x69D, offset: 0x5A130, size: 0x8, addend: 0x0, symName: '-[FIROptions initInternalWithOptionsDictionary:]', symObjAddr: 0x2B4, symBinAddr: 0xCD70, symSize: 0x80 }
+  - { offsetInCU: 0x6E4, offset: 0x5A177, size: 0x8, addend: 0x0, symName: '-[FIROptions copyWithZone:]', symObjAddr: 0x334, symBinAddr: 0xCDF0, symSize: 0xE4 }
+  - { offsetInCU: 0x73B, offset: 0x5A1CE, size: 0x8, addend: 0x0, symName: '-[FIROptions init]', symObjAddr: 0x418, symBinAddr: 0xCED4, symSize: 0x30 }
+  - { offsetInCU: 0x776, offset: 0x5A209, size: 0x8, addend: 0x0, symName: '-[FIROptions initWithContentsOfFile:]', symObjAddr: 0x448, symBinAddr: 0xCF04, symSize: 0x10C }
+  - { offsetInCU: 0x7CB, offset: 0x5A25E, size: 0x8, addend: 0x0, symName: '-[FIROptions initWithGoogleAppID:GCMSenderID:]', symObjAddr: 0x554, symBinAddr: 0xD010, symSize: 0x124 }
+  - { offsetInCU: 0x841, offset: 0x5A2D4, size: 0x8, addend: 0x0, symName: '-[FIROptions APIKey]', symObjAddr: 0x678, symBinAddr: 0xD134, symSize: 0x4C }
+  - { offsetInCU: 0x878, offset: 0x5A30B, size: 0x8, addend: 0x0, symName: '-[FIROptions checkEditingLocked]', symObjAddr: 0x6C4, symBinAddr: 0xD180, symSize: 0x3C }
+  - { offsetInCU: 0x8AB, offset: 0x5A33E, size: 0x8, addend: 0x0, symName: '-[FIROptions setAPIKey:]', symObjAddr: 0x700, symBinAddr: 0xD1BC, symSize: 0x64 }
+  - { offsetInCU: 0x8EE, offset: 0x5A381, size: 0x8, addend: 0x0, symName: '-[FIROptions clientID]', symObjAddr: 0x764, symBinAddr: 0xD220, symSize: 0x4C }
+  - { offsetInCU: 0x925, offset: 0x5A3B8, size: 0x8, addend: 0x0, symName: '-[FIROptions setClientID:]', symObjAddr: 0x7B0, symBinAddr: 0xD26C, symSize: 0x64 }
+  - { offsetInCU: 0x968, offset: 0x5A3FB, size: 0x8, addend: 0x0, symName: '-[FIROptions trackingID]', symObjAddr: 0x814, symBinAddr: 0xD2D0, symSize: 0x4C }
+  - { offsetInCU: 0x99F, offset: 0x5A432, size: 0x8, addend: 0x0, symName: '-[FIROptions setTrackingID:]', symObjAddr: 0x860, symBinAddr: 0xD31C, symSize: 0x64 }
+  - { offsetInCU: 0x9E2, offset: 0x5A475, size: 0x8, addend: 0x0, symName: '-[FIROptions GCMSenderID]', symObjAddr: 0x8C4, symBinAddr: 0xD380, symSize: 0x4C }
+  - { offsetInCU: 0xA19, offset: 0x5A4AC, size: 0x8, addend: 0x0, symName: '-[FIROptions setGCMSenderID:]', symObjAddr: 0x910, symBinAddr: 0xD3CC, symSize: 0x64 }
+  - { offsetInCU: 0xA5C, offset: 0x5A4EF, size: 0x8, addend: 0x0, symName: '-[FIROptions projectID]', symObjAddr: 0x974, symBinAddr: 0xD430, symSize: 0x4C }
+  - { offsetInCU: 0xA93, offset: 0x5A526, size: 0x8, addend: 0x0, symName: '-[FIROptions setProjectID:]', symObjAddr: 0x9C0, symBinAddr: 0xD47C, symSize: 0x64 }
+  - { offsetInCU: 0xAD8, offset: 0x5A56B, size: 0x8, addend: 0x0, symName: '-[FIROptions androidClientID]', symObjAddr: 0xA24, symBinAddr: 0xD4E0, symSize: 0x4C }
+  - { offsetInCU: 0xB10, offset: 0x5A5A3, size: 0x8, addend: 0x0, symName: '-[FIROptions setAndroidClientID:]', symObjAddr: 0xA70, symBinAddr: 0xD52C, symSize: 0x64 }
+  - { offsetInCU: 0xB55, offset: 0x5A5E8, size: 0x8, addend: 0x0, symName: '-[FIROptions googleAppID]', symObjAddr: 0xAD4, symBinAddr: 0xD590, symSize: 0x4C }
+  - { offsetInCU: 0xB8D, offset: 0x5A620, size: 0x8, addend: 0x0, symName: '-[FIROptions setGoogleAppID:]', symObjAddr: 0xB20, symBinAddr: 0xD5DC, symSize: 0x64 }
+  - { offsetInCU: 0xBD2, offset: 0x5A665, size: 0x8, addend: 0x0, symName: '___30-[FIROptions libraryVersionID]_block_invoke', symObjAddr: 0xBC4, symBinAddr: 0xD680, symSize: 0x160 }
+  - { offsetInCU: 0xC79, offset: 0x5A70C, size: 0x8, addend: 0x0, symName: '-[FIROptions setLibraryVersionID:]', symObjAddr: 0xD24, symBinAddr: 0xD7E0, symSize: 0x40 }
+  - { offsetInCU: 0xCBE, offset: 0x5A751, size: 0x8, addend: 0x0, symName: '-[FIROptions databaseURL]', symObjAddr: 0xD64, symBinAddr: 0xD820, symSize: 0x4C }
+  - { offsetInCU: 0xCF6, offset: 0x5A789, size: 0x8, addend: 0x0, symName: '-[FIROptions setDatabaseURL:]', symObjAddr: 0xDB0, symBinAddr: 0xD86C, symSize: 0x64 }
+  - { offsetInCU: 0xD3B, offset: 0x5A7CE, size: 0x8, addend: 0x0, symName: '-[FIROptions storageBucket]', symObjAddr: 0xE14, symBinAddr: 0xD8D0, symSize: 0x4C }
+  - { offsetInCU: 0xD73, offset: 0x5A806, size: 0x8, addend: 0x0, symName: '-[FIROptions setStorageBucket:]', symObjAddr: 0xE60, symBinAddr: 0xD91C, symSize: 0x64 }
+  - { offsetInCU: 0xDB8, offset: 0x5A84B, size: 0x8, addend: 0x0, symName: '-[FIROptions setDeepLinkURLScheme:]', symObjAddr: 0xEC4, symBinAddr: 0xD980, symSize: 0x54 }
+  - { offsetInCU: 0xDFD, offset: 0x5A890, size: 0x8, addend: 0x0, symName: '-[FIROptions bundleID]', symObjAddr: 0xF18, symBinAddr: 0xD9D4, symSize: 0x4C }
+  - { offsetInCU: 0xE35, offset: 0x5A8C8, size: 0x8, addend: 0x0, symName: '-[FIROptions setBundleID:]', symObjAddr: 0xF64, symBinAddr: 0xDA20, symSize: 0x64 }
+  - { offsetInCU: 0xE7A, offset: 0x5A90D, size: 0x8, addend: 0x0, symName: '-[FIROptions setAppGroupID:]', symObjAddr: 0xFC8, symBinAddr: 0xDA84, symSize: 0x54 }
+  - { offsetInCU: 0xEBF, offset: 0x5A952, size: 0x8, addend: 0x0, symName: '-[FIROptions isEqual:]', symObjAddr: 0x101C, symBinAddr: 0xDAD8, symSize: 0x6C }
+  - { offsetInCU: 0xF08, offset: 0x5A99B, size: 0x8, addend: 0x0, symName: '-[FIROptions isEqualToOptions:]', symObjAddr: 0x1088, symBinAddr: 0xDB44, symSize: 0x230 }
+  - { offsetInCU: 0xF51, offset: 0x5A9E4, size: 0x8, addend: 0x0, symName: '-[FIROptions hash]', symObjAddr: 0x12B8, symBinAddr: 0xDD74, symSize: 0x90 }
+  - { offsetInCU: 0xF89, offset: 0x5AA1C, size: 0x8, addend: 0x0, symName: '-[FIROptions analyticsOptionsDictionaryWithInfoDictionary:]', symObjAddr: 0x1348, symBinAddr: 0xDE04, symSize: 0x1F0 }
+  - { offsetInCU: 0x103B, offset: 0x5AACE, size: 0x8, addend: 0x0, symName: '-[FIROptions analyticsOptionsDictionary]', symObjAddr: 0x1538, symBinAddr: 0xDFF4, symSize: 0x78 }
+  - { offsetInCU: 0x1073, offset: 0x5AB06, size: 0x8, addend: 0x0, symName: '-[FIROptions isMeasurementEnabled]', symObjAddr: 0x15B0, symBinAddr: 0xE06C, symSize: 0xC4 }
+  - { offsetInCU: 0x10BC, offset: 0x5AB4F, size: 0x8, addend: 0x0, symName: '-[FIROptions isAnalyticsCollectionExplicitlySet]', symObjAddr: 0x1674, symBinAddr: 0xE130, symSize: 0x100 }
+  - { offsetInCU: 0x1116, offset: 0x5ABA9, size: 0x8, addend: 0x0, symName: '-[FIROptions isAnalyticsCollectionEnabled]', symObjAddr: 0x1774, symBinAddr: 0xE230, symSize: 0x90 }
+  - { offsetInCU: 0x115F, offset: 0x5ABF2, size: 0x8, addend: 0x0, symName: '-[FIROptions isAnalyticsCollectionDeactivated]', symObjAddr: 0x1804, symBinAddr: 0xE2C0, symSize: 0x6C }
+  - { offsetInCU: 0x11A8, offset: 0x5AC3B, size: 0x8, addend: 0x0, symName: '-[FIROptions deepLinkURLScheme]', symObjAddr: 0x1870, symBinAddr: 0xE32C, symSize: 0x8 }
+  - { offsetInCU: 0x11DF, offset: 0x5AC72, size: 0x8, addend: 0x0, symName: '-[FIROptions appGroupID]', symObjAddr: 0x1878, symBinAddr: 0xE334, symSize: 0x8 }
+  - { offsetInCU: 0x1216, offset: 0x5ACA9, size: 0x8, addend: 0x0, symName: '-[FIROptions optionsDictionary]', symObjAddr: 0x1880, symBinAddr: 0xE33C, symSize: 0x8 }
+  - { offsetInCU: 0x124D, offset: 0x5ACE0, size: 0x8, addend: 0x0, symName: '-[FIROptions setOptionsDictionary:]', symObjAddr: 0x1888, symBinAddr: 0xE344, symSize: 0xC }
+  - { offsetInCU: 0x128E, offset: 0x5AD21, size: 0x8, addend: 0x0, symName: '-[FIROptions usingOptionsFromDefaultPlist]', symObjAddr: 0x1894, symBinAddr: 0xE350, symSize: 0x8 }
+  - { offsetInCU: 0x12C5, offset: 0x5AD58, size: 0x8, addend: 0x0, symName: '-[FIROptions setUsingOptionsFromDefaultPlist:]', symObjAddr: 0x189C, symBinAddr: 0xE358, symSize: 0x8 }
+  - { offsetInCU: 0x1300, offset: 0x5AD93, size: 0x8, addend: 0x0, symName: '-[FIROptions isEditingLocked]', symObjAddr: 0x18A4, symBinAddr: 0xE360, symSize: 0x8 }
+  - { offsetInCU: 0x1337, offset: 0x5ADCA, size: 0x8, addend: 0x0, symName: '-[FIROptions setEditingLocked:]', symObjAddr: 0x18AC, symBinAddr: 0xE368, symSize: 0x8 }
+  - { offsetInCU: 0x1372, offset: 0x5AE05, size: 0x8, addend: 0x0, symName: '-[FIROptions .cxx_destruct]', symObjAddr: 0x18B4, symBinAddr: 0xE370, symSize: 0x48 }
+  - { offsetInCU: 0x27, offset: 0x5AFF4, size: 0x8, addend: 0x0, symName: _FIRFirebaseVersion, symObjAddr: 0x0, symBinAddr: 0xE3B8, symSize: 0xC }
+  - { offsetInCU: 0x3C, offset: 0x5B009, size: 0x8, addend: 0x0, symName: _FIRFirebaseVersion, symObjAddr: 0x0, symBinAddr: 0xE3B8, symSize: 0xC }
+...

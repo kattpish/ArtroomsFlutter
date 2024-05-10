@@ -1,0 +1,383 @@
+---
+triple:          'arm64-apple-darwin'
+binary-path:     '/Users/alain-niyonema/Library/Developer/Xcode/DerivedData/Runner-aoulumlbdocatzekozbokcpbwpjn/Build/Intermediates.noindex/ArchiveIntermediates/Runner/IntermediateBuildFilesPath/UninstalledProducts/iphoneos/FirebaseInstallations.framework/FirebaseInstallations'
+relocations:
+  - { offsetInCU: 0x34, offset: 0x563A5, size: 0x8, addend: 0x0, symName: _FirebaseInstallationsVersionString, symObjAddr: 0x0, symBinAddr: 0x10F30, symSize: 0x0 }
+  - { offsetInCU: 0x69, offset: 0x563DA, size: 0x8, addend: 0x0, symName: _FirebaseInstallationsVersionNumber, symObjAddr: 0x38, symBinAddr: 0x10F68, symSize: 0x0 }
+  - { offsetInCU: 0x27, offset: 0x56417, size: 0x8, addend: 0x0, symName: _FIRRealCurrentDateProvider, symObjAddr: 0x0, symBinAddr: 0x4000, symSize: 0xC }
+  - { offsetInCU: 0x3C, offset: 0x5642C, size: 0x8, addend: 0x0, symName: _FIRRealCurrentDateProvider, symObjAddr: 0x0, symBinAddr: 0x4000, symSize: 0xC }
+  - { offsetInCU: 0x56, offset: 0x56446, size: 0x8, addend: 0x0, symName: ___FIRRealCurrentDateProvider_block_invoke, symObjAddr: 0xC, symBinAddr: 0x400C, symSize: 0xC }
+  - { offsetInCU: 0x27, offset: 0x5658F, size: 0x8, addend: 0x0, symName: '+[FIRInstallations load]', symObjAddr: 0x0, symBinAddr: 0x4018, symSize: 0x18 }
+  - { offsetInCU: 0x15F, offset: 0x566C7, size: 0x8, addend: 0x0, symName: '+[FIRInstallations load]', symObjAddr: 0x0, symBinAddr: 0x4018, symSize: 0x18 }
+  - { offsetInCU: 0x192, offset: 0x566FA, size: 0x8, addend: 0x0, symName: '+[FIRInstallations componentsToRegister]', symObjAddr: 0x18, symBinAddr: 0x4030, symSize: 0xB4 }
+  - { offsetInCU: 0x1E5, offset: 0x5674D, size: 0x8, addend: 0x0, symName: '___40+[FIRInstallations componentsToRegister]_block_invoke', symObjAddr: 0xCC, symBinAddr: 0x40E4, symSize: 0x80 }
+  - { offsetInCU: 0x24F, offset: 0x567B7, size: 0x8, addend: 0x0, symName: '-[FIRInstallations initWithApp:]', symObjAddr: 0x14C, symBinAddr: 0x4164, symSize: 0xBC }
+  - { offsetInCU: 0x2A6, offset: 0x5680E, size: 0x8, addend: 0x0, symName: '-[FIRInstallations initWithAppOptions:appName:installationsIDController:prefetchAuthToken:]', symObjAddr: 0x208, symBinAddr: 0x4220, symSize: 0x114 }
+  - { offsetInCU: 0x31D, offset: 0x56885, size: 0x8, addend: 0x0, symName: '___91-[FIRInstallations initWithAppOptions:appName:installationsIDController:prefetchAuthToken:]_block_invoke', symObjAddr: 0x31C, symBinAddr: 0x4334, symSize: 0x4 }
+  - { offsetInCU: 0x35C, offset: 0x568C4, size: 0x8, addend: 0x0, symName: '+[FIRInstallations validateAppOptions:appName:]', symObjAddr: 0x320, symBinAddr: 0x4338, symSize: 0x1F0 }
+  - { offsetInCU: 0x3BF, offset: 0x56927, size: 0x8, addend: 0x0, symName: '+[FIRInstallations validateAPIKey:]', symObjAddr: 0x510, symBinAddr: 0x4528, symSize: 0x208 }
+  - { offsetInCU: 0x42E, offset: 0x56996, size: 0x8, addend: 0x0, symName: '+[FIRInstallations installations]', symObjAddr: 0x718, symBinAddr: 0x4730, symSize: 0x7C }
+  - { offsetInCU: 0x475, offset: 0x569DD, size: 0x8, addend: 0x0, symName: '+[FIRInstallations installationsWithApp:]', symObjAddr: 0x794, symBinAddr: 0x47AC, symSize: 0x6C }
+  - { offsetInCU: 0x4C8, offset: 0x56A30, size: 0x8, addend: 0x0, symName: '-[FIRInstallations installationIDWithCompletion:]', symObjAddr: 0x800, symBinAddr: 0x4818, symSize: 0x170 }
+  - { offsetInCU: 0x541, offset: 0x56AA9, size: 0x8, addend: 0x0, symName: '___49-[FIRInstallations installationIDWithCompletion:]_block_invoke', symObjAddr: 0x970, symBinAddr: 0x4988, symSize: 0x50 }
+  - { offsetInCU: 0x5B1, offset: 0x56B19, size: 0x8, addend: 0x0, symName: ___copy_helper_block_e8_32b, symObjAddr: 0x9C0, symBinAddr: 0x49D8, symSize: 0x10 }
+  - { offsetInCU: 0x5DA, offset: 0x56B42, size: 0x8, addend: 0x0, symName: ___destroy_helper_block_e8_32s, symObjAddr: 0x9D0, symBinAddr: 0x49E8, symSize: 0x8 }
+  - { offsetInCU: 0x5F9, offset: 0x56B61, size: 0x8, addend: 0x0, symName: '___49-[FIRInstallations installationIDWithCompletion:]_block_invoke.47', symObjAddr: 0x9D8, symBinAddr: 0x49F0, symSize: 0x50 }
+  - { offsetInCU: 0x665, offset: 0x56BCD, size: 0x8, addend: 0x0, symName: '-[FIRInstallations authTokenWithCompletion:]', symObjAddr: 0xA28, symBinAddr: 0x4A40, symSize: 0xC }
+  - { offsetInCU: 0x6A6, offset: 0x56C0E, size: 0x8, addend: 0x0, symName: '-[FIRInstallations authTokenForcingRefresh:completion:]', symObjAddr: 0xA34, symBinAddr: 0x4A4C, symSize: 0x1BC }
+  - { offsetInCU: 0x73B, offset: 0x56CA3, size: 0x8, addend: 0x0, symName: '___55-[FIRInstallations authTokenForcingRefresh:completion:]_block_invoke', symObjAddr: 0xBF0, symBinAddr: 0x4C08, symSize: 0xD4 }
+  - { offsetInCU: 0x795, offset: 0x56CFD, size: 0x8, addend: 0x0, symName: '___55-[FIRInstallations authTokenForcingRefresh:completion:]_block_invoke_2', symObjAddr: 0xCC4, symBinAddr: 0x4CDC, symSize: 0x24 }
+  - { offsetInCU: 0x7FF, offset: 0x56D67, size: 0x8, addend: 0x0, symName: '___55-[FIRInstallations authTokenForcingRefresh:completion:]_block_invoke.54', symObjAddr: 0xCE8, symBinAddr: 0x4D00, symSize: 0x50 }
+  - { offsetInCU: 0x86B, offset: 0x56DD3, size: 0x8, addend: 0x0, symName: '-[FIRInstallations deleteWithCompletion:]', symObjAddr: 0xD38, symBinAddr: 0x4D50, symSize: 0x170 }
+  - { offsetInCU: 0x8E4, offset: 0x56E4C, size: 0x8, addend: 0x0, symName: '___41-[FIRInstallations deleteWithCompletion:]_block_invoke', symObjAddr: 0xEA8, symBinAddr: 0x4EC0, symSize: 0x24 }
+  - { offsetInCU: 0x942, offset: 0x56EAA, size: 0x8, addend: 0x0, symName: '___41-[FIRInstallations deleteWithCompletion:]_block_invoke.56', symObjAddr: 0xECC, symBinAddr: 0x4EE4, symSize: 0x4C }
+  - { offsetInCU: 0x9A8, offset: 0x56F10, size: 0x8, addend: 0x0, symName: '+[FIRInstallations assertCompatibleIIDVersion]', symObjAddr: 0xF18, symBinAddr: 0x4F30, symSize: 0x3C }
+  - { offsetInCU: 0x9DB, offset: 0x56F43, size: 0x8, addend: 0x0, symName: '+[FIRInstallations isIIDVersionCompatible]', symObjAddr: 0xF54, symBinAddr: 0x4F6C, symSize: 0x50 }
+  - { offsetInCU: 0xA8B, offset: 0x56FF3, size: 0x8, addend: 0x0, symName: '-[FIRInstallations appOptions]', symObjAddr: 0xFA4, symBinAddr: 0x4FBC, symSize: 0x8 }
+  - { offsetInCU: 0xAC2, offset: 0x5702A, size: 0x8, addend: 0x0, symName: '-[FIRInstallations appName]', symObjAddr: 0xFAC, symBinAddr: 0x4FC4, symSize: 0x8 }
+  - { offsetInCU: 0xAF9, offset: 0x57061, size: 0x8, addend: 0x0, symName: '-[FIRInstallations installationsIDController]', symObjAddr: 0xFB4, symBinAddr: 0x4FCC, symSize: 0x8 }
+  - { offsetInCU: 0xB30, offset: 0x57098, size: 0x8, addend: 0x0, symName: '-[FIRInstallations .cxx_destruct]', symObjAddr: 0xFBC, symBinAddr: 0x4FD4, symSize: 0x3C }
+  - { offsetInCU: 0x27, offset: 0x57808, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsURLSessionResponse initWithResponse:data:]', symObjAddr: 0x0, symBinAddr: 0x5010, symSize: 0xC4 }
+  - { offsetInCU: 0x41, offset: 0x57822, size: 0x8, addend: 0x0, symName: _kFIRInstallationsAPIBaseURL, symObjAddr: 0x2988, symBinAddr: 0x18430, symSize: 0x0 }
+  - { offsetInCU: 0x61, offset: 0x57842, size: 0x8, addend: 0x0, symName: _kFIRInstallationsAPIKey, symObjAddr: 0x2990, symBinAddr: 0x18438, symSize: 0x0 }
+  - { offsetInCU: 0x77, offset: 0x57858, size: 0x8, addend: 0x0, symName: _kFIRInstallationsBundleId, symObjAddr: 0x2998, symBinAddr: 0x18440, symSize: 0x0 }
+  - { offsetInCU: 0x8D, offset: 0x5786E, size: 0x8, addend: 0x0, symName: _kFIRInstallationsIIDMigrationAuthHeader, symObjAddr: 0x29A0, symBinAddr: 0x18448, symSize: 0x0 }
+  - { offsetInCU: 0xA3, offset: 0x57884, size: 0x8, addend: 0x0, symName: _kFIRInstallationsHeartbeatKey, symObjAddr: 0x29A8, symBinAddr: 0x18450, symSize: 0x0 }
+  - { offsetInCU: 0x1F4, offset: 0x579D5, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsURLSessionResponse initWithResponse:data:]', symObjAddr: 0x0, symBinAddr: 0x5010, symSize: 0xC4 }
+  - { offsetInCU: 0x24B, offset: 0x57A2C, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsURLSessionResponse HTTPResponse]', symObjAddr: 0xC4, symBinAddr: 0x50D4, symSize: 0x8 }
+  - { offsetInCU: 0x282, offset: 0x57A63, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsURLSessionResponse setHTTPResponse:]', symObjAddr: 0xCC, symBinAddr: 0x50DC, symSize: 0xC }
+  - { offsetInCU: 0x2C3, offset: 0x57AA4, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsURLSessionResponse data]', symObjAddr: 0xD8, symBinAddr: 0x50E8, symSize: 0x8 }
+  - { offsetInCU: 0x2FA, offset: 0x57ADB, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsURLSessionResponse setData:]', symObjAddr: 0xE0, symBinAddr: 0x50F0, symSize: 0xC }
+  - { offsetInCU: 0x33B, offset: 0x57B1C, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsURLSessionResponse .cxx_destruct]', symObjAddr: 0xEC, symBinAddr: 0x50FC, symSize: 0x30 }
+  - { offsetInCU: 0x36E, offset: 0x57B4F, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsAPIService initWithAPIKey:projectID:heartbeatLogger:]', symObjAddr: 0x11C, symBinAddr: 0x512C, symSize: 0xDC }
+  - { offsetInCU: 0x3E5, offset: 0x57BC6, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsAPIService initWithURLSession:APIKey:projectID:heartbeatLogger:]', symObjAddr: 0x1F8, symBinAddr: 0x5208, symSize: 0x10C }
+  - { offsetInCU: 0x45C, offset: 0x57C3D, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsAPIService registerInstallation:]', symObjAddr: 0x304, symBinAddr: 0x5314, symSize: 0x1AC }
+  - { offsetInCU: 0x4E7, offset: 0x57CC8, size: 0x8, addend: 0x0, symName: '___51-[FIRInstallationsAPIService registerInstallation:]_block_invoke', symObjAddr: 0x4B0, symBinAddr: 0x54C0, symSize: 0xC }
+  - { offsetInCU: 0x53A, offset: 0x57D1B, size: 0x8, addend: 0x0, symName: ___copy_helper_block_e8_32s, symObjAddr: 0x4BC, symBinAddr: 0x54CC, symSize: 0x8 }
+  - { offsetInCU: 0x561, offset: 0x57D42, size: 0x8, addend: 0x0, symName: '___51-[FIRInstallationsAPIService registerInstallation:]_block_invoke.30', symObjAddr: 0x4CC, symBinAddr: 0x54D4, symSize: 0xC }
+  - { offsetInCU: 0x5B4, offset: 0x57D95, size: 0x8, addend: 0x0, symName: '___51-[FIRInstallationsAPIService registerInstallation:]_block_invoke.32', symObjAddr: 0x4D8, symBinAddr: 0x54E0, symSize: 0x10 }
+  - { offsetInCU: 0x617, offset: 0x57DF8, size: 0x8, addend: 0x0, symName: ___copy_helper_block_e8_32s40s, symObjAddr: 0x4E8, symBinAddr: 0x54F0, symSize: 0x28 }
+  - { offsetInCU: 0x640, offset: 0x57E21, size: 0x8, addend: 0x0, symName: ___destroy_helper_block_e8_32s40s, symObjAddr: 0x510, symBinAddr: 0x5518, symSize: 0x28 }
+  - { offsetInCU: 0x65F, offset: 0x57E40, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsAPIService refreshAuthTokenForInstallation:]', symObjAddr: 0x538, symBinAddr: 0x5540, symSize: 0x1A4 }
+  - { offsetInCU: 0x6EA, offset: 0x57ECB, size: 0x8, addend: 0x0, symName: '___62-[FIRInstallationsAPIService refreshAuthTokenForInstallation:]_block_invoke', symObjAddr: 0x6DC, symBinAddr: 0x56E4, symSize: 0xC }
+  - { offsetInCU: 0x73D, offset: 0x57F1E, size: 0x8, addend: 0x0, symName: '___62-[FIRInstallationsAPIService refreshAuthTokenForInstallation:]_block_invoke_2', symObjAddr: 0x6E8, symBinAddr: 0x56F0, symSize: 0xC }
+  - { offsetInCU: 0x790, offset: 0x57F71, size: 0x8, addend: 0x0, symName: '___62-[FIRInstallationsAPIService refreshAuthTokenForInstallation:]_block_invoke.35', symObjAddr: 0x6F4, symBinAddr: 0x56FC, symSize: 0x48 }
+  - { offsetInCU: 0x7FE, offset: 0x57FDF, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsAPIService deleteInstallation:]', symObjAddr: 0x73C, symBinAddr: 0x5744, symSize: 0x144 }
+  - { offsetInCU: 0x874, offset: 0x58055, size: 0x8, addend: 0x0, symName: '___49-[FIRInstallationsAPIService deleteInstallation:]_block_invoke', symObjAddr: 0x880, symBinAddr: 0x5888, symSize: 0xC }
+  - { offsetInCU: 0x8C7, offset: 0x580A8, size: 0x8, addend: 0x0, symName: '___49-[FIRInstallationsAPIService deleteInstallation:]_block_invoke_2', symObjAddr: 0x88C, symBinAddr: 0x5894, symSize: 0x8 }
+  - { offsetInCU: 0x912, offset: 0x580F3, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsAPIService registerRequestWithInstallation:]', symObjAddr: 0x894, symBinAddr: 0x589C, symSize: 0x26C }
+  - { offsetInCU: 0x999, offset: 0x5817A, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsAPIService registeredInstallationWithInstallation:serverResponse:]', symObjAddr: 0xB00, symBinAddr: 0x5B08, symSize: 0xD0 }
+  - { offsetInCU: 0x9EC, offset: 0x581CD, size: 0x8, addend: 0x0, symName: '___84-[FIRInstallationsAPIService registeredInstallationWithInstallation:serverResponse:]_block_invoke', symObjAddr: 0xBD0, symBinAddr: 0x5BD8, symSize: 0x16C }
+  - { offsetInCU: 0xAD7, offset: 0x582B8, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsAPIService authTokenRequestWithInstallation:]', symObjAddr: 0xD3C, symBinAddr: 0x5D44, symSize: 0x1EC }
+  - { offsetInCU: 0xB4E, offset: 0x5832F, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsAPIService authTokenWithServerResponse:]', symObjAddr: 0xF28, symBinAddr: 0x5F30, symSize: 0x94 }
+  - { offsetInCU: 0xB91, offset: 0x58372, size: 0x8, addend: 0x0, symName: '___58-[FIRInstallationsAPIService authTokenWithServerResponse:]_block_invoke', symObjAddr: 0xFBC, symBinAddr: 0x5FC4, symSize: 0x174 }
+  - { offsetInCU: 0xC48, offset: 0x58429, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsAPIService deleteInstallationRequestWithInstallation:]', symObjAddr: 0x1130, symBinAddr: 0x6138, symSize: 0x134 }
+  - { offsetInCU: 0xCAF, offset: 0x58490, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsAPIService requestWithURL:HTTPMethod:bodyDict:refreshToken:]', symObjAddr: 0x1264, symBinAddr: 0x626C, symSize: 0x8 }
+  - { offsetInCU: 0xD1C, offset: 0x584FD, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsAPIService requestWithURL:HTTPMethod:bodyDict:refreshToken:additionalHeaders:]', symObjAddr: 0x126C, symBinAddr: 0x6274, symSize: 0x194 }
+  - { offsetInCU: 0xDE3, offset: 0x585C4, size: 0x8, addend: 0x0, symName: '___96-[FIRInstallationsAPIService requestWithURL:HTTPMethod:bodyDict:refreshToken:additionalHeaders:]_block_invoke', symObjAddr: 0x1400, symBinAddr: 0x6408, symSize: 0x25C }
+  - { offsetInCU: 0xEFE, offset: 0x586DF, size: 0x8, addend: 0x0, symName: ___Block_byref_object_copy_, symObjAddr: 0x165C, symBinAddr: 0x6664, symSize: 0x10 }
+  - { offsetInCU: 0xF23, offset: 0x58704, size: 0x8, addend: 0x0, symName: ___Block_byref_object_dispose_, symObjAddr: 0x166C, symBinAddr: 0x6674, symSize: 0x8 }
+  - { offsetInCU: 0xF42, offset: 0x58723, size: 0x8, addend: 0x0, symName: '___96-[FIRInstallationsAPIService requestWithURL:HTTPMethod:bodyDict:refreshToken:additionalHeaders:]_block_invoke.84', symObjAddr: 0x1674, symBinAddr: 0x667C, symSize: 0x14 }
+  - { offsetInCU: 0xFAD, offset: 0x5878E, size: 0x8, addend: 0x0, symName: ___copy_helper_block_e8_32r, symObjAddr: 0x1688, symBinAddr: 0x6690, symSize: 0x10 }
+  - { offsetInCU: 0xFD6, offset: 0x587B7, size: 0x8, addend: 0x0, symName: ___destroy_helper_block_e8_32r, symObjAddr: 0x1698, symBinAddr: 0x66A0, symSize: 0xC }
+  - { offsetInCU: 0xFF5, offset: 0x587D6, size: 0x8, addend: 0x0, symName: ___copy_helper_block_e8_32s40s48s56s64s72s, symObjAddr: 0x16A4, symBinAddr: 0x66AC, symSize: 0x48 }
+  - { offsetInCU: 0x101E, offset: 0x587FF, size: 0x8, addend: 0x0, symName: ___destroy_helper_block_e8_32s40s48s56s64s72s, symObjAddr: 0x16EC, symBinAddr: 0x66F4, symSize: 0x48 }
+  - { offsetInCU: 0x103D, offset: 0x5881E, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsAPIService URLRequestPromise:]', symObjAddr: 0x1734, symBinAddr: 0x673C, symSize: 0xE4 }
+  - { offsetInCU: 0x1086, offset: 0x58867, size: 0x8, addend: 0x0, symName: '___48-[FIRInstallationsAPIService URLRequestPromise:]_block_invoke', symObjAddr: 0x1818, symBinAddr: 0x6820, symSize: 0x1C0 }
+  - { offsetInCU: 0x1118, offset: 0x588F9, size: 0x8, addend: 0x0, symName: '___48-[FIRInstallationsAPIService URLRequestPromise:]_block_invoke_2', symObjAddr: 0x19D8, symBinAddr: 0x69E0, symSize: 0x148 }
+  - { offsetInCU: 0x120D, offset: 0x589EE, size: 0x8, addend: 0x0, symName: ___copy_helper_block_e8_32s40b48b, symObjAddr: 0x1B20, symBinAddr: 0x6B28, symSize: 0x44 }
+  - { offsetInCU: 0x1236, offset: 0x58A17, size: 0x8, addend: 0x0, symName: ___destroy_helper_block_e8_32s40s48s, symObjAddr: 0x1B64, symBinAddr: 0x6B6C, symSize: 0x30 }
+  - { offsetInCU: 0x1255, offset: 0x58A36, size: 0x8, addend: 0x0, symName: '___48-[FIRInstallationsAPIService URLRequestPromise:]_block_invoke.95', symObjAddr: 0x1B94, symBinAddr: 0x6B9C, symSize: 0xC }
+  - { offsetInCU: 0x12AC, offset: 0x58A8D, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsAPIService validateHTTPResponseStatusCode:]', symObjAddr: 0x1BA0, symBinAddr: 0x6BA8, symSize: 0xC4 }
+  - { offsetInCU: 0x1302, offset: 0x58AE3, size: 0x8, addend: 0x0, symName: '___61-[FIRInstallationsAPIService validateHTTPResponseStatusCode:]_block_invoke', symObjAddr: 0x1C64, symBinAddr: 0x6C6C, symSize: 0x148 }
+  - { offsetInCU: 0x1372, offset: 0x58B53, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsAPIService sendURLRequest:]', symObjAddr: 0x1DAC, symBinAddr: 0x6DB4, symSize: 0xA8 }
+  - { offsetInCU: 0x13BB, offset: 0x58B9C, size: 0x8, addend: 0x0, symName: '___45-[FIRInstallationsAPIService sendURLRequest:]_block_invoke', symObjAddr: 0x1E54, symBinAddr: 0x6E5C, symSize: 0x10 }
+  - { offsetInCU: 0x1404, offset: 0x58BE5, size: 0x8, addend: 0x0, symName: '___45-[FIRInstallationsAPIService sendURLRequest:]_block_invoke_2', symObjAddr: 0x1E64, symBinAddr: 0x6E6C, symSize: 0xC }
+  - { offsetInCU: 0x145B, offset: 0x58C3C, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsAPIService SDKVersion]', symObjAddr: 0x1E70, symBinAddr: 0x6E78, symSize: 0x64 }
+  - { offsetInCU: 0x14A9, offset: 0x58C8A, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsAPIService validateInstallation:]', symObjAddr: 0x1ED4, symBinAddr: 0x6EDC, symSize: 0x9C }
+  - { offsetInCU: 0x1510, offset: 0x58CF1, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsAPIService setJSONHTTPBody:forRequest:]', symObjAddr: 0x1F70, symBinAddr: 0x6F78, symSize: 0xA8 }
+  - { offsetInCU: 0x1584, offset: 0x58D65, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsAPIService URLSession]', symObjAddr: 0x2018, symBinAddr: 0x7020, symSize: 0x8 }
+  - { offsetInCU: 0x15BB, offset: 0x58D9C, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsAPIService APIKey]', symObjAddr: 0x2020, symBinAddr: 0x7028, symSize: 0x8 }
+  - { offsetInCU: 0x15F2, offset: 0x58DD3, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsAPIService projectID]', symObjAddr: 0x2028, symBinAddr: 0x7030, symSize: 0x8 }
+  - { offsetInCU: 0x1629, offset: 0x58E0A, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsAPIService heartbeatLogger]', symObjAddr: 0x2030, symBinAddr: 0x7038, symSize: 0xC }
+  - { offsetInCU: 0x1660, offset: 0x58E41, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsAPIService .cxx_destruct]', symObjAddr: 0x203C, symBinAddr: 0x7044, symSize: 0x48 }
+  - { offsetInCU: 0x27, offset: 0x5986E, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsAuthTokenResult initWithToken:expirationDate:]', symObjAddr: 0x0, symBinAddr: 0x708C, symSize: 0xA4 }
+  - { offsetInCU: 0x8B, offset: 0x598D2, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsAuthTokenResult initWithToken:expirationDate:]', symObjAddr: 0x0, symBinAddr: 0x708C, symSize: 0xA4 }
+  - { offsetInCU: 0xE2, offset: 0x59929, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsAuthTokenResult authToken]', symObjAddr: 0xA4, symBinAddr: 0x7130, symSize: 0x8 }
+  - { offsetInCU: 0x119, offset: 0x59960, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsAuthTokenResult expirationDate]', symObjAddr: 0xAC, symBinAddr: 0x7138, symSize: 0x8 }
+  - { offsetInCU: 0x150, offset: 0x59997, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsAuthTokenResult .cxx_destruct]', symObjAddr: 0xB4, symBinAddr: 0x7140, symSize: 0x30 }
+  - { offsetInCU: 0x27, offset: 0x59A40, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsBackoffEventData initWithEvent:lastEventDate:eventCount:]', symObjAddr: 0x0, symBinAddr: 0x7170, symSize: 0xA8 }
+  - { offsetInCU: 0x1EC, offset: 0x59C05, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsBackoffEventData initWithEvent:lastEventDate:eventCount:]', symObjAddr: 0x0, symBinAddr: 0x7170, symSize: 0xA8 }
+  - { offsetInCU: 0x253, offset: 0x59C6C, size: 0x8, addend: 0x0, symName: '+[FIRInstallationsBackoffEventData backoffTimeIntervalWithEvent:eventCount:]', symObjAddr: 0xA8, symBinAddr: 0x7218, symSize: 0x28 }
+  - { offsetInCU: 0x2A6, offset: 0x59CBF, size: 0x8, addend: 0x0, symName: '+[FIRInstallationsBackoffEventData recoverableErrorBackoffTimeForAttemptNumber:]', symObjAddr: 0xD0, symBinAddr: 0x7240, symSize: 0x48 }
+  - { offsetInCU: 0x2FD, offset: 0x59D16, size: 0x8, addend: 0x0, symName: '+[FIRInstallationsBackoffEventData randomMilliseconds]', symObjAddr: 0x118, symBinAddr: 0x7288, symSize: 0x40 }
+  - { offsetInCU: 0x370, offset: 0x59D89, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsBackoffEventData eventType]', symObjAddr: 0x158, symBinAddr: 0x72C8, symSize: 0x8 }
+  - { offsetInCU: 0x3A7, offset: 0x59DC0, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsBackoffEventData lastEventDate]', symObjAddr: 0x160, symBinAddr: 0x72D0, symSize: 0x8 }
+  - { offsetInCU: 0x3DE, offset: 0x59DF7, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsBackoffEventData eventCount]', symObjAddr: 0x168, symBinAddr: 0x72D8, symSize: 0x8 }
+  - { offsetInCU: 0x415, offset: 0x59E2E, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsBackoffEventData backoffTimeInterval]', symObjAddr: 0x170, symBinAddr: 0x72E0, symSize: 0x8 }
+  - { offsetInCU: 0x44A, offset: 0x59E63, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsBackoffEventData .cxx_destruct]', symObjAddr: 0x178, symBinAddr: 0x72E8, symSize: 0xC }
+  - { offsetInCU: 0x47D, offset: 0x59E96, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsBackoffController init]', symObjAddr: 0x184, symBinAddr: 0x72F4, symSize: 0x48 }
+  - { offsetInCU: 0x4CE, offset: 0x59EE7, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsBackoffController initWithCurrentDateProvider:]', symObjAddr: 0x1CC, symBinAddr: 0x733C, symSize: 0x78 }
+  - { offsetInCU: 0x515, offset: 0x59F2E, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsBackoffController isNextRequestAllowed]', symObjAddr: 0x244, symBinAddr: 0x73B4, symSize: 0x130 }
+  - { offsetInCU: 0x56F, offset: 0x59F88, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsBackoffController registerEvent:]', symObjAddr: 0x374, symBinAddr: 0x74E4, symSize: 0x198 }
+  - { offsetInCU: 0x5CA, offset: 0x59FE3, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsBackoffController currentDateProvider]', symObjAddr: 0x50C, symBinAddr: 0x767C, symSize: 0x8 }
+  - { offsetInCU: 0x601, offset: 0x5A01A, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsBackoffController lastEventData]', symObjAddr: 0x514, symBinAddr: 0x7684, symSize: 0x8 }
+  - { offsetInCU: 0x638, offset: 0x5A051, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsBackoffController setLastEventData:]', symObjAddr: 0x51C, symBinAddr: 0x768C, symSize: 0xC }
+  - { offsetInCU: 0x679, offset: 0x5A092, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsBackoffController .cxx_destruct]', symObjAddr: 0x528, symBinAddr: 0x7698, symSize: 0x30 }
+  - { offsetInCU: 0x27, offset: 0x5A155, size: 0x8, addend: 0x0, symName: _FIRInstallationsItemSetErrorToPointer, symObjAddr: 0x0, symBinAddr: 0x76C8, symSize: 0x28 }
+  - { offsetInCU: 0x41, offset: 0x5A16F, size: 0x8, addend: 0x0, symName: _kFirebaseInstallationsErrorDomain, symObjAddr: 0x9C0, symBinAddr: 0x18708, symSize: 0x0 }
+  - { offsetInCU: 0xC8, offset: 0x5A1F6, size: 0x8, addend: 0x0, symName: _FIRInstallationsItemSetErrorToPointer, symObjAddr: 0x0, symBinAddr: 0x76C8, symSize: 0x28 }
+  - { offsetInCU: 0xFF, offset: 0x5A22D, size: 0x8, addend: 0x0, symName: '+[FIRInstallationsErrorUtil keyedArchiverErrorWithException:]', symObjAddr: 0x28, symBinAddr: 0x76F0, symSize: 0xF0 }
+  - { offsetInCU: 0x156, offset: 0x5A284, size: 0x8, addend: 0x0, symName: '+[FIRInstallationsErrorUtil keyedArchiverErrorWithError:]', symObjAddr: 0x118, symBinAddr: 0x77E0, symSize: 0x88 }
+  - { offsetInCU: 0x1AD, offset: 0x5A2DB, size: 0x8, addend: 0x0, symName: '+[FIRInstallationsErrorUtil keychainErrorWithFunction:status:]', symObjAddr: 0x1A0, symBinAddr: 0x7868, symSize: 0x78 }
+  - { offsetInCU: 0x214, offset: 0x5A342, size: 0x8, addend: 0x0, symName: '+[FIRInstallationsErrorUtil installationItemNotFoundForAppID:appName:]', symObjAddr: 0x218, symBinAddr: 0x78E0, symSize: 0x74 }
+  - { offsetInCU: 0x27B, offset: 0x5A3A9, size: 0x8, addend: 0x0, symName: '+[FIRInstallationsErrorUtil corruptedIIDTokenData]', symObjAddr: 0x28C, symBinAddr: 0x7954, symSize: 0x14 }
+  - { offsetInCU: 0x2C0, offset: 0x5A3EE, size: 0x8, addend: 0x0, symName: '+[FIRInstallationsErrorUtil APIErrorWithHTTPResponse:data:]', symObjAddr: 0x2A0, symBinAddr: 0x7968, symSize: 0x70 }
+  - { offsetInCU: 0x313, offset: 0x5A441, size: 0x8, addend: 0x0, symName: '+[FIRInstallationsErrorUtil isAPIError:withHTTPCode:]', symObjAddr: 0x310, symBinAddr: 0x79D8, symSize: 0x88 }
+  - { offsetInCU: 0x366, offset: 0x5A494, size: 0x8, addend: 0x0, symName: '+[FIRInstallationsErrorUtil JSONSerializationError:]', symObjAddr: 0x398, symBinAddr: 0x7A60, symSize: 0x68 }
+  - { offsetInCU: 0x3B9, offset: 0x5A4E7, size: 0x8, addend: 0x0, symName: '+[FIRInstallationsErrorUtil FIDRegistrationErrorWithResponseMissingField:]', symObjAddr: 0x400, symBinAddr: 0x7AC8, symSize: 0x74 }
+  - { offsetInCU: 0x410, offset: 0x5A53E, size: 0x8, addend: 0x0, symName: '+[FIRInstallationsErrorUtil networkErrorWithError:]', symObjAddr: 0x474, symBinAddr: 0x7B3C, symSize: 0x14 }
+  - { offsetInCU: 0x455, offset: 0x5A583, size: 0x8, addend: 0x0, symName: '+[FIRInstallationsErrorUtil backoffIntervalWaitError]', symObjAddr: 0x488, symBinAddr: 0x7B50, symSize: 0x14 }
+  - { offsetInCU: 0x48A, offset: 0x5A5B8, size: 0x8, addend: 0x0, symName: '+[FIRInstallationsErrorUtil publicDomainErrorWithError:]', symObjAddr: 0x49C, symBinAddr: 0x7B64, symSize: 0x94 }
+  - { offsetInCU: 0x4D1, offset: 0x5A5FF, size: 0x8, addend: 0x0, symName: '+[FIRInstallationsErrorUtil installationsErrorWithCode:failureReason:underlyingError:]', symObjAddr: 0x530, symBinAddr: 0x7BF8, symSize: 0x144 }
+  - { offsetInCU: 0x544, offset: 0x5A672, size: 0x8, addend: 0x0, symName: '+[FIRInstallationsErrorUtil rejectedPromiseWithError:]', symObjAddr: 0x674, symBinAddr: 0x7D3C, symSize: 0x54 }
+  - { offsetInCU: 0x27, offset: 0x5A749, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsHTTPError initWithHTTPResponse:data:]', symObjAddr: 0x0, symBinAddr: 0x7D90, symSize: 0x114 }
+  - { offsetInCU: 0xB7, offset: 0x5A7D9, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsHTTPError initWithHTTPResponse:data:]', symObjAddr: 0x0, symBinAddr: 0x7D90, symSize: 0x114 }
+  - { offsetInCU: 0x11E, offset: 0x5A840, size: 0x8, addend: 0x0, symName: '+[FIRInstallationsHTTPError errorCodeWithHTTPCode:]', symObjAddr: 0x114, symBinAddr: 0x7EA4, symSize: 0x8 }
+  - { offsetInCU: 0x15D, offset: 0x5A87F, size: 0x8, addend: 0x0, symName: '+[FIRInstallationsHTTPError userInfoWithHTTPResponse:data:]', symObjAddr: 0x11C, symBinAddr: 0x7EAC, symSize: 0x140 }
+  - { offsetInCU: 0x1D0, offset: 0x5A8F2, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsHTTPError copyWithZone:]', symObjAddr: 0x25C, symBinAddr: 0x7FEC, symSize: 0x84 }
+  - { offsetInCU: 0x213, offset: 0x5A935, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsHTTPError initWithCoder:]', symObjAddr: 0x2E0, symBinAddr: 0x8070, symSize: 0xD4 }
+  - { offsetInCU: 0x27A, offset: 0x5A99C, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsHTTPError encodeWithCoder:]', symObjAddr: 0x3B4, symBinAddr: 0x8144, symSize: 0x94 }
+  - { offsetInCU: 0x2BD, offset: 0x5A9DF, size: 0x8, addend: 0x0, symName: '+[FIRInstallationsHTTPError supportsSecureCoding]', symObjAddr: 0x448, symBinAddr: 0x81D8, symSize: 0x8 }
+  - { offsetInCU: 0x2F0, offset: 0x5AA12, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsHTTPError HTTPResponse]', symObjAddr: 0x450, symBinAddr: 0x81E0, symSize: 0x10 }
+  - { offsetInCU: 0x327, offset: 0x5AA49, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsHTTPError data]', symObjAddr: 0x460, symBinAddr: 0x81F0, symSize: 0x10 }
+  - { offsetInCU: 0x35E, offset: 0x5AA80, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsHTTPError .cxx_destruct]', symObjAddr: 0x470, symBinAddr: 0x8200, symSize: 0x40 }
+  - { offsetInCU: 0x27, offset: 0x5AB5D, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsIDController initWithApp:]', symObjAddr: 0x0, symBinAddr: 0x8240, symSize: 0x2F8 }
+  - { offsetInCU: 0x41, offset: 0x5AB77, size: 0x8, addend: 0x0, symName: _FIRInstallationIDDidChangeNotification, symObjAddr: 0x2C78, symBinAddr: 0x18710, symSize: 0x0 }
+  - { offsetInCU: 0x61, offset: 0x5AB97, size: 0x8, addend: 0x0, symName: _kFIRInstallationIDDidChangeNotificationAppNameKey, symObjAddr: 0x2C80, symBinAddr: 0x18718, symSize: 0x0 }
+  - { offsetInCU: 0x7C, offset: 0x5ABB2, size: 0x8, addend: 0x0, symName: _kFIRInstallationsTokenExpirationThreshold, symObjAddr: 0x2868, symBinAddr: 0x10FA8, symSize: 0x0 }
+  - { offsetInCU: 0x2D2, offset: 0x5AE08, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsIDController initWithApp:]', symObjAddr: 0x0, symBinAddr: 0x8240, symSize: 0x2F8 }
+  - { offsetInCU: 0x389, offset: 0x5AEBF, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsIDController initWithGoogleAppID:appName:installationsStore:APIService:IIDStore:IIDTokenStore:backoffController:]', symObjAddr: 0x2F8, symBinAddr: 0x8538, symSize: 0x360 }
+  - { offsetInCU: 0x446, offset: 0x5AF7C, size: 0x8, addend: 0x0, symName: '___131-[FIRInstallationsIDController initWithGoogleAppID:appName:installationsStore:APIService:IIDStore:IIDTokenStore:backoffController:]_block_invoke', symObjAddr: 0x658, symBinAddr: 0x8898, symSize: 0x40 }
+  - { offsetInCU: 0x4A4, offset: 0x5AFDA, size: 0x8, addend: 0x0, symName: ___copy_helper_block_e8_32w, symObjAddr: 0x698, symBinAddr: 0x88D8, symSize: 0xC }
+  - { offsetInCU: 0x4CD, offset: 0x5B003, size: 0x8, addend: 0x0, symName: ___destroy_helper_block_e8_32w, symObjAddr: 0x6A4, symBinAddr: 0x88E4, symSize: 0x8 }
+  - { offsetInCU: 0x4EC, offset: 0x5B022, size: 0x8, addend: 0x0, symName: '___131-[FIRInstallationsIDController initWithGoogleAppID:appName:installationsStore:APIService:IIDStore:IIDTokenStore:backoffController:]_block_invoke.11', symObjAddr: 0x6AC, symBinAddr: 0x88EC, symSize: 0x44 }
+  - { offsetInCU: 0x54A, offset: 0x5B080, size: 0x8, addend: 0x0, symName: '___131-[FIRInstallationsIDController initWithGoogleAppID:appName:installationsStore:APIService:IIDStore:IIDTokenStore:backoffController:]_block_invoke_2', symObjAddr: 0x6F0, symBinAddr: 0x8930, symSize: 0x44 }
+  - { offsetInCU: 0x5A8, offset: 0x5B0DE, size: 0x8, addend: 0x0, symName: '___131-[FIRInstallationsIDController initWithGoogleAppID:appName:installationsStore:APIService:IIDStore:IIDTokenStore:backoffController:]_block_invoke_3', symObjAddr: 0x734, symBinAddr: 0x8974, symSize: 0x40 }
+  - { offsetInCU: 0x606, offset: 0x5B13C, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsIDController getInstallationItem]', symObjAddr: 0x774, symBinAddr: 0x89B4, symSize: 0x44 }
+  - { offsetInCU: 0x63D, offset: 0x5B173, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsIDController createGetInstallationItemPromise]', symObjAddr: 0x7B8, symBinAddr: 0x89F8, symSize: 0x15C }
+  - { offsetInCU: 0x6ED, offset: 0x5B223, size: 0x8, addend: 0x0, symName: '___64-[FIRInstallationsIDController createGetInstallationItemPromise]_block_invoke', symObjAddr: 0x914, symBinAddr: 0x8B54, symSize: 0x8 }
+  - { offsetInCU: 0x73C, offset: 0x5B272, size: 0x8, addend: 0x0, symName: '___64-[FIRInstallationsIDController createGetInstallationItemPromise]_block_invoke.15', symObjAddr: 0x92C, symBinAddr: 0x8B5C, symSize: 0x28 }
+  - { offsetInCU: 0x78B, offset: 0x5B2C1, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsIDController getStoredInstallation]', symObjAddr: 0x954, symBinAddr: 0x8B84, symSize: 0xD8 }
+  - { offsetInCU: 0x7CE, offset: 0x5B304, size: 0x8, addend: 0x0, symName: '___53-[FIRInstallationsIDController getStoredInstallation]_block_invoke', symObjAddr: 0xA2C, symBinAddr: 0x8C5C, symSize: 0xAC }
+  - { offsetInCU: 0x86E, offset: 0x5B3A4, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsIDController createAndSaveFID]', symObjAddr: 0xAD8, symBinAddr: 0x8D08, symSize: 0x110 }
+  - { offsetInCU: 0x8CD, offset: 0x5B403, size: 0x8, addend: 0x0, symName: '___48-[FIRInstallationsIDController createAndSaveFID]_block_invoke', symObjAddr: 0xBE8, symBinAddr: 0x8E18, symSize: 0xC }
+  - { offsetInCU: 0x920, offset: 0x5B456, size: 0x8, addend: 0x0, symName: '___48-[FIRInstallationsIDController createAndSaveFID]_block_invoke.21', symObjAddr: 0xBF4, symBinAddr: 0x8E24, symSize: 0x34 }
+  - { offsetInCU: 0x973, offset: 0x5B4A9, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsIDController saveInstallation:]', symObjAddr: 0xC28, symBinAddr: 0x8E58, symSize: 0xFC }
+  - { offsetInCU: 0x9D5, offset: 0x5B50B, size: 0x8, addend: 0x0, symName: '___49-[FIRInstallationsIDController saveInstallation:]_block_invoke', symObjAddr: 0xD24, symBinAddr: 0x8F54, symSize: 0x8 }
+  - { offsetInCU: 0xA20, offset: 0x5B556, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsIDController migrateOrGenerateInstallation]', symObjAddr: 0xD2C, symBinAddr: 0x8F5C, symSize: 0x224 }
+  - { offsetInCU: 0xA76, offset: 0x5B5AC, size: 0x8, addend: 0x0, symName: '___61-[FIRInstallationsIDController migrateOrGenerateInstallation]_block_invoke', symObjAddr: 0xF50, symBinAddr: 0x9180, symSize: 0x94 }
+  - { offsetInCU: 0xAF8, offset: 0x5B62E, size: 0x8, addend: 0x0, symName: '___61-[FIRInstallationsIDController migrateOrGenerateInstallation]_block_invoke.28', symObjAddr: 0xFE4, symBinAddr: 0x9214, symSize: 0x5C }
+  - { offsetInCU: 0xB47, offset: 0x5B67D, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsIDController createInstallationWithFID:IIDDefaultToken:]', symObjAddr: 0x1040, symBinAddr: 0x9270, symSize: 0xE0 }
+  - { offsetInCU: 0xBAE, offset: 0x5B6E4, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsIDController registerInstallationIfNeeded:]', symObjAddr: 0x1120, symBinAddr: 0x9350, symSize: 0x250 }
+  - { offsetInCU: 0xC39, offset: 0x5B76F, size: 0x8, addend: 0x0, symName: '___61-[FIRInstallationsIDController registerInstallationIfNeeded:]_block_invoke', symObjAddr: 0x1370, symBinAddr: 0x95A0, symSize: 0xF0 }
+  - { offsetInCU: 0xCC2, offset: 0x5B7F8, size: 0x8, addend: 0x0, symName: '___61-[FIRInstallationsIDController registerInstallationIfNeeded:]_block_invoke.33', symObjAddr: 0x1460, symBinAddr: 0x9690, symSize: 0x68 }
+  - { offsetInCU: 0xD19, offset: 0x5B84F, size: 0x8, addend: 0x0, symName: '___61-[FIRInstallationsIDController registerInstallationIfNeeded:]_block_invoke_2', symObjAddr: 0x14C8, symBinAddr: 0x96F8, symSize: 0x8C }
+  - { offsetInCU: 0xD7F, offset: 0x5B8B5, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsIDController doesRegistrationErrorRequireConfigChange:]', symObjAddr: 0x15A4, symBinAddr: 0x9784, symSize: 0x98 }
+  - { offsetInCU: 0xDD1, offset: 0x5B907, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsIDController getAuthTokenForcingRefresh:]', symObjAddr: 0x163C, symBinAddr: 0x981C, symSize: 0xA0 }
+  - { offsetInCU: 0xE1A, offset: 0x5B950, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsIDController installationWithValidAuthTokenForcingRefresh:]', symObjAddr: 0x16DC, symBinAddr: 0x98BC, symSize: 0x1E8 }
+  - { offsetInCU: 0xEB9, offset: 0x5B9EF, size: 0x8, addend: 0x0, symName: '___77-[FIRInstallationsIDController installationWithValidAuthTokenForcingRefresh:]_block_invoke', symObjAddr: 0x18C4, symBinAddr: 0x9AA4, symSize: 0xC }
+  - { offsetInCU: 0xF10, offset: 0x5BA46, size: 0x8, addend: 0x0, symName: '___77-[FIRInstallationsIDController installationWithValidAuthTokenForcingRefresh:]_block_invoke_2', symObjAddr: 0x18D0, symBinAddr: 0x9AB0, symSize: 0xE8 }
+  - { offsetInCU: 0xF94, offset: 0x5BACA, size: 0x8, addend: 0x0, symName: '___77-[FIRInstallationsIDController installationWithValidAuthTokenForcingRefresh:]_block_invoke.39', symObjAddr: 0x19B8, symBinAddr: 0x9B98, symSize: 0xC }
+  - { offsetInCU: 0xFEB, offset: 0x5BB21, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsIDController refreshAuthTokenForInstallation:]', symObjAddr: 0x19C4, symBinAddr: 0x9BA4, symSize: 0x16C }
+  - { offsetInCU: 0x1034, offset: 0x5BB6A, size: 0x8, addend: 0x0, symName: '___64-[FIRInstallationsIDController refreshAuthTokenForInstallation:]_block_invoke', symObjAddr: 0x1B30, symBinAddr: 0x9D10, symSize: 0x68 }
+  - { offsetInCU: 0x108B, offset: 0x5BBC1, size: 0x8, addend: 0x0, symName: '___64-[FIRInstallationsIDController refreshAuthTokenForInstallation:]_block_invoke_2', symObjAddr: 0x1B98, symBinAddr: 0x9D78, symSize: 0x3C }
+  - { offsetInCU: 0x10E2, offset: 0x5BC18, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsIDController regenerateFIDOnRefreshTokenErrorIfNeeded:]', symObjAddr: 0x1BD4, symBinAddr: 0x9DB4, symSize: 0x1AC }
+  - { offsetInCU: 0x1160, offset: 0x5BC96, size: 0x8, addend: 0x0, symName: '___73-[FIRInstallationsIDController regenerateFIDOnRefreshTokenErrorIfNeeded:]_block_invoke', symObjAddr: 0x1D80, symBinAddr: 0x9F60, symSize: 0xC }
+  - { offsetInCU: 0x11B7, offset: 0x5BCED, size: 0x8, addend: 0x0, symName: '___73-[FIRInstallationsIDController regenerateFIDOnRefreshTokenErrorIfNeeded:]_block_invoke_2', symObjAddr: 0x1D8C, symBinAddr: 0x9F6C, symSize: 0xC }
+  - { offsetInCU: 0x120A, offset: 0x5BD40, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsIDController deleteInstallation]', symObjAddr: 0x1D98, symBinAddr: 0x9F78, symSize: 0x44 }
+  - { offsetInCU: 0x1242, offset: 0x5BD78, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsIDController createDeleteInstallationPromise]', symObjAddr: 0x1DDC, symBinAddr: 0x9FBC, symSize: 0x194 }
+  - { offsetInCU: 0x12D0, offset: 0x5BE06, size: 0x8, addend: 0x0, symName: '___63-[FIRInstallationsIDController createDeleteInstallationPromise]_block_invoke', symObjAddr: 0x1F70, symBinAddr: 0xA150, symSize: 0xC }
+  - { offsetInCU: 0x1327, offset: 0x5BE5D, size: 0x8, addend: 0x0, symName: '___63-[FIRInstallationsIDController createDeleteInstallationPromise]_block_invoke_2', symObjAddr: 0x1F7C, symBinAddr: 0xA15C, symSize: 0xC }
+  - { offsetInCU: 0x137E, offset: 0x5BEB4, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsIDController deleteInstallationLocally:]', symObjAddr: 0x1F88, symBinAddr: 0xA168, symSize: 0x194 }
+  - { offsetInCU: 0x13EF, offset: 0x5BF25, size: 0x8, addend: 0x0, symName: '___58-[FIRInstallationsIDController deleteInstallationLocally:]_block_invoke', symObjAddr: 0x211C, symBinAddr: 0xA2FC, symSize: 0x8 }
+  - { offsetInCU: 0x1442, offset: 0x5BF78, size: 0x8, addend: 0x0, symName: '___58-[FIRInstallationsIDController deleteInstallationLocally:]_block_invoke.42', symObjAddr: 0x2124, symBinAddr: 0xA304, symSize: 0x34 }
+  - { offsetInCU: 0x1499, offset: 0x5BFCF, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsIDController sendDeleteInstallationRequestIfNeeded:]', symObjAddr: 0x2158, symBinAddr: 0xA338, symSize: 0x124 }
+  - { offsetInCU: 0x14FD, offset: 0x5C033, size: 0x8, addend: 0x0, symName: '___70-[FIRInstallationsIDController sendDeleteInstallationRequestIfNeeded:]_block_invoke', symObjAddr: 0x227C, symBinAddr: 0xA45C, symSize: 0x60 }
+  - { offsetInCU: 0x1550, offset: 0x5C086, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsIDController deleteExistingIIDIfNeeded]', symObjAddr: 0x22DC, symBinAddr: 0xA4BC, symSize: 0x8C }
+  - { offsetInCU: 0x1588, offset: 0x5C0BE, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsIDController mostRecentInstallationOperation]', symObjAddr: 0x2368, symBinAddr: 0xA548, symSize: 0xE8 }
+  - { offsetInCU: 0x15C0, offset: 0x5C0F6, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsIDController updateBackoffWithSuccess:APIError:]', symObjAddr: 0x2450, symBinAddr: 0xA630, symSize: 0x110 }
+  - { offsetInCU: 0x163B, offset: 0x5C171, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsIDController postFIDDidChangeNotification]', symObjAddr: 0x2560, symBinAddr: 0xA740, symSize: 0xE4 }
+  - { offsetInCU: 0x166F, offset: 0x5C1A5, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsIDController isDefaultApp]', symObjAddr: 0x2644, symBinAddr: 0xA824, symSize: 0x48 }
+  - { offsetInCU: 0x16A7, offset: 0x5C1DD, size: 0x8, addend: 0x0, symName: '+[FIRInstallationsIDController keychainServiceWithAppID:]', symObjAddr: 0x268C, symBinAddr: 0xA86C, symSize: 0xC }
+  - { offsetInCU: 0x16E8, offset: 0x5C21E, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsIDController appID]', symObjAddr: 0x2698, symBinAddr: 0xA878, symSize: 0x8 }
+  - { offsetInCU: 0x171F, offset: 0x5C255, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsIDController appName]', symObjAddr: 0x26A0, symBinAddr: 0xA880, symSize: 0x8 }
+  - { offsetInCU: 0x1756, offset: 0x5C28C, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsIDController installationsStore]', symObjAddr: 0x26A8, symBinAddr: 0xA888, symSize: 0x8 }
+  - { offsetInCU: 0x178D, offset: 0x5C2C3, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsIDController IIDStore]', symObjAddr: 0x26B0, symBinAddr: 0xA890, symSize: 0x8 }
+  - { offsetInCU: 0x17C4, offset: 0x5C2FA, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsIDController IIDTokenStore]', symObjAddr: 0x26B8, symBinAddr: 0xA898, symSize: 0x8 }
+  - { offsetInCU: 0x17FB, offset: 0x5C331, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsIDController APIService]', symObjAddr: 0x26C0, symBinAddr: 0xA8A0, symSize: 0x8 }
+  - { offsetInCU: 0x1832, offset: 0x5C368, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsIDController backoffController]', symObjAddr: 0x26C8, symBinAddr: 0xA8A8, symSize: 0x8 }
+  - { offsetInCU: 0x1869, offset: 0x5C39F, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsIDController getInstallationPromiseCache]', symObjAddr: 0x26D0, symBinAddr: 0xA8B0, symSize: 0x8 }
+  - { offsetInCU: 0x18A0, offset: 0x5C3D6, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsIDController authTokenPromiseCache]', symObjAddr: 0x26D8, symBinAddr: 0xA8B8, symSize: 0x8 }
+  - { offsetInCU: 0x18D7, offset: 0x5C40D, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsIDController authTokenForcingRefreshPromiseCache]', symObjAddr: 0x26E0, symBinAddr: 0xA8C0, symSize: 0x8 }
+  - { offsetInCU: 0x190E, offset: 0x5C444, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsIDController deleteInstallationPromiseCache]', symObjAddr: 0x26E8, symBinAddr: 0xA8C8, symSize: 0x8 }
+  - { offsetInCU: 0x1945, offset: 0x5C47B, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsIDController .cxx_destruct]', symObjAddr: 0x26F0, symBinAddr: 0xA8D0, symSize: 0x9C }
+  - { offsetInCU: 0x27, offset: 0x5D206, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsIIDStore existingIID]', symObjAddr: 0x0, symBinAddr: 0xA96C, symSize: 0xE0 }
+  - { offsetInCU: 0x9C, offset: 0x5D27B, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsIIDStore existingIID]', symObjAddr: 0x0, symBinAddr: 0xA96C, symSize: 0xE0 }
+  - { offsetInCU: 0x120, offset: 0x5D2FF, size: 0x8, addend: 0x0, symName: '___39-[FIRInstallationsIIDStore existingIID]_block_invoke', symObjAddr: 0xE0, symBinAddr: 0xAA4C, symSize: 0x68 }
+  - { offsetInCU: 0x182, offset: 0x5D361, size: 0x8, addend: 0x0, symName: '___39-[FIRInstallationsIIDStore existingIID]_block_invoke.6', symObjAddr: 0x158, symBinAddr: 0xAAB4, symSize: 0x20 }
+  - { offsetInCU: 0x1BD, offset: 0x5D39C, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsIIDStore deleteExistingIID]', symObjAddr: 0x178, symBinAddr: 0xAAD4, symSize: 0xA4 }
+  - { offsetInCU: 0x20F, offset: 0x5D3EE, size: 0x8, addend: 0x0, symName: '___45-[FIRInstallationsIIDStore deleteExistingIID]_block_invoke', symObjAddr: 0x21C, symBinAddr: 0xAB78, symSize: 0xBC }
+  - { offsetInCU: 0x271, offset: 0x5D450, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsIIDStore IIDWithPublicKeyData:]', symObjAddr: 0x2D8, symBinAddr: 0xAC34, symSize: 0xD4 }
+  - { offsetInCU: 0x308, offset: 0x5D4E7, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsIIDStore sha1WithData:]', symObjAddr: 0x3AC, symBinAddr: 0xAD08, symSize: 0xB0 }
+  - { offsetInCU: 0x3B6, offset: 0x5D595, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsIIDStore base64URLEncodedStringWithData:]', symObjAddr: 0x45C, symBinAddr: 0xADB8, symSize: 0xB4 }
+  - { offsetInCU: 0x409, offset: 0x5D5E8, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsIIDStore IIDPublicKeyData]', symObjAddr: 0x510, symBinAddr: 0xAE6C, symSize: 0xA4 }
+  - { offsetInCU: 0x4D2, offset: 0x5D6B1, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsIIDStore deleteIID:]', symObjAddr: 0x5B4, symBinAddr: 0xAF10, symSize: 0x50 }
+  - { offsetInCU: 0x519, offset: 0x5D6F8, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsIIDStore deleteKeychainKeyWithTagPrefix:error:]', symObjAddr: 0x604, symBinAddr: 0xAF60, symSize: 0xD0 }
+  - { offsetInCU: 0x5F0, offset: 0x5D7CF, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsIIDStore keyPairQueryWithTag:returnData:]', symObjAddr: 0x6D4, symBinAddr: 0xB030, symSize: 0x110 }
+  - { offsetInCU: 0x663, offset: 0x5D842, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsIIDStore keychainKeyTagWithPrefix:]', symObjAddr: 0x7E4, symBinAddr: 0xB140, symSize: 0xB0 }
+  - { offsetInCU: 0x6B6, offset: 0x5D895, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsIIDStore mainbundleIdentifier]', symObjAddr: 0x894, symBinAddr: 0xB1F0, symSize: 0x74 }
+  - { offsetInCU: 0x6F9, offset: 0x5D8D8, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsIIDStore deleteIIDFlagFromPlist:]', symObjAddr: 0x908, symBinAddr: 0xB264, symSize: 0x110 }
+  - { offsetInCU: 0x760, offset: 0x5D93F, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsIIDStore hasPlistIIDFlag]', symObjAddr: 0xA18, symBinAddr: 0xB374, symSize: 0xB4 }
+  - { offsetInCU: 0x7B7, offset: 0x5D996, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsIIDStore plistPath]', symObjAddr: 0xACC, symBinAddr: 0xB428, symSize: 0xF0 }
+  - { offsetInCU: 0x871, offset: 0x5DA50, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsIIDStore supportedDirectory]', symObjAddr: 0xBBC, symBinAddr: 0xB518, symSize: 0x8 }
+  - { offsetInCU: 0x27, offset: 0x5DC88, size: 0x8, addend: 0x0, symName: '+[FIRInstallationsIIDTokenInfo supportsSecureCoding]', symObjAddr: 0x0, symBinAddr: 0xB520, symSize: 0x8 }
+  - { offsetInCU: 0xCE, offset: 0x5DD2F, size: 0x8, addend: 0x0, symName: '+[FIRInstallationsIIDTokenInfo supportsSecureCoding]', symObjAddr: 0x0, symBinAddr: 0xB520, symSize: 0x8 }
+  - { offsetInCU: 0x101, offset: 0x5DD62, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsIIDTokenInfo encodeWithCoder:]', symObjAddr: 0x8, symBinAddr: 0xB528, symSize: 0x4 }
+  - { offsetInCU: 0x13C, offset: 0x5DD9D, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsIIDTokenInfo initWithCoder:]', symObjAddr: 0xC, symBinAddr: 0xB52C, symSize: 0x98 }
+  - { offsetInCU: 0x183, offset: 0x5DDE4, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsIIDTokenInfo token]', symObjAddr: 0xA4, symBinAddr: 0xB5C4, symSize: 0x8 }
+  - { offsetInCU: 0x1BA, offset: 0x5DE1B, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsIIDTokenInfo setToken:]', symObjAddr: 0xAC, symBinAddr: 0xB5CC, symSize: 0x8 }
+  - { offsetInCU: 0x1F9, offset: 0x5DE5A, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsIIDTokenInfo .cxx_destruct]', symObjAddr: 0xB4, symBinAddr: 0xB5D4, symSize: 0xC }
+  - { offsetInCU: 0x22C, offset: 0x5DE8D, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsIIDTokenStore initWithGCMSenderID:]', symObjAddr: 0xC0, symBinAddr: 0xB5E0, symSize: 0x78 }
+  - { offsetInCU: 0x273, offset: 0x5DED4, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsIIDTokenStore existingIIDDefaultToken]', symObjAddr: 0x138, symBinAddr: 0xB658, symSize: 0xF4 }
+  - { offsetInCU: 0x2EB, offset: 0x5DF4C, size: 0x8, addend: 0x0, symName: '___56-[FIRInstallationsIIDTokenStore existingIIDDefaultToken]_block_invoke', symObjAddr: 0x22C, symBinAddr: 0xB74C, symSize: 0x8 }
+  - { offsetInCU: 0x32E, offset: 0x5DF8F, size: 0x8, addend: 0x0, symName: '___56-[FIRInstallationsIIDTokenStore existingIIDDefaultToken]_block_invoke.26', symObjAddr: 0x244, symBinAddr: 0xB754, symSize: 0xC }
+  - { offsetInCU: 0x381, offset: 0x5DFE2, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsIIDTokenStore IIDCheckinWithData:]', symObjAddr: 0x250, symBinAddr: 0xB760, symSize: 0x238 }
+  - { offsetInCU: 0x42E, offset: 0x5E08F, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsIIDTokenStore IIDDefaultTokenData]', symObjAddr: 0x488, symBinAddr: 0xB998, symSize: 0xFC }
+  - { offsetInCU: 0x4C0, offset: 0x5E121, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsIIDTokenStore IIDDefaultTokenDataKeychainQuery]', symObjAddr: 0x584, symBinAddr: 0xBA94, symSize: 0x17C }
+  - { offsetInCU: 0x527, offset: 0x5E188, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsIIDTokenStore IIDAppIdentifier]', symObjAddr: 0x700, symBinAddr: 0xBC10, symSize: 0x74 }
+  - { offsetInCU: 0x55A, offset: 0x5E1BB, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsIIDTokenStore serviceKeyForAuthorizedEntity:scope:]', symObjAddr: 0x774, symBinAddr: 0xBC84, symSize: 0x30 }
+  - { offsetInCU: 0x5AD, offset: 0x5E20E, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsIIDTokenStore GCMSenderID]', symObjAddr: 0x7A4, symBinAddr: 0xBCB4, symSize: 0x8 }
+  - { offsetInCU: 0x5E4, offset: 0x5E245, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsIIDTokenStore .cxx_destruct]', symObjAddr: 0x7AC, symBinAddr: 0xBCBC, symSize: 0xC }
+  - { offsetInCU: 0x27, offset: 0x5E42C, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsItem initWithAppID:firebaseAppName:]', symObjAddr: 0x0, symBinAddr: 0xBCC8, symSize: 0xB0 }
+  - { offsetInCU: 0x1AB, offset: 0x5E5B0, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsItem initWithAppID:firebaseAppName:]', symObjAddr: 0x0, symBinAddr: 0xBCC8, symSize: 0xB0 }
+  - { offsetInCU: 0x202, offset: 0x5E607, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsItem copyWithZone:]', symObjAddr: 0xB0, symBinAddr: 0xBD78, symSize: 0x178 }
+  - { offsetInCU: 0x255, offset: 0x5E65A, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsItem updateWithStoredItem:]', symObjAddr: 0x228, symBinAddr: 0xBEF0, symSize: 0xE4 }
+  - { offsetInCU: 0x298, offset: 0x5E69D, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsItem storedItem]', symObjAddr: 0x30C, symBinAddr: 0xBFD4, symSize: 0xF0 }
+  - { offsetInCU: 0x2DF, offset: 0x5E6E4, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsItem identifier]', symObjAddr: 0x3FC, symBinAddr: 0xC0C4, symSize: 0x84 }
+  - { offsetInCU: 0x316, offset: 0x5E71B, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsItem isValid:]', symObjAddr: 0x480, symBinAddr: 0xC148, symSize: 0x270 }
+  - { offsetInCU: 0x398, offset: 0x5E79D, size: 0x8, addend: 0x0, symName: '+[FIRInstallationsItem identifierWithAppID:appName:]', symObjAddr: 0x6F0, symBinAddr: 0xC3B8, symSize: 0xC }
+  - { offsetInCU: 0x3EB, offset: 0x5E7F0, size: 0x8, addend: 0x0, symName: '+[FIRInstallationsItem generateFID]', symObjAddr: 0x6FC, symBinAddr: 0xC3C4, symSize: 0x12C }
+  - { offsetInCU: 0x49D, offset: 0x5E8A2, size: 0x8, addend: 0x0, symName: '+[FIRInstallationsItem base64URLEncodedStringWithData:]', symObjAddr: 0x828, symBinAddr: 0xC4F0, symSize: 0x88 }
+  - { offsetInCU: 0x4F0, offset: 0x5E8F5, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsItem appID]', symObjAddr: 0x8B0, symBinAddr: 0xC578, symSize: 0x8 }
+  - { offsetInCU: 0x527, offset: 0x5E92C, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsItem firebaseAppName]', symObjAddr: 0x8B8, symBinAddr: 0xC580, symSize: 0x8 }
+  - { offsetInCU: 0x55E, offset: 0x5E963, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsItem firebaseInstallationID]', symObjAddr: 0x8C0, symBinAddr: 0xC588, symSize: 0x8 }
+  - { offsetInCU: 0x595, offset: 0x5E99A, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsItem setFirebaseInstallationID:]', symObjAddr: 0x8C8, symBinAddr: 0xC590, symSize: 0x8 }
+  - { offsetInCU: 0x5D4, offset: 0x5E9D9, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsItem refreshToken]', symObjAddr: 0x8D0, symBinAddr: 0xC598, symSize: 0x8 }
+  - { offsetInCU: 0x60B, offset: 0x5EA10, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsItem setRefreshToken:]', symObjAddr: 0x8D8, symBinAddr: 0xC5A0, symSize: 0x8 }
+  - { offsetInCU: 0x64A, offset: 0x5EA4F, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsItem authToken]', symObjAddr: 0x8E0, symBinAddr: 0xC5A8, symSize: 0x8 }
+  - { offsetInCU: 0x681, offset: 0x5EA86, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsItem setAuthToken:]', symObjAddr: 0x8E8, symBinAddr: 0xC5B0, symSize: 0xC }
+  - { offsetInCU: 0x6C2, offset: 0x5EAC7, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsItem registrationStatus]', symObjAddr: 0x8F4, symBinAddr: 0xC5BC, symSize: 0x8 }
+  - { offsetInCU: 0x6F9, offset: 0x5EAFE, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsItem setRegistrationStatus:]', symObjAddr: 0x8FC, symBinAddr: 0xC5C4, symSize: 0x8 }
+  - { offsetInCU: 0x736, offset: 0x5EB3B, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsItem IIDDefaultToken]', symObjAddr: 0x904, symBinAddr: 0xC5CC, symSize: 0x8 }
+  - { offsetInCU: 0x76D, offset: 0x5EB72, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsItem setIIDDefaultToken:]', symObjAddr: 0x90C, symBinAddr: 0xC5D4, symSize: 0xC }
+  - { offsetInCU: 0x7AE, offset: 0x5EBB3, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsItem .cxx_destruct]', symObjAddr: 0x918, symBinAddr: 0xC5E0, symSize: 0x60 }
+  - { offsetInCU: 0x27, offset: 0x5ED0C, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsItem(RegisterInstallationAPI) registeredInstallationWithJSONData:date:error:]', symObjAddr: 0x0, symBinAddr: 0xC640, symSize: 0x268 }
+  - { offsetInCU: 0x7B, offset: 0x5ED60, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsItem(RegisterInstallationAPI) registeredInstallationWithJSONData:date:error:]', symObjAddr: 0x0, symBinAddr: 0xC640, symSize: 0x268 }
+  - { offsetInCU: 0x18B, offset: 0x5EE70, size: 0x8, addend: 0x0, symName: '+[FIRInstallationsItem(RegisterInstallationAPI) authTokenWithGenerateTokenAPIJSONData:date:error:]', symObjAddr: 0x268, symBinAddr: 0xC8A8, symSize: 0x94 }
+  - { offsetInCU: 0x202, offset: 0x5EEE7, size: 0x8, addend: 0x0, symName: '+[FIRInstallationsItem(RegisterInstallationAPI) authTokenWithJSONDict:date:error:]', symObjAddr: 0x2FC, symBinAddr: 0xC93C, symSize: 0x19C }
+  - { offsetInCU: 0x2F5, offset: 0x5EFDA, size: 0x8, addend: 0x0, symName: '+[FIRInstallationsItem(RegisterInstallationAPI) dictionaryFromJSONData:error:]', symObjAddr: 0x498, symBinAddr: 0xCAD8, symSize: 0xCC }
+  - { offsetInCU: 0x37E, offset: 0x5F063, size: 0x8, addend: 0x0, symName: '+[FIRInstallationsItem(RegisterInstallationAPI) validStringOrNilForKey:fromDict:]', symObjAddr: 0x564, symBinAddr: 0xCBA4, symSize: 0x74 }
+  - { offsetInCU: 0x35, offset: 0x5F215, size: 0x8, addend: 0x0, symName: _kFIRLoggerInstallations, symObjAddr: 0x380, symBinAddr: 0x18A10, symSize: 0x0 }
+  - { offsetInCU: 0x60, offset: 0x5F240, size: 0x8, addend: 0x0, symName: _kFIRInstallationsMessageCodeSendAPIRequest, symObjAddr: 0x388, symBinAddr: 0x18A18, symSize: 0x0 }
+  - { offsetInCU: 0x76, offset: 0x5F256, size: 0x8, addend: 0x0, symName: _kFIRInstallationsMessageCodeAPIRequestNetworkError, symObjAddr: 0x390, symBinAddr: 0x18A20, symSize: 0x0 }
+  - { offsetInCU: 0x8C, offset: 0x5F26C, size: 0x8, addend: 0x0, symName: _kFIRInstallationsMessageCodeAPIRequestResponse, symObjAddr: 0x398, symBinAddr: 0x18A28, symSize: 0x0 }
+  - { offsetInCU: 0xA2, offset: 0x5F282, size: 0x8, addend: 0x0, symName: _kFIRInstallationsMessageCodeUnexpectedAPIRequestResponse, symObjAddr: 0x3A0, symBinAddr: 0x18A30, symSize: 0x0 }
+  - { offsetInCU: 0xB8, offset: 0x5F298, size: 0x8, addend: 0x0, symName: _kFIRInstallationsMessageCodeParsingAPIResponse, symObjAddr: 0x3A8, symBinAddr: 0x18A38, symSize: 0x0 }
+  - { offsetInCU: 0xCE, offset: 0x5F2AE, size: 0x8, addend: 0x0, symName: _kFIRInstallationsMessageCodeAPIResponseParsingInstallationFailed, symObjAddr: 0x3B0, symBinAddr: 0x18A40, symSize: 0x0 }
+  - { offsetInCU: 0xE4, offset: 0x5F2C4, size: 0x8, addend: 0x0, symName: _kFIRInstallationsMessageCodeAPIResponseParsingInstallationSucceed, symObjAddr: 0x3B8, symBinAddr: 0x18A48, symSize: 0x0 }
+  - { offsetInCU: 0xFA, offset: 0x5F2DA, size: 0x8, addend: 0x0, symName: _kFIRInstallationsMessageCodeAPIResponseParsingAuthTokenFailed, symObjAddr: 0x3C0, symBinAddr: 0x18A50, symSize: 0x0 }
+  - { offsetInCU: 0x110, offset: 0x5F2F0, size: 0x8, addend: 0x0, symName: _kFIRInstallationsMessageCodeAPIResponseParsingAuthTokenSucceed, symObjAddr: 0x3C8, symBinAddr: 0x18A58, symSize: 0x0 }
+  - { offsetInCU: 0x126, offset: 0x5F306, size: 0x8, addend: 0x0, symName: _kFIRInstallationsMessageCodeNewGetInstallationOperationCreated, symObjAddr: 0x3D0, symBinAddr: 0x18A60, symSize: 0x0 }
+  - { offsetInCU: 0x13C, offset: 0x5F31C, size: 0x8, addend: 0x0, symName: _kFIRInstallationsMessageCodeNewGetAuthTokenOperationCreated, symObjAddr: 0x3D8, symBinAddr: 0x18A68, symSize: 0x0 }
+  - { offsetInCU: 0x152, offset: 0x5F332, size: 0x8, addend: 0x0, symName: _kFIRInstallationsMessageCodeNewDeleteInstallationOperationCreated, symObjAddr: 0x3E0, symBinAddr: 0x18A70, symSize: 0x0 }
+  - { offsetInCU: 0x168, offset: 0x5F348, size: 0x8, addend: 0x0, symName: _kFIRInstallationsMessageCodeInvalidFirebaseConfiguration, symObjAddr: 0x3E8, symBinAddr: 0x18A78, symSize: 0x0 }
+  - { offsetInCU: 0x17E, offset: 0x5F35E, size: 0x8, addend: 0x0, symName: _kFIRInstallationsMessageCodeCorruptedStoredInstallation, symObjAddr: 0x3F0, symBinAddr: 0x18A80, symSize: 0x0 }
+  - { offsetInCU: 0x194, offset: 0x5F374, size: 0x8, addend: 0x0, symName: _kFIRInstallationsMessageCodeInstallationCoderVersionMismatch, symObjAddr: 0x3F8, symBinAddr: 0x18A88, symSize: 0x0 }
+  - { offsetInCU: 0x1AA, offset: 0x5F38A, size: 0x8, addend: 0x0, symName: _kFIRInstallationsMessageCodeAuthTokenCoderVersionMismatch, symObjAddr: 0x400, symBinAddr: 0x18A90, symSize: 0x0 }
+  - { offsetInCU: 0x1C0, offset: 0x5F3A0, size: 0x8, addend: 0x0, symName: _kFIRInstallationsMessageCodeIIDCheckinCoderVersionMismatch, symObjAddr: 0x408, symBinAddr: 0x18A98, symSize: 0x0 }
+  - { offsetInCU: 0x1D6, offset: 0x5F3B6, size: 0x8, addend: 0x0, symName: _kFIRInstallationsMessageCodeIIDCheckinFailedToDecode, symObjAddr: 0x410, symBinAddr: 0x18AA0, symSize: 0x0 }
+  - { offsetInCU: 0x1EC, offset: 0x5F3CC, size: 0x8, addend: 0x0, symName: _kFIRInstallationsMessageCodeInvalidFirebaseAppOptions, symObjAddr: 0x418, symBinAddr: 0x18AA8, symSize: 0x0 }
+  - { offsetInCU: 0x27, offset: 0x5F420, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsSingleOperationPromiseCache initWithNewOperationHandler:]', symObjAddr: 0x0, symBinAddr: 0xCC18, symSize: 0x9C }
+  - { offsetInCU: 0x101, offset: 0x5F4FA, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsSingleOperationPromiseCache initWithNewOperationHandler:]', symObjAddr: 0x0, symBinAddr: 0xCC18, symSize: 0x9C }
+  - { offsetInCU: 0x148, offset: 0x5F541, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsSingleOperationPromiseCache getExistingPendingOrCreateNewPromise]', symObjAddr: 0x9C, symBinAddr: 0xCCB4, symSize: 0x1B0 }
+  - { offsetInCU: 0x1B3, offset: 0x5F5AC, size: 0x8, addend: 0x0, symName: '___83-[FIRInstallationsSingleOperationPromiseCache getExistingPendingOrCreateNewPromise]_block_invoke', symObjAddr: 0x24C, symBinAddr: 0xCE64, symSize: 0x7C }
+  - { offsetInCU: 0x206, offset: 0x5F5FF, size: 0x8, addend: 0x0, symName: '___83-[FIRInstallationsSingleOperationPromiseCache getExistingPendingOrCreateNewPromise]_block_invoke.2', symObjAddr: 0x2D8, symBinAddr: 0xCEE0, symSize: 0x74 }
+  - { offsetInCU: 0x255, offset: 0x5F64E, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsSingleOperationPromiseCache getExistingPendingPromise]', symObjAddr: 0x34C, symBinAddr: 0xCF54, symSize: 0x60 }
+  - { offsetInCU: 0x28C, offset: 0x5F685, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsSingleOperationPromiseCache newOperationHandler]', symObjAddr: 0x3AC, symBinAddr: 0xCFB4, symSize: 0x8 }
+  - { offsetInCU: 0x2C3, offset: 0x5F6BC, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsSingleOperationPromiseCache pendingPromise]', symObjAddr: 0x3B4, symBinAddr: 0xCFBC, symSize: 0x8 }
+  - { offsetInCU: 0x2FA, offset: 0x5F6F3, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsSingleOperationPromiseCache setPendingPromise:]', symObjAddr: 0x3BC, symBinAddr: 0xCFC4, symSize: 0xC }
+  - { offsetInCU: 0x33B, offset: 0x5F734, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsSingleOperationPromiseCache .cxx_destruct]', symObjAddr: 0x3C8, symBinAddr: 0xCFD0, symSize: 0x30 }
+  - { offsetInCU: 0x27, offset: 0x5F8FC, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsStore initWithSecureStorage:accessGroup:]', symObjAddr: 0x0, symBinAddr: 0xD000, symSize: 0x11C }
+  - { offsetInCU: 0x41, offset: 0x5F916, size: 0x8, addend: 0x0, symName: _kFIRInstallationsStoreUserDefaultsID, symObjAddr: 0xB98, symBinAddr: 0x18AE0, symSize: 0x0 }
+  - { offsetInCU: 0x12B, offset: 0x5FA00, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsStore initWithSecureStorage:accessGroup:]', symObjAddr: 0x0, symBinAddr: 0xD000, symSize: 0x11C }
+  - { offsetInCU: 0x1D8, offset: 0x5FAAD, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsStore installationForAppID:appName:]', symObjAddr: 0x11C, symBinAddr: 0xD11C, symSize: 0x1BC }
+  - { offsetInCU: 0x275, offset: 0x5FB4A, size: 0x8, addend: 0x0, symName: '___54-[FIRInstallationsStore installationForAppID:appName:]_block_invoke', symObjAddr: 0x2D8, symBinAddr: 0xD2D8, symSize: 0x94 }
+  - { offsetInCU: 0x2D4, offset: 0x5FBA9, size: 0x8, addend: 0x0, symName: '___54-[FIRInstallationsStore installationForAppID:appName:]_block_invoke.5', symObjAddr: 0x3BC, symBinAddr: 0xD36C, symSize: 0x78 }
+  - { offsetInCU: 0x352, offset: 0x5FC27, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsStore saveInstallation:]', symObjAddr: 0x434, symBinAddr: 0xD3E4, symSize: 0x160 }
+  - { offsetInCU: 0x3D4, offset: 0x5FCA9, size: 0x8, addend: 0x0, symName: '___42-[FIRInstallationsStore saveInstallation:]_block_invoke', symObjAddr: 0x594, symBinAddr: 0xD544, symSize: 0x10 }
+  - { offsetInCU: 0x433, offset: 0x5FD08, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsStore removeInstallationForAppID:appName:]', symObjAddr: 0x5A4, symBinAddr: 0xD554, symSize: 0x134 }
+  - { offsetInCU: 0x4B5, offset: 0x5FD8A, size: 0x8, addend: 0x0, symName: '___60-[FIRInstallationsStore removeInstallationForAppID:appName:]_block_invoke', symObjAddr: 0x6D8, symBinAddr: 0xD688, symSize: 0x10 }
+  - { offsetInCU: 0x514, offset: 0x5FDE9, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsStore installationExistsForAppID:appName:]', symObjAddr: 0x6E8, symBinAddr: 0xD698, symSize: 0x13C }
+  - { offsetInCU: 0x57B, offset: 0x5FE50, size: 0x8, addend: 0x0, symName: '___60-[FIRInstallationsStore installationExistsForAppID:appName:]_block_invoke', symObjAddr: 0x824, symBinAddr: 0xD7D4, symSize: 0x98 }
+  - { offsetInCU: 0x5EE, offset: 0x5FEC3, size: 0x8, addend: 0x0, symName: ___copy_helper_block_e8_32s40s48s56s, symObjAddr: 0x8BC, symBinAddr: 0xD86C, symSize: 0x38 }
+  - { offsetInCU: 0x617, offset: 0x5FEEC, size: 0x8, addend: 0x0, symName: ___destroy_helper_block_e8_32s40s48s56s, symObjAddr: 0x8F4, symBinAddr: 0xD8A4, symSize: 0x38 }
+  - { offsetInCU: 0x636, offset: 0x5FF0B, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsStore setInstallationExists:forItemWithIdentifier:]', symObjAddr: 0x92C, symBinAddr: 0xD8DC, symSize: 0xD8 }
+  - { offsetInCU: 0x689, offset: 0x5FF5E, size: 0x8, addend: 0x0, symName: '___69-[FIRInstallationsStore setInstallationExists:forItemWithIdentifier:]_block_invoke', symObjAddr: 0xA04, symBinAddr: 0xD9B4, symSize: 0x68 }
+  - { offsetInCU: 0x6EC, offset: 0x5FFC1, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsStore secureStorage]', symObjAddr: 0xA6C, symBinAddr: 0xDA1C, symSize: 0x8 }
+  - { offsetInCU: 0x723, offset: 0x5FFF8, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsStore accessGroup]', symObjAddr: 0xA74, symBinAddr: 0xDA24, symSize: 0x8 }
+  - { offsetInCU: 0x75A, offset: 0x6002F, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsStore queue]', symObjAddr: 0xA7C, symBinAddr: 0xDA2C, symSize: 0x8 }
+  - { offsetInCU: 0x791, offset: 0x60066, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsStore userDefaults]', symObjAddr: 0xA84, symBinAddr: 0xDA34, symSize: 0x8 }
+  - { offsetInCU: 0x7C8, offset: 0x6009D, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsStore .cxx_destruct]', symObjAddr: 0xA8C, symBinAddr: 0xDA3C, symSize: 0x48 }
+  - { offsetInCU: 0x27, offset: 0x60557, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsStoredAuthToken storageVersion]', symObjAddr: 0x0, symBinAddr: 0xDA84, symSize: 0x8 }
+  - { offsetInCU: 0x41, offset: 0x60571, size: 0x8, addend: 0x0, symName: _kFIRInstallationsStoredAuthTokenStatusKey, symObjAddr: 0x490, symBinAddr: 0x18BA8, symSize: 0x0 }
+  - { offsetInCU: 0x61, offset: 0x60591, size: 0x8, addend: 0x0, symName: _kFIRInstallationsStoredAuthTokenTokenKey, symObjAddr: 0x498, symBinAddr: 0x18BB0, symSize: 0x0 }
+  - { offsetInCU: 0x77, offset: 0x605A7, size: 0x8, addend: 0x0, symName: _kFIRInstallationsStoredAuthTokenExpirationDateKey, symObjAddr: 0x4A0, symBinAddr: 0x18BB8, symSize: 0x0 }
+  - { offsetInCU: 0x8D, offset: 0x605BD, size: 0x8, addend: 0x0, symName: _kFIRInstallationsStoredAuthTokenStorageVersionKey, symObjAddr: 0x4A8, symBinAddr: 0x18BC0, symSize: 0x0 }
+  - { offsetInCU: 0xA3, offset: 0x605D3, size: 0x8, addend: 0x0, symName: _kFIRInstallationsStoredAuthTokenStorageVersion, symObjAddr: 0x4B0, symBinAddr: 0x10FB0, symSize: 0x0 }
+  - { offsetInCU: 0x171, offset: 0x606A1, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsStoredAuthToken storageVersion]', symObjAddr: 0x0, symBinAddr: 0xDA84, symSize: 0x8 }
+  - { offsetInCU: 0x1A4, offset: 0x606D4, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsStoredAuthToken copyWithZone:]', symObjAddr: 0x8, symBinAddr: 0xDA8C, symSize: 0xB0 }
+  - { offsetInCU: 0x1F7, offset: 0x60727, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsStoredAuthToken encodeWithCoder:]', symObjAddr: 0xB8, symBinAddr: 0xDB3C, symSize: 0xCC }
+  - { offsetInCU: 0x23A, offset: 0x6076A, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsStoredAuthToken initWithCoder:]', symObjAddr: 0x184, symBinAddr: 0xDC08, symSize: 0x140 }
+  - { offsetInCU: 0x2D3, offset: 0x60803, size: 0x8, addend: 0x0, symName: '+[FIRInstallationsStoredAuthToken supportsSecureCoding]', symObjAddr: 0x2C4, symBinAddr: 0xDD48, symSize: 0x8 }
+  - { offsetInCU: 0x306, offset: 0x60836, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsStoredAuthToken status]', symObjAddr: 0x2CC, symBinAddr: 0xDD50, symSize: 0x8 }
+  - { offsetInCU: 0x33D, offset: 0x6086D, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsStoredAuthToken setStatus:]', symObjAddr: 0x2D4, symBinAddr: 0xDD58, symSize: 0x8 }
+  - { offsetInCU: 0x37A, offset: 0x608AA, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsStoredAuthToken token]', symObjAddr: 0x2DC, symBinAddr: 0xDD60, symSize: 0xC }
+  - { offsetInCU: 0x3B1, offset: 0x608E1, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsStoredAuthToken setToken:]', symObjAddr: 0x2E8, symBinAddr: 0xDD6C, symSize: 0x8 }
+  - { offsetInCU: 0x3F0, offset: 0x60920, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsStoredAuthToken expirationDate]', symObjAddr: 0x2F0, symBinAddr: 0xDD74, symSize: 0xC }
+  - { offsetInCU: 0x427, offset: 0x60957, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsStoredAuthToken setExpirationDate:]', symObjAddr: 0x2FC, symBinAddr: 0xDD80, symSize: 0x8 }
+  - { offsetInCU: 0x466, offset: 0x60996, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsStoredAuthToken .cxx_destruct]', symObjAddr: 0x304, symBinAddr: 0xDD88, symSize: 0x30 }
+  - { offsetInCU: 0x27, offset: 0x60A5E, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsStoredItem storageVersion]', symObjAddr: 0x0, symBinAddr: 0xDDB8, symSize: 0x8 }
+  - { offsetInCU: 0x41, offset: 0x60A78, size: 0x8, addend: 0x0, symName: _kFIRInstallationsStoredItemFirebaseInstallationIDKey, symObjAddr: 0x570, symBinAddr: 0x18BC8, symSize: 0x0 }
+  - { offsetInCU: 0x61, offset: 0x60A98, size: 0x8, addend: 0x0, symName: _kFIRInstallationsStoredItemRefreshTokenKey, symObjAddr: 0x578, symBinAddr: 0x18BD0, symSize: 0x0 }
+  - { offsetInCU: 0x77, offset: 0x60AAE, size: 0x8, addend: 0x0, symName: _kFIRInstallationsStoredItemAuthTokenKey, symObjAddr: 0x580, symBinAddr: 0x18BD8, symSize: 0x0 }
+  - { offsetInCU: 0x8D, offset: 0x60AC4, size: 0x8, addend: 0x0, symName: _kFIRInstallationsStoredItemRegistrationStatusKey, symObjAddr: 0x588, symBinAddr: 0x18BE0, symSize: 0x0 }
+  - { offsetInCU: 0xA3, offset: 0x60ADA, size: 0x8, addend: 0x0, symName: _kFIRInstallationsStoredItemIIDDefaultTokenKey, symObjAddr: 0x590, symBinAddr: 0x18BE8, symSize: 0x0 }
+  - { offsetInCU: 0xB9, offset: 0x60AF0, size: 0x8, addend: 0x0, symName: _kFIRInstallationsStoredItemStorageVersionKey, symObjAddr: 0x598, symBinAddr: 0x18BF0, symSize: 0x0 }
+  - { offsetInCU: 0xCF, offset: 0x60B06, size: 0x8, addend: 0x0, symName: _kFIRInstallationsStoredItemStorageVersion, symObjAddr: 0x5A0, symBinAddr: 0x10FB8, symSize: 0x0 }
+  - { offsetInCU: 0x244, offset: 0x60C7B, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsStoredItem storageVersion]', symObjAddr: 0x0, symBinAddr: 0xDDB8, symSize: 0x8 }
+  - { offsetInCU: 0x277, offset: 0x60CAE, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsStoredItem encodeWithCoder:]', symObjAddr: 0x8, symBinAddr: 0xDDC0, symSize: 0x12C }
+  - { offsetInCU: 0x2BA, offset: 0x60CF1, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsStoredItem initWithCoder:]', symObjAddr: 0x134, symBinAddr: 0xDEEC, symSize: 0x1C8 }
+  - { offsetInCU: 0x353, offset: 0x60D8A, size: 0x8, addend: 0x0, symName: '+[FIRInstallationsStoredItem supportsSecureCoding]', symObjAddr: 0x2FC, symBinAddr: 0xE0B4, symSize: 0x8 }
+  - { offsetInCU: 0x386, offset: 0x60DBD, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsStoredItem firebaseInstallationID]', symObjAddr: 0x304, symBinAddr: 0xE0BC, symSize: 0x8 }
+  - { offsetInCU: 0x3BD, offset: 0x60DF4, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsStoredItem setFirebaseInstallationID:]', symObjAddr: 0x30C, symBinAddr: 0xE0C4, symSize: 0x8 }
+  - { offsetInCU: 0x3FC, offset: 0x60E33, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsStoredItem refreshToken]', symObjAddr: 0x314, symBinAddr: 0xE0CC, symSize: 0x8 }
+  - { offsetInCU: 0x433, offset: 0x60E6A, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsStoredItem setRefreshToken:]', symObjAddr: 0x31C, symBinAddr: 0xE0D4, symSize: 0x8 }
+  - { offsetInCU: 0x472, offset: 0x60EA9, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsStoredItem authToken]', symObjAddr: 0x324, symBinAddr: 0xE0DC, symSize: 0x8 }
+  - { offsetInCU: 0x4A9, offset: 0x60EE0, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsStoredItem setAuthToken:]', symObjAddr: 0x32C, symBinAddr: 0xE0E4, symSize: 0xC }
+  - { offsetInCU: 0x4EA, offset: 0x60F21, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsStoredItem registrationStatus]', symObjAddr: 0x338, symBinAddr: 0xE0F0, symSize: 0x8 }
+  - { offsetInCU: 0x521, offset: 0x60F58, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsStoredItem setRegistrationStatus:]', symObjAddr: 0x340, symBinAddr: 0xE0F8, symSize: 0x8 }
+  - { offsetInCU: 0x55E, offset: 0x60F95, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsStoredItem IIDDefaultToken]', symObjAddr: 0x348, symBinAddr: 0xE100, symSize: 0x8 }
+  - { offsetInCU: 0x595, offset: 0x60FCC, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsStoredItem setIIDDefaultToken:]', symObjAddr: 0x350, symBinAddr: 0xE108, symSize: 0xC }
+  - { offsetInCU: 0x5D6, offset: 0x6100D, size: 0x8, addend: 0x0, symName: '-[FIRInstallationsStoredItem .cxx_destruct]', symObjAddr: 0x35C, symBinAddr: 0xE114, symSize: 0x48 }
+...
