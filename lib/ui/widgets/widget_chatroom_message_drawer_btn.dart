@@ -8,8 +8,7 @@ import 'package:flutter/material.dart';
 import '../screens/screen_chatroom_drawer.dart';
 
 
-Widget widgetChatroomMessageDrawerBtn(BuildContext context, DataChat dataChat,
-    ModuleNotice moduleNotice,DataNotice dataNotice,ModuleMemo moduleMemo ) {
+Widget widgetChatroomMessageDrawerBtn(BuildContext context, DataChat dataChat, ModuleNotice moduleNotice,DataNotice dataNotice,ModuleMemo moduleMemo, {required Null Function() onExit} ) {
   return Container(
     width: 80,
     height: 80,
@@ -35,6 +34,9 @@ Widget widgetChatroomMessageDrawerBtn(BuildContext context, DataChat dataChat,
           MaterialPageRoute(builder: (context) {
             return ScreenChatroomDrawer(
               dataChat: dataChat,
+              onExit: () {
+                onExit();
+              },
             );
           }),
         );

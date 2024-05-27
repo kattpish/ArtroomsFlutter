@@ -9,12 +9,12 @@ void widgetProfileLogoutDialog(BuildContext context, {required Null Function() o
     context: context,
     builder: (BuildContext context) {
       return Dialog(
-        backgroundColor: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20.0),
-        ),
         child: Container(
           padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20.0),
+          ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [

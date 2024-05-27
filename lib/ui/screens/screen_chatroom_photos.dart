@@ -199,6 +199,7 @@ class _ScreenChatroomPhotosState extends State<ScreenChatroomPhotos> {
             ),
           ],
           elevation: 0.2,
+          scrolledUnderElevation: 0,
         ),
         backgroundColor: colorMainScreen,
         body: WidgetUiNotify(

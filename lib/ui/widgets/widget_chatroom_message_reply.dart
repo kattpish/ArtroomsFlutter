@@ -87,9 +87,8 @@ class WidgetChatroomMessageReply extends StatelessWidget {
 
 }
 
-Widget buildReply(int index, DataMessage message, bool isMe, Null Function(int index) onReplyClick) {
-  return (
-      _doParseReplyMessage(message.data))
+Widget buildReply(int index, DataMessage message, bool isMe, Null Function(int id) onReplyClick) {
+  return (_doParseReplyMessage(message.data))
       ? Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
@@ -98,8 +97,9 @@ Widget buildReply(int index, DataMessage message, bool isMe, Null Function(int i
         highlightColor: Colors.transparent,
         onTap: (){
           ParentMessage? parent = _getParentMessage(message.data);
-          print('index selected ${parent!.messageId}',);
-          onReplyClick(parent.messageId);
+          if(parent != null) {
+            onReplyClick(parent.messageId);
+          }
         },
         child: Container(
           decoration: const BoxDecoration(
@@ -116,7 +116,6 @@ Widget buildReply(int index, DataMessage message, bool isMe, Null Function(int i
         ),
       ),
       Container(
-        width: 194,
         height: 1,
         margin: const EdgeInsets.only(top: 10, bottom: 8),
         decoration: BoxDecoration(

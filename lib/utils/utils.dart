@@ -1,5 +1,10 @@
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:intl/date_symbol_data_custom.dart';
+import 'package:intl/date_symbols.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -10,6 +15,18 @@ final DateFormat formatterTime = DateFormat('a h:mm', 'ko_KR');
 final DateFormat formatterDate = DateFormat('yyyy.MM.dd', 'ko_KR');
 final DateFormat formatterLastMessage = DateFormat('y년 M월 d일 EEEE', 'ko_KR');
 final DateFormat timeFormatChat = DateFormat("a h:mm", "ko_KR");
+
+Future<void> initLocale() async {
+
+  String symbolsDataString = await rootBundle.loadString('assets/locale/symbols/ko_KR.json');
+  Map<String, dynamic> symbolsData = json.decode(symbolsDataString);
+  initializeDateFormattingCustom(
+    locale: 'ko_KR',
+    symbols: DateSymbols.deserializeFromMap(symbolsData),
+    patterns: {},
+  );
+
+}
 
 String formatTime(int timestamp) {
   var date = DateTime.fromMillisecondsSinceEpoch(timestamp);
@@ -98,7 +115,7 @@ Future<void> launchInBrowser(Uri url) async {
 }
 
 bool isEmailValid(String email) {
-  return RegExp(r"^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(email);
+  return RegExp(r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+\.[a-zA-Z]{2,}$").hasMatch(email);
 }
 
 void showSnackBar(BuildContext context, String message) {
@@ -135,7 +152,7 @@ List<TextSpan> replacePattern(String original, Color color, Color colorMention, 
               style: TextStyle(
                 color: color,
                 fontSize: 15.8,
-                letterSpacing: -0.2,
+                letterSpacing: -0.32,
               ),
           ),
       );
@@ -145,7 +162,7 @@ List<TextSpan> replacePattern(String original, Color color, Color colorMention, 
               style: TextStyle(
                 color: colorMention,
                 fontSize: 15.8,
-                letterSpacing: -0.2,
+                letterSpacing: -0.32,
               ),
           ),
       );
@@ -167,7 +184,7 @@ List<TextSpan> replacePattern(String original, Color color, Color colorMention, 
             style: TextStyle(
               color: color,
               fontSize: 15.8,
-              letterSpacing: 1.2,
+              letterSpacing: -0.32,
             ),
         ),
     );

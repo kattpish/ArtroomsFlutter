@@ -18,16 +18,13 @@ class WidgetChatroomMessageFlow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return IntrinsicHeight(
-    child: Row(
-      children: [
-        Container(
-          width: 4,
-        ),
-        const SizedBox(width: 0),
-        Expanded(child:  buildReplyMessageForText(isMe)),
-      ],
-    ),
-  );
+      child: Row(
+        children: [
+          const SizedBox(width: 4),
+          Expanded(child:  buildReplyMessageForText(isMe)),
+        ],
+      ),
+    );
   }
 
   Widget buildReplyMessageForText(bool isMe) {
@@ -35,29 +32,23 @@ class WidgetChatroomMessageFlow extends StatelessWidget {
     ParentMessage parentMessage = ParentMessage(0, "", "", "", "");
 
     try{
-       parentMessage = ParentMessage.fromJson(const JsonDecoder().convert(message.data));
+      parentMessage = ParentMessage.fromJson(const JsonDecoder().convert(message.data));
     }catch(_){
     }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            Expanded(
-              child: Text(
-                '${parentMessage.senderName}에게 답장',
-                style: TextStyle(
-                  color: isMe ? Colors.white : colorMainGrey800,
-                  fontSize: 13,
-                  fontFamily: 'SUIT',
-                  fontWeight: FontWeight.w400,
-                  height: 0,
-                  letterSpacing: -0.26,
-                ),
-              ),
-            ),
-          ],
+        Text(
+          '${parentMessage.senderName}에게 답장',
+          style: TextStyle(
+            color: isMe ? Colors.white : colorMainGrey800,
+            fontSize: 13,
+            fontFamily: 'SUIT',
+            fontWeight: FontWeight.w400,
+            height: 0,
+            letterSpacing: -0.26,
+          ),
         ),
         const SizedBox(height: 2),
         Text(
@@ -72,7 +63,7 @@ class WidgetChatroomMessageFlow extends StatelessWidget {
               fontWeight: FontWeight.w400,
               height: 0,
               letterSpacing: -0.26,
-        )),
+            )),
       ],
     );
   }

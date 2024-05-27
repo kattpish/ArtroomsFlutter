@@ -22,6 +22,7 @@ import 'package:sendbird_sdk/query/group_channel_list_query.dart';
 import 'package:sendbird_sdk/sdk/sendbird_sdk_api.dart';
 
 import '../main.dart';
+import '../utils/utils.dart';
 import 'module_push_notifications.dart';
 
 
@@ -35,6 +36,8 @@ class ModuleSendBird {
     try {
 
       if(!_isInitialized) {
+
+        await initLocale();
 
         final String email = dbStore.getEmail();
 

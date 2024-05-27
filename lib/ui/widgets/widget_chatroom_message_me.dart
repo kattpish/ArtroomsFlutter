@@ -115,10 +115,9 @@ Widget chatroomMessageMe({
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              buildReply(index, message, true,
-                                      (index) {
-                                    onReplySelect(index);
-                                  }),
+                              buildReply(index, message, true, (id) {
+                                onReplySelect(id);
+                              }),
                               Container(
                                 padding: const EdgeInsets.only(bottom: 2),
                                 constraints: BoxConstraints(

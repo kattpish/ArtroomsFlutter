@@ -31,16 +31,9 @@ class WidgetLoaderPage extends StatelessWidget {
     return Container(
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height,
-      color: const Color(0xFF6A79FF).withOpacity(0.2),
+      color: const Color(0xFF6A79FF).withOpacity(0.1),
       child: const Center(
-        child: SizedBox(
-          width: 40,
-          height: 40,
-          child: CircularProgressIndicator(
-            color: Color(0xFF6A79FF),
-            strokeWidth: 3,
-          ),
-        ),
+        child: WidgetLoader(),
       ),
     );
   }

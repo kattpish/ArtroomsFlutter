@@ -72,6 +72,7 @@ class _ScreenNoticesState extends State<ScreenNotices> {
           ),
         ),
         elevation: 0.2,
+        scrolledUnderElevation: 0,
       ),
       bottomNavigationBar: BottomAppBar(
         height: isTablet(context) ? 0 : 0,

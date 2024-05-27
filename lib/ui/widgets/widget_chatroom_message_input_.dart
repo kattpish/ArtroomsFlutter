@@ -34,6 +34,7 @@ class ChatroomMessageInput extends StatelessWidget {
               ),
               filled: true,
               fillColor: const Color(0xFFF3F3F3),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 12.0),
             ),
             style: const TextStyle(
               color: colorMainGrey800,

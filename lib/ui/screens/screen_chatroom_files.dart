@@ -89,6 +89,7 @@ class _ScreenChatroomFilesState extends State<ScreenChatroomFiles> {
         titleSpacing: 0,
         leadingWidth: 46,
         elevation: 0.2,
+        scrolledUnderElevation: 0,
       ),
       backgroundColor: colorMainScreen,
       body: WidgetUiNotify(

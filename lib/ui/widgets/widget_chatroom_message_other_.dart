@@ -24,7 +24,7 @@ class ChatroomMessageOther extends StatefulWidget {
   final bool isNextSameTime;
   final double screenWidth;
   final Null Function() onReplyClick;
-  final Null Function(int index) onReplySelect;
+  final Null Function(int id) onReplySelect;
 
   const ChatroomMessageOther(
       {super.key,
@@ -197,9 +197,8 @@ class _ChatroomMessageOtherState extends State<ChatroomMessageOther> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          buildReply(widget.index, widget.message, false,
-                                              (index) {
-                                            widget.onReplySelect(index);
+                                          buildReply(widget.index, widget.message, false, (id) {
+                                            widget.onReplySelect(id);
                                           }),
                                           WidgetChatroomMessageText(
                                             message: widget.message.content,

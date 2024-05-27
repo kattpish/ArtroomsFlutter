@@ -390,6 +390,14 @@ class _ScreenLoginState extends State<ScreenLogin> {
 
           await dbStore.saveTokens(email, accessToken, refreshToken);
 
+          setState(() {
+            _isLoading = false;
+          });
+
+          Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) {
+            return const ScreenChats();
+          }));
+
           Map<String, dynamic>? profile = await _userModule.getMyProfile();
           if (profile != null) {
 
@@ -405,17 +413,9 @@ class _ScreenLoginState extends State<ScreenLogin> {
             }
           }
 
-          Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) {
-            return const ScreenChats();
-          }));
-
         } else {
           showSnackBar(context, "로그인 실패");
         }
-
-        setState(() {
-          _isLoading = false;
-        });
 
       },
     );

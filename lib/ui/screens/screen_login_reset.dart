@@ -86,6 +86,7 @@ class _ScreenLoginResetState extends State<ScreenLoginReset> with SingleTickerPr
         ),
         centerTitle: true,
         elevation: 0.2,
+        scrolledUnderElevation: 0,
         toolbarHeight: 60,
         backgroundColor: Colors.white,
         bottom: TabBar(

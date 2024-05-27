@@ -1,4 +1,6 @@
 
+import 'dart:ui';
+
 import 'package:artrooms/beans/bean_chatting_artist_profile.dart';
 import 'package:artrooms/beans/bean_memo.dart';
 import 'package:artrooms/beans/bean_message.dart';
@@ -7,7 +9,6 @@ import 'package:artrooms/modules/module_messages.dart';
 import 'package:artrooms/modules/module_notices.dart';
 import 'package:artrooms/ui/screens/screen_chatroom_files.dart';
 import 'package:artrooms/ui/screens/screen_chatroom_photos.dart';
-import 'package:artrooms/ui/screens/screen_chats.dart';
 import 'package:artrooms/ui/screens/screen_memo.dart';
 import 'package:artrooms/ui/screens/screen_notices.dart';
 import 'package:flutter/material.dart';
@@ -27,8 +28,9 @@ import '../widgets/widget_ui_notify.dart';
 class ScreenChatroomDrawer extends StatefulWidget {
 
   final DataChat dataChat;
+  final VoidCallback onExit;
 
-  const ScreenChatroomDrawer({super.key, required this.dataChat,});
+  const ScreenChatroomDrawer({super.key, required this.dataChat, required this.onExit});
 
   @override
   State<StatefulWidget> createState() {
@@ -39,7 +41,8 @@ class ScreenChatroomDrawer extends StatefulWidget {
 
 class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
 
-  bool _isLoading = true;
+  int _loaded = 0;
+  bool _isLoadingArtist = true;
   final ModuleNotice moduleNotice = ModuleNotice();
   final TextEditingController _memoController = TextEditingController();
   final TextEditingController _noticeController = TextEditingController();
@@ -86,6 +89,7 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
         ),
         toolbarHeight: 60,
         leadingWidth: 0,
+        leading: const SizedBox.shrink(),
         actions: [
           Container(
             height: 24.0,
@@ -111,6 +115,7 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
           )
         ],
         elevation: 0.2,
+        scrolledUnderElevation: 0,
         backgroundColor: Colors.white,
       ),
       body: WidgetUiNotify(
@@ -187,30 +192,60 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
                             Visibility(
                               visible: !widget.dataChat.isArtrooms,
                               child: Container(
-                                  margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
-                                  padding: const EdgeInsets.all(20.0),
-                                  decoration: BoxDecoration(
-                                    color: colorMainGrey100,
-                                    borderRadius: BorderRadius.circular(16.0),
-                                  ),
-                                  child:  Column(
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          const Text(
-                                            '주중피드백',
-                                            style: TextStyle(
-                                              color: colorMainGrey400,
-                                              fontSize: 14,
-                                              fontFamily: 'SUIT',
-                                              fontWeight: FontWeight.w400,
-                                              height: 0,
-                                              letterSpacing: -0.28,
+                                margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
+                                padding: const EdgeInsets.all(20.0),
+                                decoration: BoxDecoration(
+                                  color: colorMainGrey100,
+                                  borderRadius: BorderRadius.circular(16.0),
+                                ),
+                                child:  Stack(
+                                  children: [
+                                    Column(
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            const Text(
+                                              '주중 피드백',
+                                              style: TextStyle(
+                                                color: colorMainGrey400,
+                                                fontSize: 14,
+                                                fontFamily: 'SUIT',
+                                                fontWeight: FontWeight.w400,
+                                                height: 0,
+                                                letterSpacing: -0.28,
+                                              ),
                                             ),
-                                          ),
-                                          Text(
-                                              _artistProfile.feedback.isNotEmpty ? _artistProfile.feedback : '-',
+                                            Text(
+                                                _artistProfile.feedback.isNotEmpty ? _artistProfile.feedback : '-',
+                                                style: const TextStyle(
+                                                  color: colorMainGrey800,
+                                                  fontSize: 14,
+                                                  fontFamily: 'SUIT',
+                                                  fontWeight: FontWeight.w400,
+                                                  height: 0,
+                                                  letterSpacing: -0.28,
+                                                )
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 8),
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            const Text(
+                                              '수업상담',
+                                              style: TextStyle(
+                                                color: colorMainGrey400,
+                                                fontSize: 14,
+                                                fontFamily: 'SUIT',
+                                                fontWeight: FontWeight.w400,
+                                                height: 0,
+                                                letterSpacing: -0.28,
+                                              ),
+                                            ),
+                                            Text(
+                                              _artistProfile.classAdvice.isNotEmpty ? _artistProfile.classAdvice : '-',
                                               style: const TextStyle(
                                                 color: colorMainGrey800,
                                                 fontSize: 14,
@@ -218,154 +253,147 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
                                                 fontWeight: FontWeight.w400,
                                                 height: 0,
                                                 letterSpacing: -0.28,
-                                              )
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 8),
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            const Text(
+                                              '채팅 가능 요일',
+                                              style: TextStyle(
+                                                color: colorMainGrey400,
+                                                fontSize: 14,
+                                                fontFamily: 'SUIT',
+                                                fontWeight: FontWeight.w400,
+                                                height: 0,
+                                                letterSpacing: -0.28,
+                                              ),
+                                            ),
+                                            Text(
+                                              _artistProfile.ableDay.isNotEmpty ? _artistProfile.ableDay : '-',
+                                              style: const TextStyle(
+                                                color: colorMainGrey800,
+                                                fontSize: 14,
+                                                fontFamily: 'SUIT',
+                                                fontWeight: FontWeight.w400,
+                                                height: 0,
+                                                letterSpacing: -0.28,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 8),
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            const Text(
+                                              '채팅 가능 시간',
+                                              style: TextStyle(
+                                                color: colorMainGrey400,
+                                                fontSize: 14,
+                                                fontFamily: 'SUIT',
+                                                fontWeight: FontWeight.w400,
+                                                height: 0,
+                                                letterSpacing: -0.28,
+                                              ),
+                                            ),
+                                            Text(
+                                              _artistProfile.ableTime.isNotEmpty ? _artistProfile.ableTime : '-',
+                                              style: const TextStyle(
+                                                color: colorMainGrey800,
+                                                fontSize: 14,
+                                                fontFamily: 'SUIT',
+                                                fontWeight: FontWeight.w400,
+                                                height: 0,
+                                                letterSpacing: -0.28,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 8),
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            const Text(
+                                              '평균 응답 시간',
+                                              style: TextStyle(
+                                                color: colorMainGrey400,
+                                                fontSize: 14,
+                                                fontFamily: 'SUIT',
+                                                fontWeight: FontWeight.w400,
+                                                height: 0,
+                                                letterSpacing: -0.28,
+                                              ),
+                                            ),
+                                            Text(
+                                              _artistProfile.replyTime.isNotEmpty ? _artistProfile.replyTime : '-',
+                                              style: const TextStyle(
+                                                color: colorMainGrey800,
+                                                fontSize: 14,
+                                                fontFamily: 'SUIT',
+                                                fontWeight: FontWeight.w400,
+                                                height: 0,
+                                                letterSpacing: -0.28,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                    Visibility(
+                                      visible: _loaded > 3 && _isLoadingArtist,
+                                      child: const Center(
+                                        child: SizedBox(
+                                          width: 20,
+                                          height: 20,
+                                          child: CircularProgressIndicator(
+                                            color: Color(0xFF6A79FF),
+                                            strokeWidth: 3,
                                           ),
-                                        ],
+                                        ),
                                       ),
-                                      const SizedBox(height: 8),
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          const Text('수업상담',
-                                            style: TextStyle(
-                                              color: colorMainGrey400,
-                                              fontSize: 14,
-                                              fontFamily: 'SUIT',
-                                              fontWeight: FontWeight.w400,
-                                              height: 0,
-                                              letterSpacing: -0.28,
-                                            ),
-                                          ),
-                                          Text(
-                                            _artistProfile.classAdvice.isNotEmpty ? _artistProfile.classAdvice : '-',
-                                            style: const TextStyle(
-                                              color: colorMainGrey800,
-                                              fontSize: 14,
-                                              fontFamily: 'SUIT',
-                                              fontWeight: FontWeight.w400,
-                                              height: 0,
-                                              letterSpacing: -0.28,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 8),
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          const Text('채팅가능시간',
-                                            style: TextStyle(
-                                              color: colorMainGrey400,
-                                              fontSize: 14,
-                                              fontFamily: 'SUIT',
-                                              fontWeight: FontWeight.w400,
-                                              height: 0,
-                                              letterSpacing: -0.28,
-                                            ),
-                                          ),
-                                          Text(
-                                            _artistProfile.ableTime.isNotEmpty ? _artistProfile.ableTime : '-',
-                                            style: const TextStyle(
-                                              color: colorMainGrey800,
-                                              fontSize: 14,
-                                              fontFamily: 'SUIT',
-                                              fontWeight: FontWeight.w400,
-                                              height: 0,
-                                              letterSpacing: -0.28,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 8),
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          const Text('평균응답시간',
-                                            style: TextStyle(
-                                              color: colorMainGrey400,
-                                              fontSize: 14,
-                                              fontFamily: 'SUIT',
-                                              fontWeight: FontWeight.w400,
-                                              height: 0,
-                                              letterSpacing: -0.28,
-                                            ),
-                                          ),
-                                          Text(
-                                            _artistProfile.ableDay.isNotEmpty ? _artistProfile.ableDay : '-',
-                                            style: const TextStyle(
-                                              color: colorMainGrey800,
-                                              fontSize: 14,
-                                              fontFamily: 'SUIT',
-                                              fontWeight: FontWeight.w400,
-                                              height: 0,
-                                              letterSpacing: -0.28,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 8),
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          const Text(''
-                                              ''
-                                              '',
-                                            style: TextStyle(
-                                              color: colorMainGrey400,
-                                              fontSize: 14,
-                                              fontFamily: 'SUIT',
-                                              fontWeight: FontWeight.w400,
-                                              height: 0,
-                                              letterSpacing: -0.28,
-                                            ),
-                                          ),
-                                          Text(
-                                            _artistProfile.replyTime.isNotEmpty ? _artistProfile.replyTime : '-',
-                                            style: const TextStyle(
-                                              color: colorMainGrey800,
-                                              fontSize: 14,
-                                              fontFamily: 'SUIT',
-                                              fontWeight: FontWeight.w400,
-                                              height: 0,
-                                              letterSpacing: -0.28,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  )
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                             const SizedBox(height: 8),
                             Column(
                               children:[
-                                ListTile(
-                                  title: const Text(
-                                    '메모',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      color: colorMainGrey900,
-                                      fontFamily: 'SUIT',
-                                      fontWeight: FontWeight.w600,
-                                      height: 0,
-                                      letterSpacing: -0.32,
+                                GestureDetector(
+                                  behavior: HitTestBehavior.translucent,
+                                  child: ListTile(
+                                    title: const Text(
+                                      '메모',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: colorMainGrey900,
+                                        fontFamily: 'SUIT',
+                                        fontWeight: FontWeight.w600,
+                                        height: 0,
+                                        letterSpacing: -0.32,
+                                      ),
                                     ),
+                                    trailing: const Icon(
+                                      Icons.chevron_right,
+                                      color: Colors.black,
+                                      size: 20,
+                                    ),
+                                    onTap: () async {
+                                      await Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                        return ScreenMemo(dataChat: widget.dataChat, dataMemo: _dataMemo, onUpdateMemo: (dataMemo) {
+                                          setState(() {
+                                            _dataMemo = dataMemo;
+                                          });
+                                          dbStore.saveMemo(widget.dataChat, _dataMemo.memo);
+                                          _doLoadMemo();
+                                        },);
+                                      }));
+                                    },
                                   ),
-                                  trailing: const Icon(
-                                    Icons.chevron_right,
-                                    color: Colors.black,
-                                    size: 20,
-                                  ),
-                                  onTap: () async {
-                                    await Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                      return ScreenMemo(dataChat: widget.dataChat, dataMemo: _dataMemo, onUpdateMemo: (memo) {
-                                        setState(() {
-                                          _dataMemo = memo;
-                                        });
-                                        _doLoadMemo();
-                                      },);
-                                    }));
-                                  },
                                 ),
                                 Container(
                                   height: 82,
@@ -388,8 +416,8 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
                                       fillColor: Colors.white,
                                       contentPadding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 0),
                                     ),
-                                    minLines: 2,
-                                    maxLines: 2,
+                                    minLines: 4,
+                                    maxLines: null,
                                     readOnly: true,
                                     keyboardType: TextInputType.multiline,
                                     style: const TextStyle(
@@ -406,28 +434,31 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
                             const SizedBox(height: 16),
                             Column(
                               children:[
-                                ListTile(
-                                  title: const Text(
-                                    '공지',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      color: colorMainGrey900,
-                                      fontFamily: 'SUIT',
-                                      fontWeight: FontWeight.w600,
-                                      height: 0,
-                                      letterSpacing: -0.32,
+                                GestureDetector(
+                                  behavior: HitTestBehavior.translucent,
+                                  child: ListTile(
+                                    title: const Text(
+                                      '공지',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: colorMainGrey900,
+                                        fontFamily: 'SUIT',
+                                        fontWeight: FontWeight.w600,
+                                        height: 0,
+                                        letterSpacing: -0.32,
+                                      ),
                                     ),
+                                    trailing: const Icon(
+                                      Icons.chevron_right,
+                                      color: Colors.black,
+                                      size: 20,
+                                    ),
+                                    onTap: () {
+                                      Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                        return ScreenNotices(dataChat: widget.dataChat,);
+                                      }));
+                                    },
                                   ),
-                                  trailing: const Icon(
-                                    Icons.chevron_right,
-                                    color: Colors.black,
-                                    size: 20,
-                                  ),
-                                  onTap: () {
-                                    Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                      return ScreenNotices(dataChat: widget.dataChat,);
-                                    }));
-                                  },
                                 ),
                                 Container(
                                   height: 82,
@@ -450,8 +481,8 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
                                       fillColor: Colors.white,
                                       contentPadding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 0),
                                     ),
-                                    minLines: 2,
-                                    maxLines: 2,
+                                    minLines: 4,
+                                    maxLines: null,
                                     readOnly: true,
                                     keyboardType: TextInputType.multiline,
                                     style: const TextStyle(
@@ -470,23 +501,26 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
                               children:[
                                 Column(
                                   children: [
-                                    ListTile(
-                                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0.0),
-                                      title: const Text(
-                                        '이미지',
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          color: colorMainGrey900,
-                                          fontFamily: 'SUIT',
-                                          fontWeight: FontWeight.w600,
-                                          height: 0,
-                                          letterSpacing: -0.32,
+                                    GestureDetector(
+                                      behavior: HitTestBehavior.translucent,
+                                      child: const ListTile(
+                                        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 0.0),
+                                        title: Text(
+                                          '이미지',
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            color: colorMainGrey900,
+                                            fontFamily: 'SUIT',
+                                            fontWeight: FontWeight.w600,
+                                            height: 0,
+                                            letterSpacing: -0.32,
+                                          ),
                                         ),
-                                      ),
-                                      trailing: const Icon(
-                                        Icons.chevron_right,
-                                        color: Colors.black,
-                                        size: 20,
+                                        trailing: Icon(
+                                          Icons.chevron_right,
+                                          color: Colors.black,
+                                          size: 20,
+                                        ),
                                       ),
                                       onTap: () {
                                         Navigator.push(context, MaterialPageRoute(builder: (context) {
@@ -501,29 +535,32 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
                                     ),
                                   ],
                                 ),
-                                ListTile(
-                                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0.0),
-                                  title: const Text(
-                                    '파일',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      color: colorMainGrey900,
-                                      fontFamily: 'SUIT',
-                                      fontWeight: FontWeight.w600,
-                                      height: 0,
-                                      letterSpacing: -0.32,
+                                GestureDetector(
+                                  behavior: HitTestBehavior.translucent,
+                                  child: ListTile(
+                                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0.0),
+                                    title: const Text(
+                                      '파일',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: colorMainGrey900,
+                                        fontFamily: 'SUIT',
+                                        fontWeight: FontWeight.w600,
+                                        height: 0,
+                                        letterSpacing: -0.32,
+                                      ),
                                     ),
+                                    trailing: const Icon(
+                                      Icons.chevron_right,
+                                      color: Colors.black,
+                                      size: 20,
+                                    ),
+                                    onTap: () {
+                                      Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                        return ScreenChatroomFiles(dataChat: widget.dataChat,);
+                                      }));
+                                    },
                                   ),
-                                  trailing: const Icon(
-                                    Icons.chevron_right,
-                                    color: Colors.black,
-                                    size: 20,
-                                  ),
-                                  onTap: () {
-                                    Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                      return ScreenChatroomFiles(dataChat: widget.dataChat,);
-                                    }));
-                                  },
                                 ),
                                 const Divider(
                                   thickness: 2,
@@ -598,8 +635,8 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
                 ],
               ),
               Visibility(
-                  visible: _isLoading,
-                  child: const WidgetLoaderPage()
+                visible: _loaded < 3,
+                child: const WidgetLoader(),
               ),
             ],
           ),
@@ -612,6 +649,7 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
     setState(() {
       _memoController.text = dbStore.getMemo(widget.dataChat).replaceAll("\n\n", "");
       _dataMemo.memo = _memoController.text;
+      _loaded++;
     });
   }
 
@@ -627,6 +665,9 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
     }).catchError((e) {
 
     }).whenComplete(() {
+      setState(() {
+        _loaded++;
+      });
       _loadMemoAndArtistProfile();
     });
 
@@ -636,6 +677,7 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
     List<User> members = await moduleSendBird.getGroupChannelMembers(widget.dataChat.id);
     setState(() {
       _listMembers = members;
+      _loaded++;
     });
   }
 
@@ -643,14 +685,14 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
     List<DataMessage> attachmentsImages = await _moduleMessages.fetchAttachmentsImages();
     setState(() {
       _listAttachmentsImages = attachmentsImages;
+      _loaded++;
     });
   }
 
   void _doExitChat() {
     moduleSendBird.leaveChannel(widget.dataChat.id);
-    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) {
-      return const ScreenChats();
-    }));
+    widget.onExit();
+    Navigator.of(context).pop();
   }
 
   void _doToggleNotification(BuildContext context, DataChat dataChat) {
@@ -667,7 +709,8 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
       _dataMemo = dataMemo;
     }
     setState(() {
-      _isLoading = false;
+      _isLoadingArtist = false;
+      _loaded++;
     });
   }
 

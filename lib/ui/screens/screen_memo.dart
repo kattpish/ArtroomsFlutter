@@ -79,6 +79,7 @@ class _ScreenMemoState extends State<ScreenMemo> {
             ),
           ),
           elevation: 0,
+          scrolledUnderElevation: 0,
           backgroundColor: Colors.white,
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(1.0),

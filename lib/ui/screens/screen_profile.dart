@@ -93,6 +93,7 @@ class _ScreenProfileState extends State<ScreenProfile> {
         ],
         backgroundColor: Colors.white,
         elevation: 0,
+        scrolledUnderElevation: 0,
       ),
       backgroundColor: Colors.white,
       body: WidgetUiNotify(
@@ -374,6 +375,7 @@ class _ScreenProfileState extends State<ScreenProfile> {
                             widgetProfileLogoutDialog(context,
                                 onLogout: () {
                                   dbStore.logout();
+                                  Navigator.of(context).pop();
                                   Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) {
                                     return const ScreenLogin();
                                   }));

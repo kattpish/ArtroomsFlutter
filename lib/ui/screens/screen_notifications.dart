@@ -59,6 +59,7 @@ class _ScreenNotificationsState extends State<ScreenNotifications> {
           ),
         ),
         elevation: 0,
+        scrolledUnderElevation: 0,
       ),
       backgroundColor: colorMainScreen,
       body: WidgetUiNotify(

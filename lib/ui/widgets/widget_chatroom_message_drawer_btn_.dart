@@ -7,11 +7,14 @@ import 'package:flutter/material.dart';
 import '../screens/screen_chatroom_drawer.dart';
 
 class ChatroomMessageDrawerButton extends StatelessWidget {
+
   final DataChat dataChat;
   final ModuleNotice moduleNotice;
   final DataNotice dataNotice;
   final ModuleMemo moduleMemo;
-  const ChatroomMessageDrawerButton({super.key, required this.dataChat, required this.moduleNotice, required this.dataNotice, required this.moduleMemo});
+  final VoidCallback onExit;
+
+  const ChatroomMessageDrawerButton({super.key, required this.dataChat, required this.moduleNotice, required this.dataNotice, required this.moduleMemo, required this.onExit});
 
   @override
   Widget build(BuildContext context) {
@@ -38,6 +41,9 @@ class ChatroomMessageDrawerButton extends StatelessWidget {
             MaterialPageRoute(builder: (context) {
               return ScreenChatroomDrawer(
                 dataChat: dataChat,
+                onExit: () {
+                  onExit();
+                },
               );
             }),
           );

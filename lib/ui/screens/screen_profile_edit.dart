@@ -99,6 +99,7 @@ class _ScreenProfileEditState extends State<ScreenProfileEdit> {
         ),
         backgroundColor: Colors.white,
         elevation: 0,
+        scrolledUnderElevation: 0,
       ),
       backgroundColor: colorMainScreen,
       body: WidgetUiNotify(
@@ -180,11 +181,11 @@ class _ScreenProfileEditState extends State<ScreenProfileEdit> {
                                 ? const SizedBox(
                               width: 20,
                               height: 20,
-                                  child: CircularProgressIndicator(
-                              color: colorPrimaryPurple,
-                              strokeWidth: 3,
-                            ),
-                                )
+                              child: CircularProgressIndicator(
+                                color: colorPrimaryPurple,
+                                strokeWidth: 3,
+                              ),
+                            )
                                 : const Text(
                               '프로필 바꾸기',
                               style: TextStyle(
@@ -301,8 +302,8 @@ class _ScreenProfileEditState extends State<ScreenProfileEdit> {
                 ),
               ),
               Visibility(
-                  visible: _isLoading,
-                  child: const WidgetLoaderPage()
+                visible: _isLoading,
+                child: const WidgetLoader(),
               ),
             ],
           ),

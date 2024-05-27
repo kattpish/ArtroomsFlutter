@@ -288,25 +288,26 @@ class ModuleMessages {
 
     List<DataMessage> attachments = await fetchAttachments();
 
-    for (DataMessage myMessage in attachments) {
+    for (DataMessage dataMessage in attachments) {
 
-        if(myMessage.isImage) {
+        if(dataMessage.isImage) {
 
-          for(String attachmentUrl in myMessage.attachmentImages) {
+          for(String attachmentUrl in dataMessage.attachmentImages) {
 
             DataMessage myMessage1 = DataMessage.fromBaseMessageWithDetails(
-              index: myMessage.index,
-              senderId: myMessage.senderId,
-              senderName: myMessage.senderName,
-              content: myMessage.content,
-              timestamp: myMessage.timestamp,
-              isMe: myMessage.isMe,
+              index: dataMessage.index,
+              channelUrl: dataMessage.channelUrl,
+              senderId: dataMessage.senderId,
+              senderName: dataMessage.senderName,
+              content: dataMessage.content,
+              timestamp: dataMessage.timestamp,
+              isMe: dataMessage.isMe,
             );
 
             myMessage1.isImage = true;
             myMessage1.attachmentUrl = attachmentUrl;
-            myMessage1.attachmentName = myMessage.attachmentName;
-            myMessage1.attachmentSize = myMessage.attachmentSize;
+            myMessage1.attachmentName = dataMessage.attachmentName;
+            myMessage1.attachmentSize = dataMessage.attachmentSize;
             myMessage1.attachmentImages.add(attachmentUrl);
 
             attachmentsImages.add(myMessage1);

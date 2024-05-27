@@ -14,6 +14,7 @@ import '../utils/utils_notifications.dart';
 class DataMessage {
 
   int index;
+  String channelUrl;
   String senderId;
   String senderName;
   String profilePictureUrl = "";
@@ -38,6 +39,7 @@ class DataMessage {
 
   DataMessage.empty({
     this.index = 0,
+    this.channelUrl = "",
     this.senderId = "",
     this.senderName = "",
     this.content = "",
@@ -47,6 +49,7 @@ class DataMessage {
 
   DataMessage.fromBaseMessageWithDetails({
     required this.index,
+    required this.channelUrl,
     required this.senderId,
     required this.senderName,
     required this.content,
@@ -56,6 +59,7 @@ class DataMessage {
 
   DataMessage.fromBaseMessage(BaseMessage baseMessage)
       : index = baseMessage.messageId,
+        channelUrl = baseMessage.channelUrl,
         senderId = baseMessage.sender?.userId ?? "",
         senderName = baseMessage.sender?.nickname ?? "",
         timestamp = baseMessage.createdAt,

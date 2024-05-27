@@ -26,7 +26,7 @@ class WidgetChatroomMessageText extends StatelessWidget {
             fontSize: 16,
             fontFamily: 'SUIT',
             fontWeight: FontWeight.w400,
-            letterSpacing: -0.2,
+            letterSpacing: -0.32,
           ),
           children: parsedMessage,
         ),

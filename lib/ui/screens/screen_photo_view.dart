@@ -243,8 +243,10 @@ class _ScreenPhotoView extends State<ScreenPhotoView> {
       controller: _photoViewController,
       imageProvider: imageProvider,
       minScale: PhotoViewComputedScale.contained,
-      maxScale: PhotoViewComputedScale.covered * 2,
-      enableRotation: true,
+      maxScale: PhotoViewComputedScale.covered * 4,
+      enableRotation: false,
+      disableGestures: false,
+      tightMode: true,
       backgroundDecoration: BoxDecoration(
         color: Colors.black.withOpacity(0.5),
       ),

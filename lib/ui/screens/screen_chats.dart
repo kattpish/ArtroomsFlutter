@@ -2,6 +2,7 @@
 import 'dart:async';
 import 'dart:isolate';
 
+import 'package:artrooms/beans/bean_message.dart';
 import 'package:artrooms/main.dart';
 import 'package:artrooms/ui/screens/screen_chatroom.dart';
 import 'package:artrooms/ui/screens/screen_login.dart';
@@ -108,6 +109,7 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver  
               backgroundColor: Colors.white,
               toolbarHeight: 60,
               elevation: 0,
+              scrolledUnderElevation: 0,
               actions: [
                 IconButton(
                     icon: const Icon(
@@ -191,7 +193,6 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver  
                                                 setState(() {
                                                   _listChats.remove(dataChat);
                                                 });
-                                                Navigator.of(context).pop();
                                               });
                                         },
                                         onSelectChat: () {
@@ -290,6 +291,9 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver  
           ScreenChatroom screenChatroom = ScreenChatroom(
             dataChat: dataChat,
             widthRatio: 0.62,
+            onMessageSent: (DataMessage newMessage) {
+              onMessageSent(newMessage);
+            },
             onBackPressed: () {
               setState(() {
                 _selectChatId = "";
@@ -309,7 +313,12 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver  
 
     }else {
       Navigator.push(context, MaterialPageRoute(builder: (context) {
-        return ScreenChatroom(dataChat: dataChat);
+        return ScreenChatroom(
+          dataChat: dataChat,
+          onMessageSent: (DataMessage newMessage) {
+            onMessageSent(newMessage);
+          },
+        );
       }));
     }
   }
@@ -322,11 +331,11 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver  
       return;
     }
 
-    setState(() {
-      if(_searchController.text.isEmpty) {
+    if(_searchController.text.isEmpty) {
+      setState(() {
         _isLoading = true;
-      }
-    });
+      });
+    }
 
     await _chatModule.getUserChats().then((List<DataChat> chats) {
 
@@ -405,6 +414,28 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver  
       });
 
     });
+
+  }
+
+  void onMessageSent(DataMessage newMessage) {
+
+    for(DataChat dataChat in _listChatsAll) {
+      if(dataChat.id == newMessage.channelUrl) {
+        setState(() {
+          dataChat.lastMessage = newMessage;
+        });
+        break;
+      }
+    }
+
+    for(DataChat dataChat in _listChats) {
+      if(dataChat.id == newMessage.channelUrl) {
+        setState(() {
+          dataChat.lastMessage = newMessage;
+        });
+        break;
+      }
+    }
 
   }
 

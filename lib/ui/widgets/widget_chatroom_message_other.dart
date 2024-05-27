@@ -27,7 +27,7 @@ Widget chatroomMessageOther({
   required bool isNextSameTime,
   required double screenWidth,
   required Null Function() onReplyClick,
-  required Null Function(int index) onReplySelect
+  required Null Function(int id) onReplySelect
 }) {
 
   Color activeColor = colorMainGrey200;
@@ -180,10 +180,9 @@ Widget chatroomMessageOther({
                                       crossAxisAlignment:
                                       CrossAxisAlignment.start,
                                       children: [
-                                        buildReply(index, message, false,
-                                                (index) {
-                                              onReplySelect(index);
-                                            }),
+                                        buildReply(index, message, false, (id) {
+                                          onReplySelect(id);
+                                        }),
                                         WidgetChatroomMessageText(
                                           message: message.content,
                                           color: const Color(0xFF1F1F1F),
