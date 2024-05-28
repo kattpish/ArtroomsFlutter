@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
@@ -15,9 +14,7 @@ import '../beans/bean_message.dart';
 import '../main.dart';
 import '../utils/utils_media.dart';
 
-
 class ModuleMessages {
-
   late final String _channelUrl;
   late final GroupChannel _groupChannel;
   ChannelEventHandler? _channelEventHandler;
@@ -25,7 +22,6 @@ class ModuleMessages {
   bool _isLoading = false;
   int? _earliestMessageTimestamp;
   int? _earliestMessageTimestampFiles;
-  
 
   ModuleMessages(String channelUrl) {
     _channelUrl = channelUrl;
@@ -36,15 +32,15 @@ class ModuleMessages {
   }
 
   Future<GroupChannel> initChannel() async {
-
-    await GroupChannel.getChannel(_channelUrl).then((GroupChannel groupChannel) {
+    await GroupChannel.getChannel(_channelUrl)
+        .then((GroupChannel groupChannel) {
       _groupChannel = groupChannel;
     });
 
     _isInitialized = true;
-    
+
     removeChannelEventHandler();
-    if(_channelEventHandler != null) {
+    if (_channelEventHandler != null) {
       addChannelEventHandler(_channelEventHandler!);
     }
 
@@ -60,20 +56,20 @@ class ModuleMessages {
   }
 
   Future<List<DataMessage>> getMessages(bool isMore) async {
-
     final List<DataMessage> messages = [];
 
-    if(_isLoading) return messages;
+    if (_isLoading) return messages;
 
     _isLoading = true;
 
-    if(!_isInitialized) {
+    if (!_isInitialized) {
       await initChannel();
     }
 
-    await moduleSendBird.loadMessages(_groupChannel, _earliestMessageTimestamp).then((List<BaseMessage> baseMessages) {
-
-      for(BaseMessage baseMessage in baseMessages) {
+    await moduleSendBird
+        .loadMessages(_groupChannel, _earliestMessageTimestamp)
+        .then((List<BaseMessage> baseMessages) {
+      for (BaseMessage baseMessage in baseMessages) {
         final DataMessage myMessage = DataMessage.fromBaseMessage(baseMessage);
         messages.add(myMessage);
       }
@@ -81,7 +77,6 @@ class ModuleMessages {
       if (isMore && messages.isNotEmpty) {
         _earliestMessageTimestamp = baseMessages.last.createdAt;
       }
-
     });
 
     _isLoading = false;
@@ -90,12 +85,12 @@ class ModuleMessages {
   }
 
   Future<DataMessage> sendMessage(String text, DataMessage? message) async {
-
-    if(!_isInitialized) {
+    if (!_isInitialized) {
       await initChannel();
     }
 
-    final UserMessage userMessage = await moduleSendBird.sendMessage(_groupChannel, text.trim(), message: message);
+    final UserMessage userMessage = await moduleSendBird
+        .sendMessage(_groupChannel, text.trim(), message: message);
 
     final myMessage = DataMessage.fromBaseMessage(userMessage);
 
@@ -103,7 +98,6 @@ class ModuleMessages {
   }
 
   DataMessage preSendMessageImage(List<FileItem> fileItems) {
-
     DataMessage myMessage = DataMessage.empty();
     myMessage.index = DateTime.now().millisecondsSinceEpoch;
     myMessage.isMe = true;
@@ -111,9 +105,10 @@ class ModuleMessages {
     myMessage.isSending = true;
     myMessage.timestamp = DateTime.now().millisecondsSinceEpoch;
 
-    for(FileItem fileItem in fileItems) {
-      if(fileItem.isSelected) {
-        myMessage.index = DateTime.now().millisecondsSinceEpoch + fileItem.path.hashCode;
+    for (FileItem fileItem in fileItems) {
+      if (fileItem.isSelected) {
+        myMessage.index =
+            DateTime.now().millisecondsSinceEpoch + fileItem.path.hashCode;
         myMessage.attachmentImages.add(fileItem.path);
         myMessage.attachmentImagesThumbs.add(fileItem.thumbFile);
       }
@@ -126,15 +121,15 @@ class ModuleMessages {
     return myMessage;
   }
 
-  Future<List<DataMessage>> preSendMessageMedia(List<FileItem> fileItems) async {
-
+  Future<List<DataMessage>> preSendMessageMedia(
+      List<FileItem> fileItems) async {
     List<DataMessage> messages = [];
 
-    for(FileItem fileItem in fileItems) {
-      if(fileItem.isSelected) {
-
+    for (FileItem fileItem in fileItems) {
+      if (fileItem.isSelected) {
         DataMessage myMessage = DataMessage.empty();
-        myMessage.index = DateTime.now().millisecondsSinceEpoch + fileItem.file.path.length;
+        myMessage.index =
+            DateTime.now().millisecondsSinceEpoch + fileItem.file.path.length;
         myMessage.isMe = true;
         myMessage.isFile = true;
         myMessage.isSending = true;
@@ -156,54 +151,50 @@ class ModuleMessages {
   }
 
   Future<DataMessage> sendMessageImages(List<FileItem> fileItems) async {
-
-    if(!_isInitialized) {
+    if (!_isInitialized) {
       await initChannel();
     }
 
     List<File> files = [];
 
-    for(FileItem fileItem in fileItems) {
-      if(fileItem.isSelected) {
+    for (FileItem fileItem in fileItems) {
+      if (fileItem.isSelected) {
         files.add(fileItem.file);
       }
     }
 
     final DataMessage myMessage;
 
-    if(files.length == 1) {
-
-      if(kDebugMode) {
+    if (files.length == 1) {
+      if (kDebugMode) {
         print("sendMessageImages Start: ${files.length}");
       }
 
       myMessage = await moduleSendBird.sendMessageFiles(_groupChannel, files);
 
-      if(kDebugMode) {
+      if (kDebugMode) {
         print("sendMessageImages Done: ${myMessage.attachmentImages.length}");
       }
-
-    }else {
-
+    } else {
       List<String> dataImages = [];
 
-      for(File file in files) {
-
+      for (File file in files) {
         Map<String, dynamic>? uploadData = await uploadFile(file);
 
-        if(uploadData != null) {
-
+        if (uploadData != null) {
           String accessUrl = uploadData["accessUrl"] ?? "";
 
-          if(accessUrl.isNotEmpty) {
+          if (accessUrl.isNotEmpty) {
             dataImages.add(accessUrl);
           }
         }
       }
 
-      UserMessage userMessage = await moduleSendBird.sendMessage(_groupChannel, "multiple:image", data: jsonEncode(dataImages));
+      UserMessage userMessage = await moduleSendBird.sendMessage(
+          _groupChannel, "multiple:image",
+          data: jsonEncode(dataImages));
 
-      if(kDebugMode) {
+      if (kDebugMode) {
         print("sendMessageImages Start: ${jsonEncode(dataImages)}");
       }
 
@@ -218,17 +209,16 @@ class ModuleMessages {
   }
 
   Future<List<DataMessage>> sendMessageMedia(List<FileItem> fileItems) async {
-
     List<DataMessage> messages = [];
 
-    if(!_isInitialized) {
+    if (!_isInitialized) {
       await initChannel();
     }
 
     List<File> files = [];
 
-    for(FileItem fileItem in fileItems) {
-      if(fileItem.isSelected) {
+    for (FileItem fileItem in fileItems) {
+      if (fileItem.isSelected) {
         files.add(fileItem.file);
         fileItem.isSelected = false;
       }
@@ -236,8 +226,9 @@ class ModuleMessages {
 
     print("sendMessageMedia Start :${files.length}");
 
-    for(File file in files) {
-      FileMessage fileMessage = await moduleSendBird.sendMessageFile(_groupChannel, file);
+    for (File file in files) {
+      FileMessage fileMessage =
+          await moduleSendBird.sendMessageFile(_groupChannel, file);
       DataMessage myMessage = DataMessage.fromBaseMessage(fileMessage);
       messages.add(myMessage);
     }
@@ -252,23 +243,21 @@ class ModuleMessages {
   }
 
   Future<List<DataMessage>> fetchAttachments() async {
-
-    if(!_isInitialized) {
+    if (!_isInitialized) {
       await initChannel();
     }
 
     List<DataMessage> attachmentsImages = [];
 
-    List<BaseMessage> attachments = await moduleSendBird.fetchAttachments(_groupChannel, _earliestMessageTimestampFiles);
+    List<BaseMessage> attachments = await moduleSendBird.fetchAttachments(
+        _groupChannel, _earliestMessageTimestampFiles);
 
     for (BaseMessage message in attachments) {
-
       DataMessage myMessage = DataMessage.fromBaseMessage(message);
 
-      if(myMessage.isImage || myMessage.isFile) {
+      if (myMessage.isImage || myMessage.isFile) {
         attachmentsImages.add(myMessage);
       }
-
     }
 
     if (attachments.isNotEmpty) {
@@ -279,8 +268,7 @@ class ModuleMessages {
   }
 
   Future<List<DataMessage>> fetchAttachmentsImages() async {
-
-    if(!_isInitialized) {
+    if (!_isInitialized) {
       await initChannel();
     }
 
@@ -289,40 +277,34 @@ class ModuleMessages {
     List<DataMessage> attachments = await fetchAttachments();
 
     for (DataMessage dataMessage in attachments) {
+      if (dataMessage.isImage) {
+        for (String attachmentUrl in dataMessage.attachmentImages) {
+          DataMessage myMessage1 = DataMessage.fromBaseMessageWithDetails(
+            index: dataMessage.index,
+            channelUrl: dataMessage.channelUrl,
+            senderId: dataMessage.senderId,
+            senderName: dataMessage.senderName,
+            content: dataMessage.content,
+            timestamp: dataMessage.timestamp,
+            isMe: dataMessage.isMe,
+          );
 
-        if(dataMessage.isImage) {
+          myMessage1.isImage = true;
+          myMessage1.attachmentUrl = attachmentUrl;
+          myMessage1.attachmentName = dataMessage.attachmentName;
+          myMessage1.attachmentSize = dataMessage.attachmentSize;
+          myMessage1.attachmentImages.add(attachmentUrl);
 
-          for(String attachmentUrl in dataMessage.attachmentImages) {
-
-            DataMessage myMessage1 = DataMessage.fromBaseMessageWithDetails(
-              index: dataMessage.index,
-              channelUrl: dataMessage.channelUrl,
-              senderId: dataMessage.senderId,
-              senderName: dataMessage.senderName,
-              content: dataMessage.content,
-              timestamp: dataMessage.timestamp,
-              isMe: dataMessage.isMe,
-            );
-
-            myMessage1.isImage = true;
-            myMessage1.attachmentUrl = attachmentUrl;
-            myMessage1.attachmentName = dataMessage.attachmentName;
-            myMessage1.attachmentSize = dataMessage.attachmentSize;
-            myMessage1.attachmentImages.add(attachmentUrl);
-
-            attachmentsImages.add(myMessage1);
-          }
-
+          attachmentsImages.add(myMessage1);
         }
-
+      }
     }
 
     return attachmentsImages;
   }
 
   Future<List<DataMessage>> fetchAttachmentsFiles() async {
-
-    if(!_isInitialized) {
+    if (!_isInitialized) {
       await initChannel();
     }
 
@@ -331,11 +313,9 @@ class ModuleMessages {
     List<DataMessage> attachments = await fetchAttachments();
 
     for (DataMessage myMessage in attachments) {
-
-      if(myMessage.isFile) {
+      if (myMessage.isFile) {
         attachmentsImages.add(myMessage);
       }
-
     }
 
     return attachmentsImages;
@@ -343,7 +323,6 @@ class ModuleMessages {
 
   Future<Map<String, dynamic>?> uploadFile(File file) async {
     try {
-
       var uri = Uri.parse('https://artrooms-api-upload.com/file');
       var request = http.MultipartRequest('POST', uri);
 
@@ -362,8 +341,7 @@ class ModuleMessages {
       var response = await http.Response.fromStream(streamedResponse);
 
       if (response.statusCode == 201) {
-
-        Map<String,dynamic> uploadData = jsonDecode(response.body);
+        Map<String, dynamic> uploadData = jsonDecode(response.body);
 
         if (kDebugMode) {
           print(uploadData.toString());
@@ -384,7 +362,7 @@ class ModuleMessages {
     }
   }
 
-  GroupChannel getGroupChannel(){
+  GroupChannel getGroupChannel() {
     return _groupChannel;
   }
 
@@ -395,5 +373,4 @@ class ModuleMessages {
   void removeChannelEventHandler() {
     moduleSendBird.removeChannelEventHandler(_groupChannel);
   }
-
 }

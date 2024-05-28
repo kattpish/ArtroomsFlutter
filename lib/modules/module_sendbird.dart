@@ -1,4 +1,3 @@
-
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
@@ -25,42 +24,34 @@ import '../main.dart';
 import '../utils/utils.dart';
 import 'module_push_notifications.dart';
 
-
 class ModuleSendBird {
-
   late final User user;
   bool _isInitialized = false;
 
   Future<void> initSendbird() async {
-
     try {
-
-      if(!_isInitialized) {
-
+      if (!_isInitialized) {
         await initLocale();
 
         final String email = dbStore.getEmail();
 
         SendbirdSdk(
             appId: "01CFFFE8-F1B8-4BB4-A576-952ABDC8D08A",
-            apiToken: "39ac9b8e2125ad49035c7bd9c105ccc9d4dc7ba4"
-        );
+            apiToken: "39ac9b8e2125ad49035c7bd9c105ccc9d4dc7ba4");
 
         user = await SendbirdSdk().connect(email);
 
-        ModulePushNotifications modulePushNotifications = ModulePushNotifications();
+        ModulePushNotifications modulePushNotifications =
+            ModulePushNotifications();
         modulePushNotifications.init();
-
       }
 
       _isInitialized = true;
-
     } catch (e) {
       if (kDebugMode) {
         print('Sendbird connection error: $e');
       }
     }
-
   }
 
   bool isInitialized() {
@@ -68,14 +59,12 @@ class ModuleSendBird {
   }
 
   Future<void> joinChannel(id) async {
-
     late BaseChannel channel;
 
     try {
-
       try {
         channel = await GroupChannel.getChannel(id);
-      }catch(e) {
+      } catch (e) {
         channel = await OpenChannel.getChannel(id);
       }
 
@@ -88,24 +77,20 @@ class ModuleSendBird {
       if (kDebugMode) {
         print('Channel joined $id');
       }
-
     } catch (e) {
       if (kDebugMode) {
         print('Join channel error: $id : $e');
       }
     }
-
   }
 
   Future<void> leaveChannel(String channelUrl) async {
-
     late BaseChannel channel;
 
     try {
-
       try {
         channel = await GroupChannel.getChannel(channelUrl);
-      }catch(e) {
+      } catch (e) {
         channel = await OpenChannel.getChannel(channelUrl);
       }
 
@@ -118,17 +103,14 @@ class ModuleSendBird {
       if (kDebugMode) {
         print('Channel joined $channelUrl');
       }
-
     } catch (e) {
       if (kDebugMode) {
         print('Join channel error: $channelUrl : $e');
       }
     }
-
   }
 
   Future<List<GroupChannel>> getListOfGroupChannels() async {
-
     Completer<List<GroupChannel>> completer = Completer<List<GroupChannel>>();
 
     try {
@@ -163,38 +145,42 @@ class ModuleSendBird {
     }
   }
 
-  Future<List<BaseMessage>> loadMessages(GroupChannel groupChannel, int? earliestMessageTimestamp) async {
-
+  Future<List<BaseMessage>> loadMessages(
+      GroupChannel groupChannel, int? earliestMessageTimestamp) async {
     Completer<List<BaseMessage>> completer = Completer<List<BaseMessage>>();
 
-      try {
-        final params = MessageListParams();
-        params.previousResultSize = 200;
-        params.reverse = true;
-
-        final referenceTime = earliestMessageTimestamp ?? DateTime.now().millisecondsSinceEpoch;
-        final messages = await groupChannel.getMessagesByTimestamp(referenceTime, params);
-
-        completer.complete(messages);
-      } catch (e) {
-        if (kDebugMode) {
-          print('Load messages error: $e');
-        }
-        completer.completeError(e);
-      }
-
-    return completer.future;
-  }
-
-  Future<List<BaseMessage>> fetchAttachments(GroupChannel groupChannel, int? earliestMessageTimestamp) async {
     try {
-
       final params = MessageListParams();
       params.previousResultSize = 200;
       params.reverse = true;
 
-      final referenceTime = earliestMessageTimestamp ?? DateTime.now().millisecondsSinceEpoch;
-      final messages = await groupChannel.getMessagesByTimestamp(referenceTime, params);
+      final referenceTime =
+          earliestMessageTimestamp ?? DateTime.now().millisecondsSinceEpoch;
+      final messages =
+          await groupChannel.getMessagesByTimestamp(referenceTime, params);
+
+      completer.complete(messages);
+    } catch (e) {
+      if (kDebugMode) {
+        print('Load messages error: $e');
+      }
+      completer.completeError(e);
+    }
+
+    return completer.future;
+  }
+
+  Future<List<BaseMessage>> fetchAttachments(
+      GroupChannel groupChannel, int? earliestMessageTimestamp) async {
+    try {
+      final params = MessageListParams();
+      params.previousResultSize = 200;
+      params.reverse = true;
+
+      final referenceTime =
+          earliestMessageTimestamp ?? DateTime.now().millisecondsSinceEpoch;
+      final messages =
+          await groupChannel.getMessagesByTimestamp(referenceTime, params);
 
       return messages;
     } catch (e) {
@@ -205,18 +191,27 @@ class ModuleSendBird {
     }
   }
 
-  Future<UserMessage> sendMessage(GroupChannel groupChannel, String text, {String data="", DataMessage? message}) async {
+  Future<UserMessage> sendMessage(GroupChannel groupChannel, String text,
+      {String data = "", DataMessage? message}) async {
     final params = UserMessageParams(message: text);
-     ParentMessage parentMessage = ParentMessage(message?.index ?? 0, message?.content ?? "", message?.senderId ?? "", message?.senderName ?? "", message?.data ?? data);
-     params.mentionedUserIds = [];
-     params.data = const JsonEncoder().convert(parentMessage);
+    ParentMessage parentMessage = ParentMessage(
+        message?.index ?? 0,
+        message?.content ?? "",
+        message?.senderId ?? "",
+        message?.senderName ?? "",
+        message?.data ?? data);
+    params.mentionedUserIds = [];
+    params.data =
+        message?.data ? const JsonEncoder().convert(parentMessage) : "";
     return performSendMessage(groupChannel, text, params);
   }
 
-  Future<UserMessage> performSendMessage(GroupChannel groupChannel, String text,UserMessageParams params) async {
+  Future<UserMessage> performSendMessage(
+      GroupChannel groupChannel, String text, UserMessageParams params) async {
     Completer<UserMessage> completer = Completer();
 
-    groupChannel.sendUserMessage(params, onCompleted: (UserMessage userMessage, error) {
+    groupChannel.sendUserMessage(params,
+        onCompleted: (UserMessage userMessage, error) {
       if (error != null) {
         if (kDebugMode) {
           print('Send message error: $error');
@@ -231,9 +226,8 @@ class ModuleSendBird {
     return completer.future;
   }
 
-
-  Future<FileMessage> sendMessageFile(GroupChannel groupChannel, File file) async {
-
+  Future<FileMessage> sendMessageFile(
+      GroupChannel groupChannel, File file) async {
     Completer<FileMessage> completer = Completer();
 
     String fileName = path.basename(Uri.parse(file.path).path);
@@ -244,7 +238,8 @@ class ModuleSendBird {
       print('Sending message file: ${file.path}');
     }
 
-    groupChannel.sendFileMessage(params, onCompleted: (FileMessage userMessage, error) {
+    groupChannel.sendFileMessage(params,
+        onCompleted: (FileMessage userMessage, error) {
       if (error != null) {
         if (kDebugMode) {
           print('Send message file error: $error');
@@ -263,15 +258,15 @@ class ModuleSendBird {
     return completer.future;
   }
 
-  Future<DataMessage> sendMessageFiles(GroupChannel groupChannel, List<File> files) async {
+  Future<DataMessage> sendMessageFiles(
+      GroupChannel groupChannel, List<File> files) async {
     Completer<DataMessage> completer = Completer();
 
     DataMessage myMessage = DataMessage.empty();
 
     List<String> attachmentImages = [];
 
-    for(int i = 0; i < files.length; i++) {
-
+    for (int i = 0; i < files.length; i++) {
       File file = files[i];
 
       FileMessage fileMessage = await sendMessageFile(groupChannel, file);
@@ -301,12 +296,12 @@ class ModuleSendBird {
     }
   }
 
-  void addChannelEventHandler(GroupChannel groupChannel, ChannelEventHandler listener) {
+  void addChannelEventHandler(
+      GroupChannel groupChannel, ChannelEventHandler listener) {
     SendbirdSdk().addChannelEventHandler(groupChannel.channelUrl, listener);
   }
 
   void removeChannelEventHandler(GroupChannel groupChannel) {
     SendbirdSdk().removeChannelEventHandler(groupChannel.channelUrl);
   }
-
 }
