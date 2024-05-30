@@ -202,7 +202,7 @@ class ModuleSendBird {
         message?.data ?? data);
     params.mentionedUserIds = [];
     params.data =
-        message?.data ? const JsonEncoder().convert(parentMessage) : "";
+        message?.data != null ? const JsonEncoder().convert(parentMessage) : "";
     return performSendMessage(groupChannel, text, params);
   }
 
