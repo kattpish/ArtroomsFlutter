@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
@@ -8,11 +7,8 @@ import 'package:image_picker/image_picker.dart';
 import '../api/api.dart';
 import '../main.dart';
 
-
 class ModuleProfile {
-
   Future<Map<String, dynamic>?> getMyProfile() async {
-
     const String query = '''
       query WhoAmI {
         whoAmI {
@@ -66,8 +62,7 @@ class ModuleProfile {
           }
         }
       }
-    '''
-    ;
+    ''';
 
     var response = await http.post(
       Uri.parse(apiUrlGraphQL),
@@ -99,7 +94,6 @@ class ModuleProfile {
     bool acceptMarketing = false,
     bool certificationPhone = false,
   }) async {
-
     const String mutation = '''
       mutation UpdateUser(\$updateUserId: Int, \$updateStudentInput: UpdateStudentInput) {
         updateUser(
@@ -172,14 +166,12 @@ class ModuleProfile {
       }
       return null;
     }
-
   }
 
   Future<Map<String, dynamic>?> updateProfilePicture({
     required int userId,
     required int profileImgId,
   }) async {
-
     const String mutation = '''
       mutation UpdateUser(\$id: Int, \$updateStudentInput: UpdateStudentInput, \$updateUserInput: UpdateUserInput) {
         updateUser(
@@ -273,15 +265,12 @@ class ModuleProfile {
       var response = await http.Response.fromStream(streamedResponse);
 
       if (response.statusCode == 201) {
-
-        Map<String,dynamic> profileImg = jsonDecode(response.body);
+        Map<String, dynamic> profileImg = jsonDecode(response.body);
 
         int profileImgId = profileImg["id"] ?? 0;
 
         await updateProfilePicture(
-            userId: dbStore.getUserId(),
-            profileImgId: profileImgId
-        );
+            userId: dbStore.getUserId(), profileImgId: profileImgId);
 
         dbStore.saveProfilePicture(profileImg);
 

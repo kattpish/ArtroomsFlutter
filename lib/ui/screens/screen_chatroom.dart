@@ -39,9 +39,7 @@ import '../widgets/widget_chatroom_notice_pin.dart';
 import '../widgets/widget_media.dart';
 import '../widgets/widget_ui_notify.dart';
 
-
 class ScreenChatroom extends StatefulWidget {
-
   final DataChat dataChat;
   final double widthRatio;
   final Function(DataMessage newMessage)? onMessageSent;
@@ -59,11 +57,10 @@ class ScreenChatroom extends StatefulWidget {
   State<StatefulWidget> createState() {
     return _ScreenChatroomState();
   }
-
 }
 
-class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProviderStateMixin, ChannelEventHandler {
-
+class _ScreenChatroomState extends State<ScreenChatroom>
+    with SingleTickerProviderStateMixin, ChannelEventHandler {
   bool _isLoading = true;
   bool _isLoadMore = false;
   bool _isSending = false;
@@ -76,8 +73,10 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
   List<Member> _listMembersAll = [];
   final TextEditingController _messageController = TextEditingController();
   final ItemScrollController _itemScrollController = ItemScrollController();
-  final ItemPositionsListener _itemPositionsListener = ItemPositionsListener.create();
-  final DraggableScrollableController _draggableScrollableController = DraggableScrollableController();
+  final ItemPositionsListener _itemPositionsListener =
+      ItemPositionsListener.create();
+  final DraggableScrollableController _draggableScrollableController =
+      DraggableScrollableController();
   final FocusNode _messageFocusNode = FocusNode();
 
   late final ModuleMessages _moduleMessages;
@@ -110,6 +109,8 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
   bool _selectMode = true;
   final List<FileItem> _filesImages = [];
   final List<FileItem> _filesMedia = [];
+  String title = "";
+  Map<String, dynamic>? user;
 
   @override
   void initState() {
@@ -119,7 +120,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
     _moduleMessages = ModuleMessages(widget.dataChat.id);
 
     _moduleMessages.init(this);
-
+    setTitle();
     _doLoadMessages();
     _doLoadNotice();
 
@@ -131,7 +132,25 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
         _doAttachmentPickerClose();
       }
     });
+  }
 
+  Future<void> setTitle() async {
+    if (widget.dataChat.groupChannel!.memberCount > 2) {
+      setState(() {
+        title = widget.dataChat.name;
+      });
+    } else {
+      final creatorEmail = widget.dataChat.creator?.userId;
+      if (creatorEmail == null) return;
+      user =
+          await _moduleNotice.getArtistProfileInfoByEmail(email: creatorEmail);
+      if (user == null) {
+        user = await _moduleNotice.getAdminProfileByEmail(email: creatorEmail);
+      }
+      setState(() {
+        title = user!['name'];
+      });
+    }
   }
 
   @override
@@ -147,15 +166,14 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
 
   @override
   Widget build(BuildContext context) {
-
-    if(_screenWidth == 0 || _screenHeight == 0) {
+    if (_screenWidth == 0 || _screenHeight == 0) {
       _screenWidth = MediaQuery.of(context).size.width * widget.widthRatio;
       _screenHeight = MediaQuery.of(context).size.height;
     }
-    if(_bottomSheetHeightMin == 0) {
+    if (_bottomSheetHeightMin == 0) {
       _bottomSheetHeightMin = _screenHeight * 0.35;
     }
-    if(_bottomSheetHeightMax == 0) {
+    if (_bottomSheetHeightMax == 0) {
       _bottomSheetHeightMax = _screenHeight;
     }
 
@@ -195,7 +213,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                       },
                     ),
                     title: Text(
-                      widget.dataChat.name,
+                      title,
                       style: const TextStyle(
                         color: colorMainGrey900,
                         fontWeight: FontWeight.w600,
@@ -211,60 +229,64 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                     toolbarHeight: _appBarHeight,
                     backgroundColor: Colors.white,
                     actions: [
-                      widgetChatroomMessageDrawerBtn(context, widget.dataChat,_moduleNotice,_dataNotice,_moduleMemo,
-                          onExit: () {
-                            Navigator.of(context).pop();
-                          }),
+                      widgetChatroomMessageDrawerBtn(context, widget.dataChat,
+                          _moduleNotice, _dataNotice, _moduleMemo, onExit: () {
+                        Navigator.of(context).pop();
+                      }),
                     ],
                   ),
                   backgroundColor: Colors.white,
                   body: WidgetUiNotify(
                     dataChat: widget.dataChat,
-                    child: Consumer<ScreenHeight>(
-                        builder: (context, res, child) {
-                          if(res.isOpen) {
-                            _bottomSheetHeightMins.add(res.keyboardHeight);
-                            _bottomSheetHeightMin = _bottomSheetHeightMins.reduce((value, element) => element > value ? element : value);
-                          }else {
-                            _bottomSheetHeightMins.clear();
-                          }
-                        return Column(
-                          children: [
-                            Expanded(
-                              child: _buildMessageBox(),
-                            ),
-                            Visibility(
-                              visible: _showAttachment,
-                              child: attachmentSelected(context, _filesImages,
-                                  onRemove:(FileItem fileItem) {
-                                    setState(() {
-                                      fileItem.isSelected = false;
-                                      fileItem.timeSelected = 0;
-                                    });
-                                    closeKeyboard(context);
-                                  }
-                              ),
-                            ),
-                            _buildMessageInput(),
-                            AnimatedContainer(
-                              duration: const Duration(milliseconds: 0),
-                              curve: Curves.easeOut,
-                              height: _bottomSheetHeight >= _bottomSheetHeightMin ? _bottomSheetHeightMin - 14 : _bottomSheetHeight,
-                            ),
-                          ],
-                        );
+                    child:
+                        Consumer<ScreenHeight>(builder: (context, res, child) {
+                      if (res.isOpen) {
+                        _bottomSheetHeightMins.add(res.keyboardHeight);
+                        _bottomSheetHeightMin = _bottomSheetHeightMins.reduce(
+                            (value, element) =>
+                                element > value ? element : value);
+                      } else {
+                        _bottomSheetHeightMins.clear();
                       }
-                    ),
+                      return Column(
+                        children: [
+                          Expanded(
+                            child: _buildMessageBox(),
+                          ),
+                          Visibility(
+                            visible: _showAttachment,
+                            child: attachmentSelected(context, _filesImages,
+                                onRemove: (FileItem fileItem) {
+                              setState(() {
+                                fileItem.isSelected = false;
+                                fileItem.timeSelected = 0;
+                              });
+                              closeKeyboard(context);
+                            }),
+                          ),
+                          _buildMessageInput(),
+                          AnimatedContainer(
+                            duration: const Duration(milliseconds: 0),
+                            curve: Curves.easeOut,
+                            height: _bottomSheetHeight >= _bottomSheetHeightMin
+                                ? _bottomSheetHeightMin - 14
+                                : _bottomSheetHeight,
+                          ),
+                        ],
+                      );
+                    }),
                   ),
                 ),
               ),
               Visibility(
-                visible:  _showAttachment && _bottomSheetHeight > _bottomSheetHeightMin + _appBarHeight,
+                visible: _showAttachment &&
+                    _bottomSheetHeight > _bottomSheetHeightMin + _appBarHeight,
                 child: Container(
-                  color: Colors.black.withOpacity(0.4 * (_bottomSheetHeight / _bottomSheetHeightMax)),
+                  color: Colors.black.withOpacity(
+                      0.4 * (_bottomSheetHeight / _bottomSheetHeightMax)),
                   child: GestureDetector(
                     onTap: () {
-                      if(_bottomSheetHeight > _bottomSheetHeightMin) {
+                      if (_bottomSheetHeight > _bottomSheetHeightMin) {
                         _doAttachmentPickerMin();
                       }
                     },
@@ -279,20 +301,24 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                 child: Stack(
                   children: [
                     NotificationListener<DraggableScrollableNotification>(
-                      onNotification: (DraggableScrollableNotification dSNotification) {
+                      onNotification:
+                          (DraggableScrollableNotification dSNotification) {
                         setState(() {
-                          _bottomSheetHeight = _bottomSheetHeightMax * dSNotification.extent;
+                          _bottomSheetHeight =
+                              _bottomSheetHeightMax * dSNotification.extent;
                         });
                         return true;
                       },
                       child: DraggableScrollableSheet(
                         initialChildSize: _bottomSheetHeightMin / _screenHeight,
                         minChildSize: _bottomSheetHeightMin / _screenHeight,
-                        maxChildSize: (_bottomSheetHeightMax - _appBarHeight) / _screenHeight,
+                        maxChildSize: (_bottomSheetHeightMax - _appBarHeight) /
+                            _screenHeight,
                         expand: true,
                         snap: true,
                         controller: _draggableScrollableController,
-                        builder: (BuildContext context, ScrollController scrollController) {
+                        builder: (BuildContext context,
+                            ScrollController scrollController) {
                           return Scaffold(
                             backgroundColor: Colors.transparent,
                             body: Stack(
@@ -335,7 +361,14 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                                   duration: const Duration(milliseconds: 500),
                                   curve: Curves.easeInOut,
                                   right: 16,
-                                  bottom: _selectedImages > 0 && (_showAttachment && _bottomSheetHeight > (_bottomSheetHeightMax - _appBarHeight - 5)) ? 16 : -100,
+                                  bottom: _selectedImages > 0 &&
+                                          (_showAttachment &&
+                                              _bottomSheetHeight >
+                                                  (_bottomSheetHeightMax -
+                                                      _appBarHeight -
+                                                      5))
+                                      ? 16
+                                      : -100,
                                   child: InkWell(
                                     splashColor: Colors.transparent,
                                     highlightColor: Colors.transparent,
@@ -344,18 +377,23 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                                     },
                                     child: Container(
                                       height: 40,
-                                      constraints: const BoxConstraints(minWidth: 106),
-                                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                                      constraints:
+                                          const BoxConstraints(minWidth: 106),
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 20, vertical: 8),
                                       decoration: ShapeDecoration(
                                         color: const Color(0xFF5667FF),
                                         shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(20),
+                                          borderRadius:
+                                              BorderRadius.circular(20),
                                         ),
                                       ),
                                       child: Row(
                                         mainAxisSize: MainAxisSize.min,
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
                                         children: [
                                           Padding(
                                             padding: const EdgeInsets.all(2.0),
@@ -416,128 +454,166 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
     return _isLoading
         ? const WidgetLoader()
         : Stack(
-      alignment: AlignmentDirectional.topCenter,
-      children: [
-        Container(
-          padding: const EdgeInsets.symmetric(vertical: 0),
-          child: _listMessages.isNotEmpty ? GestureDetector(
-              onTap: () {
-                closeKeyboard(context);
-              },
-              child: StretchingOverscrollIndicator(
-                axisDirection: AxisDirection.up,
-                child: ScrollConfiguration(
-                  behavior: scrollBehavior,
-                  child: ScrollablePositionedList.builder(
-                    itemScrollController: _itemScrollController,
-                    itemPositionsListener: _itemPositionsListener,
-                    itemCount: _listMessages.length,
-                    reverse: true,
-                    shrinkWrap: true,
-                    minCacheExtent: 200,
-                    itemBuilder: (context, index) {
-                      _itemKeys[index] = GlobalKey();
-                      final message = _listMessages[index];
-                      final isLast = index == 0;
-                      final messageNext = index > 0 ? _listMessages[index - 1] : DataMessage.empty();
-                      final messagePrevious = index < _listMessages.length - 1 ? _listMessages[index + 1] : DataMessage.empty();
-                      final isPreviousSame = messagePrevious.senderId == message.senderId;
-                      final isNextSame = messageNext.senderId == message.senderId;
-                      final isPreviousDate = messagePrevious.isSameDate(message);
-                      final isPreviousSameDateTime = isPreviousSame && messagePrevious.isSameDateTime(message);
-                      final isNextSameTime = isNextSame && messageNext.isSameTime(message);
-                      return Column(
-                        key: _itemKeys[index],
-                        children: [
-                          if(!isPreviousDate) widgetChatroomMessageDatePin(context, message.timestamp, index),
-                          message.isMe
-                              ? chatroomMessageMe(context: context, index: index, state: this, message: message, listMessages:_listMessages, isLast: isLast, isPreviousSame: isPreviousSame,
-                              isNextSame: isNextSame, isPreviousSameDateTime: isPreviousSameDateTime, isNextSameTime: isNextSameTime, screenWidth: _screenWidth,
-                              onReplyClick:(){
-                                _replyMessage = message;
-                                _messageFocusNode.requestFocus();
-                              }, onReplySelect:(id) {
-                                _doScrollToMessage(id);
-                              })
-                              : chatroomMessageOther(context: context, index:index, state: this, message: message,listMessages: _listMessages, isLast: isLast, isPreviousSame: isPreviousSame,
-                              isNextSame: isNextSame, isPreviousSameDateTime: isPreviousSameDateTime, isNextSameTime: isNextSameTime, screenWidth: _screenWidth,
-                              onReplyClick: (){
-                                _replyMessage = message;
-                                _messageFocusNode.requestFocus();
+            alignment: AlignmentDirectional.topCenter,
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(vertical: 0),
+                child: _listMessages.isNotEmpty
+                    ? GestureDetector(
+                        onTap: () {
+                          closeKeyboard(context);
+                        },
+                        child: StretchingOverscrollIndicator(
+                          axisDirection: AxisDirection.up,
+                          child: ScrollConfiguration(
+                            behavior: scrollBehavior,
+                            child: ScrollablePositionedList.builder(
+                              itemScrollController: _itemScrollController,
+                              itemPositionsListener: _itemPositionsListener,
+                              itemCount: _listMessages.length,
+                              reverse: true,
+                              shrinkWrap: true,
+                              minCacheExtent: 200,
+                              itemBuilder: (context, index) {
+                                _itemKeys[index] = GlobalKey();
+                                final message = _listMessages[index];
+                                final isLast = index == 0;
+                                final messageNext = index > 0
+                                    ? _listMessages[index - 1]
+                                    : DataMessage.empty();
+                                final messagePrevious =
+                                    index < _listMessages.length - 1
+                                        ? _listMessages[index + 1]
+                                        : DataMessage.empty();
+                                final isPreviousSame =
+                                    messagePrevious.senderId ==
+                                        message.senderId;
+                                final isNextSame =
+                                    messageNext.senderId == message.senderId;
+                                final isPreviousDate =
+                                    messagePrevious.isSameDate(message);
+                                final isPreviousSameDateTime = isPreviousSame &&
+                                    messagePrevious.isSameDateTime(message);
+                                final isNextSameTime = isNextSame &&
+                                    messageNext.isSameTime(message);
+                                return Column(
+                                  key: _itemKeys[index],
+                                  children: [
+                                    if (!isPreviousDate)
+                                      widgetChatroomMessageDatePin(
+                                          context, message.timestamp, index),
+                                    message.isMe
+                                        ? chatroomMessageMe(
+                                            context: context,
+                                            index: index,
+                                            state: this,
+                                            message: message,
+                                            listMessages: _listMessages,
+                                            isLast: isLast,
+                                            isPreviousSame: isPreviousSame,
+                                            isNextSame: isNextSame,
+                                            isPreviousSameDateTime:
+                                                isPreviousSameDateTime,
+                                            isNextSameTime: isNextSameTime,
+                                            screenWidth: _screenWidth,
+                                            onReplyClick: () {
+                                              _replyMessage = message;
+                                              _messageFocusNode.requestFocus();
+                                            },
+                                            onReplySelect: (id) {
+                                              _doScrollToMessage(id);
+                                            })
+                                        : chatroomMessageOther(
+                                            context: context,
+                                            index: index,
+                                            state: this,
+                                            message: message,
+                                            listMessages: _listMessages,
+                                            isLast: isLast,
+                                            isPreviousSame: isPreviousSame,
+                                            isNextSame: isNextSame,
+                                            isPreviousSameDateTime:
+                                                isPreviousSameDateTime,
+                                            isNextSameTime: isNextSameTime,
+                                            screenWidth: _screenWidth,
+                                            onReplyClick: () {
+                                              _replyMessage = message;
+                                              _messageFocusNode.requestFocus();
+                                            },
+                                            onReplySelect: (id) {
+                                              _doScrollToMessage(id);
+                                            }),
+                                  ],
+                                );
                               },
-                              onReplySelect:(id) {
-                                _doScrollToMessage(id);
-                              }),
-                        ],
-                      );
-                    },
+                            ),
+                          ),
+                        ),
+                      )
+                    : widgetChatroomEmpty(context),
+              ),
+              Visibility(
+                visible: _isLoadMore,
+                child: Container(
+                  width: 12,
+                  height: 12,
+                  margin: const EdgeInsets.only(top: 2),
+                  child: const CircularProgressIndicator(
+                    color: Color(0xFF6A79FF),
+                    strokeWidth: 2,
                   ),
                 ),
               ),
-          )
-              : widgetChatroomEmpty(context),
-        ),
-        Visibility(
-          visible: _isLoadMore,
-          child: Container(
-            width: 12,
-            height: 12,
-            margin: const EdgeInsets.only(top: 2),
-            child: const CircularProgressIndicator(
-              color: Color(0xFF6A79FF),
-              strokeWidth: 2,
-            ),
-          ),
-        ),
-        Visibility(
-          visible: !_isHideNotice,
-          child: AnimatedOpacity(
-            opacity: !_isHideNotice && _dataNotice.notice.isNotEmpty ? 1.0 : 0.0,
-            duration: const Duration(milliseconds: 500),
-            onEnd: () {
-              setState(() {
-                _isHideNotice = true;
-              });
-            },
-            child: WidgetChatroomNoticePin(_dataNotice, _isExpandNotice,
-                onToggle:() {
-                  setState(() {
-                    _isExpandNotice = !_isExpandNotice;
-                    closeKeyboard(context);
-                  });
-                },
-                onHide:() {
-                  setState(() {
-                    _isHideNotice = true;
-                    dbStore.setNoticeHide(_dataNotice, _isHideNotice);
-                  });
-                }
-            ),
-          ),
-        ),
-        AnimatedOpacity(
-          opacity: _showDateContainer ? 1.0 : 0.0,
-          duration: const Duration(milliseconds: 500),
-          child: widgetChatroomDatePin(context, _currentDate),
-        ),
-      ],
-    );
+              Visibility(
+                visible: !_isHideNotice,
+                child: AnimatedOpacity(
+                  opacity: !_isHideNotice && _dataNotice.notice.isNotEmpty
+                      ? 1.0
+                      : 0.0,
+                  duration: const Duration(milliseconds: 500),
+                  onEnd: () {
+                    setState(() {
+                      _isHideNotice = true;
+                    });
+                  },
+                  child: WidgetChatroomNoticePin(_dataNotice, _isExpandNotice,
+                      onToggle: () {
+                    setState(() {
+                      _isExpandNotice = !_isExpandNotice;
+                      closeKeyboard(context);
+                    });
+                  }, onHide: () {
+                    setState(() {
+                      _isHideNotice = true;
+                      dbStore.setNoticeHide(_dataNotice, _isHideNotice);
+                    });
+                  }),
+                ),
+              ),
+              AnimatedOpacity(
+                opacity: _showDateContainer ? 1.0 : 0.0,
+                duration: const Duration(milliseconds: 500),
+                child: widgetChatroomDatePin(context, _currentDate),
+              ),
+            ],
+          );
   }
 
   Widget _buildMessageInput() {
     final isReplying = _replyMessage != null;
     return Container(
       color: Colors.white,
-      padding: const EdgeInsets.only(left: 8.0, right: 8.0, top: 8.0, bottom: 8.0),
+      padding:
+          const EdgeInsets.only(left: 8.0, right: 8.0, top: 8.0, bottom: 8.0),
       child: Column(
         children: [
           if (isReplying) buildReplyForTextField(_replyMessage, _doCancelReply),
-          if (_isMentioning) buildMentions(
-              members: _listMembers,
-              onCancelReply: (Member member) {
-                _doSelectMention(member);
-              }
-          ),
+          if (_isMentioning)
+            buildMentions(
+                members: _listMembers,
+                onCancelReply: (Member member) {
+                  _doSelectMention(member);
+                }),
           Row(
             children: [
               Container(
@@ -571,7 +647,9 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
               Expanded(
                 child: Column(
                   children: [
-                    widgetChatroomMessageInput(_messageController, _messageFocusNode,
+                    widgetChatroomMessageInput(
+                      _messageController,
+                      _messageFocusNode,
                       onChanged: (String text) {
                         if (text.endsWith("@")) {
                           setState(() {
@@ -596,7 +674,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                   splashColor: Colors.transparent,
                   highlightColor: Colors.transparent,
                   onTap: () {
-                    if(!_isSending) {
+                    if (!_isSending) {
                       _doSendMessage();
                     }
                   },
@@ -606,7 +684,9 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                       'assets/images/icons/icon_send.png',
                       width: 24,
                       height: 24,
-                      color: _isSending || _isButtonDisabled ? colorMainGrey250 : colorPrimaryBlue,
+                      color: _isSending || _isButtonDisabled
+                          ? colorMainGrey250
+                          : colorPrimaryBlue,
                     ),
                   ),
                 ),
@@ -636,7 +716,11 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                 elevation: 0,
                 leadingWidth: 0,
                 scrolledUnderElevation: 0,
-                toolbarHeight: _showAttachment && _bottomSheetHeight > (_bottomSheetHeightMax - _appBarHeight - 5) ? 140 : 80,
+                toolbarHeight: _showAttachment &&
+                        _bottomSheetHeight >
+                            (_bottomSheetHeightMax - _appBarHeight - 5)
+                    ? 140
+                    : 80,
                 leading: Container(),
                 backgroundColor: Colors.transparent,
                 flexibleSpace: Container(
@@ -652,14 +736,19 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                             height: 5,
                             decoration: const BoxDecoration(
                               color: colorMainGrey250,
-                              borderRadius: BorderRadius.all(Radius.circular(24)),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(24)),
                             ),
                           ),
                         ),
                       ),
-                      const SizedBox(height: 10,),
+                      const SizedBox(
+                        height: 10,
+                      ),
                       Visibility(
-                        visible: _showAttachment && _bottomSheetHeight > (_bottomSheetHeightMax - _appBarHeight - 5),
+                        visible: _showAttachment &&
+                            _bottomSheetHeight >
+                                (_bottomSheetHeightMax - _appBarHeight - 5),
                         child: AppBar(
                           backgroundColor: Colors.white,
                           title: Text(
@@ -740,8 +829,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                                     },
                                     child: Container(
                                       padding: const EdgeInsets.all(8.0),
-                                      child: const Text(
-                                          '선택 해제',
+                                      child: const Text('선택 해제',
                                           style: TextStyle(
                                             fontSize: 16,
                                             color: colorMainGrey600,
@@ -749,8 +837,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                                             fontWeight: FontWeight.w400,
                                             height: 0,
                                             letterSpacing: -0.32,
-                                          )
-                                      ),
+                                          )),
                                     ),
                                   ),
                                 ),
@@ -797,7 +884,8 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                             child: Container(
                               width: double.infinity,
                               height: 44,
-                              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20.0),
                               decoration: BoxDecoration(
                                 color: colorPrimaryPurple,
                                 borderRadius: BorderRadius.circular(30),
@@ -824,19 +912,21 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                                           fontWeight: FontWeight.w500,
                                           height: 0,
                                           letterSpacing: -0.32,
-                                        )
-                                    ),
+                                        )),
                                   ],
                                 ),
                               ),
                             ),
                           ),
-                          const SizedBox(width: 4,),
+                          const SizedBox(
+                            width: 4,
+                          ),
                           Expanded(
                             child: Container(
                               width: double.infinity,
                               height: 44,
-                              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20.0),
                               decoration: BoxDecoration(
                                 color: colorPrimaryBlue,
                                 borderRadius: BorderRadius.circular(30),
@@ -855,7 +945,8 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                                       size: 20,
                                     ),
                                     SizedBox(width: 6),
-                                    Text('파일',
+                                    Text(
+                                      '파일',
                                       style: TextStyle(
                                         color: Colors.white,
                                         fontSize: 16,
@@ -885,102 +976,115 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
                     mainAxisSpacing: 5,
                     childAspectRatio: 1,
                   ),
-                  delegate: SliverChildBuilderDelegate((BuildContext context, int index) {
-                    var fileImage = _filesImages[index];
-                    return Container(
-                      clipBehavior: Clip.antiAlias,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: InkWell(
-                        splashColor: Colors.transparent,
-                        highlightColor: Colors.transparent,
-                        onTap: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) {
-                            return ScreenPhotoView(images: _filesImages, initialIndex: index, isSelectMode: true,
-                              onSelect: (bool isSelected, index, FileItem fileItem) {
-                                _doCheckEnableButtonFile();
-                              },);
-                          }));
-                        },
-                        onLongPress: () {
-                          setState(() {
-                            if(!fileImage.isSelected) {
-                              fileImage.isSelected = true;
-                              fileImage.timeSelected = DateTime.now().millisecondsSinceEpoch;
-                            }else {
-                              fileImage.isSelected = false;
-                              fileImage.timeSelected = 0;
-                            }
-                            closeKeyboard(context);
-                          });
-                          _doCheckEnableButtonFile();
-                        },
-                        child: Stack(
-                          children: [
-                            Container(
-                              color: colorMainGrey200,
-                              child: Image.file(
-                                fileImage.getPreviewFile(),
-                                width: double.infinity,
-                                height: double.infinity,
-                                fit: BoxFit.cover,
-                                cacheWidth: 200,
-                                cacheHeight: 200,
+                  delegate: SliverChildBuilderDelegate(
+                    (BuildContext context, int index) {
+                      var fileImage = _filesImages[index];
+                      return Container(
+                        clipBehavior: Clip.antiAlias,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: InkWell(
+                          splashColor: Colors.transparent,
+                          highlightColor: Colors.transparent,
+                          onTap: () {
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (context) {
+                              return ScreenPhotoView(
+                                images: _filesImages,
+                                initialIndex: index,
+                                isSelectMode: true,
+                                onSelect: (bool isSelected, index,
+                                    FileItem fileItem) {
+                                  _doCheckEnableButtonFile();
+                                },
+                              );
+                            }));
+                          },
+                          onLongPress: () {
+                            setState(() {
+                              if (!fileImage.isSelected) {
+                                fileImage.isSelected = true;
+                                fileImage.timeSelected =
+                                    DateTime.now().millisecondsSinceEpoch;
+                              } else {
+                                fileImage.isSelected = false;
+                                fileImage.timeSelected = 0;
+                              }
+                              closeKeyboard(context);
+                            });
+                            _doCheckEnableButtonFile();
+                          },
+                          child: Stack(
+                            children: [
+                              Container(
+                                color: colorMainGrey200,
+                                child: Image.file(
+                                  fileImage.getPreviewFile(),
+                                  width: double.infinity,
+                                  height: double.infinity,
+                                  fit: BoxFit.cover,
+                                  cacheWidth: 200,
+                                  cacheHeight: 200,
+                                ),
                               ),
-                            ),
-                            Positioned(
-                              top: 0,
-                              right: 0,
-                              child: Visibility(
-                                visible: _selectMode,
-                                child: InkWell(
-                                  splashColor: Colors.transparent,
-                                  highlightColor: Colors.transparent,
-                                  onTap: () {
-                                    setState(() {
-                                      if(!fileImage.isSelected) {
-                                        fileImage.isSelected = true;
-                                        fileImage.timeSelected = DateTime.now().millisecondsSinceEpoch;
-                                      }else {
-                                        fileImage.isSelected = false;
-                                        fileImage.timeSelected = 0;
-                                      }
-                                      _doCheckEnableButtonFile();
-                                      closeKeyboard(context);
-                                    });
-                                  },
-                                  child: Container(
-                                    width: 26,
-                                    height: 26,
-                                    margin: const EdgeInsets.only(top: 8.0, right: 8, left: 16, bottom: 16),
-                                    decoration: BoxDecoration(
-                                      color: fileImage.isSelected
-                                          ? colorPrimaryBlue
-                                          : colorMainGrey200
-                                          .withAlpha(150),
-                                      shape: BoxShape.circle,
-                                      border: Border.all(
+                              Positioned(
+                                top: 0,
+                                right: 0,
+                                child: Visibility(
+                                  visible: _selectMode,
+                                  child: InkWell(
+                                    splashColor: Colors.transparent,
+                                    highlightColor: Colors.transparent,
+                                    onTap: () {
+                                      setState(() {
+                                        if (!fileImage.isSelected) {
+                                          fileImage.isSelected = true;
+                                          fileImage.timeSelected =
+                                              DateTime.now()
+                                                  .millisecondsSinceEpoch;
+                                        } else {
+                                          fileImage.isSelected = false;
+                                          fileImage.timeSelected = 0;
+                                        }
+                                        _doCheckEnableButtonFile();
+                                        closeKeyboard(context);
+                                      });
+                                    },
+                                    child: Container(
+                                      width: 26,
+                                      height: 26,
+                                      margin: const EdgeInsets.only(
+                                          top: 8.0,
+                                          right: 8,
+                                          left: 16,
+                                          bottom: 16),
+                                      decoration: BoxDecoration(
                                         color: fileImage.isSelected
                                             ? colorPrimaryBlue
-                                            : const Color(0xFFE3E3E3),
-                                        width: 1,
+                                            : colorMainGrey200.withAlpha(150),
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                          color: fileImage.isSelected
+                                              ? colorPrimaryBlue
+                                              : const Color(0xFFE3E3E3),
+                                          width: 1,
+                                        ),
                                       ),
+                                      child: fileImage.isSelected
+                                          ? const Icon(Icons.check,
+                                              size: 16, color: Colors.white)
+                                          : Container(),
                                     ),
-                                    child: fileImage.isSelected
-                                        ? const Icon(Icons.check,
-                                        size: 16, color: Colors.white)
-                                        : Container(),
                                   ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                    );
-                  },
+                      );
+                    },
                     childCount: _filesImages.length,
                   ),
                 ),
@@ -994,58 +1098,57 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
 
   @override
   void onMessageReceived(BaseChannel channel, BaseMessage baseMessage) {
-
     DataMessage dataMessage = DataMessage.fromBaseMessage(baseMessage);
 
-    if(!_listMessages.contains(dataMessage)) {
+    if (!_listMessages.contains(dataMessage)) {
       _listMessages.insert(0, dataMessage);
       showNotificationMessage(context, widget.dataChat, dataMessage);
     }
-
   }
 
   Future<void> _doLoadMessages() async {
+    print('_doLoadMessages');
     if (_moduleMessages.isLoading()) return;
-
+    print('_doLoadMessages 22');
     if (!_isLoadMore) {
       setState(() {
         // _isLoadMore = listMessages.isNotEmpty;
       });
     }
-
-    _moduleMessages.getMessagesMore().then((List<DataMessage> messages) {
-      setState(() {
-        _listMessages.addAll(messages);
-      });
-
-      for (DataMessage message in messages) {
-        showNotificationMessage(context, widget.dataChat, message);
-      }
-
-    }).catchError((e) {
-
-    }).whenComplete(() {
-      if(mounted) {
-        setState(() {
-          _isLoading = false;
-          _isLoadMore = false;
+    print('_doLoadMessages 33');
+    _moduleMessages
+        .getMessagesMore()
+        .then((List<DataMessage> messages) {
+          print('_doLoadMessages 44');
+          setState(() {
+            _listMessages.addAll(messages);
+          });
+          print('_doLoadMessages 55 $messages.length');
+          for (DataMessage message in messages) {
+            showNotificationMessage(context, widget.dataChat, message);
+          }
+        })
+        .catchError((e) {})
+        .whenComplete(() {
+          if (mounted) {
+            setState(() {
+              _isLoading = false;
+              _isLoadMore = false;
+            });
+          }
         });
-      }
-    });
   }
 
   Future<void> _doLoadMessagesNew() async {
     if (_moduleMessages.isLoading()) return;
 
     _moduleMessages.getMessagesNew().then((List<DataMessage> messages) {
-
       for (DataMessage message in messages) {
-        if(!_listMessages.contains(message)) {
+        if (!_listMessages.contains(message)) {
           _listMessages.insert(0, message);
           showNotificationMessage(context, widget.dataChat, message);
         }
       }
-
     });
   }
 
@@ -1065,7 +1168,9 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
   }
 
   void _doLoadNotice() {
-    _moduleNotice.getNotices(widget.dataChat.id).then((List<DataNotice> listNotices) {
+    _moduleNotice
+        .getNotices(widget.dataChat.id)
+        .then((List<DataNotice> listNotices) {
       setState(() {
         for (DataNotice notice in listNotices) {
           if (notice.noticeable && notice.notice.isNotEmpty) {
@@ -1091,7 +1196,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
   }
 
   List<Member> _doGetAllMembers() {
-    if(_listMembersAll.isEmpty) {
+    if (_listMembersAll.isEmpty) {
       setState(() {
         _listMembersAll = _moduleMessages.getGroupChannel().members;
       });
@@ -1102,7 +1207,6 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
 
   Future<void> _doSendMessage() async {
     if (!_isButtonDisabled) {
-
       _doSendMessageText();
 
       _doAttachmentPickerClose();
@@ -1116,14 +1220,14 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
   }
 
   void _doSendMessageText() {
-
     if (_messageController.text.isNotEmpty) {
-
       setState(() {
         _isSending = true;
       });
 
-      _moduleMessages.sendMessage(_messageController.text, _replyMessage).then((DataMessage myMessage) {
+      _moduleMessages
+          .sendMessage(_messageController.text, _replyMessage)
+          .then((DataMessage myMessage) {
         setState(() {
           _listMessages.insert(0, myMessage);
           _messageController.clear();
@@ -1136,20 +1240,18 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
         });
       });
     }
-
   }
 
   Future<void> _doSendMessageImages() async {
-
     if (_selectedImages > 0) {
-
       setState(() {
         _isSending = true;
       });
 
       _doAttachmentPickerClose();
 
-      DataMessage myMessage1 = _moduleMessages.preSendMessageImage(_filesImages);
+      DataMessage myMessage1 =
+          _moduleMessages.preSendMessageImage(_filesImages);
       int index = myMessage1.index;
 
       setState(() {
@@ -1178,15 +1280,11 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
           break;
         }
       }
-
     }
-
   }
 
   Future<void> _doSendMessageMedia() async {
-
     if (_selectedMedia > 0) {
-
       setState(() {
         _isSending = true;
       });
@@ -1195,7 +1293,8 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
 
       List<int> index = [];
 
-      List<DataMessage> myMessages = await _moduleMessages.preSendMessageMedia(_filesMedia);
+      List<DataMessage> myMessages =
+          await _moduleMessages.preSendMessageMedia(_filesMedia);
 
       for (DataMessage myMessage1 in myMessages) {
         setState(() {
@@ -1230,15 +1329,13 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
           }
         }
       }
-
     }
-
   }
 
   Future<void> _doProcessCameraResult() async {
     File? file = await doPickImageWithCamera();
 
-    if(file != null) {
+    if (file != null) {
       _selectedImages++;
       FileItem fileItem = FileItem(file: file, path: file.path);
       fileItem.isSelected = true;
@@ -1252,7 +1349,7 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
 
     List<FileItem> fileItems = await doPickFiles();
 
-    for(FileItem fileItem in fileItems) {
+    for (FileItem fileItem in fileItems) {
       _selectedMedia++;
       fileItem.isSelected = true;
       fileItem.timeSelected = DateTime.now().millisecondsSinceEpoch;
@@ -1263,16 +1360,17 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
   }
 
   Future<void> _doLoadMedia(isShow) async {
-
-    _moduleMedia.loadFileImages1(isShowSettings: isShow, onLoad: (FileItem fileItem) {
-      if(mounted) {
-        setState(() {
-          if (!_filesImages.contains(fileItem)) {
-            _filesImages.add(fileItem);
+    _moduleMedia.loadFileImages1(
+        isShowSettings: isShow,
+        onLoad: (FileItem fileItem) {
+          if (mounted) {
+            setState(() {
+              if (!_filesImages.contains(fileItem)) {
+                _filesImages.add(fileItem);
+              }
+            });
           }
         });
-      }
-    });
 
     for (FileItem fileItem in _filesImages) {
       if (!await fileItem.file.exists()) {
@@ -1281,13 +1379,12 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
         });
       }
     }
-
   }
 
   void _deselectPickedFiles(isClose) {
     _doDeselectPickedImages();
     _doDeselectPickedMedia();
-    if(isClose) {
+    if (isClose) {
       _doAttachmentPickerClose();
     }
   }
@@ -1342,7 +1439,6 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
   }
 
   void _doFilterInputs(String text) {
-
     _doGetAllMembers();
 
     String textAfterCharacter = "";
@@ -1351,15 +1447,15 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
     }
 
     if (text.endsWith("@")) {
-      if(_isMentioning == false) {
+      if (_isMentioning == false) {
         setState(() {
           _isMentioning = true;
         });
       }
     }
 
-    if(textAfterCharacter.isNotEmpty && !textAfterCharacter.contains(' ')){
-      if(_isMentioning == false) {
+    if (textAfterCharacter.isNotEmpty && !textAfterCharacter.contains(' ')) {
+      if (_isMentioning == false) {
         setState(() {
           _isMentioning = true;
         });
@@ -1373,13 +1469,13 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
         _isMentioning = false;
       });
     }
-
   }
 
   void _doUpdateAllMemberByFilter(String textAfterCharacter) {
     setState(() {
       _listMembers = _listMembersAll.where((member) {
-        return member.nickname.toLowerCase()
+        return member.nickname
+            .toLowerCase()
             .substring(member.nickname.lastIndexOf('@') + 1)
             .contains(textAfterCharacter.toLowerCase());
       }).toList();
@@ -1410,7 +1506,10 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
   }
 
   void _doScrollToMessage(int id) {
-    _itemScrollController.scrollTo(index: _getMessageIndex(id), alignment: 0.5,duration: const Duration(milliseconds: 500));
+    _itemScrollController.scrollTo(
+        index: _getMessageIndex(id),
+        alignment: 0.5,
+        duration: const Duration(milliseconds: 500));
   }
 
   void _doCheckEnableButtonFile() {
@@ -1446,29 +1545,28 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
   }
 
   void _doHandleScroll() {
-
-    final visiblePositions = _itemPositionsListener.itemPositions.value.where((ItemPosition position) {
+    final visiblePositions = _itemPositionsListener.itemPositions.value
+        .where((ItemPosition position) {
       return position.itemTrailingEdge > 0;
     });
     if (visiblePositions.isEmpty) return;
 
-    final firstVisibleItemIndex = visiblePositions.reduce((ItemPosition max, ItemPosition position) {
+    final firstVisibleItemIndex =
+        visiblePositions.reduce((ItemPosition max, ItemPosition position) {
       return position.itemTrailingEdge > max.itemTrailingEdge ? position : max;
     }).index;
 
-    if(_firstVisibleItemIndex == -1) {
+    if (_firstVisibleItemIndex == -1) {
       _firstVisibleItemIndex = firstVisibleItemIndex;
       return;
-    }else if(_firstVisibleItemIndex == firstVisibleItemIndex) {
+    } else if (_firstVisibleItemIndex == firstVisibleItemIndex) {
       return;
     }
 
     _firstVisibleItemIndex = firstVisibleItemIndex;
 
-    if(_listMessages.isNotEmpty) {
-
-      if(!_showDateContainer) {
-
+    if (_listMessages.isNotEmpty) {
+      if (!_showDateContainer) {
         DataMessage firstVisibleMessage = _listMessages[firstVisibleItemIndex];
 
         setState(() {
@@ -1484,21 +1582,18 @@ class _ScreenChatroomState extends State<ScreenChatroom> with SingleTickerProvid
           });
           _timerScroll?.cancel();
         });
-
       }
-
     }
 
     _doLoadMessages();
   }
 
   int _getMessageIndex(int id) {
-    for(int i = 0; i < _listMessages.length; i++) {
-      if(_listMessages[i].index == id) {
-        return i < _listMessages.length ? i+1 : i;
+    for (int i = 0; i < _listMessages.length; i++) {
+      if (_listMessages[i].index == id) {
+        return i < _listMessages.length ? i + 1 : i;
       }
     }
     return 0;
   }
-
 }

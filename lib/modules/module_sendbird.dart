@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:path/path.dart' as path;
+import 'package:http/http.dart' as http;
 
 import 'package:artrooms/beans/bean_message.dart';
 import 'package:flutter/foundation.dart';
@@ -17,7 +18,7 @@ import 'package:sendbird_sdk/handlers/channel_event_handler.dart';
 import 'package:sendbird_sdk/params/file_message_params.dart';
 import 'package:sendbird_sdk/params/message_list_params.dart';
 import 'package:sendbird_sdk/params/user_message_params.dart';
-import 'package:sendbird_sdk/query/group_channel_list_query.dart';
+import 'package:sendbird_sdk/query/channel_list/group_channel_list_query.dart';
 import 'package:sendbird_sdk/sdk/sendbird_sdk_api.dart';
 
 import '../main.dart';
@@ -150,14 +151,17 @@ class ModuleSendBird {
     Completer<List<BaseMessage>> completer = Completer<List<BaseMessage>>();
 
     try {
+      print("...loadMessages init ${earliestMessageTimestamp}");
       final params = MessageListParams();
       params.previousResultSize = 200;
       params.reverse = true;
 
       final referenceTime =
           earliestMessageTimestamp ?? DateTime.now().millisecondsSinceEpoch;
+      print("...loadMessages referenceTime $referenceTime ${params}");
       final messages =
           await groupChannel.getMessagesByTimestamp(referenceTime, params);
+      print("...loadMessages RESULT ${messages.length}");
 
       completer.complete(messages);
     } catch (e) {
@@ -199,10 +203,13 @@ class ModuleSendBird {
         message?.content ?? "",
         message?.senderId ?? "",
         message?.senderName ?? "",
-        message?.data ?? data);
+        message?.data ?? "");
     params.mentionedUserIds = [];
-    params.data =
-        message?.data != null ? const JsonEncoder().convert(parentMessage) : "";
+    // params.data =
+    //     message?.data != null ? const JsonEncoder().convert(parentMessage) : "";
+    params.data = const JsonEncoder().convert(parentMessage);
+    print(
+        "...sendMessage $text ${params.data} ${params.message} ${params.targetLanguages} ${params.customType} ${params.pushOption}");
     return performSendMessage(groupChannel, text, params);
   }
 

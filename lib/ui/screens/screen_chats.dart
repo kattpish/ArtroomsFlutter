@@ -1,4 +1,3 @@
-
 import 'dart:async';
 import 'dart:isolate';
 
@@ -25,20 +24,16 @@ import '../widgets/widget_chats_row.dart';
 import '../widgets/widget_loader.dart';
 import '../widgets/widget_ui_notify.dart';
 
-
 class ScreenChats extends StatefulWidget {
-
   const ScreenChats({super.key});
 
   @override
   State<StatefulWidget> createState() {
     return _ScreenChatsState();
   }
-
 }
 
-class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver  {
-
+class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver {
   bool _isLoading = true;
   bool _isSearching = false;
   bool _autofocus = false;
@@ -59,8 +54,9 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver  
 
     addState(this);
 
-    if(!dbStore.isLoggedIn()) {
-      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) {
+    if (!dbStore.isLoggedIn()) {
+      Navigator.of(context)
+          .pushReplacement(MaterialPageRoute(builder: (context) {
         return const ScreenLogin();
       }));
       return;
@@ -76,7 +72,6 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver  
     _searchController.addListener(() {
       _doSearchChats(_searchController.text, true);
     });
-
   }
 
   @override
@@ -112,20 +107,17 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver  
               scrolledUnderElevation: 0,
               actions: [
                 IconButton(
-                    icon: const Icon(
-                        Icons.more_vert,
-                        color: colorMainGrey250
-                    ),
+                    icon: const Icon(Icons.more_vert, color: colorMainGrey250),
                     onPressed: () {
                       setState(() {
                         _autofocus = false;
                       });
                       closeKeyboard(context);
-                      Navigator.push(context, MaterialPageRoute(builder: (context) {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) {
                         return const ScreenProfile();
                       }));
-                    }
-                ),
+                    }),
               ],
             ),
             body: Stack(
@@ -133,94 +125,103 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver  
                 _isLoading && _listChats.isEmpty
                     ? const WidgetLoader()
                     : Column(
-                  children: [
-                    Visibility(
-                      visible: _isSearching || _listChats.isNotEmpty || _searchController.text.isNotEmpty,
-                      child: Container(
-                        height: 44,
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                        child: TextField(
-                          controller: _searchController,
-                          autofocus: _autofocus,
-                          decoration: InputDecoration(
-                            hintText: '',
-                            suffixIcon: const Icon(
-                                Icons.search,
-                                size: 30,
-                                color: colorMainGrey300
-                            ),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(30),
-                              borderSide: BorderSide.none,
-                            ),
-                            filled: true,
-                            fillColor: Colors.grey[200],
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
-                          ),
-                          onChanged: (value) {
-                            setState(() {
-                              _autofocus = true;
-                            });
-                          },
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    Expanded(
-                      child: (_listChats.isNotEmpty || _isSearching)
-                          ? LayoutBuilder(
-                        builder: (context, constraints) {
-                          return SlidableAutoCloseBehavior(
-                            child: StretchingOverscrollIndicator(
-                              axisDirection: AxisDirection.down,
-                              child: ScrollConfiguration(
-                                behavior: scrollBehavior,
-                                child: ListView.builder(
-                                  shrinkWrap: true,
-                                  itemCount: _listChats.length,
-                                  itemBuilder: (context, index) {
-                                    DataChat dataChat = _listChats[index];
-                                    return Container(
-                                      key: Key(_listChats[index].id),
-                                      child: widgetChatRow(context, index, dataChat,
-                                        onClickOption1: () {
-                                          _doToggleNotification(context, dataChat);
-                                        },
-                                        onClickOption2: () {
-                                          widgetChatsExit(context, dataChat,
-                                              onExit: (context) {
-                                                moduleSendBird.leaveChannel(dataChat.id);
-                                                setState(() {
-                                                  _listChats.remove(dataChat);
-                                                });
-                                              });
-                                        },
-                                        onSelectChat: () {
-                                          _doSelectChat(context, dataChat);
-                                        },
-                                      ),
-                                    );
-                                  },
+                        children: [
+                          Visibility(
+                            visible: _isSearching ||
+                                _listChats.isNotEmpty ||
+                                _searchController.text.isNotEmpty,
+                            child: Container(
+                              height: 44,
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16.0),
+                              child: TextField(
+                                controller: _searchController,
+                                autofocus: _autofocus,
+                                decoration: InputDecoration(
+                                  hintText: '',
+                                  suffixIcon: const Icon(Icons.search,
+                                      size: 30, color: colorMainGrey300),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(30),
+                                    borderSide: BorderSide.none,
+                                  ),
+                                  filled: true,
+                                  fillColor: Colors.grey[200],
+                                  contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 16.0, vertical: 0),
                                 ),
+                                onChanged: (value) {
+                                  setState(() {
+                                    _autofocus = true;
+                                  });
+                                },
                               ),
                             ),
-                          );
-                        },
-                      )
-                          : widgetChatsEmpty(context),
-                    ),
-                  ],
-                ),
-                widgetChatMessagePin(context, this,
-                    onSelectChat: () {
-                      _doSelectChat(context, dataChatPin);
-                    }
-                ),
+                          ),
+                          const SizedBox(height: 10),
+                          Expanded(
+                            child: (_listChats.isNotEmpty || _isSearching)
+                                ? LayoutBuilder(
+                                    builder: (context, constraints) {
+                                      return SlidableAutoCloseBehavior(
+                                        child: StretchingOverscrollIndicator(
+                                          axisDirection: AxisDirection.down,
+                                          child: ScrollConfiguration(
+                                            behavior: scrollBehavior,
+                                            child: ListView.builder(
+                                              shrinkWrap: true,
+                                              itemCount: _listChats.length,
+                                              itemBuilder: (context, index) {
+                                                DataChat dataChat =
+                                                    _listChats[index];
+                                                return Container(
+                                                  key:
+                                                      Key(_listChats[index].id),
+                                                  child: WidgetChatRow(
+                                                    context: context,
+                                                    index: index,
+                                                    dataChat: dataChat,
+                                                    onClickOption1: () {
+                                                      _doToggleNotification(
+                                                          context, dataChat);
+                                                    },
+                                                    onClickOption2: () {
+                                                      widgetChatsExit(
+                                                          context, dataChat,
+                                                          onExit: (context) {
+                                                        moduleSendBird
+                                                            .leaveChannel(
+                                                                dataChat.id);
+                                                        setState(() {
+                                                          _listChats
+                                                              .remove(dataChat);
+                                                        });
+                                                      });
+                                                    },
+                                                    onSelectChat: () {
+                                                      _doSelectChat(
+                                                          context, dataChat);
+                                                    },
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  )
+                                : widgetChatsEmpty(context),
+                          ),
+                        ],
+                      ),
+                widgetChatMessagePin(context, this, onSelectChat: () {
+                  _doSelectChat(context, dataChatPin);
+                }),
               ],
             ),
           ),
         ),
-
         Visibility(
           visible: _selectChatId.isNotEmpty || _isLoadingChatroom,
           child: Expanded(
@@ -233,19 +234,20 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver  
                   left: BorderSide(width: 2, color: Color(0xFFF3F3F3)),
                 ),
               ),
-              child: _listScreenChatrooms.containsKey(_selectChatId) && !_isLoadingChatroom
+              child: _listScreenChatrooms.containsKey(_selectChatId) &&
+                      !_isLoadingChatroom
                   ? _listScreenChatrooms[_selectChatId]!
                   : Center(
-                child: Container(
-                  width: 40,
-                  height: 40,
-                  margin: const EdgeInsets.only(bottom: 20),
-                  child: const CircularProgressIndicator(
-                    color: colorPrimaryBlue,
-                    strokeWidth: 2,
-                  ),
-                ),
-              ),
+                      child: Container(
+                        width: 40,
+                        height: 40,
+                        margin: const EdgeInsets.only(bottom: 20),
+                        child: const CircularProgressIndicator(
+                          color: colorPrimaryBlue,
+                          strokeWidth: 2,
+                        ),
+                      ),
+                    ),
             ),
           ),
         ),
@@ -261,7 +263,6 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver  
   }
 
   void _doSelectChat(BuildContext context, DataChat dataChat) {
-
     setState(() {
       _autofocus = false;
     });
@@ -272,22 +273,19 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver  
       dataChat.unreadMessages = 0;
     });
 
-    if(dataChat.id == _selectChatId) return;
+    if (dataChat.id == _selectChatId) return;
 
-    if(isTablet(context)) {
-
+    if (isTablet(context)) {
       setState(() {
         _isLoadingChatroom = true;
       });
 
-      if(_listScreenChatrooms.containsKey(dataChat.id)) {
+      if (_listScreenChatrooms.containsKey(dataChat.id)) {
         _listScreenChatrooms.remove(dataChat.id);
       }
 
       Future.delayed(const Duration(milliseconds: 100), () {
-
-        if(!_listScreenChatrooms.containsKey(dataChat.id)) {
-
+        if (!_listScreenChatrooms.containsKey(dataChat.id)) {
           ScreenChatroom screenChatroom = ScreenChatroom(
             dataChat: dataChat,
             widthRatio: 0.62,
@@ -308,10 +306,8 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver  
           _selectChatId = dataChat.id;
           _isLoadingChatroom = false;
         });
-
       });
-
-    }else {
+    } else {
       Navigator.push(context, MaterialPageRoute(builder: (context) {
         return ScreenChatroom(
           dataChat: dataChat,
@@ -324,56 +320,52 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver  
   }
 
   Future<void> _doLoadChats() async {
-
-    if(!moduleSendBird.isInitialized()) {
+    if (!moduleSendBird.isInitialized()) {
       await moduleSendBird.initSendbird();
-    }else if(_isLoading) {
+    } else if (_isLoading) {
       return;
     }
 
-    if(_searchController.text.isEmpty) {
+    if (_searchController.text.isEmpty) {
       setState(() {
         _isLoading = true;
       });
     }
 
-    await _chatModule.getUserChats().then((List<DataChat> chats) {
+    await _chatModule
+        .getUserChats()
+        .then((List<DataChat> chats) {
+          _listChats.clear();
+          _listChatsAll.clear();
 
-      _listChats.clear();
-      _listChatsAll.clear();
+          if (_searchController.text.isNotEmpty) {
+            _listChats.addAll(chats);
+          } else {
+            setState(() {
+              _listChats.addAll(chats);
+            });
+          }
 
-      if(_searchController.text.isNotEmpty) {
-        _listChats.addAll(chats);
-      }else {
-        setState(() {
-          _listChats.addAll(chats);
+          setState(() {
+            _listChatsAll.addAll(chats);
+          });
+
+          if (_searchController.text.isNotEmpty) {
+            _doSearchChats(_searchController.text, false);
+          }
+
+          for (DataChat dataChat in chats) {
+            if (dbStore.isNotificationChat(dataChat)) {
+              showNotificationChat(context, dataChat);
+            }
+          }
+        })
+        .catchError((e) {})
+        .whenComplete(() {
+          setState(() {
+            _isLoading = false;
+          });
         });
-      }
-
-      setState(() {
-        _listChatsAll.addAll(chats);
-      });
-
-      if(_searchController.text.isNotEmpty) {
-        _doSearchChats(_searchController.text, false);
-      }
-
-      for(DataChat dataChat in chats) {
-        if(dbStore.isNotificationChat(dataChat)) {
-          showNotificationChat(context, dataChat);
-        }
-      }
-
-    }).catchError((e) {
-
-    }).whenComplete(() {
-
-      setState(() {
-        _isLoading = false;
-      });
-
-    });
-
   }
 
   void startIsolate() async {
@@ -392,18 +384,18 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver  
   }
 
   void _doSearchChats(String query, bool showLoader) {
-
-    if(showLoader && query.isNotEmpty) {
+    if (showLoader && query.isNotEmpty) {
       setState(() {
         _isSearching = true;
       });
     }
 
     Future.delayed(const Duration(milliseconds: 100), () {
-
       List<DataChat> filtered = _listChatsAll.where((chat) {
         return chat.name.toLowerCase().contains(query.toLowerCase()) ||
-            chat.lastMessage.content.toLowerCase().contains(query.toLowerCase());
+            chat.lastMessage.content
+                .toLowerCase()
+                .contains(query.toLowerCase());
       }).toList();
 
       setState(() {
@@ -412,15 +404,12 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver  
         _isSearching = false;
         _isLoading = false;
       });
-
     });
-
   }
 
   void onMessageSent(DataMessage newMessage) {
-
-    for(DataChat dataChat in _listChatsAll) {
-      if(dataChat.id == newMessage.channelUrl) {
+    for (DataChat dataChat in _listChatsAll) {
+      if (dataChat.id == newMessage.channelUrl) {
         setState(() {
           dataChat.lastMessage = newMessage;
         });
@@ -428,15 +417,13 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver  
       }
     }
 
-    for(DataChat dataChat in _listChats) {
-      if(dataChat.id == newMessage.channelUrl) {
+    for (DataChat dataChat in _listChats) {
+      if (dataChat.id == newMessage.channelUrl) {
         setState(() {
           dataChat.lastMessage = newMessage;
         });
         break;
       }
     }
-
   }
-
 }
