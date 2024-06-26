@@ -35,8 +35,8 @@ class _WidgetChatRowState extends State<WidgetChatRow> {
   Member? opponentUser;
   Map<String, dynamic>? opponentProfile;
   String temp = "temp";
-  String title = "";
-  String profilePictureUrl = "";
+  String title = '-';
+  String profilePictureUrl = '';
 
   @override
   void initState() {
@@ -45,16 +45,16 @@ class _WidgetChatRowState extends State<WidgetChatRow> {
   }
 
   void getOpponentData() async {
+    print('>><><><><><>><>getOpponentData ${widget.dataChat.creator}');
     final creatorUserId = widget.dataChat.creator?.userId;
+    if (creatorUserId == null) return;
     ModuleNotice moduleNotice = ModuleNotice();
 
-    opponentProfile = await moduleNotice.getArtistProfileInfoByEmail(
-        email: creatorUserId ?? '');
+    opponentProfile =
+        await moduleNotice.getArtistProfileInfoByEmail(email: creatorUserId);
 
-    if (opponentProfile == null) {
-      opponentProfile =
-          await moduleNotice.getAdminProfileByEmail(email: creatorUserId ?? '');
-    }
+    opponentProfile ??=
+        await moduleNotice.getAdminProfileByEmail(email: creatorUserId);
 
     if (opponentProfile == null) return;
     setState(() {
@@ -65,14 +65,14 @@ class _WidgetChatRowState extends State<WidgetChatRow> {
   }
 
   void setTitleAndDescription() {
-    if (widget.dataChat.groupChannel!.memberCount > 2) {
-      setState(() {
-        title = widget.dataChat.name;
-        profilePictureUrl = widget.dataChat.profilePictureUrl;
-      });
-      return;
+    setState(() {
+      title = widget.dataChat.name;
+      profilePictureUrl = widget.dataChat.profilePictureUrl;
+    });
+    if (widget.dataChat.groupChannel!.memberCount <= 2) {
+      getOpponentData();
     }
-    getOpponentData();
+    // return;
   }
 
   @override
@@ -149,8 +149,6 @@ class _WidgetChatRowState extends State<WidgetChatRow> {
                             fadeInDuration: const Duration(milliseconds: 100),
                             fadeOutDuration: const Duration(milliseconds: 100),
                             imageErrorBuilder: (context, error, stackTrace) {
-                              print(
-                                  "IMAGE ERROR /${profilePictureUrl}/ ${error}");
                               return Image.asset(
                                 widget.dataChat.isArtrooms
                                     ? 'assets/images/chats/chat_artrooms.png'

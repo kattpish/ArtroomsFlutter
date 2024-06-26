@@ -175,6 +175,7 @@ class ModuleNotice {
     };
 
     try {
+      print('=>>>>>>>>>>>>> getArtistProfileInfoByEmail /$email/');
       final response = await http.post(
         Uri.parse(apiUrlGraphQL),
         headers: {

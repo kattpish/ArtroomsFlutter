@@ -10,6 +10,7 @@ import 'package:artrooms/utils/utils.dart';
 import 'package:artrooms/utils/utils_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:sendbird_sdk/utils/extensions.dart';
 
 import '../../beans/bean_chat.dart';
 import '../../listeners/scroll_bouncing_physics.dart';
@@ -174,6 +175,8 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver {
                                               itemBuilder: (context, index) {
                                                 DataChat dataChat =
                                                     _listChats[index];
+                                                print(
+                                                    '======== chat list $index ${dataChat.groupChannel?.creator}');
                                                 return Container(
                                                   key:
                                                       Key(_listChats[index].id),
@@ -337,6 +340,8 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver {
         .then((List<DataChat> chats) {
           _listChats.clear();
           _listChatsAll.clear();
+
+          print('chats ${chats[0].creator}');
 
           if (_searchController.text.isNotEmpty) {
             _listChats.addAll(chats);

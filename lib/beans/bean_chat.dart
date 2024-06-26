@@ -1,4 +1,7 @@
+import 'dart:developer';
+
 import 'package:artrooms/main.dart';
+import 'package:flutter/material.dart';
 import 'package:sendbird_sdk/sendbird_sdk.dart';
 import '../utils/utils.dart';
 import '../utils/utils_notifications.dart';
@@ -49,6 +52,7 @@ class DataChat {
       lastMessage = DataMessage.fromBaseMessage(lastBaseMessage);
       messageDate = formatDateTime(lastBaseMessage.createdAt);
     }
+    debugPrint("!!!!!! groupChannel creator ${groupChannel.toJson()}");
 
     final DataChat dataChat = DataChat(
       groupChannel: groupChannel,

@@ -120,7 +120,7 @@ class ModuleSendBird {
       query.order = GroupChannelListOrder.latestLastMessage;
       List<GroupChannel> channels = await query.loadNext();
       if (kDebugMode) {
-        print('My GroupChannels: ${channels.length}');
+        print('My GroupChannels: ${channels[0].creator}');
       }
       completer.complete(channels);
     } catch (e) {
@@ -205,9 +205,9 @@ class ModuleSendBird {
         message?.senderName ?? "",
         message?.data ?? "");
     params.mentionedUserIds = [];
-    // params.data =
-    //     message?.data != null ? const JsonEncoder().convert(parentMessage) : "";
-    params.data = const JsonEncoder().convert(parentMessage);
+    params.data =
+        message?.data != null ? const JsonEncoder().convert(parentMessage) : "";
+    // params.data = const JsonEncoder().convert(parentMessage);
     print(
         "...sendMessage $text ${params.data} ${params.message} ${params.targetLanguages} ${params.customType} ${params.pushOption}");
     return performSendMessage(groupChannel, text, params);

@@ -6,7 +6,7 @@ import FlutterMacOS
 import Foundation
 
 import audioplayers_darwin
-import connectivity_macos
+import connectivity_plus
 import file_selector_macos
 import firebase_core
 import firebase_messaging
