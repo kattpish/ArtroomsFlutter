@@ -52,7 +52,6 @@ class DataChat {
       lastMessage = DataMessage.fromBaseMessage(lastBaseMessage);
       messageDate = formatDateTime(lastBaseMessage.createdAt);
     }
-    debugPrint("!!!!!! groupChannel creator ${groupChannel.toJson()}");
 
     final DataChat dataChat = DataChat(
       groupChannel: groupChannel,

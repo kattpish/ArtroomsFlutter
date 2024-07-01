@@ -1,4 +1,3 @@
-
 import 'package:artrooms/beans/bean_focusedMenuItem.dart';
 import 'package:artrooms/ui/widgets/widget_chatroom_message_attachment_file.dart';
 import 'package:artrooms/ui/widgets/widget_chatroom_message_attachment_photos.dart';
@@ -13,23 +12,20 @@ import '../../beans/bean_message.dart';
 import '../../utils/utils_media.dart';
 import '../theme/theme_colors.dart';
 
-
-Widget chatroomMessageOther({
-  required BuildContext context,
-  required int index,
-  required State state,
-  required DataMessage message,
-  required List<DataMessage> listMessages,
-  required bool isLast,
-  required bool isPreviousSame,
-  required bool isNextSame,
-  required bool isPreviousSameDateTime,
-  required bool isNextSameTime,
-  required double screenWidth,
-  required Null Function() onReplyClick,
-  required Null Function(int id) onReplySelect
-}) {
-
+Widget chatroomMessageOther(
+    {required BuildContext context,
+    required int index,
+    required State state,
+    required DataMessage message,
+    required List<DataMessage> listMessages,
+    required bool isLast,
+    required bool isPreviousSame,
+    required bool isNextSame,
+    required bool isPreviousSameDateTime,
+    required bool isNextSameTime,
+    required double screenWidth,
+    required Null Function() onReplyClick,
+    required Null Function(int id) onReplySelect}) {
   Color activeColor = colorMainGrey200;
 
   return Container(
@@ -37,8 +33,7 @@ Widget chatroomMessageOther({
         left: 16,
         right: 16,
         top: 0,
-        bottom: isLast ? 9 : (isNextSame && isNextSameTime ? 0 : 9)
-    ),
+        bottom: isLast ? 9 : (isNextSame && isNextSameTime ? 0 : 9)),
     child: Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -57,9 +52,8 @@ Widget chatroomMessageOther({
                   clipBehavior: Clip.antiAlias,
                   child: CircleAvatar(
                     radius: 15,
-                    backgroundColor: isPreviousSame
-                        ? Colors.transparent
-                        : colorMainGrey200,
+                    backgroundColor:
+                        isPreviousSame ? Colors.transparent : colorMainGrey200,
                     child: CachedNetworkImage(
                       imageUrl: message.profilePictureUrl,
                       cacheManager: customCacheManager,
@@ -121,7 +115,8 @@ Widget chatroomMessageOther({
                           decoration: BoxDecoration(
                             color: activeColor,
                             borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(isPreviousSameDateTime ? 24 : 2),
+                                topLeft: Radius.circular(
+                                    isPreviousSameDateTime ? 24 : 2),
                                 topRight: const Radius.circular(24),
                                 bottomLeft: const Radius.circular(24),
                                 bottomRight: const Radius.circular(24)),
@@ -148,10 +143,11 @@ Widget chatroomMessageOther({
                             ],
                             blurSize: 0.0,
                             menuOffset: 10.0,
+                            isMine: false,
                             bottomOffsetHeight: 80.0,
                             menuBoxDecoration: const BoxDecoration(
                                 borderRadius:
-                                BorderRadius.all(Radius.circular(15.0))),
+                                    BorderRadius.all(Radius.circular(15.0))),
                             activeColor: colorMainGrey400,
                             child: Container(
                               constraints: const BoxConstraints(
@@ -162,7 +158,8 @@ Widget chatroomMessageOther({
                               decoration: BoxDecoration(
                                 color: Colors.transparent,
                                 borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(isPreviousSameDateTime ? 20 : 2),
+                                  topLeft: Radius.circular(
+                                      isPreviousSameDateTime ? 20 : 2),
                                   topRight: const Radius.circular(20),
                                   bottomLeft: const Radius.circular(20),
                                   bottomRight: const Radius.circular(20),
@@ -178,7 +175,7 @@ Widget chatroomMessageOther({
                                     ),
                                     child: Column(
                                       crossAxisAlignment:
-                                      CrossAxisAlignment.start,
+                                          CrossAxisAlignment.start,
                                       children: [
                                         buildReply(index, message, false, (id) {
                                           onReplySelect(id);
@@ -200,7 +197,7 @@ Widget chatroomMessageOther({
                   ),
                 ),
                 if (((isPreviousSameDateTime && !isNextSameTime) ||
-                    (!isPreviousSameDateTime && !isNextSameTime)) &&
+                        (!isPreviousSameDateTime && !isNextSameTime)) &&
                     message.content.isNotEmpty)
                   Text(
                     message.getTime(),

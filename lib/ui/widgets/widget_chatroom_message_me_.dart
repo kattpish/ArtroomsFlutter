@@ -38,8 +38,7 @@ class ChatroomMessageMe extends StatefulWidget {
       required this.isNextSameTime,
       required this.screenWidth,
       required this.onReplyClick,
-      required this.onReplySelect}
-      );
+      required this.onReplySelect});
 
   @override
   State<ChatroomMessageMe> createState() => _ChatroomMessageMeState();
@@ -51,7 +50,8 @@ class _ChatroomMessageMeState extends State<ChatroomMessageMe> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(left: 16, right: 16, top: 0, bottom: widget.isLast ? 9 : 0),
+      margin: EdgeInsets.only(
+          left: 16, right: 16, top: 0, bottom: widget.isLast ? 9 : 0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
@@ -135,7 +135,8 @@ class _ChatroomMessageMeState extends State<ChatroomMessageMe> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                buildReply(widget.index, widget.message, true, (id) {
+                                buildReply(widget.index, widget.message, true,
+                                    (id) {
                                   widget.onReplySelect(id);
                                 }),
                                 Container(
@@ -185,5 +186,4 @@ class _ChatroomMessageMeState extends State<ChatroomMessageMe> {
       ),
     );
   }
-
 }

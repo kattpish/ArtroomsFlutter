@@ -122,11 +122,6 @@ class ModuleNotice {
         body: json.encode(body),
       );
 
-      final responseData = json.decode(response.body);
-
-      if (kDebugMode) {
-        print('response of profile $responseData');
-      }
       if (response.statusCode == 200) {
         final Map<String, dynamic> responseData = jsonDecode(response.body);
         if (kDebugMode) {
@@ -135,9 +130,6 @@ class ModuleNotice {
         return ArtistProfile.fromJson(
             responseData['data']['searchChattingArtistProfile']);
       } else {
-        if (kDebugMode) {
-          // print('Failed to get artist info: ${response.body}');
-        }
         return ArtistProfile();
       }
     } catch (e) {
@@ -175,7 +167,6 @@ class ModuleNotice {
     };
 
     try {
-      print('=>>>>>>>>>>>>> getArtistProfileInfoByEmail /$email/');
       final response = await http.post(
         Uri.parse(apiUrlGraphQL),
         headers: {
@@ -184,16 +175,9 @@ class ModuleNotice {
         body: json.encode(body),
       );
 
-      final responseData = json.decode(response.body);
-
-      if (kDebugMode) {
-        print('>> response of profile $responseData');
-      }
       if (response.statusCode == 200) {
         final Map<String, dynamic> responseData = jsonDecode(response.body);
-        if (kDebugMode) {
-          // print('!!!! Get artist info: $responseData');
-        }
+
         if (responseData.isEmpty) {
           return null;
         }
@@ -245,16 +229,8 @@ class ModuleNotice {
         body: json.encode(body),
       );
 
-      final responseData = json.decode(response.body);
-
-      if (kDebugMode) {
-        print('>> response of profile $responseData');
-      }
       if (response.statusCode == 200) {
         final Map<String, dynamic> responseData = jsonDecode(response.body);
-        if (kDebugMode) {
-          // print('!!!! Get student info: $email $responseData');
-        }
         if (responseData.isEmpty) {
           return null;
         }

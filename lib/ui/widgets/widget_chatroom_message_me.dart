@@ -1,4 +1,3 @@
-
 import 'package:artrooms/beans/bean_focusedMenuItem.dart';
 import 'package:artrooms/ui/widgets/widget_chatroom_message_attachment_file.dart';
 import 'package:artrooms/ui/widgets/widget_chatroom_message_attachment_photos.dart';
@@ -11,9 +10,8 @@ import 'package:flutter/services.dart';
 import '../../beans/bean_message.dart';
 import '../theme/theme_colors.dart';
 
-
-Widget chatroomMessageMe({
-    required BuildContext context,
+Widget chatroomMessageMe(
+    {required BuildContext context,
     required int index,
     required State state,
     required DataMessage message,
@@ -25,13 +23,12 @@ Widget chatroomMessageMe({
     required bool isNextSameTime,
     required double screenWidth,
     required Null Function() onReplyClick,
-    required Null Function(int index) onReplySelect
-}) {
-
+    required Null Function(int index) onReplySelect}) {
   Color activeColor = colorPrimaryBlue;
 
   return Container(
-    margin: EdgeInsets.only(left: 16, right: 16, top: 0, bottom: isLast ? 9 : 0),
+    margin:
+        EdgeInsets.only(left: 16, right: 16, top: 0, bottom: isLast ? 9 : 0),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
@@ -44,10 +41,8 @@ Widget chatroomMessageMe({
                   mainAxisAlignment: MainAxisAlignment.end,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    if (((isPreviousSameDateTime &&
-                        !isNextSameTime) ||
-                        (!isPreviousSameDateTime &&
-                            !isNextSameTime)) &&
+                    if (((isPreviousSameDateTime && !isNextSameTime) ||
+                            (!isPreviousSameDateTime && !isNextSameTime)) &&
                         message.content.isNotEmpty)
                       Text(
                         message.getTime(),
@@ -87,20 +82,21 @@ Widget chatroomMessageMe({
                                   'assets/images/icons/icon_copy.png')),
                               title: const Text("복사"),
                               onPressed: () async {
-                                await Clipboard.setData(ClipboardData(
-                                    text: message.content));
+                                await Clipboard.setData(
+                                    ClipboardData(text: message.content));
                               }),
                         ],
                         blurSize: 0.0,
                         menuOffset: 10.0,
+                        isMine: true,
                         bottomOffsetHeight: 80.0,
                         menuBoxDecoration: const BoxDecoration(
                             borderRadius:
-                            BorderRadius.all(Radius.circular(15.0))),
+                                BorderRadius.all(Radius.circular(15.0))),
                         activeColor: colorPrimaryBlue800,
                         child: Container(
-                          constraints: BoxConstraints(
-                              maxWidth: screenWidth * 0.55),
+                          constraints:
+                              BoxConstraints(maxWidth: screenWidth * 0.55),
                           padding: const EdgeInsets.symmetric(
                               horizontal: 16, vertical: 12),
                           decoration: BoxDecoration(
@@ -158,8 +154,7 @@ Widget chatroomMessageMe({
                   message,
                   listMessages,
                   screenWidth,
-                )
-            ),
+                )),
           ],
         ),
       ],

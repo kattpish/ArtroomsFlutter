@@ -161,7 +161,8 @@ class ModuleSendBird {
       print("...loadMessages referenceTime $referenceTime ${params}");
       final messages =
           await groupChannel.getMessagesByTimestamp(referenceTime, params);
-      print("...loadMessages RESULT ${messages.length}");
+      print(
+          "...loadMessages RESULT ${messages.length} /${messages.first.data}/");
 
       completer.complete(messages);
     } catch (e) {
@@ -203,13 +204,14 @@ class ModuleSendBird {
         message?.content ?? "",
         message?.senderId ?? "",
         message?.senderName ?? "",
-        message?.data ?? "");
+        data.isNotEmpty ? data : message?.data ?? "");
     params.mentionedUserIds = [];
     params.data =
-        message?.data != null ? const JsonEncoder().convert(parentMessage) : "";
+        data.isNotEmpty ? const JsonEncoder().convert(parentMessage) : "";
+    // params.data =
+    //     message?.data != null ? const JsonEncoder().convert(parentMessage) : "";
     // params.data = const JsonEncoder().convert(parentMessage);
-    print(
-        "...sendMessage $text ${params.data} ${params.message} ${params.targetLanguages} ${params.customType} ${params.pushOption}");
+    print("...sendMessage $text ${params.data} ${message?.data} ${data}");
     return performSendMessage(groupChannel, text, params);
   }
 

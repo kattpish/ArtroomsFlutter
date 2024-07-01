@@ -1107,23 +1107,20 @@ class _ScreenChatroomState extends State<ScreenChatroom>
   }
 
   Future<void> _doLoadMessages() async {
-    print('_doLoadMessages');
     if (_moduleMessages.isLoading()) return;
-    print('_doLoadMessages 22');
     if (!_isLoadMore) {
       setState(() {
         // _isLoadMore = listMessages.isNotEmpty;
       });
     }
-    print('_doLoadMessages 33');
     _moduleMessages
         .getMessagesMore()
         .then((List<DataMessage> messages) {
-          print('_doLoadMessages 44');
+          // print('_doLoadMessages ${messages.length}');
           setState(() {
             _listMessages.addAll(messages);
           });
-          print('_doLoadMessages 55 $messages.length');
+          // print('_doLoadMessages LAST MESSAGE ${messages.last}');
           for (DataMessage message in messages) {
             showNotificationMessage(context, widget.dataChat, message);
           }
@@ -1144,6 +1141,7 @@ class _ScreenChatroomState extends State<ScreenChatroom>
 
     _moduleMessages.getMessagesNew().then((List<DataMessage> messages) {
       for (DataMessage message in messages) {
+        print('here?');
         if (!_listMessages.contains(message)) {
           _listMessages.insert(0, message);
           showNotificationMessage(context, widget.dataChat, message);
@@ -1271,6 +1269,7 @@ class _ScreenChatroomState extends State<ScreenChatroom>
       _doDeselectPickedImages();
 
       for (int i = 0; i < _listMessages.length; i++) {
+        print("hello ${_listMessages[i]}");
         DataMessage myMessage = _listMessages[i];
         if (myMessage.index == index) {
           setState(() {

@@ -10,6 +10,7 @@ class FocusedMenuHolder extends StatefulWidget {
   final double? menuWidth;
   final List<FocusedMenuItem> menuItems;
   final bool? animateMenuItems;
+  final bool? isMine;
   final BoxDecoration? menuBoxDecoration;
   final Function onPressed;
   final Duration? duration;
@@ -21,23 +22,24 @@ class FocusedMenuHolder extends StatefulWidget {
 
   final bool openWithTap;
 
-  const FocusedMenuHolder(
-      {Key? key,
-      required this.child,
-      required this.onPressed,
-      required this.menuItems,
-      this.duration,
-      this.menuBoxDecoration,
-      this.menuItemExtent,
-      this.animateMenuItems,
-      this.blurSize,
-      this.blurBackgroundColor,
-      this.menuWidth,
-      this.bottomOffsetHeight,
-      this.menuOffset,
-      this.openWithTap = false,
-        required this.activeColor,})
-      : super(key: key);
+  const FocusedMenuHolder({
+    Key? key,
+    required this.child,
+    required this.onPressed,
+    required this.menuItems,
+    this.duration,
+    this.menuBoxDecoration,
+    this.menuItemExtent,
+    this.animateMenuItems,
+    this.isMine,
+    this.blurSize,
+    this.blurBackgroundColor,
+    this.menuWidth,
+    this.bottomOffsetHeight,
+    this.menuOffset,
+    this.openWithTap = false,
+    required this.activeColor,
+  }) : super(key: key);
 
   @override
   _FocusedMenuHolderState createState() => _FocusedMenuHolderState();
@@ -82,11 +84,13 @@ class _FocusedMenuHolderState extends State<FocusedMenuHolder> {
     await Navigator.push(
         context,
         PageRouteBuilder(
-            transitionDuration: widget.duration ?? const Duration(milliseconds: 100),
+            transitionDuration:
+                widget.duration ?? const Duration(milliseconds: 100),
             pageBuilder: (context, animation, secondaryAnimation) {
               animation = Tween(begin: 0.0, end: 1.0).animate(animation);
               return FadeTransition(
                   opacity: animation,
+                  alwaysIncludeSemantics: true,
                   child: FocusedMenuDetails(
                     itemExtent: widget.menuItemExtent,
                     menuBoxDecoration: widget.menuBoxDecoration,
@@ -100,6 +104,7 @@ class _FocusedMenuHolderState extends State<FocusedMenuHolder> {
                     bottomOffsetHeight: widget.bottomOffsetHeight ?? 0,
                     menuOffset: widget.menuOffset ?? 0,
                     activeColor: widget.activeColor,
+                    isMine: widget.isMine,
                     child: widget.child,
                   ));
             },
@@ -116,6 +121,7 @@ class FocusedMenuDetails extends StatefulWidget {
   final Size? childSize;
   final Widget child;
   final bool animateMenu;
+  final bool? isMine;
   final double? blurSize;
   final double? menuWidth;
   final Color? blurBackgroundColor;
@@ -123,22 +129,23 @@ class FocusedMenuDetails extends StatefulWidget {
   final double? menuOffset;
   final Color activeColor;
 
-  const FocusedMenuDetails(
-      {Key? key,
-      required this.menuItems,
-      required this.child,
-      required this.childOffset,
-      required this.childSize,
-      required this.menuBoxDecoration,
-      required this.itemExtent,
-      required this.animateMenu,
-      required this.blurSize,
-      required this.blurBackgroundColor,
-      required this.menuWidth,
-      this.bottomOffsetHeight,
-      this.menuOffset, required this.activeColor,
-      })
-      : super(key: key);
+  const FocusedMenuDetails({
+    Key? key,
+    required this.menuItems,
+    required this.child,
+    required this.childOffset,
+    required this.childSize,
+    required this.menuBoxDecoration,
+    required this.itemExtent,
+    required this.animateMenu,
+    required this.blurSize,
+    required this.blurBackgroundColor,
+    required this.menuWidth,
+    this.bottomOffsetHeight,
+    this.isMine,
+    this.menuOffset,
+    required this.activeColor,
+  }) : super(key: key);
 
   @override
   State<FocusedMenuDetails> createState() => _FocusedMenuDetailsState();
@@ -170,6 +177,23 @@ class _FocusedMenuDetailsState extends State<FocusedMenuDetails> {
       body: Stack(
         fit: StackFit.expand,
         children: <Widget>[
+          Positioned(
+              top: widget.childOffset.dy,
+              left: widget.childOffset.dx,
+              child: AbsorbPointer(
+                  absorbing: true,
+                  child: Container(
+                      decoration: BoxDecoration(
+                        color: widget.activeColor,
+                        borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(widget.isMine! ? 24 : 2),
+                            topRight: Radius.circular(widget.isMine! ? 2 : 24),
+                            bottomLeft: const Radius.circular(24),
+                            bottomRight: const Radius.circular(24)),
+                      ),
+                      width: widget.childSize!.width,
+                      height: widget.childSize!.height,
+                      child: widget.child))),
           GestureDetector(
               onTap: () {
                 Navigator.pop(context);
@@ -258,26 +282,6 @@ class _FocusedMenuDetailsState extends State<FocusedMenuDetails> {
                 ),
               ),
             ),
-          ),
-          Positioned(
-              top: widget.childOffset.dy,
-              left: widget.childOffset.dx,
-              child: AbsorbPointer(
-                  absorbing: true,
-                  child: Container(
-                      decoration: BoxDecoration(
-                        color: widget.activeColor,
-                        borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(24),
-                            topRight: Radius.circular(2),
-                            bottomLeft: Radius.circular(24),
-                            bottomRight: Radius.circular(24)
-                        ),
-                      ),
-                      width: widget.childSize!.width,
-                      height: widget.childSize!.height,
-                      child: widget.child)
-              )
           ),
         ],
       ),

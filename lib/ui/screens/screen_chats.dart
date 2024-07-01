@@ -52,7 +52,6 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
-
     addState(this);
 
     if (!dbStore.isLoggedIn()) {
@@ -169,45 +168,46 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver {
                                           axisDirection: AxisDirection.down,
                                           child: ScrollConfiguration(
                                             behavior: scrollBehavior,
-                                            child: ListView.builder(
-                                              shrinkWrap: true,
-                                              itemCount: _listChats.length,
-                                              itemBuilder: (context, index) {
-                                                DataChat dataChat =
-                                                    _listChats[index];
-                                                print(
-                                                    '======== chat list $index ${dataChat.groupChannel?.creator}');
-                                                return Container(
-                                                  key:
-                                                      Key(_listChats[index].id),
-                                                  child: WidgetChatRow(
-                                                    context: context,
-                                                    index: index,
-                                                    dataChat: dataChat,
-                                                    onClickOption1: () {
-                                                      _doToggleNotification(
-                                                          context, dataChat);
-                                                    },
-                                                    onClickOption2: () {
-                                                      widgetChatsExit(
-                                                          context, dataChat,
-                                                          onExit: (context) {
-                                                        moduleSendBird
-                                                            .leaveChannel(
-                                                                dataChat.id);
-                                                        setState(() {
-                                                          _listChats
-                                                              .remove(dataChat);
+                                            child: RefreshIndicator(
+                                              onRefresh: _doLoadChats,
+                                              child: ListView.builder(
+                                                shrinkWrap: true,
+                                                itemCount: _listChats.length,
+                                                itemBuilder: (context, index) {
+                                                  DataChat dataChat =
+                                                      _listChats[index];
+                                                  return Container(
+                                                    key: Key(
+                                                        _listChats[index].id),
+                                                    child: WidgetChatRow(
+                                                      context: context,
+                                                      index: index,
+                                                      dataChat: dataChat,
+                                                      onClickOption1: () {
+                                                        _doToggleNotification(
+                                                            context, dataChat);
+                                                      },
+                                                      onClickOption2: () {
+                                                        widgetChatsExit(
+                                                            context, dataChat,
+                                                            onExit: (context) {
+                                                          moduleSendBird
+                                                              .leaveChannel(
+                                                                  dataChat.id);
+                                                          setState(() {
+                                                            _listChats.remove(
+                                                                dataChat);
+                                                          });
                                                         });
-                                                      });
-                                                    },
-                                                    onSelectChat: () {
-                                                      _doSelectChat(
-                                                          context, dataChat);
-                                                    },
-                                                  ),
-                                                );
-                                              },
+                                                      },
+                                                      onSelectChat: () {
+                                                        _doSelectChat(
+                                                            context, dataChat);
+                                                      },
+                                                    ),
+                                                  );
+                                                },
+                                              ),
                                             ),
                                           ),
                                         ),
@@ -383,9 +383,13 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver {
   }
 
   static void timerEntryPoint(SendPort sendPort) {
-    Timer.periodic(Duration(seconds: timeSecRefreshChat), (timer) {
-      sendPort.send('loadChats');
-    });
+    // Timer.periodic(Duration(seconds: timeSecRefreshChat), (timer) {
+    //   sendPort.send('loadChats');
+    // });
+  }
+
+  void updateChatList() {
+    _doLoadChats();
   }
 
   void _doSearchChats(String query, bool showLoader) {
@@ -417,6 +421,7 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver {
       if (dataChat.id == newMessage.channelUrl) {
         setState(() {
           dataChat.lastMessage = newMessage;
+          _doLoadChats();
         });
         break;
       }
@@ -426,6 +431,7 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver {
       if (dataChat.id == newMessage.channelUrl) {
         setState(() {
           dataChat.lastMessage = newMessage;
+          _doLoadChats();
         });
         break;
       }

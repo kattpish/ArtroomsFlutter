@@ -35,7 +35,7 @@ class _WidgetChatRowState extends State<WidgetChatRow> {
   Member? opponentUser;
   Map<String, dynamic>? opponentProfile;
   String temp = "temp";
-  String title = '-';
+  String title = '';
   String profilePictureUrl = '';
 
   @override
@@ -45,7 +45,6 @@ class _WidgetChatRowState extends State<WidgetChatRow> {
   }
 
   void getOpponentData() async {
-    print('>><><><><><>><>getOpponentData ${widget.dataChat.creator}');
     final creatorUserId = widget.dataChat.creator?.userId;
     if (creatorUserId == null) return;
     ModuleNotice moduleNotice = ModuleNotice();
@@ -65,14 +64,14 @@ class _WidgetChatRowState extends State<WidgetChatRow> {
   }
 
   void setTitleAndDescription() {
-    setState(() {
-      title = widget.dataChat.name;
-      profilePictureUrl = widget.dataChat.profilePictureUrl;
-    });
     if (widget.dataChat.groupChannel!.memberCount <= 2) {
       getOpponentData();
+    } else {
+      setState(() {
+        title = widget.dataChat.name;
+        profilePictureUrl = widget.dataChat.profilePictureUrl;
+      });
     }
-    // return;
   }
 
   @override
