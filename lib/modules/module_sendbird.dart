@@ -206,12 +206,13 @@ class ModuleSendBird {
         message?.senderName ?? "",
         data.isNotEmpty ? data : message?.data ?? "");
     params.mentionedUserIds = [];
-    params.data =
-        data.isNotEmpty ? const JsonEncoder().convert(parentMessage) : "";
-    // params.data =
-    //     message?.data != null ? const JsonEncoder().convert(parentMessage) : "";
-    // params.data = const JsonEncoder().convert(parentMessage);
-    print("...sendMessage $text ${params.data} ${message?.data} ${data}");
+    // params.data = (data.isNotEmpty || (message?.senderName ?? "").isNotEmpty)
+    //     ? const JsonEncoder().convert(parentMessage)
+    //     : "";
+
+    params.data = const JsonEncoder().convert(parentMessage);
+    print(
+        "...sendMessage 1$data 2${message?.data} 3${message?.index} 4${message?.content} 5${message?.senderId} 6${message?.senderName}");
     return performSendMessage(groupChannel, text, params);
   }
 

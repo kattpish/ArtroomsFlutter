@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 
 import 'package:artrooms/beans/bean_message.dart';
@@ -7,16 +6,12 @@ import 'package:flutter/material.dart';
 
 import '../theme/theme_colors.dart';
 
-
 class WidgetChatroomMessageReply extends StatelessWidget {
-
   final DataMessage message;
   final VoidCallback onCancelReply;
 
-  const WidgetChatroomMessageReply({super.key,
-    required this.message,
-    required this.onCancelReply
-  });
+  const WidgetChatroomMessageReply(
+      {super.key, required this.message, required this.onCancelReply});
 
   @override
   Widget build(BuildContext context) {
@@ -57,8 +52,7 @@ class WidgetChatroomMessageReply extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 8),
-              Text(
-                  message.content,
+              Text(message.content,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
@@ -68,8 +62,7 @@ class WidgetChatroomMessageReply extends StatelessWidget {
                     fontWeight: FontWeight.w400,
                     height: 0,
                     letterSpacing: -0.28,
-                  )
-              ),
+                  )),
             ],
           ),
         ),
@@ -84,54 +77,55 @@ class WidgetChatroomMessageReply extends StatelessWidget {
       ],
     );
   }
-
 }
 
-Widget buildReply(int index, DataMessage message, bool isMe, Null Function(int id) onReplyClick) {
+Widget buildReply(int index, DataMessage message, bool isMe,
+    Null Function(int id) onReplyClick) {
   return (_doParseReplyMessage(message.data))
       ? Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      InkWell(
-        splashColor: Colors.transparent,
-        highlightColor: Colors.transparent,
-        onTap: (){
-          ParentMessage? parent = _getParentMessage(message.data);
-          if(parent != null) {
-            onReplyClick(parent.messageId);
-          }
-        },
-        child: Container(
-          decoration: const BoxDecoration(
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(12),
-              topRight: Radius.circular(12),
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            InkWell(
+              splashColor: Colors.transparent,
+              highlightColor: Colors.transparent,
+              onTap: () {
+                ParentMessage? parent = _getParentMessage(message.data);
+                if (parent != null) {
+                  onReplyClick(parent.messageId);
+                }
+              },
+              child: Container(
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(12),
+                    topRight: Radius.circular(12),
+                  ),
+                ),
+                child: WidgetChatroomMessageFlow(
+                  message: message,
+                  isMe: isMe,
+                  key: null,
+                ),
+              ),
             ),
-          ),
-          child: WidgetChatroomMessageFlow(
-            message: message,
-            isMe: isMe,
-            key: null,
-          ),
-        ),
-      ),
-      Container(
-        height: 1,
-        margin: const EdgeInsets.only(top: 10, bottom: 8),
-        decoration: BoxDecoration(
-          color: isMe ? Colors.white.withOpacity(0.2) : Colors.black.withOpacity(0.2),
-        ),
-      ),
-    ],
-  )
-      : const SizedBox.shrink()
-  ;
+            Container(
+              height: 1,
+              margin: const EdgeInsets.only(top: 10, bottom: 8),
+              decoration: BoxDecoration(
+                color: isMe
+                    ? Colors.white.withOpacity(0.2)
+                    : Colors.black.withOpacity(0.2),
+              ),
+            ),
+          ],
+        )
+      : const SizedBox.shrink();
 }
 
 bool _doParseReplyMessage(String json) {
   try {
     ParentMessage parentMessage =
-    ParentMessage.fromJson(const JsonDecoder().convert(json));
+        ParentMessage.fromJson(const JsonDecoder().convert(json));
     if (parentMessage.messageId != 0 && parentMessage.senderName != "") {
       return true;
     }
@@ -144,7 +138,7 @@ bool _doParseReplyMessage(String json) {
 ParentMessage? _getParentMessage(String json) {
   try {
     ParentMessage parentMessage =
-    ParentMessage.fromJson(const JsonDecoder().convert(json));
+        ParentMessage.fromJson(const JsonDecoder().convert(json));
     return parentMessage;
   } catch (_) {
     return null;

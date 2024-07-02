@@ -1,19 +1,15 @@
-
 import 'dart:convert';
 
 import 'package:artrooms/beans/bean_message.dart';
 import 'package:artrooms/ui/theme/theme_colors.dart';
 import 'package:flutter/material.dart';
 
-
 class WidgetChatroomMessageFlow extends StatelessWidget {
-
   final DataMessage message;
   final bool isMe;
 
-  const WidgetChatroomMessageFlow({super.key,
-    required this.message, required this.isMe
-  });
+  const WidgetChatroomMessageFlow(
+      {super.key, required this.message, required this.isMe});
 
   @override
   Widget build(BuildContext context) {
@@ -21,20 +17,19 @@ class WidgetChatroomMessageFlow extends StatelessWidget {
       child: Row(
         children: [
           const SizedBox(width: 4),
-          Expanded(child:  buildReplyMessageForText(isMe)),
+          Expanded(child: buildReplyMessageForText(isMe)),
         ],
       ),
     );
   }
 
   Widget buildReplyMessageForText(bool isMe) {
-
     ParentMessage parentMessage = ParentMessage(0, "", "", "", "");
 
-    try{
-      parentMessage = ParentMessage.fromJson(const JsonDecoder().convert(message.data));
-    }catch(_){
-    }
+    try {
+      parentMessage =
+          ParentMessage.fromJson(const JsonDecoder().convert(message.data));
+    } catch (_) {}
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -51,13 +46,14 @@ class WidgetChatroomMessageFlow extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 2),
-        Text(
-            parentMessage.content,
+        Text(parentMessage.content,
             maxLines: 1,
             textAlign: TextAlign.start,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
-              color: isMe ? Colors.white.withOpacity(0.5) : Colors.black.withOpacity(0.5),
+              color: isMe
+                  ? Colors.white.withOpacity(0.5)
+                  : Colors.black.withOpacity(0.5),
               fontSize: 13,
               fontFamily: 'SUIT',
               fontWeight: FontWeight.w400,
@@ -67,5 +63,4 @@ class WidgetChatroomMessageFlow extends StatelessWidget {
       ],
     );
   }
-
 }
