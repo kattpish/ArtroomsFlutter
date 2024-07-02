@@ -1,5 +1,7 @@
 import 'package:artrooms/utils/utils_media.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../listeners/scroll_bouncing_physics.dart';
 import '../../main.dart';
@@ -17,7 +19,6 @@ class ScreenNotifications extends StatefulWidget {
 }
 
 class _ScreenNotificationsState extends State<ScreenNotifications> {
-
   List<String> _tunes = [];
   late String _notificationEnabled;
 
@@ -26,6 +27,13 @@ class _ScreenNotificationsState extends State<ScreenNotifications> {
     super.initState();
     setTunes();
     _notificationEnabled = dbStore.getNotificationValue();
+  }
+
+  Future<void> setTunes() async {
+    List<String> tunes = await getAllTunes();
+    setState(() {
+      _tunes = tunes;
+    });
   }
 
   @override
@@ -74,27 +82,35 @@ class _ScreenNotificationsState extends State<ScreenNotifications> {
                   Column(
                     children: _tunes.map((tune) {
                       int index = _tunes.indexOf(tune);
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                        child: ListTile(
-                          title: Text(
-                            tune,
-                            style: const TextStyle(
-                              color: Color(0xFF111111),
-                              fontSize: 16,
-                              fontFamily: 'SUIT',
-                              fontWeight: FontWeight.w400,
-                              height: 0,
-                              letterSpacing: -0.32,
+                      return InkWell(
+                          onTap: () {
+                            _doToggleNotification(index);
+                            audioPlayer ??= AudioPlayer();
+                            audioPlayer?.play(
+                                AssetSource('sounds/${_tunes[index]}.mp3'));
+                          },
+                          child: Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 8.0),
+                            child: ListTile(
+                              title: Text(
+                                tune,
+                                style: const TextStyle(
+                                  color: Color(0xFF111111),
+                                  fontSize: 16,
+                                  fontFamily: 'SUIT',
+                                  fontWeight: FontWeight.w400,
+                                  height: 0,
+                                  letterSpacing: -0.32,
+                                ),
+                              ),
+                              trailing: SvgPicture.asset(
+                                _notificationEnabled == _tunes[index]
+                                    ? 'assets/images/icons/icon_tick_on.svg'
+                                    : 'assets/images/icons/icon_tick_off.svg',
+                              ),
                             ),
-                          ),
-                          trailing: widgetNotificationItemTick(
-                              tune, index, _notificationEnabled,
-                              onTap: (index, isEnabled) {
-                                _doToggleNotification(index, isEnabled);
-                              }),
-                        ),
-                      );
+                          ));
                     }).toList(),
                   ),
                 ],
@@ -106,18 +122,10 @@ class _ScreenNotificationsState extends State<ScreenNotifications> {
     );
   }
 
-  void _doToggleNotification(int index, bool value) {
+  void _doToggleNotification(int index) {
     dbStore.setNotificationValue(_tunes[index]);
     setState(() {
       _notificationEnabled = _tunes[index];
     });
   }
-
-  Future<void> setTunes() async {
-    List<String> tunes = await getAllTunes();
-    setState(() {
-      _tunes = tunes;
-    });
-  }
-
 }

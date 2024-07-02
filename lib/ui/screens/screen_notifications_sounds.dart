@@ -1,4 +1,3 @@
-
 import 'package:artrooms/ui/screens/screen_notifications.dart';
 import 'package:artrooms/ui/theme/theme_colors.dart';
 import 'package:flutter/material.dart';
@@ -8,37 +7,43 @@ import '../../main.dart';
 import '../widgets/widget_notifications.dart';
 import '../widgets/widget_ui_notify.dart';
 
-
 class ScreenNotificationsSounds extends StatefulWidget {
-
   const ScreenNotificationsSounds({super.key});
 
   @override
   State<StatefulWidget> createState() {
     return _ScreenNotificationsSoundsState();
   }
-
 }
 
 class _ScreenNotificationsSoundsState extends State<ScreenNotificationsSounds> {
-
   late final List<Map<String, dynamic>> _notifications;
+  String notiSound = "";
 
   @override
   void initState() {
     super.initState();
+    notiSound = dbStore.getNotificationValue();
 
     _notifications = [
       {"title": "채팅알림", "enabled": dbStore.isNotificationMessage()},
       {"title": "멘션알림", "enabled": dbStore.isNotificationMention()},
     ];
-
   }
 
   @override
   void dispose() {
     removeState(this);
     super.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    print('----------');
+    setState(() {
+      notiSound = dbStore.getNotificationValue();
+    });
   }
 
   @override
@@ -101,11 +106,11 @@ class _ScreenNotificationsSoundsState extends State<ScreenNotificationsSounds> {
                               letterSpacing: -0.32,
                             ),
                           ),
-                          trailing: widgetNotificationItemSwitch(notification['enabled'], index,
+                          trailing: widgetNotificationItemSwitch(
+                              notification['enabled'], index,
                               onTap: (index, isEnabled) {
-                                _doToggleNotification(index, isEnabled);
-                              }
-                          ),
+                            _doToggleNotification(index, isEnabled);
+                          }),
                         ),
                       );
                     }).toList(),
@@ -125,13 +130,14 @@ class _ScreenNotificationsSoundsState extends State<ScreenNotificationsSounds> {
                         ),
                       ),
                       onTap: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) {
                           return const ScreenNotifications();
                         }));
                       },
-                      trailing: const Text(
-                        '아룸 (기본)',
-                        style: TextStyle(
+                      trailing: Text(
+                        notiSound,
+                        style: const TextStyle(
                           color: colorPrimaryBlue400,
                           fontSize: 14,
                           fontFamily: 'SUIT',
@@ -157,5 +163,4 @@ class _ScreenNotificationsSoundsState extends State<ScreenNotificationsSounds> {
       _notifications[index]['enabled'] = value;
     });
   }
-
 }
