@@ -49,7 +49,7 @@ class _ScreenNotificationsState extends State<ScreenNotifications> {
               color: colorMainGrey250,
               size: 20,
             ),
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: () => Navigator.pop(context, true),
           ),
         ),
         toolbarHeight: 60,

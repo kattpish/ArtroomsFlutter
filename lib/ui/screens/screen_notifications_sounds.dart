@@ -38,15 +38,6 @@ class _ScreenNotificationsSoundsState extends State<ScreenNotificationsSounds> {
   }
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    print('----------');
-    setState(() {
-      notiSound = dbStore.getNotificationValue();
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -133,7 +124,13 @@ class _ScreenNotificationsSoundsState extends State<ScreenNotificationsSounds> {
                         Navigator.push(context,
                             MaterialPageRoute(builder: (context) {
                           return const ScreenNotifications();
-                        }));
+                        })).then((value) {
+                          if (value == true) {
+                            setState(() {
+                              notiSound = dbStore.getNotificationValue();
+                            });
+                          }
+                        });
                       },
                       trailing: Text(
                         notiSound,
