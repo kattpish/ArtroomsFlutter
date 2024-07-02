@@ -1,35 +1,27 @@
-
-
 import 'package:artrooms/ui/theme/theme_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:sendbird_sdk/core/models/member.dart';
 
 import '../../listeners/scroll_bouncing_physics.dart';
 
-
 class WidgetChatroomMentionUser extends StatelessWidget {
-
   final List<Member> member;
   final void Function(Member) onCancelReply;
 
-  const WidgetChatroomMentionUser({super.key,
-    required this.member,
-    required this.onCancelReply
-  });
+  const WidgetChatroomMentionUser(
+      {super.key, required this.member, required this.onCancelReply});
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      child: Row(
-          children: [
-            Container(
-              color: colorPrimaryPurple,
-              width: 0,
-            ),
-            const SizedBox(width: 8),
-            Expanded(child: widgetChatroomMentionUsers(member))
-          ]
-      ),
+      child: Row(children: [
+        Container(
+          color: colorPrimaryPurple,
+          width: 0,
+        ),
+        const SizedBox(width: 8),
+        Expanded(child: widgetChatroomMentionUsers(member))
+      ]),
     );
   }
 
@@ -39,7 +31,7 @@ class WidgetChatroomMentionUser extends StatelessWidget {
       child: ListView.builder(
           itemCount: memberList.length,
           shrinkWrap: true,
-          itemBuilder: (context,index) {
+          itemBuilder: (context, index) {
             Member member = memberList[index];
             return Container(
               margin: const EdgeInsets.only(bottom: 8),
@@ -62,14 +54,22 @@ class WidgetChatroomMentionUser extends StatelessWidget {
                         ),
                       ),
                       child: FadeInImage.assetNetwork(
-                        placeholder: (member.nickname == "artrooms" || member.nickname == "artroom") ? 'assets/images/chats/chat_artrooms.png' : 'assets/images/chats/placeholder_photo.png',
-                        image: member.profileUrl != null ? member.profileUrl.toString() : "",
+                        placeholder: (member.nickname == "artrooms" ||
+                                member.nickname == "artroom")
+                            ? 'assets/images/chats/chat_artrooms.png'
+                            : 'assets/images/chats/placeholder_photo.png',
+                        image: member.profileUrl != null
+                            ? member.profileUrl.toString()
+                            : "",
                         fit: BoxFit.cover,
                         fadeInDuration: const Duration(milliseconds: 100),
                         fadeOutDuration: const Duration(milliseconds: 100),
                         imageErrorBuilder: (context, error, stackTrace) {
                           return Image.asset(
-                            (member.nickname == "artrooms" || member.nickname == "artroom") ? 'assets/images/chats/chat_artrooms.png' : 'assets/images/chats/placeholder_photo.png',
+                            (member.nickname == "artrooms" ||
+                                    member.nickname == "artroom")
+                                ? 'assets/images/chats/chat_artrooms.png'
+                                : 'assets/images/chats/placeholder_photo.png',
                             fit: BoxFit.cover,
                           );
                         },
@@ -92,8 +92,8 @@ class WidgetChatroomMentionUser extends StatelessWidget {
                   ],
                 ),
               ),
-            );}
-      ),
+            );
+          }),
     );
   }
 }

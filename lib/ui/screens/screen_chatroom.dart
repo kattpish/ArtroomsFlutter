@@ -111,6 +111,8 @@ class _ScreenChatroomState extends State<ScreenChatroom>
   final List<FileItem> _filesMedia = [];
   String title = "";
   Map<String, dynamic>? user;
+  List<Member> _mentionedUsers = [];
+  List<String> _mentionedUserIds = [];
 
   @override
   void initState() {
@@ -1141,7 +1143,6 @@ class _ScreenChatroomState extends State<ScreenChatroom>
 
     _moduleMessages.getMessagesNew().then((List<DataMessage> messages) {
       for (DataMessage message in messages) {
-        print('here?');
         if (!_listMessages.contains(message)) {
           _listMessages.insert(0, message);
           showNotificationMessage(context, widget.dataChat, message);
@@ -1224,13 +1225,19 @@ class _ScreenChatroomState extends State<ScreenChatroom>
       });
 
       _moduleMessages
-          .sendMessage(_messageController.text, _replyMessage)
+          .sendMessage(
+        _messageController.text,
+        _replyMessage,
+        mentionedUserIds: _mentionedUserIds,
+      )
           .then((DataMessage myMessage) {
         setState(() {
           _listMessages.insert(0, myMessage);
           _messageController.clear();
           _isSending = false;
           widget.onMessageSent?.call(myMessage);
+          _mentionedUsers = [];
+          _mentionedUserIds = [];
         });
 
         Future.delayed(const Duration(milliseconds: 100), () {
@@ -1433,8 +1440,11 @@ class _ScreenChatroomState extends State<ScreenChatroom>
       TextPosition(offset: newText.length),
     );
     setState(() {
+      _mentionedUsers.add(member);
+      _mentionedUserIds.add(member.userId);
       _isMentioning = false;
     });
+    // TODO: 멘션 처리하기
   }
 
   void _doFilterInputs(String text) {

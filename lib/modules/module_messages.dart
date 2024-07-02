@@ -86,13 +86,15 @@ class ModuleMessages {
     return messages;
   }
 
-  Future<DataMessage> sendMessage(String text, DataMessage? message) async {
+  Future<DataMessage> sendMessage(String text, DataMessage? message,
+      {List<String>? mentionedUserIds}) async {
     if (!_isInitialized) {
       await initChannel();
     }
 
-    final UserMessage userMessage = await moduleSendBird
-        .sendMessage(_groupChannel, text.trim(), message: message);
+    final UserMessage userMessage = await moduleSendBird.sendMessage(
+        _groupChannel, text.trim(),
+        message: message, mentionedUserIds: mentionedUserIds);
 
     final myMessage = DataMessage.fromBaseMessage(userMessage);
 

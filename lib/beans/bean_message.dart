@@ -22,6 +22,7 @@ class DataMessage {
   int attachmentSize = 0;
   List<String> attachmentImages = [];
   List<File?> attachmentImagesThumbs = [];
+  List<String>? mentionedUserIds;
   bool isMe;
   bool isArtrooms = false;
 
@@ -63,6 +64,7 @@ class DataMessage {
         isMe = baseMessage.sender?.userId.toString() == dbStore.getEmail(),
         parentMessageId = baseMessage.parentMessageId,
         data = baseMessage.data != null ? baseMessage.data! : "",
+        mentionedUserIds = baseMessage.mentionedUserIds,
         profilePictureUrl = baseMessage.sender?.profileUrl ?? "" {
     if (baseMessage is FileMessage) {
       FileMessage fileMessage = baseMessage;

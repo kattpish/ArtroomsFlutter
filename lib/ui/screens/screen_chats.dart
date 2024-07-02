@@ -383,9 +383,9 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver {
   }
 
   static void timerEntryPoint(SendPort sendPort) {
-    // Timer.periodic(Duration(seconds: timeSecRefreshChat), (timer) {
-    //   sendPort.send('loadChats');
-    // });
+    Timer.periodic(Duration(seconds: timeSecRefreshChat), (timer) {
+      sendPort.send('loadChats');
+    });
   }
 
   void updateChatList() {
