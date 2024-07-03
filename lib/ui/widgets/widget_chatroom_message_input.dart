@@ -1,10 +1,10 @@
-
 import 'package:flutter/material.dart';
 
 import '../theme/theme_colors.dart';
 
-
-Widget widgetChatroomMessageInput(TextEditingController messageController, messageFocusNode, {required Null Function(String text) onChanged}) {
+Widget widgetChatroomMessageInput(
+    TextEditingController messageController, messageFocusNode,
+    {required Null Function(String text) onChanged}) {
   return Stack(
     alignment: Alignment.topLeft,
     children: <Widget>[
@@ -23,13 +23,14 @@ Widget widgetChatroomMessageInput(TextEditingController messageController, messa
           },
           decoration: InputDecoration(
             hintText: '',
-            border: UnderlineInputBorder(
+            border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(25),
               borderSide: BorderSide.none,
             ),
             filled: true,
             fillColor: const Color(0xFFF3F3F3),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 12.0),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 18.0, vertical: 12.0),
           ),
           style: const TextStyle(
             color: colorMainGrey800,

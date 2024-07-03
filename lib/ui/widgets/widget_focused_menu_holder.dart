@@ -1,5 +1,7 @@
 library focused_menu;
 
+import 'dart:math';
+
 import 'package:artrooms/beans/bean_focusedMenuItem.dart';
 import 'package:artrooms/ui/theme/theme_colors.dart';
 import 'package:flutter/material.dart';
@@ -63,15 +65,21 @@ class _FocusedMenuHolderState extends State<FocusedMenuHolder> {
 
   @override
   Widget build(BuildContext context) {
+    // print('build with $containerKey');
     return GestureDetector(
         key: containerKey,
         onTap: () async {
+          print('hello2222222!!');
           widget.onPressed();
           if (widget.openWithTap) {
             await openMenu(context);
           }
         },
+        onDoubleTap: () {
+          print('double tap');
+        },
         onLongPress: () async {
+          print('hello!!');
           if (!widget.openWithTap) {
             await openMenu(context);
           }
@@ -171,35 +179,38 @@ class _FocusedMenuDetailsState extends State<FocusedMenuDetails> {
                 widget.childSize!.height) <
             size.height - widget.bottomOffsetHeight!
         ? widget.childOffset.dy + widget.childSize!.height + widget.menuOffset!
-        : widget.childOffset.dy - menuHeight - widget.menuOffset!;
+        : max(widget.childOffset.dy - menuHeight - widget.menuOffset!,
+            menuHeight);
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: Stack(
         fit: StackFit.expand,
         children: <Widget>[
-          Positioned(
-              top: widget.childOffset.dy,
-              left: widget.childOffset.dx,
-              child: AbsorbPointer(
-                  absorbing: true,
-                  child: Container(
-                      decoration: BoxDecoration(
-                        color: widget.activeColor,
-                        borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(widget.isMine! ? 24 : 2),
-                            topRight: Radius.circular(widget.isMine! ? 2 : 24),
-                            bottomLeft: const Radius.circular(24),
-                            bottomRight: const Radius.circular(24)),
-                      ),
-                      width: widget.childSize!.width,
-                      height: widget.childSize!.height,
-                      child: widget.child))),
+          // Positioned(
+          //     top: widget.childOffset.dy,
+          //     left: widget.childOffset.dx,
+          //     child: AbsorbPointer(
+          //         absorbing: true,
+          //         child: Container(
+          //             decoration: BoxDecoration(
+          //               color: widget.activeColor,
+          //               borderRadius: BorderRadius.only(
+          //                   topLeft: Radius.circular(widget.isMine! ? 24 : 2),
+          //                   topRight: Radius.circular(widget.isMine! ? 2 : 24),
+          //                   bottomLeft: const Radius.circular(24),
+          //                   bottomRight: const Radius.circular(24)),
+          //             ),
+          //             width: widget.childSize!.width,
+          //             height: widget.childSize!.height,
+          //             child: widget.child))),
           GestureDetector(
               onTap: () {
+                print(
+                    'offset data $topOffset $leftOffset ${(widget.childOffset.dy + menuHeight + widget.childSize!.height) < size.height - widget.bottomOffsetHeight!}');
                 Navigator.pop(context);
               },
               child: Container(
-                color: (Colors.transparent).withOpacity(0),
+                color: (Colors.black).withOpacity(0.2),
               )),
           Positioned(
             top: topOffset,
@@ -231,7 +242,6 @@ class _FocusedMenuDetailsState extends State<FocusedMenuDetails> {
                     child: ListView.builder(
                       itemCount: widget.menuItems.length,
                       padding: EdgeInsets.zero,
-                      physics: const BouncingScrollPhysics(),
                       itemBuilder: (context, index) {
                         FocusedMenuItem item = widget.menuItems[index];
                         Widget listItem = GestureDetector(

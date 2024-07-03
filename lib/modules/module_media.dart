@@ -1,4 +1,3 @@
-
 import 'dart:io';
 
 import 'package:artrooms/beans/bean_file.dart';
@@ -11,19 +10,17 @@ import 'package:path/path.dart' as path;
 
 import '../utils/utils_media.dart';
 
-
 class ModuleMedia {
-
   bool isLoadingImages = false;
   bool isLoadingMedia = false;
   List<FileItem> imageFiles = [];
   List<FileItem> mediaFiles = [];
 
   Future<List<FileItem>> loadFileImages({bool isShowSettings = false}) async {
-
     List<FileItem> imageFiles = [];
 
-    List<FileItem> imageFiles1 = await loadFileImages1(isShowSettings: isShowSettings);
+    List<FileItem> imageFiles1 =
+        await loadFileImages1(isShowSettings: isShowSettings);
 
     imageFiles.addAll(imageFiles1);
 
@@ -34,38 +31,41 @@ class ModuleMedia {
     return imageFiles;
   }
 
-  Future<List<FileItem>> loadFileImages1({bool isShowSettings = false, Null Function(FileItem fileItem)? onLoad}) async {
-
+  Future<List<FileItem>> loadFileImages1(
+      {bool isShowSettings = false,
+      Null Function(FileItem fileItem)? onLoad,
+      Null Function()? onLoadEnd}) async {
     List<AssetEntity> assetFiles = [];
 
     PhotoManager.clearFileCache();
 
     PermissionState result = await PhotoManager.requestPermissionExtend();
 
-    if(result.isAuth || result.hasAccess) {
+    if (result.isAuth || result.hasAccess) {
+      List<AssetPathEntity> albums =
+          await PhotoManager.getAssetPathList(type: RequestType.image);
 
-      List<AssetPathEntity> albums = await PhotoManager.getAssetPathList(type: RequestType.image);
-
-      for(AssetPathEntity album in albums) {
-
+      for (AssetPathEntity album in albums) {
         await album.assetCountAsync.then((assetCount) async {
-
-          List<AssetEntity> images = await album.getAssetListPaged(page: 0, size: assetCount);
+          List<AssetEntity> images =
+              await album.getAssetListPaged(page: 0, size: assetCount);
           assetFiles.addAll(images);
 
-          for(AssetEntity asset in images) {
+          for (AssetEntity asset in images.sublist(0, 20)) {
             File? file = await asset.originFile;
 
             final Uint8List? thumbData = await asset.thumbnailDataWithSize(
               const ThumbnailSize(200, 200),
             );
 
-            if(file != null) {
-
+            if (file != null) {
               File? thumbFile;
               if (thumbData != null) {
-                final String fileName = path.basename(asset.relativePath ?? "") + (asset.title ?? "");
-                final String thumbnailPath = path.join((await getTemporaryDirectory()).path, fileName);
+                final String fileName =
+                    path.basename(asset.relativePath ?? "") +
+                        (asset.title ?? "");
+                final String thumbnailPath =
+                    path.join((await getTemporaryDirectory()).path, fileName);
                 thumbFile = File(thumbnailPath)..writeAsBytesSync(thumbData);
               }
 
@@ -73,29 +73,28 @@ class ModuleMedia {
                   file: file,
                   thumbFile: thumbFile,
                   name: file.path,
-                  path: file.path
-              );
+                  path: file.path);
 
-              if(onLoad != null) {
+              if (onLoad != null) {
                 onLoad(fileItem);
               }
 
-              if(!imageFiles.contains(fileItem)) {
+              if (!imageFiles.contains(fileItem)) {
                 imageFiles.add(fileItem);
               }
             }
           }
-
         });
-
+      }
+      if (onLoadEnd != null) {
+        onLoadEnd();
       }
 
       assetFiles.sort((a, b) {
         return b.createDateTime.compareTo(a.createDateTime);
       });
-
     } else {
-      if(isShowSettings) {
+      if (isShowSettings) {
         PhotoManager.openSetting();
       }
     }
@@ -104,7 +103,6 @@ class ModuleMedia {
   }
 
   Future<List<FileItem>> loadFilesMedia() async {
-
     List<FileItem> mediaFiles = [];
 
     List<FileItem> mediaFiles1 = await loadFilesMedia1();
@@ -121,40 +119,40 @@ class ModuleMedia {
   }
 
   Future<List<FileItem>> loadFilesMedia1() async {
-
     List<FileItem> mediaFiles = [];
 
     List<AssetEntity> assetFiles = [];
 
     PermissionState result = await PhotoManager.requestPermissionExtend();
 
-    if(result.isAuth || result.hasAccess) {
-
+    if (result.isAuth || result.hasAccess) {
       List<AssetPathEntity> albums = [];
 
-      List<AssetPathEntity> albums1 = await PhotoManager.getAssetPathList(type: RequestType.video);
-      List<AssetPathEntity> albums2 = await PhotoManager.getAssetPathList(type: RequestType.audio);
+      List<AssetPathEntity> albums1 =
+          await PhotoManager.getAssetPathList(type: RequestType.video);
+      List<AssetPathEntity> albums2 =
+          await PhotoManager.getAssetPathList(type: RequestType.audio);
 
       albums.addAll(albums1);
       albums.addAll(albums2);
 
-      for(AssetPathEntity album in albums) {
-
+      for (AssetPathEntity album in albums) {
         await album.assetCountAsync.then((assetCount) async {
-          List<AssetEntity> images = await album.getAssetListPaged(page: 0, size: assetCount);
+          List<AssetEntity> images =
+              await album.getAssetListPaged(page: 0, size: assetCount);
           assetFiles.addAll(images);
 
-          for(AssetEntity asset in images) {
+          for (AssetEntity asset in images) {
             File? file = await asset.originFile;
-            if(file != null) {
-
-              final String fileExtension = path.extension(asset.title ?? asset.id).toLowerCase();
+            if (file != null) {
+              final String fileExtension =
+                  path.extension(asset.title ?? asset.id).toLowerCase();
               final bool isImage = isFileImage(fileExtension);
 
               final dateFormat = DateFormat('yyyy.MM.dd', 'ko_KR');
               final dateString = dateFormat.format(asset.createDateTime);
 
-              if(!isImage) {
+              if (!isImage) {
                 FileItem fileItem = FileItem(
                   file: file,
                   name: asset.title ?? asset.id,
@@ -166,18 +164,14 @@ class ModuleMedia {
                   mediaFiles.add(fileItem);
                 }
               }
-
             }
           }
-
         });
-
       }
 
       assetFiles.sort((a, b) {
         return b.createDateTime.compareTo(a.createDateTime);
       });
-
     } else {
       PhotoManager.openSetting();
     }
@@ -186,7 +180,6 @@ class ModuleMedia {
   }
 
   Future<List<FileItem>> loadFilesMedia2() async {
-
     List<FileItem> mediaFiles = [];
 
     var status = await Permission.storage.status;
@@ -213,9 +206,9 @@ class ModuleMedia {
     } else {
       directory = "/storage/emulated/0/Download/";
       bool dirDownloadExists = await Directory(directory).exists();
-      if(dirDownloadExists){
+      if (dirDownloadExists) {
         directory = Directory("/storage/emulated/0/Download/");
-      }else{
+      } else {
         directory = Directory("/storage/emulated/0/Downloads/");
       }
     }
@@ -227,33 +220,32 @@ class ModuleMedia {
     } else {
       directoryRoot = "/storage/emulated/0/";
       bool dirDownloadExists = await Directory(directoryRoot).exists();
-      if(dirDownloadExists){
+      if (dirDownloadExists) {
         directoryRoot = Directory("/storage/emulated/0/");
-      }else{
+      } else {
         directoryRoot = Directory("/storage/emulated/0/");
       }
     }
     directories.add(directoryRoot);
 
     for (var directory in directories) {
-
       try {
-
         if (kDebugMode) {
           print(directory.path);
         }
 
         if (await directory.exists()) {
-          await for (var entity in directory.list(recursive: true, followLinks: false)) {
+          await for (var entity
+              in directory.list(recursive: true, followLinks: false)) {
             if (entity is File) {
-
-              final String fileExtension = path.extension(entity.path).toLowerCase();
+              final String fileExtension =
+                  path.extension(entity.path).toLowerCase();
               final bool isImage = isFileImage(fileExtension);
 
               if (!isImage) {
-
                 final dateFormat = DateFormat('yyyy.MM.dd', 'ko_KR');
-                final dateString = dateFormat.format(await entity.lastModified());
+                final dateString =
+                    dateFormat.format(await entity.lastModified());
 
                 final fileItem = FileItem(
                   file: entity,
@@ -262,17 +254,14 @@ class ModuleMedia {
                   date: dateString,
                 );
 
-                if(!mediaFiles.contains(fileItem)) {
+                if (!mediaFiles.contains(fileItem)) {
                   mediaFiles.add(fileItem);
                 }
-
               }
-
             }
           }
         }
-
-      }catch(error) {
+      } catch (error) {
         if (kDebugMode) {
           print(error);
         }
@@ -281,5 +270,4 @@ class ModuleMedia {
 
     return mediaFiles;
   }
-
 }

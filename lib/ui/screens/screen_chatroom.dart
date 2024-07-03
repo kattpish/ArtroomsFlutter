@@ -622,16 +622,16 @@ class _ScreenChatroomState extends State<ScreenChatroom>
                 padding: const EdgeInsets.all(0.0),
                 child: GestureDetector(
                   onTap: () {
-                    setState(() {
-                      if (_showAttachment) {
-                        _doAttachmentPickerClose();
-                        _deselectPickedFiles(false);
-                      } else {
-                        _doAttachmentPickerMin();
-                        _doLoadMedia(true);
-                        closeKeyboard(context);
-                      }
-                    });
+                    if (_showAttachment) {
+                      _doAttachmentPickerClose();
+                      _deselectPickedFiles(false);
+                    } else {
+                      _doAttachmentPickerMin();
+                      _doLoadMedia(true);
+                      closeKeyboard(context);
+                    }
+                    // setState(() {
+                    // });
                   },
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -1367,23 +1367,27 @@ class _ScreenChatroomState extends State<ScreenChatroom>
 
   Future<void> _doLoadMedia(isShow) async {
     _moduleMedia.loadFileImages1(
-        isShowSettings: isShow,
-        onLoad: (FileItem fileItem) {
-          if (mounted) {
-            setState(() {
-              if (!_filesImages.contains(fileItem)) {
-                _filesImages.add(fileItem);
-              }
-            });
-          }
+      isShowSettings: isShow,
+      onLoad: (FileItem fileItem) {
+        if (!mounted) {
+          return;
+        }
+        if (_filesImages.contains(fileItem)) {
+          return;
+        }
+        setState(() {
+          _filesImages.add(fileItem);
         });
+      },
+    );
 
     for (FileItem fileItem in _filesImages) {
-      if (!await fileItem.file.exists()) {
-        setState(() {
-          _filesImages.remove(fileItem);
-        });
+      if (await fileItem.file.exists()) {
+        return;
       }
+      setState(() {
+        _filesImages.remove(fileItem);
+      });
     }
   }
 
@@ -1494,10 +1498,10 @@ class _ScreenChatroomState extends State<ScreenChatroom>
   void _doAttachmentPickerMin() {
     setState(() {
       _showAttachment = true;
-    });
-    setState(() {
       _bottomSheetHeight = _bottomSheetHeightMin;
     });
+    // setState(() {
+    // });
     _draggableScrollableController.reset();
   }
 
