@@ -1,12 +1,14 @@
 
 import 'dart:convert';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/date_symbol_data_custom.dart';
 import 'package:intl/date_symbols.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 import '../ui/theme/theme_colors.dart';
 
@@ -131,12 +133,12 @@ void closeKeyboard(BuildContext context) {
   FocusScope.of(context).requestFocus(FocusNode());
 }
 
-List<TextSpan> replacePattern(String original, Color color, Color colorMention, bool isTyping) {
+List<InlineSpan> replacePattern(String original, Color colorText, Color colorMention, bool isTyping) {
 
-  List<TextSpan> spans = [];
+  List<InlineSpan> spans = [];
 
   if(isTyping) {
-    color = colorMainGrey800;
+    colorText = colorMainGrey800;
   }
 
   if(original.contains("@")) {
@@ -146,50 +148,111 @@ List<TextSpan> replacePattern(String original, Color color, Color colorMention, 
     Iterable<RegExpMatch> matches = regex.allMatches(original);
 
     for (var match in matches) {
+
       spans.add(
-          TextSpan(
-              text: original.substring(lastMatchIndex, match.start),
-              style: TextStyle(
-                color: color,
-                fontSize: 15.8,
-                letterSpacing: -0.32,
-              ),
+        TextSpan(
+          text: original.substring(lastMatchIndex, match.start),
+          style: TextStyle(
+            color: colorText,
+            fontSize: 15.8,
+            letterSpacing: -0.32,
           ),
+        ),
       );
       spans.add(
-          TextSpan(
-              text: original.substring(match.start, match.end),
-              style: TextStyle(
-                color: colorMention,
-                fontSize: 15.8,
-                letterSpacing: -0.32,
-              ),
+        TextSpan(
+          text: original.substring(match.start, match.end),
+          style: TextStyle(
+            color: colorMention,
+            fontSize: 15.8,
+            letterSpacing: -0.32,
           ),
+        ),
       );
       lastMatchIndex = match.end;
     }
 
     spans.add(
-        TextSpan(
-            text: original.substring(lastMatchIndex, original.length),
-            style: TextStyle(color: color),
-        ),
+      TextSpan(
+        text: original.substring(lastMatchIndex, original.length),
+        style: TextStyle(color: colorText),
+      ),
     );
 
   }else {
 
-    spans.add(
-        TextSpan(
-            text: original,
-            style: TextStyle(
-              color: color,
-              fontSize: 15.8,
-              letterSpacing: -0.32,
-            ),
-        ),
+    spans.addAll(
+        parseAndLinkify(original, colorText, colorMention)
     );
 
   }
 
   return spans;
+}
+
+List<InlineSpan> parseAndLinkify(String text, Color colorText, Color colorLink) {
+  final RegExp linkRegExp = RegExp(
+    r'((http|https):\/\/[^\s/$.?#].[^\s]*)|(www\.[^\s/$.?#].[^\s]*)|([^\s/$.?#].[^\s]*\.[a-z]{2,})',
+    caseSensitive: false,
+  );
+
+  final List<InlineSpan> spans = [];
+  final matches = linkRegExp.allMatches(text);
+  int lastMatchEnd = 0;
+
+  for (final match in matches) {
+    if (match.start != lastMatchEnd) {
+      spans.add(TextSpan(
+        text: text.substring(lastMatchEnd, match.start),
+        style: TextStyle(
+          color: colorText,
+          fontSize: 15.8,
+          letterSpacing: -0.32,
+        ),
+      ));
+    }
+    final linkText = match.group(0)!;
+    spans.add(TextSpan(
+      text: linkText,
+      style: TextStyle(
+        color: colorLink,
+        fontSize: 15.8,
+        letterSpacing: -0.32,
+      ),
+      recognizer: TapGestureRecognizer()
+        ..onTap = () async {
+          String url = linkText;
+          if (!url.startsWith('http') && !url.startsWith('https')) {
+            url = 'http://$url';
+          }
+
+          if (await canLaunchUrlString(url)) {
+            await launchUrlString(url, mode: LaunchMode.externalApplication);
+          } else {
+            print('Could not launch $url');
+          }
+        },
+    ));
+    lastMatchEnd = match.end;
+  }
+
+  if (lastMatchEnd != text.length) {
+    spans.add(TextSpan(
+      text: text.substring(lastMatchEnd),
+      style: TextStyle(
+        color: colorText,
+        fontSize: 15.8,
+        letterSpacing: -0.32,
+      ),
+    ));
+  }
+
+  return spans;
+}
+
+String trimAll(String text) {
+  return text
+      .split('\n')
+      .map((line) => line.trim())
+      .join('\n');
 }

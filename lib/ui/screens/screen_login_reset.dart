@@ -135,53 +135,51 @@ class _ScreenLoginResetState extends State<ScreenLoginReset> with SingleTickerPr
                     ],
                   ),
                 ),
+                Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: 44,
+                  margin: const EdgeInsets.symmetric(vertical: 10.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      _doSubmit(context);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      backgroundColor: _isButtonDisabled ? colorPrimaryBlue.withAlpha(100) : colorPrimaryBlue,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      elevation: 0,
+                      textStyle: const TextStyle(fontSize: 18),
+                      fixedSize: const Size.fromHeight(60),
+                    ),
+                    child:  _isLoading
+                        ? const SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(
+                        color: Color(0xFFFFFFFF),
+                        strokeWidth: 3,
+                      ),
+                    )
+                        : const Text(
+                        '인증메일 전송',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontFamily: 'SUIT',
+                          fontWeight: FontWeight.w700,
+                          height: 0,
+                          letterSpacing: -0.32,
+                        )
+                    ),
+                  ),
+                )
               ],
             );
           },
-        ),
-      ),
-      bottomNavigationBar: SafeArea(
-        child: Container(
-          width: MediaQuery.of(context).size.width,
-          height: 44,
-          margin: const EdgeInsets.symmetric(vertical: 10.0),
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: ElevatedButton(
-            onPressed: () {
-              _doSubmit(context);
-            },
-            style: ElevatedButton.styleFrom(
-              foregroundColor: Colors.white,
-              backgroundColor: _isButtonDisabled ? colorPrimaryBlue.withAlpha(100) : colorPrimaryBlue,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30.0),
-              ),
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              elevation: 0,
-              textStyle: const TextStyle(fontSize: 18),
-              fixedSize: const Size.fromHeight(60),
-            ),
-            child:  _isLoading
-                ? const SizedBox(
-              width: 24,
-              height: 24,
-              child: CircularProgressIndicator(
-                color: Color(0xFFFFFFFF),
-                strokeWidth: 3,
-              ),
-            )
-                : const Text(
-                '인증메일 전송',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontFamily: 'SUIT',
-                  fontWeight: FontWeight.w700,
-                  height: 0,
-                  letterSpacing: -0.32,
-                )
-            ),
-          ),
         ),
       ),
     );
@@ -254,7 +252,7 @@ class _ScreenLoginResetState extends State<ScreenLoginReset> with SingleTickerPr
       callback: (bool success, String message) async {
 
         if(success) {
-          showSnackBar(context, "귀하의 Artrooms ID가 귀하의 전화번호로 전송되었습니다");
+          showSnackBar(context, "가입하신 아이디(이메일 주소)를 휴대폰 번호로 보내드렸습니다");
 
           await Future.delayed(const Duration(milliseconds: 2000), (){
             Navigator.of(context).pop();
@@ -264,7 +262,7 @@ class _ScreenLoginResetState extends State<ScreenLoginReset> with SingleTickerPr
           });
 
         } else {
-          showSnackBar(context, "로그인 실패");
+          showSnackBar(context, "정보를 찾을 수 없습니다");
         }
 
         setState(() {
@@ -307,7 +305,7 @@ class _ScreenLoginResetState extends State<ScreenLoginReset> with SingleTickerPr
           }));
 
         } else {
-          showSnackBar(context, "로그인 실패");
+          showSnackBar(context, "정보를 찾을 수 없습니다");
         }
 
         setState(() {

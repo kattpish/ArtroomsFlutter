@@ -101,7 +101,7 @@ class DataMessage {
         }
       }
     } else {
-      content = baseMessage.message.trim();
+      content = trimAll(baseMessage.message);
     }
 
     if (senderName == "artrooms" || senderName == "artroom") {
@@ -226,7 +226,7 @@ class ParentMessage {
 
   ParentMessage.fromJson(Map<String, dynamic> json)
       : messageId = json['messageId'],
-        content = json['content'],
+        content = trimAll(json['content']),
         senderId = json['senderId'],
         senderName = json['senderName'],
         data = json['data'];

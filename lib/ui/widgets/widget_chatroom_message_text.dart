@@ -14,7 +14,7 @@ class WidgetChatroomMessageText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    List<TextSpan> parsedMessage = replacePattern(message, color, colorMention, false);
+    List<InlineSpan> parsedMessage = replacePattern(message, color, colorMention, false);
 
     return RichText(
         softWrap: true,

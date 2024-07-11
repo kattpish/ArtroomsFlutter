@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 
 import '../../listeners/scroll_bouncing_physics.dart';
+import '../../utils/utils.dart';
 
 
 Widget widgetLoginRestTabId(BuildContext context, TextEditingController nameController, TextEditingController phoneController, FocusNode nameFocus, FocusNode phoneFocus, {required Null Function() onSubmitted}) {
@@ -111,7 +112,7 @@ Widget widgetLoginRestTabId(BuildContext context, TextEditingController nameCont
                 minLines: 1,
                 maxLines: 1,
                 onSubmitted: (_) {
-                  onSubmitted();
+                  closeKeyboard(context);
                 },
                 decoration: InputDecoration(
                   hintText: '휴대폰 번호를 입력해주세요',

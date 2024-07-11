@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 
 import '../../listeners/scroll_bouncing_physics.dart';
+import '../../utils/utils.dart';
 
 
 Widget widgetLoginRestTabPassword(BuildContext context, TextEditingController emailController, {required Null Function() onSubmitted}) {
@@ -49,7 +50,7 @@ Widget widgetLoginRestTabPassword(BuildContext context, TextEditingController em
                 keyboardType: TextInputType.emailAddress,
                 textInputAction: TextInputAction.done,
                 onSubmitted: (_) {
-                  onSubmitted();
+                  closeKeyboard(context);
                 },
                 decoration: InputDecoration(
                   hintText: '이메일 주소를 입력하세요',

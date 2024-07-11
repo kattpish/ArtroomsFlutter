@@ -11,7 +11,7 @@ dependencies:
 
   cupertino_icons: ^1.0.2
   flutter_slidable: ^3.0.1
-  url_launcher: ^6.1.14
+  url_launcher: ^6.3.0
   sendbird_sdk: ^3.2.20
   intl: 0.18.1
   http: ^0.13.3
@@ -32,6 +32,7 @@ dependencies:
   cached_network_image: ^3.3.1
   flutter_keyboard_size: ^1.0.1
   flutter_svg: ^2.0.9
+  flutter_linkify: ^5.0.2
 
 dev_dependencies:
   flutter_test:
