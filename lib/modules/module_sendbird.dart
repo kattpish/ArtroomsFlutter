@@ -201,6 +201,7 @@ class ModuleSendBird {
       DataMessage? message,
       List<String>? mentionedUserIds}) async {
     final params = UserMessageParams(message: text);
+    print('data.isNotEmpty ? data : message?.data ?? "" ${data.isNotEmpty ? data : message?.data ?? ""}');
     ParentMessage parentMessage = ParentMessage(
         message?.index ?? 0,
         message?.content ?? "",
@@ -212,9 +213,9 @@ class ModuleSendBird {
     //     ? const JsonEncoder().convert(parentMessage)
     //     : "";
 
-    params.data = const JsonEncoder().convert(parentMessage);
+    params.data = const JsonEncoder().convert(parentMessage).replaceAll('\\','').replaceAll('"["','["').replaceAll('"]"','"]');
     print(
-        "...sendMessage 1$data 2${message?.data} 3${message?.index} 4${message?.content} 5${message?.senderId} 6${message?.senderName}");
+        "===================sendMessage 1${params.data}");
     return performSendMessage(groupChannel, text, params);
   }
 
