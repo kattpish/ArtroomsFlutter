@@ -1,7 +1,5 @@
-import 'dart:developer';
 
 import 'package:artrooms/main.dart';
-import 'package:flutter/material.dart';
 import 'package:sendbird_sdk/sendbird_sdk.dart';
 import '../utils/utils.dart';
 import '../utils/utils_notifications.dart';

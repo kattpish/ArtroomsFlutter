@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:path/path.dart' as path;
-import 'package:http/http.dart' as http;
 
 import 'package:artrooms/beans/bean_message.dart';
 import 'package:flutter/foundation.dart';
