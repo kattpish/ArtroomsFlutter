@@ -151,19 +151,14 @@ class ModuleSendBird {
     Completer<List<BaseMessage>> completer = Completer<List<BaseMessage>>();
 
     try {
-      print("...loadMessages init ${earliestMessageTimestamp}");
       final params = MessageListParams();
       params.previousResultSize = 200;
       params.reverse = true;
 
       final referenceTime =
           earliestMessageTimestamp ?? DateTime.now().millisecondsSinceEpoch;
-      print("...loadMessages referenceTime $referenceTime ${params}");
       final messages =
           await groupChannel.getMessagesByTimestamp(referenceTime, params);
-      print(
-          "...loadMessages RESULT ${messages.length} /${messages.first.data}/");
-
       completer.complete(messages);
     } catch (e) {
       if (kDebugMode) {
@@ -201,7 +196,8 @@ class ModuleSendBird {
       DataMessage? message,
       List<String>? mentionedUserIds}) async {
     final params = UserMessageParams(message: text);
-    print('data.isNotEmpty ? data : message?.data ?? "" ${data.isNotEmpty ? data : message?.data ?? ""}');
+    print(
+        'data.isNotEmpty ? data : message?.data ?? "" ${data.isNotEmpty ? data : message?.data ?? ""}');
     ParentMessage parentMessage = ParentMessage(
         message?.index ?? 0,
         message?.content ?? "",
@@ -213,9 +209,12 @@ class ModuleSendBird {
     //     ? const JsonEncoder().convert(parentMessage)
     //     : "";
 
-    params.data = const JsonEncoder().convert(parentMessage).replaceAll('\\','').replaceAll('"["','["').replaceAll('"]"','"]');
-    print(
-        "===================sendMessage 1${params.data}");
+    params.data = const JsonEncoder()
+        .convert(parentMessage)
+        .replaceAll('\\', '')
+        .replaceAll('"["', '["')
+        .replaceAll('"]"', '"]');
+    print("===================sendMessage 1${params.data}");
     return performSendMessage(groupChannel, text, params);
   }
 

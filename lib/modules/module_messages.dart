@@ -56,7 +56,6 @@ class ModuleMessages {
   }
 
   Future<List<DataMessage>> getMessages(bool isMore) async {
-    print("GET MESSAGE");
     final List<DataMessage> messages = [];
     if (_isLoading) return messages;
 

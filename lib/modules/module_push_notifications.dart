@@ -1,4 +1,3 @@
-
 import 'dart:io';
 
 import 'package:artrooms/firebase_options.dart';
@@ -15,50 +14,49 @@ import 'package:sendbird_sdk/sdk/sendbird_sdk_api.dart';
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   print('calling handling background message ${message.messageId}');
-  NotificationService.showNotification(message.notification?.title ?? '', message.notification?.body ?? '');
+  NotificationService.showNotification(
+      message.notification?.title ?? '', message.notification?.body ?? '');
 }
 
 class ModulePushNotifications {
-
-
   Future<void> init() async {
-
     try {
-
       WidgetsFlutterBinding.ensureInitialized();
       await Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform,
       );
       await requestNotificationPermission();
-      await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(alert: true,badge: true,sound: true);
+      await FirebaseMessaging.instance
+          .setForegroundNotificationPresentationOptions(
+              alert: true, badge: true, sound: true);
       await FirebaseMessaging.instance.setAutoInitEnabled(true);
-      FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+      FirebaseMessaging.onBackgroundMessage(
+          _firebaseMessagingBackgroundHandler);
       FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-
         if (kDebugMode) {
           print('Got a message whilst in the foreground!');
           print('Message data: ${message.data}');
         }
         if (message.notification != null) {
           if (kDebugMode) {
-            print('Message also contained a notification: ${message.notification}');
+            print(
+                'Message also contained a notification: ${message.notification}');
           }
         }
-        NotificationService.showNotification(message.notification?.title ?? '', message.notification?.body ?? '');
+        print('got the message!');
+        NotificationService.showNotification(message.notification?.title ?? '',
+            message.notification?.body ?? '');
       });
 
       register();
-
     } catch (e) {
       if (kDebugMode) {
         print(e);
       }
     }
-
   }
 
   Future<void> register() async {
-
     PushTokenRegistrationStatus status = await SendbirdSdk().registerPushToken(
       type: getPushTokenType(),
       token: await getToken(),
@@ -68,7 +66,6 @@ class ModulePushNotifications {
     if (kDebugMode) {
       print(' PushTokenRegistrationStatus -> $status');
     }
-
   }
 
   PushTokenType getPushTokenType() {
@@ -77,7 +74,7 @@ class ModulePushNotifications {
       pushTokenType = PushTokenType.fcm;
     } else if (Platform.isIOS) {
       pushTokenType = PushTokenType.apns;
-    }else {
+    } else {
       pushTokenType = PushTokenType.fcm;
     }
     return pushTokenType;
@@ -95,5 +92,4 @@ class ModulePushNotifications {
     }
     return token ?? "";
   }
-
 }

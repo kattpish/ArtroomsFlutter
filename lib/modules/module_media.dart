@@ -33,6 +33,8 @@ class ModuleMedia {
 
   Future<List<FileItem>> loadFileImages1(
       {bool isShowSettings = false,
+      int page = 1,
+      int pageSize = 20,
       Null Function(FileItem fileItem)? onLoad,
       Null Function()? onLoadEnd}) async {
     List<AssetEntity> assetFiles = [];
@@ -47,15 +49,18 @@ class ModuleMedia {
 
       for (AssetPathEntity album in albums) {
         await album.assetCountAsync.then((assetCount) async {
+          print('asset count album is ${assetCount}');
           List<AssetEntity> images =
               await album.getAssetListPaged(page: 0, size: assetCount);
           assetFiles.addAll(images);
+          print('asset count album is 222 ${assetFiles.length}');
 
-          for (AssetEntity asset in images.sublist(0, 20)) {
+          for (AssetEntity asset
+              in images.sublist((page - 1) * pageSize, page * pageSize)) {
             File? file = await asset.originFile;
 
             final Uint8List? thumbData = await asset.thumbnailDataWithSize(
-              const ThumbnailSize(200, 200),
+              const ThumbnailSize(100, 100),
             );
 
             if (file != null) {
@@ -104,12 +109,17 @@ class ModuleMedia {
 
   Future<List<FileItem>> loadFilesMedia() async {
     List<FileItem> mediaFiles = [];
+    print('1111');
 
     List<FileItem> mediaFiles1 = await loadFilesMedia1();
+    print('2222');
     List<FileItem> mediaFiles2 = await loadFilesMedia2();
+    print('3333');
 
     mediaFiles.addAll(mediaFiles1);
+    print('4444');
     mediaFiles.addAll(mediaFiles2);
+    print('5555');
 
     mediaFiles.sort((a, b) {
       return b.date.compareTo(a.date);
@@ -119,6 +129,7 @@ class ModuleMedia {
   }
 
   Future<List<FileItem>> loadFilesMedia1() async {
+    print('loadFilesMedia1 started');
     List<FileItem> mediaFiles = [];
 
     List<AssetEntity> assetFiles = [];
@@ -137,7 +148,8 @@ class ModuleMedia {
       albums.addAll(albums2);
 
       for (AssetPathEntity album in albums) {
-        await album.assetCountAsync.then((assetCount) async {
+        album.assetCountAsync.then((assetCount) async {
+          print('asset count is ${assetCount}');
           List<AssetEntity> images =
               await album.getAssetListPaged(page: 0, size: assetCount);
           assetFiles.addAll(images);
