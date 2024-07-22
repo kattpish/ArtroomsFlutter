@@ -6,7 +6,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../../listeners/scroll_bouncing_physics.dart';
 import '../../main.dart';
 import '../theme/theme_colors.dart';
-import '../widgets/widget_notifications.dart';
 import '../widgets/widget_ui_notify.dart';
 
 class ScreenNotifications extends StatefulWidget {

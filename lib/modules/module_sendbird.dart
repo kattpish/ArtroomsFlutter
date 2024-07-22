@@ -41,8 +41,7 @@ class ModuleSendBird {
 
         user = await SendbirdSdk().connect(email);
 
-        ModulePushNotifications modulePushNotifications =
-            ModulePushNotifications();
+        ModulePushNotifications modulePushNotifications = ModulePushNotifications();
         modulePushNotifications.init();
       }
 

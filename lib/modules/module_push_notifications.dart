@@ -9,7 +9,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:artrooms/utils/utils_permissions.dart';
 import 'package:sendbird_sdk/constant/enums.dart';
-import 'package:sendbird_sdk/core/models/user.dart';
 import 'package:sendbird_sdk/sdk/sendbird_sdk_api.dart';
 
 @pragma('vm:entry-point')

@@ -621,7 +621,7 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
                             IconButton(
                                 icon: Image.asset('assets/images/icons/icon_bell.png',
                                   width: 24, height: 24,
-                                  color: widget.dataChat.isNotification ? const Color(0xFF6A79FF) : const Color(0xFF6A79FF),
+                                  color: widget.dataChat.isNotification ? const Color(0xFF6A79FF) : colorMainGrey250,
                                 ),
                                 onPressed: () {
                                   _doToggleNotification(context, widget.dataChat);
