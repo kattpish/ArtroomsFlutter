@@ -11,26 +11,33 @@ import '../ui/widgets/widget_ui_notify.dart';
 
 int timeSecRefreshChat = 30;
 
-Future<void> showNotificationChat(BuildContext context, DataChat dataChat) async {
-  if(dataChat.unreadMessages == 0) return;
-  return showNotificationMessage(context, dataChat, dataChat.lastMessage);
+void iniNotifications() {
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  var initializationSettingsAndroid = const AndroidInitializationSettings('@drawable/icon_notification');
+  var initializationSettingsIOS = const DarwinInitializationSettings();
+  var initSettings = InitializationSettings(android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
+  flutterLocalNotificationsPlugin.initialize(initSettings);
 }
 
-Future<void> showNotificationMessage(BuildContext context, DataChat dataChat, DataMessage message) async {
+Future<void> showNotificationChat(DataChat dataChat) async {
+  if(dataChat.unreadMessages == 0) return;
+  return showNotificationMessage(dataChat, dataChat.lastMessage);
+}
+
+Future<void> showNotificationMessage(DataChat dataChat, DataMessage message) async {
   if(message.isMe) return;
   if(!dataChat.isNotification) return;
-  if(!dbStore.isNotificationMessage()) return;
+  if(!dbStore.isNotificationMessage() && (!dbStore.isNotificationMention() || message.content.contains("@${moduleSendBird.user.nickname}"))) return;
   if(!message.isNew()) return;
 
   notifyState(dataChat);
 }
 
-Future<void> showNotificationDownload(BuildContext context, String filePath, String fileName) async {
-  return showNotification(context, filePath.hashCode, fileName, '미디어 파일이 다운로드되었습니다: $filePath');
+Future<void> showNotificationDownload(String filePath, String fileName) async {
+  return showNotification(filePath.hashCode, fileName, '미디어 파일이 다운로드되었습니다: $filePath');
 }
 
-Future<void> showNotification(BuildContext context, int id, String title, String message) async {
-
+Future<void> showNotification(int id, String title, String message) async {
   var androidDetails = const AndroidNotificationDetails(
       'Artrooms', 'Artrooms',
       importance: Importance.max, priority: Priority.high, showWhen: false

@@ -46,7 +46,7 @@ class _ScreenChatroomFilesState extends State<ScreenChatroomFiles> {
   @override
   void initState() {
     super.initState();
-    _moduleMessages = ModuleMessages(widget.dataChat.id);
+    _moduleMessages = ModuleMessages(widget.dataChat);
     _doLoadAttachmentsFiles();
     _scrollController.addListener(_doLoadAttachmentsFilesMore);
   }

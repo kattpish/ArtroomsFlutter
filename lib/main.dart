@@ -2,14 +2,17 @@
 import 'package:artrooms/data/module_datastore.dart';
 import 'package:artrooms/ui/screens/screen_chats.dart';
 import 'package:artrooms/ui/screens/screen_login.dart';
+import 'package:artrooms/utils/utils_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
+import 'modules/module_push_notifications.dart';
 import 'modules/module_sendbird.dart';
 
 
 late final DBStore dbStore;
 late final ModuleSendBird moduleSendBird;
+late final ModulePushNotifications modulePushNotifications;
 
 Future<void> main() async {
 
@@ -31,18 +34,15 @@ Future<void> init1() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   dbStore = DBStore();
+  moduleSendBird = ModuleSendBird();
+  modulePushNotifications = ModulePushNotifications();
+
   await dbStore.init();
+  iniNotifications();
 
 }
 
 Future<void> init2() async {
 
-  moduleSendBird = ModuleSendBird();
-
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-  var initializationSettingsAndroid = const AndroidInitializationSettings('@drawable/icon_notification');
-  var initializationSettingsIOS = const DarwinInitializationSettings();
-  var initSettings = InitializationSettings(android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
-  flutterLocalNotificationsPlugin.initialize(initSettings);
 
 }

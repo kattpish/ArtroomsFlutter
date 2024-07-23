@@ -8,6 +8,7 @@ import 'package:artrooms/ui/screens/screen_login.dart';
 import 'package:artrooms/ui/screens/screen_profile.dart';
 import 'package:artrooms/utils/utils.dart';
 import 'package:artrooms/utils/utils_notifications.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
@@ -323,7 +324,7 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver {
 
   Future<void> _doLoadChats() async {
     if (!moduleSendBird.isInitialized()) {
-      await moduleSendBird.initSendbird();
+      await moduleSendBird.init();
     } else if (_isLoading) {
       return;
     }
@@ -340,7 +341,9 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver {
           _listChats.clear();
           _listChatsAll.clear();
 
-          print('chats ${chats[0].creator}');
+          if (kDebugMode) {
+            print('chats ${chats[0].creator}');
+          }
 
           if (_searchController.text.isNotEmpty) {
             _listChats.addAll(chats);
@@ -360,7 +363,7 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver {
 
           for (DataChat dataChat in chats) {
             if (dbStore.isNotificationChat(dataChat)) {
-              showNotificationChat(context, dataChat);
+              showNotificationChat(dataChat);
             }
           }
         })

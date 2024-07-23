@@ -22,39 +22,38 @@ import 'package:sendbird_sdk/sdk/sendbird_sdk_api.dart';
 
 import '../main.dart';
 import '../utils/utils.dart';
-import 'module_push_notifications.dart';
 
 class ModuleSendBird {
+
   late final User user;
   bool _isInitialized = false;
 
-  Future<void> initSendbird() async {
+  Future<void> init() async {
     try {
-      if (!_isInitialized) {
+
+      if(!_isInitialized) {
+
         await initLocale();
 
         final String email = dbStore.getEmail();
 
         SendbirdSdk(
             appId: "01CFFFE8-F1B8-4BB4-A576-952ABDC8D08A",
-            apiToken: "39ac9b8e2125ad49035c7bd9c105ccc9d4dc7ba4");
+            apiToken: "39ac9b8e2125ad49035c7bd9c105ccc9d4dc7ba4"
+        );
 
         user = await SendbirdSdk().connect(email);
 
-        ModulePushNotifications modulePushNotifications = ModulePushNotifications();
-        modulePushNotifications.init();
+        await modulePushNotifications.init();
+
+        _isInitialized = true;
       }
 
-      _isInitialized = true;
     } catch (e) {
       if (kDebugMode) {
         print('Sendbird connection error: $e');
       }
     }
-  }
-
-  bool isInitialized() {
-    return _isInitialized;
   }
 
   Future<void> joinChannel(id) async {
@@ -307,12 +306,16 @@ class ModuleSendBird {
     }
   }
 
-  void addChannelEventHandler(
-      GroupChannel groupChannel, ChannelEventHandler listener) {
+  void addChannelEventHandler(GroupChannel groupChannel, ChannelEventHandler listener) {
     SendbirdSdk().addChannelEventHandler(groupChannel.channelUrl, listener);
   }
 
   void removeChannelEventHandler(GroupChannel groupChannel) {
     SendbirdSdk().removeChannelEventHandler(groupChannel.channelUrl);
   }
+
+  bool isInitialized() {
+    return _isInitialized;
+  }
+
 }

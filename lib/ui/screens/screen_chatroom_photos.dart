@@ -46,7 +46,7 @@ class _ScreenChatroomPhotosState extends State<ScreenChatroomPhotos> {
   @override
   void initState() {
     super.initState();
-    _moduleMessages = ModuleMessages(widget.dataChat.id);
+    _moduleMessages = ModuleMessages(widget.dataChat);
     _doLoadAttachmentsImages();
     _scrollController.addListener(_doLoadAttachmentsImagesMore);
   }

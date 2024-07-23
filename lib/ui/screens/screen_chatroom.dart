@@ -119,7 +119,7 @@ class _ScreenChatroomState extends State<ScreenChatroom>
     super.initState();
     _messageController.addListener(_doCheckEnableButton);
     // _itemPositionsListener.itemPositions.addListener(_doHandleScroll);
-    _moduleMessages = ModuleMessages(widget.dataChat.id);
+    _moduleMessages = ModuleMessages(widget.dataChat);
 
     _moduleMessages.init(this);
     setTitle();
@@ -1100,7 +1100,7 @@ class _ScreenChatroomState extends State<ScreenChatroom>
 
     if (!_listMessages.contains(dataMessage)) {
       _listMessages.insert(0, dataMessage);
-      showNotificationMessage(context, widget.dataChat, dataMessage);
+      showNotificationMessage(widget.dataChat, dataMessage);
     }
   }
 
@@ -1120,7 +1120,7 @@ class _ScreenChatroomState extends State<ScreenChatroom>
           });
           // print('_doLoadMessages LAST MESSAGE ${messages.last}');
           for (DataMessage message in messages) {
-            showNotificationMessage(context, widget.dataChat, message);
+            showNotificationMessage(widget.dataChat, message);
           }
         })
         .catchError((e) {})
@@ -1141,7 +1141,7 @@ class _ScreenChatroomState extends State<ScreenChatroom>
       for (DataMessage message in messages) {
         if (!_listMessages.contains(message)) {
           _listMessages.insert(0, message);
-          showNotificationMessage(context, widget.dataChat, message);
+          showNotificationMessage(widget.dataChat, message);
         }
       }
     });

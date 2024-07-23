@@ -58,7 +58,7 @@ class _ScreenChatroomDrawerState extends State<ScreenChatroomDrawer> {
   @override
   void initState() {
     super.initState();
-    _moduleMessages = ModuleMessages(widget.dataChat.id);
+    _moduleMessages = ModuleMessages(widget.dataChat);
     _doLoadMemo();
     _doLoadNotice();
     _doLoadMembers();
