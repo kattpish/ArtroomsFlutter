@@ -1,7 +1,5 @@
-import 'dart:developer';
 
 import 'package:artrooms/main.dart';
-import 'package:flutter/material.dart';
 import 'package:sendbird_sdk/sendbird_sdk.dart';
 import '../utils/utils.dart';
 import '../utils/utils_notifications.dart';
@@ -18,8 +16,10 @@ class DataChat {
   String profilePictureUrl = "";
   DataMessage lastMessage = DataMessage.empty();
   bool isArtrooms = false;
+  bool isGroup = false;
   bool isNotification = true;
   User? creator;
+  int memberCount;
 
   DataChat({
     required this.groupChannel,
@@ -30,6 +30,7 @@ class DataChat {
     this.unreadMessages = 0,
     this.profilePictureUrl = "",
     this.date = "",
+    this.memberCount = 0,
   });
 
   factory DataChat.empty() {
@@ -54,22 +55,25 @@ class DataChat {
     }
 
     final DataChat dataChat = DataChat(
-      groupChannel: groupChannel,
-      id: groupChannel.channelUrl,
-      name: groupChannel.name ?? "",
-      lastMessage: lastMessage,
-      unreadMessages: groupChannel.unreadMessageCount,
-      profilePictureUrl: groupChannel.coverUrl ?? groupChannel.coverUrl ?? '',
-      date: messageDate,
-      creator: groupChannel.creator,
+        groupChannel: groupChannel,
+        id: groupChannel.channelUrl,
+        name: groupChannel.name ?? "",
+        lastMessage: lastMessage,
+        unreadMessages: groupChannel.unreadMessageCount,
+        profilePictureUrl: groupChannel.coverUrl ?? groupChannel.coverUrl ?? '',
+        date: messageDate,
+        creator: groupChannel.creator,
+        memberCount: groupChannel.memberCount,
     );
+
+    dataChat.isGroup = dataChat.memberCount > 2;
 
     if (dataChat.name == "artrooms" || dataChat.name == "artroom") {
       dataChat.isArtrooms = true;
       dataChat.nameKr = "아트룸즈";
       if (dataChat.profilePictureUrl.isEmpty) {
         dataChat.profilePictureUrl =
-            "https://d2ous6lm13gwvv.cloudfront.net/image/2310190543464346_bc8443ee-ac3a-4306-adab-fd925492a358.jpg";
+        "https://d2ous6lm13gwvv.cloudfront.net/image/2310190543464346_bc8443ee-ac3a-4306-adab-fd925492a358.jpg";
       }
     }
 

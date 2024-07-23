@@ -1,5 +1,4 @@
 
-import 'package:artrooms/data/module_datastore.dart';
 import 'package:artrooms/ui/screens/screen_chats.dart';
 import 'package:artrooms/ui/screens/screen_login_reset.dart';
 import 'package:artrooms/utils/utils_screen.dart';
@@ -386,13 +385,13 @@ class _ScreenLoginState extends State<ScreenLogin> {
       loginRemember: true,
       callback: (bool success, String? accessToken, String? refreshToken) async {
 
+        setState(() {
+          _isLoading = false;
+        });
+
         if (success) {
 
           await dbStore.saveTokens(email, accessToken, refreshToken);
-
-          setState(() {
-            _isLoading = false;
-          });
 
           Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) {
             return const ScreenChats();

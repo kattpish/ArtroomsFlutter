@@ -25,9 +25,13 @@ Future<void> requestPermissions(BuildContext context) async {
     }
   }
 }
-  Future<void> requestNotificationPermission() async {
-    FirebaseMessaging messaging = FirebaseMessaging.instance;
-    NotificationSettings settings = await messaging.requestPermission(
-        alert: true,announcement: false,badge: true,carPlay: false,criticalAlert: false,provisional: false,sound: true);
-  print("nofication authorization granted ${settings.authorizationStatus}");
+Future<void> requestNotificationPermission() async {
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
+  NotificationSettings settings = await messaging.requestPermission(
+      alert: true, announcement: false, badge: true, carPlay: false, criticalAlert: false, provisional: false, sound: true
+  );
+
+  if (kDebugMode) {
+    print("notification authorization granted ${settings.authorizationStatus}");
+  }
 }

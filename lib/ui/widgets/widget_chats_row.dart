@@ -145,6 +145,8 @@ class _WidgetChatRowState extends State<WidgetChatRow> {
                                 : 'assets/images/chats/placeholder_photo.png',
                             image: profilePictureUrl,
                             fit: BoxFit.cover,
+                            height: double.infinity,
+                            width: double.infinity,
                             fadeInDuration: const Duration(milliseconds: 100),
                             fadeOutDuration: const Duration(milliseconds: 100),
                             imageErrorBuilder: (context, error, stackTrace) {
@@ -156,7 +158,7 @@ class _WidgetChatRowState extends State<WidgetChatRow> {
                               );
                             },
                           )
-                        : SizedBox.shrink(),
+                        : const SizedBox.shrink(),
                   ),
                 ),
               ),
@@ -164,7 +166,7 @@ class _WidgetChatRowState extends State<WidgetChatRow> {
                 top: 0,
                 right: 0,
                 child: Visibility(
-                  visible: !widget.dataChat.isArtrooms,
+                  visible: widget.dataChat.isGroup,
                   child: Container(
                     padding: const EdgeInsets.all(2.0),
                     margin: const EdgeInsets.all(6.0),
@@ -182,18 +184,38 @@ class _WidgetChatRowState extends State<WidgetChatRow> {
               ),
             ],
           ),
-          title: Text(
-            title,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-              color: Color(0xFF1F1F1F),
-              fontSize: 15,
-              fontFamily: 'SUIT',
-              fontWeight: FontWeight.w700,
-              height: 0,
-              letterSpacing: -0.30,
-            ),
+          title: Row(
+            children: [
+              Text(
+                title,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  color: Color(0xFF1F1F1F),
+                  fontSize: 15,
+                  fontFamily: 'SUIT',
+                  fontWeight: FontWeight.w700,
+                  height: 0,
+                  letterSpacing: -0.30,
+                ),
+              ),
+              Visibility(
+                visible: widget.dataChat.isGroup,
+                child: Text(
+                  "   ${widget.dataChat.memberCount}",
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: colorPrimaryBlue400,
+                    fontSize: 15,
+                    fontFamily: 'SUIT',
+                    fontWeight: FontWeight.w700,
+                    height: 0,
+                    letterSpacing: -0.30,
+                  ),
+                ),
+              ),
+            ],
           ),
           subtitle: Text(
             widget.dataChat.lastMessage.getSummary(),

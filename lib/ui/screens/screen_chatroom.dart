@@ -121,7 +121,7 @@ class _ScreenChatroomState extends State<ScreenChatroom>
     super.initState();
     _messageController.addListener(_doCheckEnableButton);
     // _itemPositionsListener.itemPositions.addListener(_doHandleScroll);
-    _moduleMessages = ModuleMessages(widget.dataChat.id);
+    _moduleMessages = ModuleMessages(widget.dataChat);
 
     _moduleMessages.init(this);
     setTitle();
@@ -146,11 +146,8 @@ class _ScreenChatroomState extends State<ScreenChatroom>
     } else {
       final creatorEmail = widget.dataChat.creator?.userId;
       if (creatorEmail == null) return;
-      user =
-          await _moduleNotice.getArtistProfileInfoByEmail(email: creatorEmail);
-      if (user == null) {
-        user = await _moduleNotice.getAdminProfileByEmail(email: creatorEmail);
-      }
+      user = await _moduleNotice.getArtistProfileInfoByEmail(email: creatorEmail);
+      user ??= await _moduleNotice.getAdminProfileByEmail(email: creatorEmail);
       setState(() {
         title = user!['name'];
       });
@@ -195,64 +192,63 @@ class _ScreenChatroomState extends State<ScreenChatroom>
         }
       },
       child: Builder(builder: (_) {
-        return SafeArea(
-          child: Stack(
-            alignment: Alignment.bottomCenter,
-            children: [
-              KeyboardSizeProvider(
-                child: Scaffold(
-                  appBar: AppBar(
-                    leading: IconButton(
-                      icon: const Icon(
-                        Icons.arrow_back_ios,
-                        color: colorMainGrey250,
-                        size: 20,
-                      ),
-                      onPressed: () {
-                        if (widget.onBackPressed != null) {
-                          widget.onBackPressed!.call();
-                        } else {
-                          Navigator.of(context).pop();
-                        }
-                      },
+        return Stack(
+          alignment: Alignment.bottomCenter,
+          children: [
+            KeyboardSizeProvider(
+              child: Scaffold(
+                appBar: AppBar(
+                  leading: IconButton(
+                    icon: const Icon(
+                      Icons.arrow_back_ios,
+                      color: colorMainGrey250,
+                      size: 20,
                     ),
-                    title: Text(
-                      title,
-                      style: const TextStyle(
-                        color: colorMainGrey900,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 18,
-                        fontFamily: 'SUIT',
-                        height: 0,
-                        letterSpacing: -0.36,
-                      ),
-                    ),
-                    centerTitle: true,
-                    elevation: 0.0,
-                    scrolledUnderElevation: 0,
-                    toolbarHeight: _appBarHeight,
-                    backgroundColor: Colors.white,
-                    actions: [
-                      widgetChatroomMessageDrawerBtn(context, widget.dataChat,
-                          _moduleNotice, _dataNotice, _moduleMemo, onExit: () {
+                    onPressed: () {
+                      if (widget.onBackPressed != null) {
+                        widget.onBackPressed!.call();
+                      } else {
                         Navigator.of(context).pop();
-                      }),
-                    ],
+                      }
+                    },
                   ),
+                  title: Text(
+                    title,
+                    style: const TextStyle(
+                      color: colorMainGrey900,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 18,
+                      fontFamily: 'SUIT',
+                      height: 0,
+                      letterSpacing: -0.36,
+                    ),
+                  ),
+                  centerTitle: true,
+                  elevation: 0.0,
+                  scrolledUnderElevation: 0,
+                  toolbarHeight: _appBarHeight,
                   backgroundColor: Colors.white,
-                  body: WidgetUiNotify(
-                    dataChat: widget.dataChat,
-                    child:
-                        Consumer<ScreenHeight>(builder: (context, res, child) {
-                      if (res.isOpen) {
+                  actions: [
+                    widgetChatroomMessageDrawerBtn(context, widget.dataChat,
+                        _moduleNotice, _dataNotice, _moduleMemo, onExit: () {
+                      Navigator.of(context).pop();
+                    }),
+                  ],
+                ),
+                backgroundColor: Colors.white,
+                body: WidgetUiNotify(
+                  dataChat: widget.dataChat,
+                  child: SafeArea(
+                        child: Consumer<ScreenHeight>(builder: (context, res, child) {
+                                            if (res.isOpen) {
                         _bottomSheetHeightMins.add(res.keyboardHeight);
                         _bottomSheetHeightMin = _bottomSheetHeightMins.reduce(
                             (value, element) =>
                                 element > value ? element : value);
-                      } else {
+                                            } else {
                         _bottomSheetHeightMins.clear();
-                      }
-                      return Column(
+                                            }
+                                            return Column(
                         children: [
                           Expanded(
                             child: _buildMessageBox(),
@@ -277,178 +273,178 @@ class _ScreenChatroomState extends State<ScreenChatroom>
                                 : _bottomSheetHeight,
                           ),
                         ],
-                      );
-                    }),
-                  ),
+                                            );
+                                          }),
+                      ),
                 ),
               ),
-              Visibility(
-                visible: _showAttachment &&
-                    _bottomSheetHeight > _bottomSheetHeightMin + _appBarHeight,
-                child: Container(
-                  color: Colors.black.withOpacity(
-                      0.4 * (_bottomSheetHeight / _bottomSheetHeightMax)),
-                  child: GestureDetector(
-                    onTap: () {
-                      if (_bottomSheetHeight > _bottomSheetHeightMin) {
-                        _doAttachmentPickerMin();
-                      }
+            ),
+            Visibility(
+              visible: _showAttachment &&
+                  _bottomSheetHeight > _bottomSheetHeightMin + _appBarHeight,
+              child: Container(
+                color: Colors.black.withOpacity(
+                    0.4 * (_bottomSheetHeight / _bottomSheetHeightMax)),
+                child: GestureDetector(
+                  onTap: () {
+                    if (_bottomSheetHeight > _bottomSheetHeightMin) {
+                      _doAttachmentPickerMin();
+                    }
+                  },
+                ),
+              ),
+            ),
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 0),
+              curve: Curves.easeOut,
+              height: _showAttachment ? _screenHeight : 0,
+              alignment: Alignment.bottomCenter,
+              child: Stack(
+                children: [
+                  NotificationListener<DraggableScrollableNotification>(
+                    onNotification:
+                        (DraggableScrollableNotification dSNotification) {
+                      setState(() {
+                        _bottomSheetHeight =
+                            _bottomSheetHeightMax * dSNotification.extent;
+                      });
+                      return true;
                     },
-                  ),
-                ),
-              ),
-              AnimatedContainer(
-                duration: const Duration(milliseconds: 0),
-                curve: Curves.easeOut,
-                height: _showAttachment ? _screenHeight : 0,
-                alignment: Alignment.bottomCenter,
-                child: Stack(
-                  children: [
-                    NotificationListener<DraggableScrollableNotification>(
-                      onNotification:
-                          (DraggableScrollableNotification dSNotification) {
-                        setState(() {
-                          _bottomSheetHeight =
-                              _bottomSheetHeightMax * dSNotification.extent;
-                        });
-                        return true;
-                      },
-                      child: DraggableScrollableSheet(
-                        initialChildSize: _bottomSheetHeightMin / _screenHeight,
-                        minChildSize: _bottomSheetHeightMin / _screenHeight,
-                        maxChildSize: (_bottomSheetHeightMax - _appBarHeight) /
-                            _screenHeight,
-                        expand: true,
-                        snap: true,
-                        controller: _draggableScrollableController,
-                        builder: (BuildContext context,
-                            ScrollController scrollController) {
-                          return Scaffold(
-                            backgroundColor: Colors.transparent,
-                            body: Stack(
-                              children: [
-                                GestureDetector(
-                                  onTap: () {
-                                    _doAttachmentPickerMin();
-                                  },
+                    child: DraggableScrollableSheet(
+                      initialChildSize: _bottomSheetHeightMin / _screenHeight,
+                      minChildSize: _bottomSheetHeightMin / _screenHeight,
+                      maxChildSize: (_bottomSheetHeightMax - _appBarHeight) /
+                          _screenHeight,
+                      expand: true,
+                      snap: true,
+                      controller: _draggableScrollableController,
+                      builder: (BuildContext context,
+                          ScrollController scrollController) {
+                        return Scaffold(
+                          backgroundColor: Colors.transparent,
+                          body: Stack(
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  _doAttachmentPickerMin();
+                                },
+                              ),
+                              ClipRRect(
+                                borderRadius: const BorderRadius.only(
+                                  topLeft: Radius.circular(16),
+                                  topRight: Radius.circular(16),
                                 ),
-                                ClipRRect(
-                                  borderRadius: const BorderRadius.only(
-                                    topLeft: Radius.circular(16),
-                                    topRight: Radius.circular(16),
-                                  ),
+                                child: Container(
+                                  color: Colors.white,
+                                  height: double.infinity,
+                                  child: _attachmentPicker(scrollController),
+                                ),
+                              ),
+                              Visibility(
+                                visible: _selectedImages > 0,
+                                child: Positioned.fill(
+                                  top: _bottomSheetHeightMax - 250,
                                   child: Container(
-                                    color: Colors.white,
-                                    height: double.infinity,
-                                    child: _attachmentPicker(scrollController),
-                                  ),
-                                ),
-                                Visibility(
-                                  visible: _selectedImages > 0,
-                                  child: Positioned.fill(
-                                    top: _bottomSheetHeightMax - 250,
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        gradient: LinearGradient(
-                                          begin: Alignment.bottomCenter,
-                                          end: Alignment.topCenter,
-                                          colors: [
-                                            Colors.black.withOpacity(0.8),
-                                            Colors.transparent,
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                AnimatedPositioned(
-                                  duration: const Duration(milliseconds: 500),
-                                  curve: Curves.easeInOut,
-                                  right: 16,
-                                  bottom: _selectedImages > 0 &&
-                                          (_showAttachment &&
-                                              _bottomSheetHeight >
-                                                  (_bottomSheetHeightMax -
-                                                      _appBarHeight -
-                                                      5))
-                                      ? 16
-                                      : -100,
-                                  child: InkWell(
-                                    splashColor: Colors.transparent,
-                                    highlightColor: Colors.transparent,
-                                    onTap: () {
-                                      _doSendMessageImages();
-                                    },
-                                    child: Container(
-                                      height: 40,
-                                      constraints:
-                                          const BoxConstraints(minWidth: 106),
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 20, vertical: 8),
-                                      decoration: ShapeDecoration(
-                                        color: const Color(0xFF5667FF),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(20),
-                                        ),
-                                      ),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.all(2.0),
-                                            child: Image.asset(
-                                              'assets/images/icons/icon_send.png',
-                                              width: 24,
-                                              height: 24,
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                          const SizedBox(width: 4),
-                                          const Text(
-                                            '보내기',
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 16,
-                                              fontFamily: 'SUIT',
-                                              fontWeight: FontWeight.w500,
-                                              letterSpacing: -0.32,
-                                            ),
-                                          ),
+                                    decoration: BoxDecoration(
+                                      gradient: LinearGradient(
+                                        begin: Alignment.bottomCenter,
+                                        end: Alignment.topCenter,
+                                        colors: [
+                                          Colors.black.withOpacity(0.8),
+                                          Colors.transparent,
                                         ],
                                       ),
                                     ),
                                   ),
                                 ),
-                                Visibility(
-                                  visible: _filesImages.isEmpty,
-                                  child: const Center(
-                                    child: SizedBox(
-                                      width: 30,
-                                      height: 30,
-                                      child: CircularProgressIndicator(
-                                        color: Color(0xFF6A79FF),
-                                        strokeWidth: 3,
+                              ),
+                              AnimatedPositioned(
+                                duration: const Duration(milliseconds: 500),
+                                curve: Curves.easeInOut,
+                                right: 16,
+                                bottom: _selectedImages > 0 &&
+                                        (_showAttachment &&
+                                            _bottomSheetHeight >
+                                                (_bottomSheetHeightMax -
+                                                    _appBarHeight -
+                                                    5))
+                                    ? 16
+                                    : -100,
+                                child: InkWell(
+                                  splashColor: Colors.transparent,
+                                  highlightColor: Colors.transparent,
+                                  onTap: () {
+                                    _doSendMessageImages();
+                                  },
+                                  child: Container(
+                                    height: 40,
+                                    constraints:
+                                        const BoxConstraints(minWidth: 106),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 20, vertical: 8),
+                                    decoration: ShapeDecoration(
+                                      color: const Color(0xFF5667FF),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(20),
                                       ),
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.all(2.0),
+                                          child: Image.asset(
+                                            'assets/images/icons/icon_send.png',
+                                            width: 24,
+                                            height: 24,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 4),
+                                        const Text(
+                                          '보내기',
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 16,
+                                            fontFamily: 'SUIT',
+                                            fontWeight: FontWeight.w500,
+                                            letterSpacing: -0.32,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
+                              ),
+                              Visibility(
+                                visible: _filesImages.isEmpty,
+                                child: const Center(
+                                  child: SizedBox(
+                                    width: 30,
+                                    height: 30,
+                                    child: CircularProgressIndicator(
+                                      color: Color(0xFF6A79FF),
+                                      strokeWidth: 3,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         );
       }),
     );
@@ -1119,11 +1115,11 @@ class _ScreenChatroomState extends State<ScreenChatroom>
 
   @override
   void onMessageReceived(BaseChannel channel, BaseMessage baseMessage) {
-    DataMessage dataMessage = DataMessage.fromBaseMessage(baseMessage);
+    final DataMessage dataMessage = DataMessage.fromBaseMessage(baseMessage);
 
     if (!_listMessages.contains(dataMessage)) {
       _listMessages.insert(0, dataMessage);
-      showNotificationMessage(context, widget.dataChat, dataMessage);
+      showNotificationMessage(widget.dataChat, dataMessage);
     }
   }
 
@@ -1143,7 +1139,7 @@ class _ScreenChatroomState extends State<ScreenChatroom>
           });
           // print('_doLoadMessages LAST MESSAGE ${messages.last}');
           for (DataMessage message in messages) {
-            showNotificationMessage(context, widget.dataChat, message);
+            showNotificationMessage(widget.dataChat, message);
           }
         })
         .catchError((e) {})
@@ -1164,7 +1160,7 @@ class _ScreenChatroomState extends State<ScreenChatroom>
       for (DataMessage message in messages) {
         if (!_listMessages.contains(message)) {
           _listMessages.insert(0, message);
-          showNotificationMessage(context, widget.dataChat, message);
+          showNotificationMessage(widget.dataChat, message);
         }
       }
     });

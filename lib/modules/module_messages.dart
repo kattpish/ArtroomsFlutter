@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:artrooms/beans/bean_chat.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
@@ -15,16 +16,20 @@ import '../main.dart';
 import '../utils/utils_media.dart';
 
 class ModuleMessages {
+
   late final String _channelUrl;
   late final GroupChannel _groupChannel;
+  late final DataChat _dataChat;
   ChannelEventHandler? _channelEventHandler;
+
   bool _isInitialized = false;
   bool _isLoading = false;
   int? _earliestMessageTimestamp;
   int? _earliestMessageTimestampFiles;
 
-  ModuleMessages(String channelUrl) {
-    _channelUrl = channelUrl;
+  ModuleMessages(DataChat dataChat) {
+    _dataChat = dataChat;
+    _channelUrl = dataChat.id;
   }
 
   void init(ChannelEventHandler channelEventHandler) async {
@@ -95,9 +100,11 @@ class ModuleMessages {
         _groupChannel, text.trim(),
         message: message, mentionedUserIds: mentionedUserIds);
 
-    final myMessage = DataMessage.fromBaseMessage(userMessage);
+    DataMessage dataMessage = DataMessage.fromBaseMessage(userMessage);
 
-    return myMessage;
+    modulePushNotifications.sendPushMessages(_groupChannel.members, _dataChat, dataMessage);
+
+    return dataMessage;
   }
 
   DataMessage preSendMessageImage(List<FileItem> fileItems) {
@@ -166,16 +173,16 @@ class ModuleMessages {
       }
     }
 
-    final DataMessage myMessage;
+    final DataMessage dataMessage;
     if (kDebugMode) {
       print("sendMessageImages Start: ${files.length}");
     }
 
     if (files.length == 1) {
-      myMessage = await moduleSendBird.sendMessageFiles(_groupChannel, files);
+      dataMessage = await moduleSendBird.sendMessageFiles(_groupChannel, files);
 
       if (kDebugMode) {
-        print("sendMessageImages Done: ${myMessage.attachmentImages.length}");
+        print("sendMessageImages Done: ${dataMessage.attachmentImages.length}");
       }
     } else {
       List<String> dataImages = [];
@@ -200,10 +207,10 @@ class ModuleMessages {
         print("sendMessageImages Start: ${jsonEncode(dataImages)}");
       }
 
-      myMessage = DataMessage.fromBaseMessage(userMessage);
+      dataMessage = DataMessage.fromBaseMessage(userMessage);
 
       if (kDebugMode) {
-        print("sendMessageImages End ${myMessage.attachmentImages.length}");
+        print("sendMessageImages End ${dataMessage.attachmentImages.length}");
       }
     }
     // myMessage = await moduleSendBird.sendMessageFiles(_groupChannel, files);
@@ -212,7 +219,9 @@ class ModuleMessages {
     //   print("sendMessageImages End ${myMessage.attachmentImages.length}");
     // }
 
-    return myMessage;
+    modulePushNotifications.sendPushMessages(_groupChannel.members, _dataChat, dataMessage);
+
+    return dataMessage;
   }
 
   Future<List<DataMessage>> sendMessageMedia(List<FileItem> fileItems) async {

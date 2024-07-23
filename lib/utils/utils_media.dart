@@ -1,3 +1,4 @@
+
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
@@ -79,7 +80,7 @@ Future<void> downloadFile(BuildContext context, String url, String fileName,
   }
 
   if (showNotification) {
-    showNotificationDownload(context, filePath, fileName);
+    showNotificationDownload(filePath, fileName);
   }
 }
 
