@@ -4,7 +4,6 @@ import 'package:artrooms/ui/screens/screen_chats.dart';
 import 'package:artrooms/ui/screens/screen_login.dart';
 import 'package:artrooms/utils/utils_notifications.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import 'modules/module_push_notifications.dart';
 import 'modules/module_sendbird.dart';
