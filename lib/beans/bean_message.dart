@@ -81,7 +81,6 @@ class DataMessage {
     } else if (baseMessage.message == 'multiple:image') {
       try {
         final data = jsonDecode(baseMessage.data ?? "");
-        print('1111 ${baseMessage.toString()}');
 
         if (data is Map && data.containsKey('data')) {
           final images = data['data'];
