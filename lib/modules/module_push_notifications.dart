@@ -1,6 +1,5 @@
 
 import 'dart:convert';
-import 'dart:ffi';
 import 'dart:io';
 
 import 'package:artrooms/api/firebase_options.dart';
