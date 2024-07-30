@@ -106,6 +106,7 @@ class DBStore {
   }
 
   Future<void> saveProfilePicture(Map<String, dynamic> profileImg) async {
+    print("profileImg $profileImg");
     await sharedPreferences.setString('profileImg', profileImg["accessUrl"] ?? "");
   }
 

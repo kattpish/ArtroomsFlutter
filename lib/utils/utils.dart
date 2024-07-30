@@ -1,6 +1,7 @@
 
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -192,7 +193,7 @@ List<InlineSpan> replacePattern(String original, Color colorText, Color colorMen
 
 List<InlineSpan> parseAndLinkify(String text, Color colorText, Color colorLink) {
   final RegExp linkRegExp = RegExp(
-    r'((http|https):\/\/[^\s/$.?#].[^\s]*)|(www\.[^\s/$.?#].[^\s]*)|([^\s/$.?#].[^\s]*\.[a-z]{2,})',
+    r'((http|https):\/\/[^\s/$.?#]*:[0-9]+[^\s]*)|((http|https):\/\/[^\s/$.?#].[^\s]*)|(www\.[^\s/$.?#].[^\s]*)|([^\s/$.?#].[^\s]*\.[a-z]{2,})',
     caseSensitive: false,
   );
 
@@ -229,7 +230,9 @@ List<InlineSpan> parseAndLinkify(String text, Color colorText, Color colorLink) 
           if (await canLaunchUrlString(url)) {
             await launchUrlString(url, mode: LaunchMode.externalApplication);
           } else {
-            print('Could not launch $url');
+            if (kDebugMode) {
+              print('Could not launch $url');
+            }
           }
         },
     ));

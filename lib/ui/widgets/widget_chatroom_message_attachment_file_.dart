@@ -107,7 +107,6 @@ class ChatroomMessageAttachmentFile extends StatelessWidget {
                       height: 24,
                       alignment: Alignment.bottomRight,
                       child: const CircularProgressIndicator(
-                        value: 50,
                         color: Color(0xFF6A79FF),
                         strokeWidth: 2,
                       ),

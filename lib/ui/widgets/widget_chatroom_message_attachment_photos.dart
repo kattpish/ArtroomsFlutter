@@ -161,7 +161,6 @@ Widget buildImageAttachments(
                             height: 24,
                             alignment: Alignment.topRight,
                             child: const CircularProgressIndicator(
-                              value: 50,
                               color: Color(0xFF6A79FF),
                               strokeWidth: 2,
                             ),

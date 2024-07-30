@@ -21,6 +21,9 @@ import '../utils/utils_notifications.dart';
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+
+  if(message.notification == null) return;
+
   if (kDebugMode) {
     print('FCM got a push notification in the background: ${message.notification} with Data: ${message.data}');
   }
