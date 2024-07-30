@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:artrooms/api/firebase_options.dart';
 import 'package:artrooms/beans/bean_chat.dart';
 import 'package:artrooms/beans/bean_message.dart';
+import 'package:artrooms/main.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
@@ -23,7 +24,26 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   if (kDebugMode) {
     print('FCM got a push notification in the background: ${message.notification} with Data: ${message.data}');
   }
-  showNotification(message.messageId.hashCode, message.notification?.title ?? '', message.notification?.body ?? '');
+
+  Map<String, dynamic> data = message.data;
+
+  DataMessage dataMessage = DataMessage.empty();
+  dataMessage.channelUrl = data["channelUrl"];
+  dataMessage.senderId = data["senderId"];
+  dataMessage.senderName = data["senderName"];
+  dataMessage.content = data["content"];
+  dataMessage.timestamp = int.parse(data["timestamp"]);
+  dataMessage.isMe = bool.parse(data["isMe"]);
+
+  final DataChat dataChat = DataChat(
+    id: data["chatId"],
+    name: data["chatName"],
+    groupChannel: null,
+    lastMessage: dataMessage,
+    creator: null,
+  );
+
+  showNotification(dataChat.id.hashCode, dataMessage.senderName, dataMessage.content);
 }
 
 class ModulePushNotifications {
@@ -55,7 +75,7 @@ class ModulePushNotifications {
         dataMessage.senderName = data["senderName"];
         dataMessage.content = data["content"];
         dataMessage.timestamp = int.parse(data["timestamp"]);
-        dataMessage.isMe = bool.parse(data["isMe"]);
+        dataMessage.isMe = dataMessage.senderId == moduleSendBird.user.userId;
 
         final DataChat dataChat = DataChat(
           id: data["chatId"],
@@ -156,7 +176,7 @@ class ModulePushNotifications {
     data["channelUrl"] = dataMessage.channelUrl;
     data["senderId"] = dataMessage.senderId;
     data["senderName"] = dataMessage.senderName;
-    data["content"] = dataMessage.content;
+    data["content"] = dataMessage.getSummary();
     data["timestamp"] = dataMessage.timestamp;
     data["isMe"] = dataMessage.isMe;
 
