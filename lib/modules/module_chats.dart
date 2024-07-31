@@ -1,4 +1,7 @@
+import 'package:sendbird_sdk/core/channel/base/base_channel.dart';
 import 'package:sendbird_sdk/core/channel/group/group_channel.dart';
+import 'package:sendbird_sdk/core/message/base_message.dart';
+import 'package:sendbird_sdk/handlers/channel_event_handler.dart';
 
 import '../beans/bean_chat.dart';
 import '../main.dart';
@@ -23,5 +26,28 @@ class ModuleChat {
     if (dataChat.groupChannel != null) {
       moduleSendBird.markMessageAsRead(dataChat.groupChannel!);
     }
+  }
+
+  void addChannelEventHandler(
+      GroupChannel groupChannel, ChannelEventHandler listener) {
+    moduleSendBird.addChannelEventHandlerKey(
+        "CHAT-LIST-${groupChannel.channelUrl}", listener);
+  }
+
+  void removeChannelEventHandler(GroupChannel groupChannel) {
+    moduleSendBird
+        .removeChannelEventHandlerKey("CHAT-LIST-${groupChannel.channelUrl}");
+  }
+}
+
+class CustomChannelEventHandler extends ChannelEventHandler {
+  final Function(BaseChannel channel, BaseMessage message)
+      callbackMessageReceived;
+
+  CustomChannelEventHandler({required this.callbackMessageReceived});
+
+  @override
+  void onMessageReceived(BaseChannel channel, BaseMessage message) {
+    callbackMessageReceived(channel, message);
   }
 }

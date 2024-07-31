@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_size/flutter_keyboard_size.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:sendbird_sdk/core/channel/base/base_channel.dart';
+import 'package:sendbird_sdk/core/channel/group/group_channel.dart';
 import 'package:sendbird_sdk/core/message/base_message.dart';
 import 'package:sendbird_sdk/core/models/member.dart';
 import 'package:sendbird_sdk/handlers/channel_event_handler.dart';
@@ -136,6 +137,8 @@ class _ScreenChatroomState extends State<ScreenChatroom>
         _doAttachmentPickerClose();
       }
     });
+
+    widget.dataChat.groupChannel?.markAsRead();
   }
 
   Future<void> setTitle() async {
@@ -162,6 +165,8 @@ class _ScreenChatroomState extends State<ScreenChatroom>
     receivePort.close();
     removeState(this);
     dbStore.saveKeyboardHeight(_bottomSheetHeightMin);
+
+    widget.dataChat.groupChannel?.markAsRead();
     super.dispose();
   }
 
@@ -1119,7 +1124,8 @@ class _ScreenChatroomState extends State<ScreenChatroom>
 
     if (!_listMessages.contains(dataMessage)) {
       _listMessages.insert(0, dataMessage);
-      showNotificationMessage(widget.dataChat, dataMessage);
+
+      setState(() {});
     }
   }
 
@@ -1137,10 +1143,6 @@ class _ScreenChatroomState extends State<ScreenChatroom>
           setState(() {
             _listMessages.addAll(messages);
           });
-          // print('_doLoadMessages LAST MESSAGE ${messages.last}');
-          for (DataMessage message in messages) {
-            showNotificationMessage(widget.dataChat, message);
-          }
         })
         .catchError((e) {})
         .whenComplete(() {

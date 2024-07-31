@@ -313,6 +313,14 @@ class ModuleSendBird {
     SendbirdSdk().removeChannelEventHandler(groupChannel.channelUrl);
   }
 
+  void addChannelEventHandlerKey(String key, ChannelEventHandler listener) {
+    SendbirdSdk().addChannelEventHandler(key, listener);
+  }
+
+  void removeChannelEventHandlerKey(String key) {
+    SendbirdSdk().removeChannelEventHandler(key);
+  }
+
   bool isInitialized() {
     return _isInitialized;
   }

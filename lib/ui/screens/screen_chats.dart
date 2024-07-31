@@ -11,6 +11,7 @@ import 'package:artrooms/utils/utils_notifications.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:sendbird_sdk/core/channel/group/group_channel.dart';
 
 import '../../beans/bean_chat.dart';
 import '../../listeners/scroll_bouncing_physics.dart';
@@ -78,6 +79,11 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver {
   void dispose() {
     _searchController.dispose();
     removeState(this);
+
+    for (DataChat dataChat in _listChatsAll) {
+      _chatModule.removeChannelEventHandler(dataChat.groupChannel!);
+    }
+
     super.dispose();
   }
 
@@ -365,6 +371,32 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver {
             if (dbStore.isNotificationChat(dataChat)) {
               showNotificationChat(dataChat);
             }
+
+            _chatModule.addChannelEventHandler(dataChat.groupChannel!,
+                CustomChannelEventHandler(
+              callbackMessageReceived: (channel, message) {
+                if (channel is GroupChannel) {
+                  setState(() {
+                    final newDataChat = DataChat.fromGroupChannel(channel);
+
+                    int index = _listChats
+                        .indexWhere((c) => c.id == channel.channelUrl);
+                    if (index != -1) {
+                      _listChats[index] = newDataChat;
+                    }
+
+                    int indexAll = _listChatsAll
+                        .indexWhere((c) => c.id == channel.channelUrl);
+                    if (indexAll != -1) {
+                      _listChatsAll[indexAll] = newDataChat;
+                    }
+
+                    showNotificationMessage(
+                        newDataChat, DataMessage.fromBaseMessage(message));
+                  });
+                }
+              },
+            ));
           }
         })
         .catchError((e) {})
