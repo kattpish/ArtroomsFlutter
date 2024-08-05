@@ -173,7 +173,14 @@ class ModulePushNotifications {
     if (Platform.isAndroid) {
       token = await FirebaseMessaging.instance.getToken();
     } else if (Platform.isIOS) {
-      token = await FirebaseMessaging.instance.getAPNSToken();
+      final apnsToken = await FirebaseMessaging.instance.getAPNSToken();
+      if (kDebugMode) {
+        print('APNS token $apnsToken');
+      }
+
+      if (apnsToken != null) {
+        token = await FirebaseMessaging.instance.getToken();
+      }
     }
     if (kDebugMode) {
       print('fcm token $token');
