@@ -1,10 +1,10 @@
-
 import 'dart:convert';
 import 'dart:io';
 
 import 'package:artrooms/api/firebase_options.dart';
 import 'package:artrooms/beans/bean_chat.dart';
 import 'package:artrooms/beans/bean_message.dart';
+import 'package:artrooms/beans/bean_notification.dart';
 import 'package:artrooms/main.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -21,53 +21,63 @@ import '../utils/utils_notifications.dart';
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-
-  if(message.notification == null) return;
-
   if (kDebugMode) {
-    print('FCM got a push notification in the background: ${message.notification} with Data: ${message.data}');
+    print(
+        'FCM got a push notification in the background: ${message.notification} with Data: ${message.data}');
   }
 
-  Map<String, dynamic> data = message.data;
-
   DataMessage dataMessage = DataMessage.empty();
-  dataMessage.channelUrl = data["channelUrl"];
-  dataMessage.senderId = data["senderId"];
-  dataMessage.senderName = data["senderName"];
-  dataMessage.content = data["content"];
-  dataMessage.timestamp = int.parse(data["timestamp"]);
-  dataMessage.isMe = bool.parse(data["isMe"]);
+  if (message.data["sendbird"] != null) {
+    final pushNotification =
+        PushNotification.fromJson(jsonDecode(message.data["sendbird"]));
 
-  final DataChat dataChat = DataChat(
-    id: data["chatId"],
-    name: data["chatName"],
-    groupChannel: null,
-    lastMessage: dataMessage,
-    creator: null,
-  );
+    showNotification(
+      pushNotification.channel.channelUrl.hashCode,
+      pushNotification.sender.name,
+      pushNotification.message,
+    );
+  } else {
+    Map<String, dynamic> data = message.data;
 
-  showNotification(dataChat.id.hashCode, dataMessage.senderName, dataMessage.content);
+    dataMessage.channelUrl = data["channelUrl"];
+    dataMessage.senderId = data["senderId"];
+    dataMessage.senderName = data["senderName"];
+    dataMessage.content = data["content"];
+    dataMessage.timestamp = int.parse(data["timestamp"]);
+    dataMessage.isMe = bool.parse(data["isMe"]);
+
+    final DataChat dataChat = DataChat(
+      id: data["chatId"],
+      name: data["chatName"],
+      groupChannel: null,
+      lastMessage: dataMessage,
+      creator: null,
+    );
+
+    showNotification(
+        dataChat.id.hashCode, dataMessage.senderName, dataMessage.content);
+  }
 }
 
 class ModulePushNotifications {
-
   String token = "";
 
   Future<void> init() async {
-
     try {
-
       await Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform,
       );
       await requestNotificationPermission();
-      await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(alert: true, badge: true, sound: true);
+      await FirebaseMessaging.instance
+          .setForegroundNotificationPresentationOptions(
+              alert: true, badge: true, sound: true);
       await FirebaseMessaging.instance.setAutoInitEnabled(true);
-      FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+      FirebaseMessaging.onBackgroundMessage(
+          _firebaseMessagingBackgroundHandler);
       FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-
         if (kDebugMode) {
-          print('FCM got a push notification in the foreground: ${message.notification} with Data: ${message.data}');
+          print(
+              'FCM got a push notification in the foreground: ${message.notification} with Data: ${message.data}');
         }
 
         Map<String, dynamic> data = message.data;
@@ -101,13 +111,11 @@ class ModulePushNotifications {
         token = newToken;
         register();
       });
-
     } catch (e) {
       if (kDebugMode) {
         print(e);
       }
     }
-
   }
 
   Future<void> register() async {
@@ -128,7 +136,7 @@ class ModulePushNotifications {
       pushTokenType = PushTokenType.fcm;
     } else if (Platform.isIOS) {
       pushTokenType = PushTokenType.apns;
-    }else {
+    } else {
       pushTokenType = PushTokenType.fcm;
     }
     return pushTokenType;
@@ -137,7 +145,8 @@ class ModulePushNotifications {
   Future<void> updateUserMetadata() async {
     try {
       var currentUser = SendbirdSdk().currentUser;
-      Map<String, String> metaData = currentUser != null ? currentUser.metaData : {};
+      Map<String, String> metaData =
+          currentUser != null ? currentUser.metaData : {};
       metaData["firebase_token"] = token;
       await SendbirdSdk().currentUser?.updateMetaData(metaData);
     } catch (e) {
@@ -171,8 +180,8 @@ class ModulePushNotifications {
     return token ?? "";
   }
 
-  void sendPushMessages(List<Member> members, DataChat dataChat, DataMessage dataMessage) async {
-
+  void sendPushMessages(
+      List<Member> members, DataChat dataChat, DataMessage dataMessage) async {
     Map<String, dynamic> data = {};
     data["chatId"] = dataChat.id;
     data["chatName"] = dataChat.name;
@@ -183,14 +192,16 @@ class ModulePushNotifications {
     data["timestamp"] = dataMessage.timestamp;
     data["isMe"] = dataMessage.isMe;
 
-    for(Member member in members) {
-      sendPushMessage(member, dataMessage.senderName, dataMessage.getSummary(), data: data);
+    for (Member member in members) {
+      sendPushMessage(member, dataMessage.senderName, dataMessage.getSummary(),
+          data: data);
     }
   }
 
-  Future<bool> sendPushMessage(User user, String title, String body, {String priority="high", Map<String, dynamic> data = const {}}) async {
+  Future<bool> sendPushMessage(User user, String title, String body,
+      {String priority = "high", Map<String, dynamic> data = const {}}) async {
     try {
-      if(user.isCurrentUser) return false;
+      if (user.isCurrentUser) return false;
       String token = await getUserFirebaseToken(user);
       final response = await http.post(
         Uri.parse('https://fcm.googleapis.com/fcm/send'),
@@ -210,13 +221,14 @@ class ModulePushNotifications {
           },
         ),
       );
-      if(response.statusCode == 200) {
+      if (response.statusCode == 200) {
         if (kDebugMode) {
           print('FCM push notification sent to ${user.nickname}');
         }
-      }else {
+      } else {
         if (kDebugMode) {
-          print('Failed to send FCM request: ${response.statusCode} ${response.body}');
+          print(
+              'Failed to send FCM request: ${response.statusCode} ${response.body}');
         }
       }
       return true;
@@ -227,5 +239,4 @@ class ModulePushNotifications {
     }
     return false;
   }
-
 }
