@@ -12,6 +12,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:sendbird_sdk/core/channel/group/group_channel.dart';
+import 'package:sendbird_sdk/sendbird_sdk.dart';
 
 import '../../beans/bean_chat.dart';
 import '../../listeners/scroll_bouncing_physics.dart';
@@ -317,11 +318,21 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver {
         });
       });
     } else {
+      setState(() {
+        _selectChatId = dataChat.id;
+      });
+
       Navigator.push(context, MaterialPageRoute(builder: (context) {
         return ScreenChatroom(
           dataChat: dataChat,
           onMessageSent: (DataMessage newMessage) {
             onMessageSent(newMessage);
+          },
+          onBackPressed: () {
+            Navigator.of(context).pop();
+            setState(() {
+              _selectChatId = "";
+            });
           },
         );
       }));
@@ -391,8 +402,7 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver {
                       _listChatsAll[indexAll] = newDataChat;
                     }
 
-                    showNotificationMessage(
-                        newDataChat, DataMessage.fromBaseMessage(message));
+                    _showNotif(newDataChat, message);
                   });
                 }
               },
@@ -405,6 +415,13 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver {
             _isLoading = false;
           });
         });
+  }
+
+  void _showNotif(DataChat newDataChat, BaseMessage message) {
+    if (newDataChat.id != _selectChatId) {
+      showNotificationMessage(
+          newDataChat, DataMessage.fromBaseMessage(message));
+    }
   }
 
   void startIsolate() async {

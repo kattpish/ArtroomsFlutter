@@ -1,14 +1,13 @@
-
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-
 Future<void> requestPermissions(BuildContext context) async {
   Map<Permission, PermissionStatus> statuses = await [
     Permission.camera,
     Permission.photos,
+    Permission.notification,
   ].request();
 
   final statusCamera = await Permission.camera.request();
@@ -25,10 +24,17 @@ Future<void> requestPermissions(BuildContext context) async {
     }
   }
 }
+
 Future<void> requestNotificationPermission() async {
   FirebaseMessaging messaging = FirebaseMessaging.instance;
   NotificationSettings settings = await messaging.requestPermission(
-      alert: true, announcement: false, badge: true, carPlay: false, criticalAlert: false, provisional: false, sound: true
+    alert: true,
+    announcement: false,
+    badge: true,
+    carPlay: false,
+    criticalAlert: false,
+    provisional: false,
+    sound: true,
   );
 
   if (kDebugMode) {
