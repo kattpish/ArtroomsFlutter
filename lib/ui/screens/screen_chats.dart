@@ -11,7 +11,6 @@ import 'package:artrooms/utils/utils_notifications.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:sendbird_sdk/core/channel/group/group_channel.dart';
 import 'package:sendbird_sdk/sendbird_sdk.dart';
 
 import '../../beans/bean_chat.dart';
@@ -64,9 +63,7 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver {
       return;
     }
 
-    requestPermissions(context);
-
-    _doLoadChats();
+    _requestPermissionAndLoadChat();
 
     receivePort = ReceivePort();
     startIsolate();
@@ -74,6 +71,12 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver {
     _searchController.addListener(() {
       _doSearchChats(_searchController.text, true);
     });
+  }
+
+  void _requestPermissionAndLoadChat() async {
+    await requestPermissions(context);
+
+    _doLoadChats();
   }
 
   @override

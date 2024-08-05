@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:artrooms/api/firebase_options.dart';
 import 'package:artrooms/beans/bean_chat.dart';
@@ -32,7 +33,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
         PushNotification.fromJson(jsonDecode(message.data["sendbird"]));
 
     showNotification(
-      pushNotification.channel.channelUrl.hashCode,
+      Random().nextInt(1000) + 1,
       pushNotification.sender.name,
       pushNotification.message,
     );
