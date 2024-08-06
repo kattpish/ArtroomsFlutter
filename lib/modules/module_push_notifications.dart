@@ -136,6 +136,10 @@ class ModulePushNotification {
     _isChatPageActive = false;
   }
 
+  void setNotificationSound(String notificationSound) {
+    _notificationSound = notificationSound;
+  }
+
   Future<String> getToken() async {
     String? token;
     if (Platform.isAndroid) {

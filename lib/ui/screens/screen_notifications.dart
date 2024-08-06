@@ -1,3 +1,4 @@
+import 'package:artrooms/modules/module_push_notifications.dart';
 import 'package:artrooms/utils/utils_media.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
@@ -123,6 +124,7 @@ class _ScreenNotificationsState extends State<ScreenNotifications> {
 
   void _doToggleNotification(int index) {
     dbStore.setNotificationValue(_tunes[index]);
+    ModulePushNotification.instance.setNotificationSound(_tunes[index]);
     setState(() {
       _notificationEnabled = _tunes[index];
     });
