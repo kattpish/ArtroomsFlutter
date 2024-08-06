@@ -44,6 +44,8 @@ class ModuleSendBird {
 
         user = await SendbirdSdk().connect(email);
 
+        String notification = dbStore.getNotificationValue();
+
         await modulePushNotifications.init();
 
         _isInitialized = true;
