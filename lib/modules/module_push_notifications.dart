@@ -5,7 +5,6 @@ import 'dart:math';
 import 'package:artrooms/api/firebase_options.dart';
 import 'package:artrooms/beans/bean_chat.dart';
 import 'package:artrooms/beans/bean_message.dart';
-import 'package:artrooms/beans/bean_notification.dart';
 import 'package:artrooms/main.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -22,42 +21,52 @@ import '../utils/utils_notifications.dart';
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
   if (kDebugMode) {
     print(
         'FCM got a push notification in the background: ${message.notification} with Data: ${message.data}');
   }
 
-  DataMessage dataMessage = DataMessage.empty();
-  if (message.data["sendbird"] != null) {
-    final pushNotification =
-        PushNotification.fromJson(jsonDecode(message.data["sendbird"]));
+  showNotification(
+    Random().nextInt(1000) + 1,
+    'Artrooms',
+    message.data["message"],
+  );
 
-    showNotification(
-      Random().nextInt(1000) + 1,
-      pushNotification.sender.name,
-      pushNotification.message,
-    );
-  } else {
-    Map<String, dynamic> data = message.data;
+  // DataMessage dataMessage = DataMessage.empty();
+  // if (message.data["sendbird"] != null) {
+  //   final pushNotification =
+  //       PushNotification.fromJson(jsonDecode(message.data["sendbird"]));
 
-    dataMessage.channelUrl = data["channelUrl"];
-    dataMessage.senderId = data["senderId"];
-    dataMessage.senderName = data["senderName"];
-    dataMessage.content = data["content"];
-    dataMessage.timestamp = int.parse(data["timestamp"]);
-    dataMessage.isMe = bool.parse(data["isMe"]);
+  //   showNotification(
+  //     Random().nextInt(1000) + 1,
+  //     pushNotification.sender.name,
+  //     pushNotification.message,
+  //   );
+  // } else {
+  //   Map<String, dynamic> data = message.data;
 
-    final DataChat dataChat = DataChat(
-      id: data["chatId"],
-      name: data["chatName"],
-      groupChannel: null,
-      lastMessage: dataMessage,
-      creator: null,
-    );
+  //   dataMessage.channelUrl = data["channelUrl"];
+  //   dataMessage.senderId = data["senderId"];
+  //   dataMessage.senderName = data["senderName"];
+  //   dataMessage.content = data["content"];
+  //   dataMessage.timestamp = int.parse(data["timestamp"]);
+  //   dataMessage.isMe = bool.parse(data["isMe"]);
 
-    showNotification(
-        dataChat.id.hashCode, dataMessage.senderName, dataMessage.content);
-  }
+  //   final DataChat dataChat = DataChat(
+  //     id: data["chatId"],
+  //     name: data["chatName"],
+  //     groupChannel: null,
+  //     lastMessage: dataMessage,
+  //     creator: null,
+  //   );
+
+  //   showNotification(
+  //       dataChat.id.hashCode, dataMessage.senderName, dataMessage.content);
+  // }
 }
 
 class ModulePushNotifications {
@@ -68,13 +77,22 @@ class ModulePushNotifications {
       await Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform,
       );
+
       await requestNotificationPermission();
+
       await FirebaseMessaging.instance
           .setForegroundNotificationPresentationOptions(
               alert: true, badge: true, sound: true);
+
       await FirebaseMessaging.instance.setAutoInitEnabled(true);
+
       FirebaseMessaging.onBackgroundMessage(
           _firebaseMessagingBackgroundHandler);
+
+      FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+        print("onMessageOpenedApp: $message");
+      });
+
       FirebaseMessaging.onMessage.listen((RemoteMessage message) {
         if (kDebugMode) {
           print(
