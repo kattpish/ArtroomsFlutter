@@ -1,6 +1,5 @@
 import 'package:sendbird_sdk/core/channel/base/base_channel.dart';
 import 'package:sendbird_sdk/core/channel/group/group_channel.dart';
-import 'package:sendbird_sdk/core/message/base_message.dart';
 import 'package:sendbird_sdk/handlers/channel_event_handler.dart';
 
 import '../beans/bean_chat.dart';
@@ -41,13 +40,12 @@ class ModuleChat {
 }
 
 class CustomChannelEventHandler extends ChannelEventHandler {
-  final Function(BaseChannel channel, BaseMessage message)
-      callbackMessageReceived;
+  final Function(BaseChannel channel) callback;
 
-  CustomChannelEventHandler({required this.callbackMessageReceived});
+  CustomChannelEventHandler({required this.callback});
 
   @override
-  void onMessageReceived(BaseChannel channel, BaseMessage message) {
-    callbackMessageReceived(channel, message);
+  void onChannelChanged(BaseChannel channel) {
+    callback(channel);
   }
 }

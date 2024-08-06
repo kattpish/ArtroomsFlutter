@@ -1,13 +1,11 @@
 import 'dart:async';
 import 'dart:io';
-import 'dart:isolate';
 
 import 'package:artrooms/beans/bean_notice.dart';
 import 'package:artrooms/modules/module_memo.dart';
 import 'package:artrooms/modules/module_notices.dart';
 import 'package:artrooms/ui/screens/screen_photo_view.dart';
 import 'package:artrooms/ui/widgets/widget_loader.dart';
-import 'package:artrooms/utils/utils_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_size/flutter_keyboard_size.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
@@ -95,7 +93,6 @@ class _ScreenChatroomState extends State<ScreenChatroom>
   final double _appBarHeight = 60;
   final List<double> _bottomSheetHeightMins = [];
 
-  late ReceivePort receivePort;
   Timer? _timerScroll;
   int _currentDate = 0;
   int _firstVisibleItemIndex = -1;
@@ -129,9 +126,6 @@ class _ScreenChatroomState extends State<ScreenChatroom>
     _doLoadMessages();
     _doLoadNotice();
 
-    receivePort = ReceivePort();
-    startIsolate();
-
     _messageFocusNode.addListener(() {
       if (_messageFocusNode.hasFocus) {
         _doAttachmentPickerClose();
@@ -149,7 +143,8 @@ class _ScreenChatroomState extends State<ScreenChatroom>
     } else {
       final creatorEmail = widget.dataChat.creator?.userId;
       if (creatorEmail == null) return;
-      user = await _moduleNotice.getArtistProfileInfoByEmail(email: creatorEmail);
+      user =
+          await _moduleNotice.getArtistProfileInfoByEmail(email: creatorEmail);
       user ??= await _moduleNotice.getAdminProfileByEmail(email: creatorEmail);
       setState(() {
         title = user!['name'];
@@ -162,11 +157,9 @@ class _ScreenChatroomState extends State<ScreenChatroom>
     _moduleMessages.removeChannelEventHandler();
     _messageController.dispose();
     _timerScroll?.cancel();
-    receivePort.close();
     removeState(this);
     dbStore.saveKeyboardHeight(_bottomSheetHeightMin);
 
-    widget.dataChat.groupChannel?.markAsRead();
     super.dispose();
   }
 
@@ -244,16 +237,17 @@ class _ScreenChatroomState extends State<ScreenChatroom>
                 body: WidgetUiNotify(
                   dataChat: widget.dataChat,
                   child: SafeArea(
-                        child: Consumer<ScreenHeight>(builder: (context, res, child) {
-                                            if (res.isOpen) {
+                    child:
+                        Consumer<ScreenHeight>(builder: (context, res, child) {
+                      if (res.isOpen) {
                         _bottomSheetHeightMins.add(res.keyboardHeight);
                         _bottomSheetHeightMin = _bottomSheetHeightMins.reduce(
                             (value, element) =>
                                 element > value ? element : value);
-                                            } else {
+                      } else {
                         _bottomSheetHeightMins.clear();
-                                            }
-                                            return Column(
+                      }
+                      return Column(
                         children: [
                           Expanded(
                             child: _buildMessageBox(),
@@ -278,9 +272,9 @@ class _ScreenChatroomState extends State<ScreenChatroom>
                                 : _bottomSheetHeight,
                           ),
                         ],
-                                            );
-                                          }),
-                      ),
+                      );
+                    }),
+                  ),
                 ),
               ),
             ),
@@ -390,8 +384,7 @@ class _ScreenChatroomState extends State<ScreenChatroom>
                                     decoration: ShapeDecoration(
                                       color: const Color(0xFF5667FF),
                                       shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(20),
+                                        borderRadius: BorderRadius.circular(20),
                                       ),
                                     ),
                                     child: Row(
@@ -1127,6 +1120,8 @@ class _ScreenChatroomState extends State<ScreenChatroom>
 
       setState(() {});
     }
+
+    widget.dataChat.groupChannel?.markAsRead();
   }
 
   Future<void> _doLoadMessages() async {
@@ -1153,34 +1148,6 @@ class _ScreenChatroomState extends State<ScreenChatroom>
             });
           }
         });
-  }
-
-  Future<void> _doLoadMessagesNew() async {
-    if (_moduleMessages.isLoading()) return;
-
-    _moduleMessages.getMessagesNew().then((List<DataMessage> messages) {
-      for (DataMessage message in messages) {
-        if (!_listMessages.contains(message)) {
-          _listMessages.insert(0, message);
-          showNotificationMessage(widget.dataChat, message);
-        }
-      }
-    });
-  }
-
-  void startIsolate() async {
-    await Isolate.spawn(timerEntryPoint, receivePort.sendPort);
-    receivePort.listen((data) {
-      if (data == 'loadMessages') {
-        _doLoadMessagesNew();
-      }
-    });
-  }
-
-  static void timerEntryPoint(SendPort sendPort) {
-    Timer.periodic(Duration(seconds: timeSecRefreshChat), (timer) {
-      sendPort.send('loadMessages');
-    });
   }
 
   void _doLoadNotice() {

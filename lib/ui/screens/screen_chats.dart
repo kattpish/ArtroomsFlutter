@@ -382,7 +382,7 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver {
 
             _chatModule.addChannelEventHandler(dataChat.groupChannel!,
                 CustomChannelEventHandler(
-              callbackMessageReceived: (channel, message) {
+              callback: (channel) {
                 if (channel is GroupChannel) {
                   setState(() {
                     final newDataChat = DataChat.fromGroupChannel(channel);
@@ -399,7 +399,9 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver {
                       _listChatsAll[indexAll] = newDataChat;
                     }
 
-                    _showNotif(newDataChat, message);
+                    if (channel.lastMessage != null) {
+                      _showNotif(newDataChat, channel.lastMessage!);
+                    }
                   });
                 }
               },
