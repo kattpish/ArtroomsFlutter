@@ -1,6 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:artrooms/api/firebase_options.dart';
+import 'package:artrooms/modules/module_push_notifications.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:path/path.dart' as path;
 
 import 'package:artrooms/beans/bean_message.dart';
@@ -24,33 +27,36 @@ import '../main.dart';
 import '../utils/utils.dart';
 
 class ModuleSendBird {
-
   late final User user;
   bool _isInitialized = false;
 
-  Future<void> init() async {
+  Future<void> init(
+      {required Function(String chatId) onNotificationSelected}) async {
     try {
-
-      if(!_isInitialized) {
-
+      if (!_isInitialized) {
         await initLocale();
 
         final String email = dbStore.getEmail();
 
         SendbirdSdk(
             appId: "01CFFFE8-F1B8-4BB4-A576-952ABDC8D08A",
-            apiToken: "39ac9b8e2125ad49035c7bd9c105ccc9d4dc7ba4"
-        );
+            apiToken: "39ac9b8e2125ad49035c7bd9c105ccc9d4dc7ba4");
 
         user = await SendbirdSdk().connect(email);
 
         String notification = dbStore.getNotificationValue();
 
-        await modulePushNotifications.init();
+        // await modulePushNotifications.init();
+        await Firebase.initializeApp(
+          options: DefaultFirebaseOptions.currentPlatform,
+        );
+        await ModulePushNotification.instance.initialize(
+          notificationSound: notification,
+          onNotificationSelected: onNotificationSelected,
+        );
 
         _isInitialized = true;
       }
-
     } catch (e) {
       if (kDebugMode) {
         print('Sendbird connection error: $e');
@@ -307,7 +313,8 @@ class ModuleSendBird {
     }
   }
 
-  void addChannelEventHandler(GroupChannel groupChannel, ChannelEventHandler listener) {
+  void addChannelEventHandler(
+      GroupChannel groupChannel, ChannelEventHandler listener) {
     SendbirdSdk().addChannelEventHandler(groupChannel.channelUrl, listener);
   }
 
@@ -326,5 +333,4 @@ class ModuleSendBird {
   bool isInitialized() {
     return _isInitialized;
   }
-
 }

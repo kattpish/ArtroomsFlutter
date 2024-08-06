@@ -1,15 +1,14 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'dart:math';
 
-import 'package:artrooms/api/firebase_options.dart';
 import 'package:artrooms/beans/bean_chat.dart';
 import 'package:artrooms/beans/bean_message.dart';
-import 'package:artrooms/main.dart';
+import 'package:artrooms/beans/bean_notification.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
-import 'package:artrooms/utils/utils_permissions.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:sendbird_sdk/constant/enums.dart';
 import 'package:sendbird_sdk/core/models/member.dart';
 import 'package:sendbird_sdk/core/models/user.dart';
@@ -17,130 +16,140 @@ import 'package:sendbird_sdk/sdk/sendbird_sdk_api.dart';
 import 'package:http/http.dart' as http;
 
 import '../api/api.dart';
-import '../utils/utils_notifications.dart';
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp();
 
-  if (kDebugMode) {
-    print(
-        'FCM got a push notification in the background: ${message.notification} with Data: ${message.data}');
-  }
-
-  showNotification(
-    Random().nextInt(1000) + 1,
-    'Artrooms',
-    message.data["message"],
-  );
-
-  // DataMessage dataMessage = DataMessage.empty();
-  // if (message.data["sendbird"] != null) {
-  //   final pushNotification =
-  //       PushNotification.fromJson(jsonDecode(message.data["sendbird"]));
-
-  //   showNotification(
-  //     Random().nextInt(1000) + 1,
-  //     pushNotification.sender.name,
-  //     pushNotification.message,
-  //   );
-  // } else {
-  //   Map<String, dynamic> data = message.data;
-
-  //   dataMessage.channelUrl = data["channelUrl"];
-  //   dataMessage.senderId = data["senderId"];
-  //   dataMessage.senderName = data["senderName"];
-  //   dataMessage.content = data["content"];
-  //   dataMessage.timestamp = int.parse(data["timestamp"]);
-  //   dataMessage.isMe = bool.parse(data["isMe"]);
-
-  //   final DataChat dataChat = DataChat(
-  //     id: data["chatId"],
-  //     name: data["chatName"],
-  //     groupChannel: null,
-  //     lastMessage: dataMessage,
-  //     creator: null,
-  //   );
-
-  //   showNotification(
-  //       dataChat.id.hashCode, dataMessage.senderName, dataMessage.content);
-  // }
+  ModulePushNotification.instance.showNotification(message);
 }
 
-class ModulePushNotifications {
-  String token = "";
+class ModulePushNotification {
+  final FirebaseMessaging _messaging;
+  final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin;
 
-  Future<void> init() async {
+  static final ModulePushNotification instance = ModulePushNotification._();
+
+  ModulePushNotification._()
+      : _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin(),
+        _messaging = FirebaseMessaging.instance;
+
+  bool _canReceiveNotification = false;
+  bool _isChatPageActive = false;
+
+  StreamSubscription<RemoteMessage>? _onMessageSubscription;
+  StreamSubscription<RemoteMessage>? _onMessageOpenedSubscription;
+
+  String _notificationSound = "";
+
+  void Function(String chatId)? onNotificationSelected;
+
+  Future<void> initialize({
+    required String notificationSound,
+    required Function(String chatId) onNotificationSelected,
+  }) async {
     try {
-      await Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform,
-      );
+      _notificationSound = notificationSound;
+      this.onNotificationSelected = onNotificationSelected;
 
-      await requestNotificationPermission();
+      final hasPermission = await requestNotificationPermission();
+      if (hasPermission) {
+        if (Platform.isIOS) {
+          final apnsToken = await FirebaseMessaging.instance.getAPNSToken();
 
-      await FirebaseMessaging.instance
-          .setForegroundNotificationPresentationOptions(
-              alert: true, badge: true, sound: true);
-
-      await FirebaseMessaging.instance.setAutoInitEnabled(true);
-
-      FirebaseMessaging.onBackgroundMessage(
-          _firebaseMessagingBackgroundHandler);
-
-      FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-        print("onMessageOpenedApp: $message");
-      });
-
-      FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-        if (kDebugMode) {
-          print(
-              'FCM got a push notification in the foreground: ${message.notification} with Data: ${message.data}');
+          _canReceiveNotification = apnsToken != null;
+          if (_canReceiveNotification) {
+            await FirebaseMessaging.instance
+                .setForegroundNotificationPresentationOptions(
+              alert: true,
+              badge: true,
+              sound: true,
+            );
+          }
+        } else {
+          _canReceiveNotification = true;
         }
 
-        Map<String, dynamic> data = message.data;
+        if (_canReceiveNotification) {
+          FirebaseMessaging.onBackgroundMessage(
+            _firebaseMessagingBackgroundHandler,
+          );
 
-        DataMessage dataMessage = DataMessage.empty();
-        dataMessage.channelUrl = data["channelUrl"];
-        dataMessage.senderId = data["senderId"];
-        dataMessage.senderName = data["senderName"];
-        dataMessage.content = data["content"];
-        dataMessage.timestamp = int.parse(data["timestamp"]);
-        dataMessage.isMe = dataMessage.senderId == moduleSendBird.user.userId;
+          _initLocalNotifications();
 
-        final DataChat dataChat = DataChat(
-          id: data["chatId"],
-          name: data["chatName"],
-          groupChannel: null,
-          lastMessage: dataMessage,
-          creator: null,
-        );
+          _onMessageSubscription?.cancel();
+          _onMessageSubscription =
+              FirebaseMessaging.onMessage.listen((message) {
+            print("MESSAGE LISTENER");
+            if (!_isChatPageActive ||
+                (_isChatPageActive &&
+                    message.data['type'] != 'MESSAGE_RECEIVED')) {
+              _showNotification(message);
+            }
+          });
 
-        showNotificationMessage(dataChat, dataMessage);
-      });
+          getToken().then((token) {
+            register(token);
+          });
 
-      token = await getToken();
-      register();
+          _messaging.onTokenRefresh.listen((token) {
+            register(token);
+          });
 
-      FirebaseMessaging.instance.onTokenRefresh.listen((newToken) {
-        if (kDebugMode) {
-          print("New Token: $newToken");
+          _setupInteractMessage();
         }
-        token = newToken;
-        register();
-      });
-    } catch (e) {
-      if (kDebugMode) {
-        print(e);
       }
+    } catch (e) {
+      print("Failed initiating notification: $e");
     }
   }
 
-  Future<void> register() async {
-    updateUserMetadata();
+  Future<bool> requestNotificationPermission() async {
+    try {
+      final settings = await _messaging.requestPermission(
+        alert: true,
+        announcement: true,
+        badge: true,
+        carPlay: true,
+        provisional: false,
+        sound: true,
+      );
+
+      return settings.authorizationStatus == AuthorizationStatus.authorized ||
+          settings.authorizationStatus == AuthorizationStatus.provisional;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  void setChatActive() {
+    _isChatPageActive = true;
+  }
+
+  void setChatInactive() {
+    _isChatPageActive = false;
+  }
+
+  Future<String> getToken() async {
+    String? token;
+    if (Platform.isAndroid) {
+      token = await FirebaseMessaging.instance.getToken();
+    } else if (Platform.isIOS) {
+      token = await FirebaseMessaging.instance.getAPNSToken();
+    }
+    if (kDebugMode) {
+      print('fcm token $token');
+    }
+    return token ?? "";
+  }
+
+  Future<void> register(String token) async {
+    updateUserMetadata(token);
+
+    final tokenType = getPushTokenType();
+
     PushTokenRegistrationStatus status = await SendbirdSdk().registerPushToken(
-      type: getPushTokenType(),
+      type: tokenType,
       token: token,
       unique: true,
     );
@@ -161,7 +170,7 @@ class ModulePushNotifications {
     return pushTokenType;
   }
 
-  Future<void> updateUserMetadata() async {
+  Future<void> updateUserMetadata(String token) async {
     try {
       var currentUser = SendbirdSdk().currentUser;
       Map<String, String> metaData =
@@ -175,6 +184,72 @@ class ModulePushNotifications {
     }
   }
 
+  Future<void> _setupInteractMessage() async {
+    final initialMessage = await FirebaseMessaging.instance.getInitialMessage();
+
+    if (initialMessage?.notification != null && initialMessage?.data != null) {
+      print("GET INITIAL MESSAGE");
+    }
+
+    _onMessageOpenedSubscription?.cancel();
+    _onMessageOpenedSubscription =
+        FirebaseMessaging.onMessageOpenedApp.listen((message) {
+      print("ON MESSAGE OPENED APP");
+    });
+  }
+
+  int _notificationCounter = 0;
+
+  void _initLocalNotifications() async {
+    const initializationSetting = InitializationSettings(
+      android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+      iOS: DarwinInitializationSettings(),
+    );
+    await _flutterLocalNotificationsPlugin.initialize(
+      initializationSetting,
+      onDidReceiveNotificationResponse: (details) =>
+          handleMessageAction(details.payload),
+      onDidReceiveBackgroundNotificationResponse: (details) =>
+          handleMessageAction(details.payload),
+    );
+  }
+
+  static void handleMessageAction(String? payload) {
+    try {
+      if ((payload ?? "").isNotEmpty) {
+        final data = PushNotification.fromJson(jsonDecode(payload!));
+
+        instance.onNotificationSelected?.call(data.channel.channelUrl);
+      }
+    } catch (e) {
+      print("Failed handling notification payload: $e");
+    }
+  }
+
+  Future<void> _showNotification(RemoteMessage message) async {
+    const androidDetails = AndroidNotificationDetails('Artrooms', 'Artrooms',
+        importance: Importance.max, priority: Priority.high, showWhen: false);
+
+    var iosDetails = const DarwinNotificationDetails();
+
+    var platformDetails =
+        NotificationDetails(android: androidDetails, iOS: iosDetails);
+
+    _flutterLocalNotificationsPlugin.show(
+      _notificationCounter++,
+      'Artrooms',
+      message.notification?.body ?? message.data["message"],
+      platformDetails,
+      payload: message.data["sendbird"],
+    );
+  }
+
+  Future<void> showNotification(RemoteMessage message) async {
+    await _showNotification(message);
+  }
+}
+
+class ModulePushNotifications {
   Future<String> getUserFirebaseToken(User user) async {
     try {
       return user.metaData['firebase_token'] ?? "";
@@ -184,26 +259,6 @@ class ModulePushNotifications {
       }
       return "";
     }
-  }
-
-  Future<String> getToken() async {
-    String? token;
-    if (Platform.isAndroid) {
-      token = await FirebaseMessaging.instance.getToken();
-    } else if (Platform.isIOS) {
-      token = await FirebaseMessaging.instance.getAPNSToken();
-      // if (kDebugMode) {
-      //   print('APNS token $apnsToken');
-      // }
-
-      // if (apnsToken != null) {
-      //   token = await FirebaseMessaging.instance.getToken();
-      // }
-    }
-    if (kDebugMode) {
-      print('fcm token $token');
-    }
-    return token ?? "";
   }
 
   void sendPushMessages(

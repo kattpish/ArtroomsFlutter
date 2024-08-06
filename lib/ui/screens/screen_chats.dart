@@ -7,6 +7,7 @@ import 'package:artrooms/ui/screens/screen_login.dart';
 import 'package:artrooms/ui/screens/screen_profile.dart';
 import 'package:artrooms/utils/utils.dart';
 import 'package:artrooms/utils/utils_notifications.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app_badger/flutter_app_badger.dart';
@@ -352,9 +353,23 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver {
     }
   }
 
+  Future<void> _openChatFromNotification(String chatId) async {
+    DataChat? dataChat =
+        _listChatsAll.firstWhereOrNull((element) => element.id == chatId);
+
+    if (dataChat != null) {
+      Future.delayed(const Duration(milliseconds: 500), () {
+        dataChat.groupChannel?.markAsRead();
+        _doSelectChat(context, dataChat);
+      });
+    }
+  }
+
   Future<void> _doLoadChats() async {
     if (!moduleSendBird.isInitialized()) {
-      await moduleSendBird.init();
+      await moduleSendBird.init(onNotificationSelected: (String chatId) {
+        _openChatFromNotification(chatId);
+      });
     } else if (_isLoading) {
       return;
     }

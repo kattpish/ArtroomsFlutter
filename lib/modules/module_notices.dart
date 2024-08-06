@@ -181,11 +181,14 @@ class ModuleNotice {
         if (responseData.isEmpty) {
           return null;
         }
-        return {
+
+        final data = {
           "name": responseData['data']['artistFromUserEmail']['nameKo'],
-          "profilePictureUrl": responseData['data']['artistFromUserEmail']
-              ['user']['profileImg']['accessUrl']
+          "profilePictureUrl": responseData['data']?['artistFromUserEmail']
+              ?['user']?['profileImg']?['accessUrl']
         };
+
+        return data;
       } else {
         if (kDebugMode) {
           print('Failed to get artist info $email ${response.body}');
