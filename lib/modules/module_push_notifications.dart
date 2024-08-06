@@ -24,6 +24,12 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   ModulePushNotification.instance.showNotification(message);
 }
 
+@pragma('vm:entry-point')
+void notificationTapBackground(NotificationResponse notificationResponse) {
+  ModulePushNotification.instance
+      .handleMessageAction(notificationResponse.payload);
+}
+
 class ModulePushNotification {
   final FirebaseMessaging _messaging;
   final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin;
@@ -201,7 +207,7 @@ class ModulePushNotification {
   int _notificationCounter = 0;
 
   void _initLocalNotifications() async {
-    const initializationSetting = InitializationSettings(
+    final initializationSetting = InitializationSettings(
       android: AndroidInitializationSettings('@mipmap/ic_launcher'),
       iOS: DarwinInitializationSettings(),
     );
@@ -209,12 +215,11 @@ class ModulePushNotification {
       initializationSetting,
       onDidReceiveNotificationResponse: (details) =>
           handleMessageAction(details.payload),
-      onDidReceiveBackgroundNotificationResponse: (details) =>
-          handleMessageAction(details.payload),
+      onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
     );
   }
 
-  static void handleMessageAction(String? payload) {
+  void handleMessageAction(String? payload) {
     try {
       if ((payload ?? "").isNotEmpty) {
         final data = PushNotification.fromJson(jsonDecode(payload!));
@@ -239,10 +244,15 @@ class ModulePushNotification {
       sound: RawResourceAndroidNotificationSound(filename),
     );
 
-    var iosDetails = DarwinNotificationDetails(sound: "$filename.caf");
+    var iosDetails = DarwinNotificationDetails(
+      sound: "$filename.caf",
+      presentSound: true,
+    );
 
-    var platformDetails =
-        NotificationDetails(android: androidDetails, iOS: iosDetails);
+    var platformDetails = NotificationDetails(
+      android: androidDetails,
+      iOS: iosDetails,
+    );
 
     _flutterLocalNotificationsPlugin.show(
       _notificationCounter++,
