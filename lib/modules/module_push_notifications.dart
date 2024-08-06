@@ -227,10 +227,19 @@ class ModulePushNotification {
   }
 
   Future<void> _showNotification(RemoteMessage message) async {
-    const androidDetails = AndroidNotificationDetails('Artrooms', 'Artrooms',
-        importance: Importance.max, priority: Priority.high, showWhen: false);
+    final filename = _fileName(instance._notificationSound);
 
-    var iosDetails = const DarwinNotificationDetails();
+    final androidDetails = AndroidNotificationDetails(
+      'Artrooms',
+      'Artrooms',
+      importance: Importance.max,
+      priority: Priority.high,
+      showWhen: false,
+      playSound: true,
+      sound: RawResourceAndroidNotificationSound(filename),
+    );
+
+    var iosDetails = DarwinNotificationDetails(sound: "$filename.caf");
 
     var platformDetails =
         NotificationDetails(android: androidDetails, iOS: iosDetails);
@@ -246,6 +255,33 @@ class ModulePushNotification {
 
   Future<void> showNotification(RemoteMessage message) async {
     await _showNotification(message);
+  }
+
+  String _fileName(String koreanName) {
+    switch (koreanName) {
+      case "기계음 띠링":
+        return "sounda";
+      case "기본음":
+        return "soundb";
+      case "독":
+        return "soundc";
+      case "동전":
+        return "soundd";
+      case "등장":
+        return "sounde";
+      case "똑":
+        return "soundf";
+      case "뽁":
+        return "soundg";
+      case "삑뾱":
+        return "soundh";
+      case "알림":
+        return "soundi";
+      case "영롱한 띠링":
+        return "soundj";
+      default:
+        return "sounda";
+    }
   }
 }
 

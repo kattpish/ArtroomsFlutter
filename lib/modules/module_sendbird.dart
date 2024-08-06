@@ -45,8 +45,6 @@ class ModuleSendBird {
         user = await SendbirdSdk().connect(email);
 
         String notification = dbStore.getNotificationValue();
-
-        // await modulePushNotifications.init();
         await Firebase.initializeApp(
           options: DefaultFirebaseOptions.currentPlatform,
         );
