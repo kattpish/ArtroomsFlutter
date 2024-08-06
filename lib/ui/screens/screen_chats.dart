@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:isolate';
 
 import 'package:artrooms/beans/bean_message.dart';
 import 'package:artrooms/main.dart';
@@ -48,8 +47,6 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver {
   final Map<String, ScreenChatroom> _listScreenChatrooms = {};
   final ModuleChat _chatModule = ModuleChat();
 
-  late ReceivePort receivePort;
-
   @override
   void initState() {
     super.initState();
@@ -64,9 +61,6 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver {
     }
 
     _requestPermissionAndLoadChat();
-
-    receivePort = ReceivePort();
-    startIsolate();
 
     _searchController.addListener(() {
       _doSearchChats(_searchController.text, true);
@@ -383,7 +377,7 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver {
 
           for (DataChat dataChat in chats) {
             if (dbStore.isNotificationChat(dataChat)) {
-              showNotificationChat(dataChat);
+              // showNotificationChat(dataChat);
             }
 
             _chatModule.addChannelEventHandler(dataChat.groupChannel!,
@@ -425,25 +419,6 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver {
       showNotificationMessage(
           newDataChat, DataMessage.fromBaseMessage(message));
     }
-  }
-
-  void startIsolate() async {
-    await Isolate.spawn(timerEntryPoint, receivePort.sendPort);
-    receivePort.listen((data) {
-      if (data == 'loadChats') {
-        _doLoadChats();
-      }
-    });
-  }
-
-  static void timerEntryPoint(SendPort sendPort) {
-    Timer.periodic(Duration(seconds: timeSecRefreshChat), (timer) {
-      sendPort.send('loadChats');
-    });
-  }
-
-  void updateChatList() {
-    _doLoadChats();
   }
 
   void _doSearchChats(String query, bool showLoader) {
