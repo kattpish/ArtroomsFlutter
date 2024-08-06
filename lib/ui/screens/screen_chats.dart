@@ -9,6 +9,7 @@ import 'package:artrooms/utils/utils.dart';
 import 'package:artrooms/utils/utils_notifications.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_app_badger/flutter_app_badger.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:sendbird_sdk/sendbird_sdk.dart';
 
@@ -50,6 +51,10 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
+
+    FlutterAppBadger.removeBadge();
+
     addState(this);
 
     if (!dbStore.isLoggedIn()) {
@@ -83,6 +88,17 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver {
     }
 
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+
+    if (state == AppLifecycleState.resumed) {
+      _doLoadChats();
+    }
+
+    FlutterAppBadger.removeBadge();
   }
 
   @override
