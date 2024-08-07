@@ -298,19 +298,6 @@ class ModuleSendBird {
     return completer.future;
   }
 
-  Future<void> markMessageAsRead(GroupChannel groupChannel) async {
-    try {
-      groupChannel.markAsRead();
-      if (kDebugMode) {
-        print("Messages marked as read.");
-      }
-    } catch (e) {
-      if (kDebugMode) {
-        print("Failed to mark message as read: $e");
-      }
-    }
-  }
-
   void addChannelEventHandler(
       GroupChannel groupChannel, ChannelEventHandler listener) {
     SendbirdSdk().addChannelEventHandler(groupChannel.channelUrl, listener);

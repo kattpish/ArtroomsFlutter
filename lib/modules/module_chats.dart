@@ -21,12 +21,6 @@ class ModuleChat {
     return chats;
   }
 
-  Future<void> markMessageAsRead(DataChat dataChat) async {
-    if (dataChat.groupChannel != null) {
-      moduleSendBird.markMessageAsRead(dataChat.groupChannel!);
-    }
-  }
-
   void addChannelEventHandler(
       GroupChannel groupChannel, ChannelEventHandler listener) {
     moduleSendBird.addChannelEventHandlerKey(

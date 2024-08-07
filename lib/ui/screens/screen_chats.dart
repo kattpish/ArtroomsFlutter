@@ -292,7 +292,6 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver {
     });
     closeKeyboard(context);
 
-    _chatModule.markMessageAsRead(dataChat);
     setState(() {
       dataChat.unreadMessages = 0;
     });
