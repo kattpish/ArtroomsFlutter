@@ -1,8 +1,9 @@
 import 'package:artrooms/beans/bean_file.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
+import 'package:photo_view/photo_view_gallery.dart';
 
-import '../../listeners/scroll_bouncing_physics.dart';
 import '../../utils/utils.dart';
 import '../../utils/utils_media.dart';
 import '../theme/theme_colors.dart';
@@ -31,8 +32,6 @@ class ScreenPhotoView extends StatefulWidget {
 
 class _ScreenPhotoView extends State<ScreenPhotoView> {
   bool isDownloading = false;
-  bool _isZoomed = false;
-  double _initialScale = 0;
   late int currentIndex;
   late PageController _pageController;
   late PhotoViewController _photoViewController;
@@ -43,18 +42,7 @@ class _ScreenPhotoView extends State<ScreenPhotoView> {
     currentIndex = widget.initialIndex;
     _pageController = PageController(initialPage: currentIndex);
 
-    _photoViewController = PhotoViewController()
-      ..outputStateStream.listen((state) {
-        if (_initialScale == 0) {
-          _initialScale = state.scale ?? 0;
-        }
-        bool isZoomed = (state.scale ?? 0) > _initialScale ? true : false;
-        if (_isZoomed != isZoomed) {
-          setState(() {
-            _isZoomed = isZoomed;
-          });
-        }
-      });
+    _photoViewController = PhotoViewController();
   }
 
   @override
@@ -81,27 +69,42 @@ class _ScreenPhotoView extends State<ScreenPhotoView> {
                       children: [
                         StretchingOverscrollIndicator(
                           axisDirection: AxisDirection.right,
-                          child: ScrollConfiguration(
-                            behavior: scrollBehavior,
-                            child: PageView.builder(
-                              controller: _pageController,
-                              itemCount: widget.images.length,
-                              pageSnapping: true,
-                              physics: _isZoomed
-                                  ? const NeverScrollableScrollPhysics()
-                                  : const AlwaysScrollableScrollPhysics(),
-                              onPageChanged: (int index) {
-                                setState(() {
-                                  currentIndex = index;
-                                  _initialScale = 0;
-                                  _isZoomed = false;
-                                });
-                              },
-                              itemBuilder: (context, index) {
-                                FileItem fileItem = widget.images[index];
-                                return photoView(context, fileItem);
-                              },
-                            ),
+                          child: PhotoViewGallery.builder(
+                            scrollPhysics: const BouncingScrollPhysics(),
+                            builder: (BuildContext context, int index) {
+                              print("URL: ${widget.images[index].url}\n");
+                              ImageProvider imageProvider;
+                              if (widget.images[index].url.isEmpty) {
+                                imageProvider =
+                                    FileImage(widget.images[index].file);
+                              } else {
+                                imageProvider = CachedNetworkImageProvider(
+                                    widget.images[index].url);
+                              }
+                              return PhotoViewGalleryPageOptions(
+                                imageProvider: imageProvider,
+                                initialScale: PhotoViewComputedScale.contained,
+                                // heroAttributes: PhotoViewHeroAttributes(
+                                //     tag: widget.images[index].index),
+                              );
+                            },
+                            itemCount: widget.images.length,
+                            loadingBuilder: (context, event) {
+                              return Center(
+                                child: CircularProgressIndicator(
+                                  value: event == null
+                                      ? 0
+                                      : event.cumulativeBytesLoaded /
+                                          event.expectedTotalBytes!,
+                                ),
+                              );
+                            },
+                            pageController: _pageController,
+                            onPageChanged: (index) {
+                              setState(() {
+                                currentIndex = index;
+                              });
+                            },
                           ),
                         ),
                       ],
@@ -231,44 +234,6 @@ class _ScreenPhotoView extends State<ScreenPhotoView> {
           );
         }),
       ),
-    );
-  }
-
-  Widget photoView(BuildContext context, FileItem fileItem) {
-    late ImageProvider imageProvider;
-    if (fileItem.url.isEmpty) {
-      imageProvider = FileImage(fileItem.file);
-    } else {
-      imageProvider = NetworkImage(fileItem.url);
-    }
-
-    return PhotoView(
-      controller: _photoViewController,
-      imageProvider: imageProvider,
-      minScale: PhotoViewComputedScale.contained,
-      maxScale: PhotoViewComputedScale.covered * 4,
-      enableRotation: false,
-      disableGestures: false,
-      tightMode: true,
-      backgroundDecoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.5),
-      ),
-      loadingBuilder: (context, event) {
-        return Center(
-          child: CircularProgressIndicator(
-            value: event == null
-                ? 0
-                : event.cumulativeBytesLoaded / event.expectedTotalBytes!,
-          ),
-        );
-      },
-      errorBuilder: (context, error, stackTrace) {
-        return Image.asset(
-          'assets/images/chats/placeholder_photo.png',
-          width: 0,
-          fit: BoxFit.cover,
-        );
-      },
     );
   }
 }

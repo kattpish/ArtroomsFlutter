@@ -1,6 +1,3 @@
-
-import 'dart:io';
-
 import 'package:artrooms/ui/widgets/widget_media.dart';
 
 import 'package:flutter/material.dart';
@@ -9,9 +6,8 @@ import '../../beans/bean_file.dart';
 import '../../beans/bean_message.dart';
 import '../../listeners/scroll_bouncing_physics.dart';
 
-
-Widget widgetChatDrawerAttachments(BuildContext context, List<DataMessage> listAttachmentsImages) {
-
+Widget widgetChatDrawerAttachments(
+    BuildContext context, List<DataMessage> listAttachmentsImages) {
   List<FileItem> listImages = toFileItems(listAttachmentsImages);
 
   return ScrollConfiguration(
@@ -21,14 +17,15 @@ Widget widgetChatDrawerAttachments(BuildContext context, List<DataMessage> listA
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          for(FileItem fileItem in listImages)
+          for (FileItem fileItem in listImages)
             Container(
               margin: const EdgeInsets.only(right: 4),
               child: InkWell(
                 splashColor: Colors.transparent,
                 highlightColor: Colors.transparent,
                 onTap: () {
-                  doOpenPhotoView(context, listImages, initialIndex: fileItem.index);
+                  doOpenPhotoView(context, listImages,
+                      initialIndex: fileItem.index);
                 },
                 child: Container(
                   width: 80,
@@ -36,7 +33,8 @@ Widget widgetChatDrawerAttachments(BuildContext context, List<DataMessage> listA
                   clipBehavior: Clip.antiAlias,
                   decoration: ShapeDecoration(
                     shape: RoundedRectangleBorder(
-                      side: const BorderSide(width: 1, color: Color(0xFFF3F3F3)),
+                      side:
+                          const BorderSide(width: 1, color: Color(0xFFF3F3F3)),
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
