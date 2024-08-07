@@ -359,7 +359,6 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver {
 
     if (dataChat != null) {
       Future.delayed(const Duration(milliseconds: 500), () {
-        dataChat.groupChannel?.markAsRead();
         _doSelectChat(context, dataChat);
       });
     }

@@ -55,8 +55,15 @@ class ModuleMedia {
           assetFiles.addAll(images);
           print('asset count album is 222 ${assetFiles.length}');
 
-          for (AssetEntity asset
-              in images.sublist((page - 1) * pageSize, page * pageSize)) {
+          final start = (page - 1) * pageSize;
+          int end = page * pageSize;
+
+          end = end > images.length ? images.length : end;
+
+          final imgs =
+              start < images.length ? images.sublist(start, end) : images;
+
+          for (AssetEntity asset in imgs) {
             File? file = await asset.originFile;
 
             final Uint8List? thumbData = await asset.thumbnailDataWithSize(
@@ -67,11 +74,20 @@ class ModuleMedia {
               File? thumbFile;
               if (thumbData != null) {
                 final String fileName =
-                    path.basename(asset.relativePath ?? "") +
-                        (asset.title ?? "");
-                final String thumbnailPath =
-                    path.join((await getTemporaryDirectory()).path, fileName);
-                thumbFile = File(thumbnailPath)..writeAsBytesSync(thumbData);
+                    asset.title?.isNotEmpty == true ? asset.title! : asset.id;
+                final String safeFileName =
+                    fileName.replaceAll(RegExp(r'[^\w\s-]'), '_');
+
+                try {
+                  final directory = await getTemporaryDirectory();
+                  final String thumbnailPath =
+                      path.join(directory.path, safeFileName);
+
+                  thumbFile = File(thumbnailPath)..writeAsBytesSync(thumbData);
+                } catch (e) {
+                  print("Error writing thumbnail file: $e");
+                  thumbFile = null;
+                }
               }
 
               FileItem fileItem = FileItem(
