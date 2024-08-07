@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:artrooms/beans/bean_chat.dart';
 import 'package:artrooms/beans/bean_message.dart';
 import 'package:artrooms/beans/bean_notification.dart';
+import 'package:artrooms/data/module_datastore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
@@ -21,7 +22,12 @@ import '../api/api.dart';
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
 
-  ModulePushNotification.instance.showNotification(message);
+  final dbStoreA = DBStore();
+  await dbStoreA.init();
+
+  final notificationSound = dbStoreA.getNotificationValue();
+
+  ModulePushNotification.instance.showNotification(message, notificationSound);
 }
 
 @pragma('vm:entry-point')
@@ -90,7 +96,7 @@ class ModulePushNotification {
             if (!_isChatPageActive ||
                 (_isChatPageActive &&
                     message.data['type'] != 'MESSAGE_RECEIVED')) {
-              _showNotification(message);
+              _showNotification(message, _notificationSound);
             }
           });
 
@@ -138,6 +144,10 @@ class ModulePushNotification {
 
   void setNotificationSound(String notificationSound) {
     _notificationSound = notificationSound;
+  }
+
+  String getNotificationSound() {
+    return _notificationSound;
   }
 
   Future<String> getToken() async {
@@ -211,7 +221,7 @@ class ModulePushNotification {
   int _notificationCounter = 0;
 
   void _initLocalNotifications() async {
-    final initializationSetting = InitializationSettings(
+    const initializationSetting = InitializationSettings(
       android: AndroidInitializationSettings('@mipmap/ic_launcher'),
       iOS: DarwinInitializationSettings(),
     );
@@ -235,8 +245,12 @@ class ModulePushNotification {
     }
   }
 
-  Future<void> _showNotification(RemoteMessage message) async {
-    final filename = _fileName(instance._notificationSound);
+  Future<void> _showNotification(
+    RemoteMessage message,
+    String? notificationSound,
+  ) async {
+    final filename =
+        _fileName(notificationSound ?? instance._notificationSound);
 
     final androidDetails = AndroidNotificationDetails(
       'Artrooms',
@@ -250,6 +264,8 @@ class ModulePushNotification {
 
     var iosDetails = DarwinNotificationDetails(
       sound: "$filename.caf",
+      presentAlert: true,
+      presentBadge: true,
       presentSound: true,
     );
 
@@ -267,8 +283,9 @@ class ModulePushNotification {
     );
   }
 
-  Future<void> showNotification(RemoteMessage message) async {
-    await _showNotification(message);
+  Future<void> showNotification(
+      RemoteMessage message, String? notificationSound) async {
+    await _showNotification(message, notificationSound);
   }
 
   String _fileName(String koreanName) {
