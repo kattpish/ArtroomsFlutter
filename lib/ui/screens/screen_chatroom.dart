@@ -102,7 +102,7 @@ class _ScreenChatroomState extends State<ScreenChatroom>
   DataMessage? _replyMessage;
   bool _isMentioning = false;
 
-  int _imagePage = 1;
+  int _imagePage = 0;
   int _selectedImages = 0;
   int _selectedMedia = 0;
   bool _selectMode = true;
@@ -992,6 +992,23 @@ class _ScreenChatroomState extends State<ScreenChatroom>
                     ),
                     delegate: SliverChildBuilderDelegate(
                       (BuildContext context, int index) {
+                        if (index >= _filesImages.length) {
+                          return Container(
+                            clipBehavior: Clip.antiAlias,
+                            decoration: BoxDecoration(
+                              color: _isLoadMediaMore
+                                  ? Colors.grey[400]
+                                  : Colors.white,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: const Center(
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                              ),
+                            ),
+                          );
+                        }
+
                         var fileImage = _filesImages[index];
                         return Container(
                           clipBehavior: Clip.antiAlias,
@@ -1099,7 +1116,7 @@ class _ScreenChatroomState extends State<ScreenChatroom>
                           ),
                         );
                       },
-                      childCount: _filesImages.length,
+                      childCount: calculateSliverCount(_filesImages.length),
                     ),
                   ),
                 ),
@@ -1109,6 +1126,15 @@ class _ScreenChatroomState extends State<ScreenChatroom>
         ),
       ),
     );
+  }
+
+  int calculateSliverCount(int itemLength) {
+    final int crossAxisCount = isTablet(context) ? 6 : 3;
+    int remainder = itemLength % crossAxisCount;
+    int numberOfGreyContainers =
+        (remainder == 0) ? 0 : crossAxisCount - remainder;
+
+    return itemLength + numberOfGreyContainers;
   }
 
   @override
@@ -1360,7 +1386,7 @@ class _ScreenChatroomState extends State<ScreenChatroom>
       await _moduleMedia.loadFileImages1(
           isShowSettings: isShow,
           page: _imagePage,
-          pageSize: 20,
+          pageSize: 100,
           onLoad: (FileItem fileItem) {
             if (!mounted) {
               return;
@@ -1379,14 +1405,6 @@ class _ScreenChatroomState extends State<ScreenChatroom>
           });
 
       print('========_doLoadMedia middle ${_filesImages.length}');
-      for (FileItem fileItem in _filesImages) {
-        if (await fileItem.file.exists()) {
-          return;
-        }
-        setState(() {
-          _filesImages.remove(fileItem);
-        });
-      }
     } catch (e) {
       print('ERROR $e');
     } finally {

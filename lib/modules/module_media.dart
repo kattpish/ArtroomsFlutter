@@ -34,86 +34,89 @@ class ModuleMedia {
   Future<List<FileItem>> loadFileImages1(
       {bool isShowSettings = false,
       int page = 1,
-      int pageSize = 20,
+      int pageSize = 100,
       Null Function(FileItem fileItem)? onLoad,
       Null Function()? onLoadEnd}) async {
-    List<AssetEntity> assetFiles = [];
-
-    PhotoManager.clearFileCache();
+    // PhotoManager.clearFileCache();
 
     PermissionState result = await PhotoManager.requestPermissionExtend();
 
     if (result.isAuth || result.hasAccess) {
-      List<AssetPathEntity> albums =
-          await PhotoManager.getAssetPathList(type: RequestType.image);
+      final filterOption = FilterOptionGroup()
+        ..addOrderOption(
+          const OrderOption(type: OrderOptionType.createDate),
+        );
 
-      for (AssetPathEntity album in albums) {
-        await album.assetCountAsync.then((assetCount) async {
-          print('asset count album is ${assetCount}');
-          List<AssetEntity> images =
-              await album.getAssetListPaged(page: 0, size: assetCount);
-          assetFiles.addAll(images);
-          print('asset count album is 222 ${assetFiles.length}');
+      final int count = await PhotoManager.getAssetCount(
+        type: RequestType.image,
+        filterOption: filterOption,
+      );
+      print('Total Count: ${count}');
 
-          final start = (page - 1) * pageSize;
-          int end = page * pageSize;
+      final List<AssetEntity> images = await PhotoManager.getAssetListPaged(
+        page: page - 1,
+        pageCount: pageSize,
+        filterOption: filterOption,
+      );
+      print('Total Images: ${images.length}');
 
-          end = end > images.length ? images.length : end;
+      for (AssetEntity asset in images) {
+        final directory = await getTemporaryDirectory();
 
-          final imgs =
-              start < images.length ? images.sublist(start, end) : images;
+        final String fileName =
+            asset.title?.isNotEmpty == true ? asset.title! : asset.id;
+        final String safeFileName =
+            fileName.replaceAll(RegExp(r'[^\w\s-]'), '_');
 
-          for (AssetEntity asset in imgs) {
-            File? file = await asset.originFile;
+        // final String filePath = path.join(directory.path, safeFileName);
+        final String thumbnailPath =
+            path.join(directory.path, "${safeFileName}_thumbnail");
 
-            final Uint8List? thumbData = await asset.thumbnailDataWithSize(
+        File? file = await asset.originFile;
+
+        if (file != null) {
+          final extension = path.extension(file.path);
+
+          final tempData = await asset.originBytes;
+
+          if (tempData != null) {
+            // File tempFile = File("$filePath$extension")
+            //   ..writeAsBytesSync(tempData);
+
+            File? thumbFile;
+            final thumbData = await asset.thumbnailDataWithSize(
               const ThumbnailSize(100, 100),
             );
-
-            if (file != null) {
-              File? thumbFile;
-              if (thumbData != null) {
-                final String fileName =
-                    asset.title?.isNotEmpty == true ? asset.title! : asset.id;
-                final String safeFileName =
-                    fileName.replaceAll(RegExp(r'[^\w\s-]'), '_');
-
-                try {
-                  final directory = await getTemporaryDirectory();
-                  final String thumbnailPath =
-                      path.join(directory.path, safeFileName);
-
-                  thumbFile = File(thumbnailPath)..writeAsBytesSync(thumbData);
-                } catch (e) {
-                  print("Error writing thumbnail file: $e");
-                  thumbFile = null;
-                }
-              }
-
-              FileItem fileItem = FileItem(
-                  file: file,
-                  thumbFile: thumbFile,
-                  name: file.path,
-                  path: file.path);
-
-              if (onLoad != null) {
-                onLoad(fileItem);
-              }
-
-              if (!imageFiles.contains(fileItem)) {
-                imageFiles.add(fileItem);
+            if (thumbData != null) {
+              try {
+                thumbFile = File("$thumbnailPath$extension")
+                  ..writeAsBytesSync(thumbData);
+              } catch (e) {
+                print("Error writing thumbnail file: $e");
+                thumbFile = null;
               }
             }
+
+            FileItem fileItem = FileItem(
+                file: file,
+                thumbFile: thumbFile,
+                name: file.path,
+                path: file.path);
+
+            if (onLoad != null) {
+              onLoad(fileItem);
+            }
+
+            if (!imageFiles.contains(fileItem)) {
+              imageFiles.add(fileItem);
+            }
           }
-        });
+        }
       }
+
       if (onLoadEnd != null) {
         onLoadEnd();
       }
-
-      assetFiles.sort((a, b) {
-        return b.createDateTime.compareTo(a.createDateTime);
-      });
     } else {
       if (isShowSettings) {
         PhotoManager.openSetting();
