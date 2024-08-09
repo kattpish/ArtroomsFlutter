@@ -621,13 +621,12 @@ class _ScreenChatroomState extends State<ScreenChatroom>
                     if (_showAttachment) {
                       _doAttachmentPickerClose();
                       _deselectPickedFiles(false);
+                      showKeyboard(context, _messageFocusNode);
                     } else {
                       _doAttachmentPickerMin();
                       _doLoadMedia(true);
                       closeKeyboard(context);
                     }
-                    // setState(() {
-                    // });
                   },
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
