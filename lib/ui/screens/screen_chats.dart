@@ -5,6 +5,7 @@ import 'package:artrooms/main.dart';
 import 'package:artrooms/ui/screens/screen_chatroom.dart';
 import 'package:artrooms/ui/screens/screen_login.dart';
 import 'package:artrooms/ui/screens/screen_profile.dart';
+import 'package:artrooms/utils/debouncer.dart';
 import 'package:artrooms/utils/utils.dart';
 import 'package:artrooms/utils/utils_notifications.dart';
 import 'package:collection/collection.dart';
@@ -49,6 +50,8 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver {
   final Map<String, ScreenChatroom> _listScreenChatrooms = {};
   final ModuleChat _chatModule = ModuleChat();
 
+  final _debouncer = Debouncer(milliseconds: 100);
+
   @override
   void initState() {
     super.initState();
@@ -69,7 +72,9 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver {
     _requestPermissionAndLoadChat();
 
     _searchController.addListener(() {
-      _doSearchChats(_searchController.text, true);
+      _debouncer.run(() {
+        _doSearchChats(_searchController.text, true);
+      });
     });
   }
 
@@ -459,20 +464,33 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver {
       });
     }
 
-    Future.delayed(const Duration(milliseconds: 100), () {
-      List<DataChat> filtered = _listChatsAll.where((chat) {
-        return chat.name.toLowerCase().contains(query.toLowerCase()) ||
-            chat.lastMessage.content
-                .toLowerCase()
-                .contains(query.toLowerCase());
-      }).toList();
+    List<DataChat> filtered = query.isEmpty
+        ? _listChatsAll
+        : _listChatsAll.where((chat) {
+            return chat.name.toLowerCase().contains(query.toLowerCase()) ||
+                chat.lastMessage.content
+                    .toLowerCase()
+                    .contains(query.toLowerCase()) ||
+                (chat.creator?.nickname ?? "")
+                    .toLowerCase()
+                    .contains(query.toLowerCase()) ||
+                (chat.groupChannel != null &&
+                    chat.groupChannel!.members
+                        .where((member) =>
+                            member.nickname
+                                .toLowerCase()
+                                .contains(query.toLowerCase()) ||
+                            member.userId
+                                .toLowerCase()
+                                .contains(query.toLowerCase()))
+                        .isNotEmpty);
+          }).toList();
 
-      setState(() {
-        _listChats.clear();
-        _listChats.addAll(filtered);
-        _isSearching = false;
-        _isLoading = false;
-      });
+    setState(() {
+      _listChats.clear();
+      _listChats.addAll(filtered);
+      _isSearching = false;
+      _isLoading = false;
     });
   }
 
