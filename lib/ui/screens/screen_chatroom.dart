@@ -732,165 +732,108 @@ class _ScreenChatroomState extends State<ScreenChatroom>
                   toolbarHeight: _showAttachment &&
                           _bottomSheetHeight >
                               (_bottomSheetHeightMax - _appBarHeight - 5)
-                      ? 140
+                      ? 112
                       : 80,
                   leading: Container(),
                   backgroundColor: Colors.transparent,
                   flexibleSpace: Container(
                     color: Colors.white,
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
-                        Center(
+                        const SizedBox(
+                          height: 8,
+                        ),
+                        Container(
+                          height: 16,
+                          padding: const EdgeInsets.all(4.0),
                           child: Container(
-                            height: 16,
-                            padding: const EdgeInsets.all(4.0),
-                            child: Container(
-                              width: 40,
-                              height: 5,
-                              decoration: const BoxDecoration(
-                                color: colorMainGrey250,
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(24)),
-                              ),
+                            width: 40,
+                            height: 5,
+                            decoration: const BoxDecoration(
+                              color: colorMainGrey250,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(24)),
                             ),
                           ),
                         ),
                         const SizedBox(
-                          height: 10,
+                          height: 8,
                         ),
                         Visibility(
                           visible: _showAttachment &&
                               _bottomSheetHeight >
                                   (_bottomSheetHeightMax - _appBarHeight - 5),
-                          child: AppBar(
-                            backgroundColor: Colors.white,
-                            title: Text(
-                              !_selectMode ? '이미지' : "$_selectedImages개 선택",
-                              style: const TextStyle(
-                                fontSize: 18,
-                                color: colorMainGrey900,
-                                fontFamily: 'SUIT',
-                                fontWeight: FontWeight.w700,
-                                height: 0,
-                                letterSpacing: -0.36,
-                              ),
-                            ),
-                            elevation: 0,
-                            scrolledUnderElevation: 0,
-                            toolbarHeight: _appBarHeight,
-                            centerTitle: _selectMode,
-                            leading: Row(
-                              children: [
-                                Visibility(
-                                  visible: !_selectMode,
-                                  child: IconButton(
-                                    icon: const Icon(
-                                      Icons.arrow_back_ios,
-                                      color: colorMainGrey250,
-                                      size: 20,
-                                    ),
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                  ),
-                                ),
-                                Visibility(
-                                  visible: _selectMode,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Center(
+                                child: InkWell(
+                                  splashColor: Colors.transparent,
+                                  highlightColor: Colors.transparent,
+                                  onTap: () {
+                                    _doDeselectPickedImages();
+                                    _doAttachmentPickerMin();
+                                  },
                                   child: Container(
-                                    height: double.infinity,
-                                    margin: const EdgeInsets.only(left: 8.0),
-                                    child: Center(
-                                      child: InkWell(
-                                        splashColor: Colors.transparent,
-                                        highlightColor: Colors.transparent,
-                                        onTap: () {
-                                          _doDeselectPickedImages();
-                                          _doAttachmentPickerMin();
-                                        },
-                                        child: Container(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: const Text(
-                                            '취소',
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              color: colorMainGrey600,
-                                              fontFamily: 'SUIT',
-                                              fontWeight: FontWeight.w400,
-                                              height: 0,
-                                              letterSpacing: -0.32,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            actions: [
-                              Visibility(
-                                visible: _selectMode,
-                                child: Container(
-                                  height: double.infinity,
-                                  margin: const EdgeInsets.only(right: 8.0),
-                                  child: Center(
-                                    child: InkWell(
-                                      splashColor: Colors.transparent,
-                                      highlightColor: Colors.transparent,
-                                      onTap: () {
-                                        _doDeselectPickedImages();
-                                      },
-                                      child: Container(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: const Text('선택 해제',
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              color: colorMainGrey600,
-                                              fontFamily: 'SUIT',
-                                              fontWeight: FontWeight.w400,
-                                              height: 0,
-                                              letterSpacing: -0.32,
-                                            )),
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: const Text(
+                                      '취소',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: colorMainGrey600,
+                                        fontFamily: 'SUIT',
+                                        fontWeight: FontWeight.w400,
+                                        height: 0,
+                                        letterSpacing: -0.32,
                                       ),
                                     ),
                                   ),
                                 ),
                               ),
-                              Visibility(
-                                visible: !_selectMode,
-                                child: Container(
-                                  height: double.infinity,
-                                  margin: const EdgeInsets.only(left: 8.0),
-                                  child: Center(
-                                    child: InkWell(
-                                      splashColor: Colors.transparent,
-                                      highlightColor: Colors.transparent,
-                                      onTap: () {
-                                        setState(() {
-                                          _selectMode = true;
-                                        });
-                                      },
-                                      child: Container(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: const Text(
-                                          '선택',
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                            color: colorMainGrey600,
-                                            fontFamily: 'SUIT',
-                                            fontWeight: FontWeight.w400,
-                                            height: 0,
-                                            letterSpacing: -0.32,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
+                              Text(
+                                !_selectMode ? '이미지' : "$_selectedImages개 선택",
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  color: colorMainGrey900,
+                                  fontFamily: 'SUIT',
+                                  fontWeight: FontWeight.w700,
+                                  height: 0,
+                                  letterSpacing: -0.36,
                                 ),
                               ),
+                              Center(
+                                child: InkWell(
+                                  splashColor: Colors.transparent,
+                                  highlightColor: Colors.transparent,
+                                  onTap: () {
+                                    _doDeselectPickedImages();
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: const Text('선택 해제',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          color: colorMainGrey600,
+                                          fontFamily: 'SUIT',
+                                          fontWeight: FontWeight.w400,
+                                          height: 0,
+                                          letterSpacing: -0.32,
+                                        )),
+                                  ),
+                                ),
+                              )
                             ],
                           ),
                         ),
+                        if (_showAttachment &&
+                            _bottomSheetHeight >
+                                (_bottomSheetHeightMax - _appBarHeight - 5))
+                          const SizedBox(
+                            height: 8,
+                          ),
                         Row(
                           children: [
                             Expanded(
@@ -975,6 +918,9 @@ class _ScreenChatroomState extends State<ScreenChatroom>
                               ),
                             ),
                           ],
+                        ),
+                        const SizedBox(
+                          height: 16,
                         ),
                       ],
                     ),
@@ -1522,8 +1468,6 @@ class _ScreenChatroomState extends State<ScreenChatroom>
       _showAttachment = true;
       _bottomSheetHeight = _bottomSheetHeightMin;
     });
-    // setState(() {
-    // });
     _draggableScrollableController.reset();
   }
 
