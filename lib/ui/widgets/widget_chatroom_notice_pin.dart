@@ -1,19 +1,19 @@
-
 import 'package:artrooms/beans/bean_notice.dart';
 import 'package:artrooms/utils/utils_screen.dart';
 import 'package:flutter/material.dart';
 
 import '../theme/theme_colors.dart';
 
-
 class WidgetChatroomNoticePin extends StatefulWidget {
-
   final DataNotice dataNotice;
   final bool isExpandNotice;
   final void Function() onToggle;
   final void Function() onHide;
 
-  const WidgetChatroomNoticePin(this.dataNotice, this.isExpandNotice, {super.key,
+  const WidgetChatroomNoticePin(
+    this.dataNotice,
+    this.isExpandNotice, {
+    super.key,
     required this.onToggle,
     required this.onHide,
   });
@@ -22,34 +22,74 @@ class WidgetChatroomNoticePin extends StatefulWidget {
   State<WidgetChatroomNoticePin> createState() {
     return _WidgetChatroomNoticePinState();
   }
-
 }
 
 class _WidgetChatroomNoticePinState extends State<WidgetChatroomNoticePin> {
-
-  late bool isExpanded;
+  late int maxLines;
 
   @override
   void initState() {
     super.initState();
-    isExpanded = widget.isExpandNotice;
+
+    maxLines = widget.isExpandNotice ? 5 : 1;
+  }
+
+  @override
+  void didUpdateWidget(WidgetChatroomNoticePin oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.isExpandNotice != widget.isExpandNotice) {
+      _adjustMaxLines();
+    }
+  }
+
+  void _adjustMaxLines() {
+    if (widget.dataNotice.notice.isEmpty || !widget.isExpandNotice) {
+      setState(() {
+        maxLines = 1;
+      });
+      return;
+    }
+
+    final textSpan = TextSpan(
+      text: widget.dataNotice.notice,
+      style: TextStyle(
+        color: const Color(0xFF3A3A3A),
+        fontSize: widget.isExpandNotice
+            ? (isTablet(context) ? 17 : 14)
+            : (isTablet(context) ? 17 : 14),
+        fontFamily: 'Pretendard',
+        fontWeight: FontWeight.w400,
+        height: 0,
+        letterSpacing: -0.28,
+      ),
+    );
+
+    final textPainter = TextPainter(
+      text: textSpan,
+      maxLines: 5,
+      textDirection: TextDirection.ltr,
+    );
+
+    textPainter.layout(maxWidth: MediaQuery.of(context).size.width);
+
+    final numLines = textPainter.computeLineMetrics().length;
+
+    setState(() {
+      maxLines = numLines < 5 ? numLines : 5;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-
-    return AnimatedContainer(
-      height: isExpanded ? null : (widget.isExpandNotice ? 150 : 44),
-      duration: const Duration(milliseconds: 200),
-      onEnd: () {
-        setState(() {
-          isExpanded = widget.isExpandNotice;
-        });
-      },
+    return Padding(
+      padding: const EdgeInsets.only(top: 8),
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 14, vertical: 0),
-        padding: EdgeInsets.only(top: isExpanded ? 4 : 4, bottom: isExpanded ? 4 : 0,),
-        constraints: BoxConstraints(minHeight: widget.isExpandNotice ? 50 : 44),
+        padding: EdgeInsets.only(
+          top: widget.isExpandNotice ? 4 : 4,
+          bottom: widget.isExpandNotice ? 4 : 0,
+        ),
+        constraints: BoxConstraints(minHeight: widget.isExpandNotice ? 60 : 44),
         decoration: ShapeDecoration(
           color: Colors.white,
           shape: RoundedRectangleBorder(
@@ -69,11 +109,6 @@ class _WidgetChatroomNoticePinState extends State<WidgetChatroomNoticePin> {
           highlightColor: Colors.transparent,
           onTap: () {
             widget.onToggle();
-            setState(() {
-              if(isExpanded) {
-                isExpanded = false;
-              }
-            });
           },
           child: Container(
             width: double.infinity,
@@ -116,8 +151,7 @@ class _WidgetChatroomNoticePinState extends State<WidgetChatroomNoticePin> {
                                     decoration: const BoxDecoration(
                                       image: DecorationImage(
                                         image: AssetImage(
-                                            "assets/images/icons/icon_notice.png"
-                                        ),
+                                            "assets/images/icons/icon_notice.png"),
                                         fit: BoxFit.fill,
                                       ),
                                     ),
@@ -133,20 +167,23 @@ class _WidgetChatroomNoticePinState extends State<WidgetChatroomNoticePin> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Container(
-                                      constraints: BoxConstraints(minHeight: isExpanded ? 80 : 20),
-                                      alignment: isExpanded && widget.isExpandNotice ? Alignment.topLeft : Alignment.centerLeft,
+                                    Align(
+                                      alignment: widget.isExpandNotice
+                                          ? Alignment.topLeft
+                                          : Alignment.centerLeft,
                                       child: Text(
                                         widget.dataNotice.notice,
                                         style: TextStyle(
                                           color: const Color(0xFF3A3A3A),
-                                          fontSize: isExpanded ? (isTablet(context) ? 17 : 14) : (isTablet(context) ? 17 : 14),
+                                          fontSize: widget.isExpandNotice
+                                              ? (isTablet(context) ? 17 : 14)
+                                              : (isTablet(context) ? 17 : 14),
                                           fontFamily: 'Pretendard',
                                           fontWeight: FontWeight.w400,
                                           height: 0,
                                           letterSpacing: -0.28,
                                         ),
-                                        maxLines: isExpanded && widget.isExpandNotice ? 5 : 1,
+                                        maxLines: maxLines,
                                         textAlign: TextAlign.left,
                                         overflow: TextOverflow.ellipsis,
                                       ),
@@ -161,7 +198,8 @@ class _WidgetChatroomNoticePinState extends State<WidgetChatroomNoticePin> {
                               height: isTablet(context) ? 22 : 20,
                               margin: const EdgeInsets.only(right: 2.0),
                               clipBehavior: Clip.antiAlias,
-                              decoration: const BoxDecoration(color: Colors.white),
+                              decoration:
+                                  const BoxDecoration(color: Colors.white),
                               child: Container(
                                 width: 20,
                                 height: 20,
@@ -182,7 +220,7 @@ class _WidgetChatroomNoticePinState extends State<WidgetChatroomNoticePin> {
                   ],
                 ),
                 Visibility(
-                  visible: isExpanded,
+                  visible: widget.isExpandNotice,
                   child: Container(
                     width: double.infinity,
                     height: 32,
@@ -191,13 +229,11 @@ class _WidgetChatroomNoticePinState extends State<WidgetChatroomNoticePin> {
                     child: TextButton(
                       style: ElevatedButton.styleFrom(
                         elevation: 0,
-                        minimumSize:
-                        const Size(double.infinity, 48),
+                        minimumSize: const Size(double.infinity, 48),
                         foregroundColor: colorPrimaryBlue,
                         backgroundColor: colorMainGrey200,
                         shape: RoundedRectangleBorder(
-                          borderRadius:
-                          BorderRadius.circular(5.0),
+                          borderRadius: BorderRadius.circular(5.0),
                         ),
                       ),
                       child: const Text(
@@ -225,5 +261,4 @@ class _WidgetChatroomNoticePinState extends State<WidgetChatroomNoticePin> {
       ),
     );
   }
-
 }
