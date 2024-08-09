@@ -46,6 +46,7 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver {
   final TextEditingController _searchController = TextEditingController();
 
   String _selectChatId = "";
+  String _openedChatId = "";
   bool _isLoadingChatroom = false;
   final Map<String, ScreenChatroom> _listScreenChatrooms = {};
   final ModuleChat _chatModule = ModuleChat();
@@ -337,7 +338,7 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver {
       });
     } else {
       setState(() {
-        _selectChatId = dataChat.id;
+        _openedChatId = dataChat.id;
       });
 
       Navigator.push(context, MaterialPageRoute(builder: (context) {
@@ -349,7 +350,7 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver {
           onBackPressed: () {
             Navigator.of(context).pop();
             setState(() {
-              _selectChatId = "";
+              _openedChatId = "";
             });
           },
         );
@@ -451,7 +452,7 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver {
   }
 
   void _showNotif(DataChat newDataChat, BaseMessage message) {
-    if (newDataChat.id != _selectChatId) {
+    if (newDataChat.id != _openedChatId) {
       showNotificationMessage(
           newDataChat, DataMessage.fromBaseMessage(message));
     }
