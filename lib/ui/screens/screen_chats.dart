@@ -1,4 +1,12 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:async';
+
+import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_app_badger/flutter_app_badger.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:sendbird_sdk/sendbird_sdk.dart';
 
 import 'package:artrooms/beans/bean_message.dart';
 import 'package:artrooms/main.dart';
@@ -8,12 +16,6 @@ import 'package:artrooms/ui/screens/screen_profile.dart';
 import 'package:artrooms/utils/debouncer.dart';
 import 'package:artrooms/utils/utils.dart';
 import 'package:artrooms/utils/utils_notifications.dart';
-import 'package:collection/collection.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_app_badger/flutter_app_badger.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:sendbird_sdk/sendbird_sdk.dart';
 
 import '../../beans/bean_chat.dart';
 import '../../listeners/scroll_bouncing_physics.dart';
@@ -29,7 +31,11 @@ import '../widgets/widget_loader.dart';
 import '../widgets/widget_ui_notify.dart';
 
 class ScreenChats extends StatefulWidget {
-  const ScreenChats({super.key});
+  final bool reInit;
+  const ScreenChats({
+    Key? key,
+    this.reInit = false,
+  }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -38,7 +44,8 @@ class ScreenChats extends StatefulWidget {
 }
 
 class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver {
-  bool _isLoading = true;
+  bool _reInit = false;
+  bool _isLoading = false;
   bool _isSearching = false;
   bool _autofocus = false;
   final List<DataChat> _listChats = [];
@@ -59,6 +66,8 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
 
     FlutterAppBadger.removeBadge();
+
+    _reInit = widget.reInit;
 
     addState(this);
 
@@ -370,11 +379,14 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver {
   }
 
   Future<void> _doLoadChats() async {
-    if (!moduleSendBird.isInitialized()) {
-      await moduleSendBird.init(onNotificationSelected: (String chatId) {
+    await moduleSendBird.init(
+      onNotificationSelected: (String chatId) {
         _openChatFromNotification(chatId);
-      });
-    } else if (_isLoading) {
+      },
+      reInit: _reInit,
+    );
+
+    if (_isLoading) {
       return;
     }
 
@@ -411,10 +423,6 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver {
           }
 
           for (DataChat dataChat in chats) {
-            if (dbStore.isNotificationChat(dataChat)) {
-              // showNotificationChat(dataChat);
-            }
-
             _chatModule.addChannelEventHandler(dataChat.groupChannel!,
                 CustomChannelEventHandler(
               callback: (channel) {
@@ -447,6 +455,7 @@ class _ScreenChatsState extends State<ScreenChats> with WidgetsBindingObserver {
         .whenComplete(() {
           setState(() {
             _isLoading = false;
+            _reInit = false;
           });
         });
   }

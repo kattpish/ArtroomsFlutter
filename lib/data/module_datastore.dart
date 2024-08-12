@@ -1,13 +1,8 @@
-
 import 'package:artrooms/beans/bean_chat.dart';
 import 'package:artrooms/beans/bean_notice.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../main.dart';
-
-
 class DBStore {
-
   late final SharedPreferences sharedPreferences;
 
   Future<void> init() async {
@@ -85,29 +80,35 @@ class DBStore {
     return refreshToken ?? "";
   }
 
-  Future<void> saveTokens(String email, String? accessToken, String? refreshToken) async {
+  Future<void> saveTokens(
+      String email, String? accessToken, String? refreshToken) async {
     await sharedPreferences.setString('email', email);
     await sharedPreferences.setString('accessToken', accessToken ?? '');
     await sharedPreferences.setString('refreshToken', refreshToken ?? '');
   }
 
   Future<void> saveProfile(Map<String, dynamic> profile) async {
-
-    Map<String, dynamic> student = profile["student"];
-    Map<String, dynamic> profileImg = profile["profileImg"];
-
     await sharedPreferences.setInt('userId', profile["id"] ?? 0);
     await sharedPreferences.setString('email', profile["email"] ?? "");
     await sharedPreferences.setString('userType', profile["type"] ?? "");
+
+    Map<String, dynamic> student = profile["student"];
     await sharedPreferences.setString('name', student["name"] ?? "");
     await sharedPreferences.setString('nickname', student["nickname"] ?? "");
-    await sharedPreferences.setString('phoneNumber', student["phoneNumber"] ?? "");
-    await sharedPreferences.setString('profileImg', profileImg["accessUrl"] ?? "");
+    await sharedPreferences.setString(
+        'phoneNumber', student["phoneNumber"] ?? "");
+
+    if (profile["profileImg"] != null) {
+      Map<String, dynamic> profileImg = profile["profileImg"];
+      await sharedPreferences.setString(
+          'profileImg', profileImg["accessUrl"] ?? "");
+    }
   }
 
   Future<void> saveProfilePicture(Map<String, dynamic> profileImg) async {
     print("profileImg $profileImg");
-    await sharedPreferences.setString('profileImg', profileImg["accessUrl"] ?? "");
+    await sharedPreferences.setString(
+        'profileImg', profileImg["accessUrl"] ?? "");
   }
 
   String getMemo(DataChat myChat) {
@@ -164,5 +165,4 @@ class DBStore {
     await sharedPreferences.setString('accessToken', "");
     await sharedPreferences.setString('refreshToken', "");
   }
-
 }

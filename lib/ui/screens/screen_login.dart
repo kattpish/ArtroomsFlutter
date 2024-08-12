@@ -1,4 +1,3 @@
-
 import 'package:artrooms/ui/screens/screen_chats.dart';
 import 'package:artrooms/ui/screens/screen_login_reset.dart';
 import 'package:artrooms/utils/utils_screen.dart';
@@ -13,21 +12,17 @@ import '../../modules/module_profile.dart';
 import '../../utils/utils.dart';
 import '../theme/theme_colors.dart';
 
-
 class ScreenLogin extends StatefulWidget {
-
   final String onPageEmail;
-  const ScreenLogin({super.key, this.onPageEmail=""});
+  const ScreenLogin({super.key, this.onPageEmail = ""});
 
   @override
   State<StatefulWidget> createState() {
     return _ScreenLoginState();
   }
-
 }
 
 class _ScreenLoginState extends State<ScreenLogin> {
-
   bool _isLoading = false;
   final FocusNode _emailFocus = FocusNode();
   final FocusNode _passwordFocus = FocusNode();
@@ -41,17 +36,17 @@ class _ScreenLoginState extends State<ScreenLogin> {
   void initState() {
     super.initState();
 
-    if(widget.onPageEmail.isNotEmpty){
+    if (widget.onPageEmail.isNotEmpty) {
       _emailController.text = widget.onPageEmail;
     }
 
-    if(dbStore.isLoggedIn()) {
-      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) {
+    if (dbStore.isLoggedIn()) {
+      Navigator.of(context)
+          .pushReplacement(MaterialPageRoute(builder: (context) {
         return const ScreenChats();
       }));
       return;
     }
-
   }
 
   @override
@@ -85,10 +80,14 @@ class _ScreenLoginState extends State<ScreenLogin> {
                           behavior: scrollBehavior,
                           child: SingleChildScrollView(
                             child: Container(
-                              margin: EdgeInsets.symmetric(horizontal: isTablet(context) ? 50.0 : 20.0),
+                              margin: EdgeInsets.symmetric(
+                                  horizontal: isTablet(context) ? 50.0 : 20.0),
                               child: Column(
                                 children: <Widget>[
-                                  SizedBox(height: MediaQuery.of(context).size.height / 8),
+                                  SizedBox(
+                                      height:
+                                          MediaQuery.of(context).size.height /
+                                              8),
                                   Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: <Widget>[
@@ -100,10 +99,14 @@ class _ScreenLoginState extends State<ScreenLogin> {
                                           gradient: const LinearGradient(
                                             begin: Alignment(0.71, -0.71),
                                             end: Alignment(-0.71, 0.71),
-                                            colors: [Color(0xFF6A79FF), Color(0xFF6D6AFF)],
+                                            colors: [
+                                              Color(0xFF6A79FF),
+                                              Color(0xFF6D6AFF)
+                                            ],
                                           ),
                                           shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(15.75),
+                                            borderRadius:
+                                                BorderRadius.circular(15.75),
                                           ),
                                         ),
                                         child: Image.asset(
@@ -132,20 +135,25 @@ class _ScreenLoginState extends State<ScreenLogin> {
                                         height: 54,
                                         decoration: ShapeDecoration(
                                           shape: RoundedRectangleBorder(
-                                            side: const BorderSide(width: 1, color: Color(0xFFE3E3E3)),
-                                            borderRadius: BorderRadius.circular(30),
+                                            side: const BorderSide(
+                                                width: 1,
+                                                color: Color(0xFFE3E3E3)),
+                                            borderRadius:
+                                                BorderRadius.circular(30),
                                           ),
                                         ),
                                         child: TextField(
                                           controller: _emailController,
                                           focusNode: _emailFocus,
                                           autofocus: false,
-                                          keyboardType: TextInputType.emailAddress,
+                                          keyboardType:
+                                              TextInputType.emailAddress,
                                           textInputAction: TextInputAction.next,
                                           minLines: 1,
                                           maxLines: 1,
                                           onSubmitted: (_) {
-                                            FocusScope.of(context).requestFocus(_passwordFocus);
+                                            FocusScope.of(context)
+                                                .requestFocus(_passwordFocus);
                                           },
                                           style: const TextStyle(
                                             color: colorPrimaryBlue,
@@ -164,7 +172,10 @@ class _ScreenLoginState extends State<ScreenLogin> {
                                               letterSpacing: -0.30,
                                             ),
                                             border: InputBorder.none,
-                                            contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 18),
+                                            contentPadding:
+                                                EdgeInsets.symmetric(
+                                                    horizontal: 20.0,
+                                                    vertical: 18),
                                           ),
                                         ),
                                       ),
@@ -173,8 +184,11 @@ class _ScreenLoginState extends State<ScreenLogin> {
                                         height: 54,
                                         decoration: ShapeDecoration(
                                           shape: RoundedRectangleBorder(
-                                            side: const BorderSide(width: 1, color: Color(0xFFE3E3E3)),
-                                            borderRadius: BorderRadius.circular(30),
+                                            side: const BorderSide(
+                                                width: 1,
+                                                color: Color(0xFFE3E3E3)),
+                                            borderRadius:
+                                                BorderRadius.circular(30),
                                           ),
                                         ),
                                         child: TextField(
@@ -204,7 +218,10 @@ class _ScreenLoginState extends State<ScreenLogin> {
                                               letterSpacing: -0.30,
                                             ),
                                             border: InputBorder.none,
-                                            contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 18),
+                                            contentPadding:
+                                                EdgeInsets.symmetric(
+                                                    horizontal: 20.0,
+                                                    vertical: 18),
                                           ),
                                         ),
                                       ),
@@ -214,34 +231,38 @@ class _ScreenLoginState extends State<ScreenLogin> {
                                         child: ElevatedButton(
                                           style: ElevatedButton.styleFrom(
                                             elevation: 0,
-                                            minimumSize: const Size(double.infinity, 48),
+                                            minimumSize:
+                                                const Size(double.infinity, 48),
                                             foregroundColor: Colors.white,
                                             backgroundColor: colorPrimaryBlue,
-                                            padding: const EdgeInsets.symmetric(vertical: 16.0),
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 16.0),
                                             shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(30.0),
+                                              borderRadius:
+                                                  BorderRadius.circular(30.0),
                                             ),
                                           ),
                                           child: _isLoading
                                               ? const SizedBox(
-                                            width: 24,
-                                            height: 24,
-                                            child: CircularProgressIndicator(
-                                              color: Colors.white,
-                                              strokeWidth: 3,
-                                            ),
-                                          )
+                                                  width: 24,
+                                                  height: 24,
+                                                  child:
+                                                      CircularProgressIndicator(
+                                                    color: Colors.white,
+                                                    strokeWidth: 3,
+                                                  ),
+                                                )
                                               : const Text(
-                                            '로그인',
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 18,
-                                              fontFamily: 'SUIT',
-                                              fontWeight: FontWeight.w700,
-                                              height: 0,
-                                              letterSpacing: -0.36,
-                                            ),
-                                          ),
+                                                  '로그인',
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 18,
+                                                    fontFamily: 'SUIT',
+                                                    fontWeight: FontWeight.w700,
+                                                    height: 0,
+                                                    letterSpacing: -0.36,
+                                                  ),
+                                                ),
                                           onPressed: () {
                                             _doLogin(context);
                                           },
@@ -249,9 +270,11 @@ class _ScreenLoginState extends State<ScreenLogin> {
                                       ),
                                       const SizedBox(height: 12),
                                       Padding(
-                                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 20.0),
                                         child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
                                           children: <Widget>[
                                             TextButton(
                                               child: const Text(
@@ -266,8 +289,11 @@ class _ScreenLoginState extends State<ScreenLogin> {
                                                 ),
                                               ),
                                               onPressed: () {
-                                                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                                  return const ScreenLoginReset(tab: 0);
+                                                Navigator.push(context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) {
+                                                  return const ScreenLoginReset(
+                                                      tab: 0);
                                                 }));
                                               },
                                             ),
@@ -275,7 +301,9 @@ class _ScreenLoginState extends State<ScreenLogin> {
                                               width: 1,
                                               height: 18,
                                               color: const Color(0xFFE3E3E3),
-                                              margin: const EdgeInsets.symmetric(horizontal: 12.0),
+                                              margin:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 12.0),
                                             ),
                                             TextButton(
                                               child: const Text(
@@ -290,8 +318,11 @@ class _ScreenLoginState extends State<ScreenLogin> {
                                                 ),
                                               ),
                                               onPressed: () {
-                                                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                                  return const ScreenLoginReset(tab: 1);
+                                                Navigator.push(context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) {
+                                                  return const ScreenLoginReset(
+                                                      tab: 1);
                                                 }));
                                               },
                                             ),
@@ -303,9 +334,12 @@ class _ScreenLoginState extends State<ScreenLogin> {
                                   const SizedBox(height: 80),
                                   Container(
                                     alignment: Alignment.center,
-                                    padding: const EdgeInsets.only(bottom: 20.0),
+                                    padding:
+                                        const EdgeInsets.only(bottom: 20.0),
                                     child: TextButton(
-                                      style: TextButton.styleFrom(foregroundColor: colorPrimaryBlue,),
+                                      style: TextButton.styleFrom(
+                                        foregroundColor: colorPrimaryBlue,
+                                      ),
                                       child: Row(
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
@@ -333,7 +367,10 @@ class _ScreenLoginState extends State<ScreenLogin> {
                                         ],
                                       ),
                                       onPressed: () {
-                                        launchInBrowser(Uri(scheme: 'https', host: 'artrooms.com', path: ''));
+                                        launchInBrowser(Uri(
+                                            scheme: 'https',
+                                            host: 'artrooms.com',
+                                            path: ''));
                                       },
                                     ),
                                   ),
@@ -356,7 +393,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
   }
 
   void _doLogin(BuildContext context) {
-    if(_isLoading) return;
+    if (_isLoading) return;
 
     if (_emailController.text.isEmpty) {
       showSnackBar(context, "이메일을 입력해주세요");
@@ -383,42 +420,38 @@ class _ScreenLoginState extends State<ScreenLogin> {
       email: email,
       password: _passwordController.text,
       loginRemember: true,
-      callback: (bool success, String? accessToken, String? refreshToken) async {
-
+      callback:
+          (bool success, String? accessToken, String? refreshToken) async {
         setState(() {
           _isLoading = false;
         });
 
         if (success) {
-
           await dbStore.saveTokens(email, accessToken, refreshToken);
-
-          Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) {
-            return const ScreenChats();
-          }));
 
           Map<String, dynamic>? profile = await _userModule.getMyProfile();
           if (profile != null) {
-
             await dbStore.saveProfile(profile);
 
             if (kDebugMode) {
               print("User Profile: $profile");
             }
-
           } else {
             if (kDebugMode) {
               print("Failed to fetch user profile.");
             }
           }
 
+          Navigator.of(context)
+              .pushReplacement(MaterialPageRoute(builder: (context) {
+            return const ScreenChats(
+              reInit: true,
+            );
+          }));
         } else {
           showSnackBar(context, "로그인 실패");
         }
-
       },
     );
-
   }
-
 }

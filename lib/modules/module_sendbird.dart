@@ -31,9 +31,10 @@ class ModuleSendBird {
   bool _isInitialized = false;
 
   Future<void> init(
-      {required Function(String chatId) onNotificationSelected}) async {
+      {required Function(String chatId) onNotificationSelected,
+      required bool reInit}) async {
     try {
-      if (!_isInitialized) {
+      if (!_isInitialized || reInit) {
         await initLocale();
 
         final String email = dbStore.getEmail();
